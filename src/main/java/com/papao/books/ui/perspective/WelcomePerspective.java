@@ -52,25 +52,17 @@ public final class WelcomePerspective extends Composite {
 
         CTabItem booksTabItem = new CTabItem(this.mainTabFolder, SWT.NONE);
         booksTabItem.setText("Carti");
-        booksTabItem.setImage(AppImages.getImage32(AppImages.IMG_BANCA));
+        booksTabItem.setImage(AppImages.getImage32(AppImages.IMG_DETAILS_NEW));
         booksTabItem.setControl(createBooksGrid());
 
         this.mainTabFolder.setSelection(0);
 
-        Composite topRight = new Composite(mainTabFolder, SWT.NONE);
-        topRight.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-        GridLayoutFactory.fillDefaults().numColumns(2).applyTo(topRight);
-        GridDataFactory.fillDefaults().grab(true, true).hint(450, SWT.DEFAULT).align(SWT.END,
-                SWT.CENTER).applyTo(topRight);
-
-        createTopRightComponents(topRight);
-
-        this.mainTabFolder.setTopRight(topRight);
+        createTopRightComponents(mainTabFolder);
 
         Composite lowerCompBarDocking = new Composite(this, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).grab(true, false).applyTo(lowerCompBarDocking);
-		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).extendedMargins(10,
-				10,
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.END).grab(true, false).hint(SWT.DEFAULT, 20).applyTo(lowerCompBarDocking);
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).extendedMargins(0,
+				0,
 				0,
 				0).spacing(0, 0).applyTo(lowerCompBarDocking);
 		lowerCompBarDocking.setBackground(ColorUtil.COLOR_WHITE);
@@ -89,8 +81,8 @@ public final class WelcomePerspective extends Composite {
         bar.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
         ToolItem item = new ToolItem(bar, SWT.NONE);
-        item.setImage(AppImages.getImage32(AppImages.IMG_ARROW_RIGHT));
-        item.setHotImage(AppImages.getImage32Focus(AppImages.IMG_ARROW_RIGHT));
+        item.setImage(AppImages.getImage24(AppImages.IMG_ARROW_RIGHT));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_RIGHT));
         item.setToolTipText("Logout");
         item.setText("Logout");
         item.addListener(SWT.Selection, new Listener() {
@@ -101,8 +93,8 @@ public final class WelcomePerspective extends Composite {
         });
 
         item = new ToolItem(bar, SWT.NONE);
-        item.setImage(AppImages.getImage32(AppImages.IMG_STOP));
-        item.setHotImage(AppImages.getImage32Focus(AppImages.IMG_STOP));
+        item.setImage(AppImages.getImage24(AppImages.IMG_STOP));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_STOP));
         item.setToolTipText("Exit");
         item.setText("Exit");
         item.addListener(SWT.Selection, new Listener() {
@@ -111,6 +103,7 @@ public final class WelcomePerspective extends Composite {
                 EncodePlatform.instance.performShellClose(new Event());
             }
         });
+		this.mainTabFolder.setTopRight(bar);
     }
 
 	private Composite createBooksGrid(){
