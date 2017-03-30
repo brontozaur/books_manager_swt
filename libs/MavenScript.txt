@@ -1,0 +1,84 @@
+Install to local maven
+------------------------
+
+mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.core.commands_3.5.0.I20090525-2000.jar -Dsources=org.eclipse.jface/source/org.eclipse.core.commands.source_3.5.0.I20090525-2000.jar -DgroupId=org.eclipse.core -DartifactId=commands -Dversion=3.5.0.I20090525-2000 -Dpackaging=jar
+mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.core.runtime_3.6.0.v20091204.jar -Dsources=org.eclipse.jface/source/org.eclipse.core.runtime.source_3.6.0.v20091204.jar -DgroupId=org.eclipse.core -DartifactId=runtime -Dversion=3.6.0.v20091204 -Dpackaging=jar
+mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.equinox.common_3.6.0.v20091203.jar -Dsources=org.eclipse.jface/source/org.eclipse.equinox.common.source_3.6.0.v20091203.jar -DgroupId=org.eclipse.equinox -DartifactId=common -Dversion=3.6.0.v20091203 -Dpackaging=jar
+mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.jface_3.6.0.I20091207-1800.jar -Dsources=org.eclipse.jface/source/org.eclipse.jface.source_3.6.0.I20091207-1800.jar -DgroupId=org.eclipse -DartifactId=jface -Dversion=3.6.0.I20091207-1800 -Dpackaging=jar
+
+mvn install:install-file -Dfile=borg_images.jar -DgroupId=com.papao -DartifactId=borg_images -Dversion=1.0 -Dpackaging=jar
+
+mvn install:install-file -Dfile=org.aspen.cloud.widgets/aspencloud.widgets.jar -Dsources=org.aspen.cloud.widgets/aspencloud.widgets.sources.zip -DgroupId=org.aspen.cloud -DartifactId=widgets -Dversion=1.0 -Dpackaging=jar
+
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.datechooser_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=datechooser -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.formattedtext_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=formattedtext -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.pshelf_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=pshelf -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.pgroup_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=pgroup -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.tablecombo_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=tablecombo -Dversion=1.0 -Dpackaging=jar
+
+pom.xml
+------------
+
+<!-- jface 3.6 -->
+<dependency>
+     <groupId>org.eclipse.core</groupId>
+     <artifactId>commands</artifactId>
+     <version>3.5.0.I20090525-2000</version>
+</dependency>
+<dependency>
+     <groupId>org.eclipse.core</groupId>
+     <artifactId>runtime</artifactId>
+     <version>3.6.0.v20091204</version>
+</dependency>
+<dependency>
+     <groupId>org.eclipse.equinox</groupId>
+     <artifactId>common</artifactId>
+     <version>3.6.0.v20091203</version>
+</dependency>
+<dependency>
+     <groupId>org.eclipse</groupId>
+     <artifactId>jface</artifactId>
+     <version>3.6.0.I20091207-1800</version>
+</dependency>
+
+<!-- borg images -->
+<dependency>
+     <groupId>com.papao</groupId>
+     <artifactId>borg_images</artifactId>
+     <version>1.0</version>
+</dependency>
+
+<!-- aspencloud widgets -->
+<dependency>
+     <groupId>org.aspen.cloud</groupId>
+     <artifactId>widgets</artifactId>
+     <version>1.0</version>
+</dependency>
+
+<!-- nebula widgets -->
+
+<dependency>
+     <groupId>org.eclipse.nebula.widgets</groupId>
+     <artifactId>datechooser</artifactId>
+     <version>1.0</version>
+</dependency>
+<dependency>
+     <groupId>org.eclipse.nebula.widgets</groupId>
+     <artifactId>formattedtext</artifactId>
+     <version>1.0</version>
+</dependency>
+<dependency>
+     <groupId>org.eclipse.nebula.widgets</groupId>
+     <artifactId>pshelf</artifactId>
+     <version>1.0</version>
+</dependency>
+<dependency>
+     <groupId>org.eclipse.nebula.widgets</groupId>
+     <artifactId>pgroup</artifactId>
+     <version>1.0</version>
+</dependency>
+<dependency>
+     <groupId>org.eclipse.nebula.widgets</groupId>
+     <artifactId>tablecombo</artifactId>
+     <version>1.0</version>
+</dependency>

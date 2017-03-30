@@ -84,6 +84,71 @@
             <artifactId>hibernate-validator</artifactId>
             <version>5.4.1.Final</version>
         </dependency>
+
+        <!-- jface 3.6 -->
+        <dependency>
+            <groupId>org.eclipse.core</groupId>
+            <artifactId>commands</artifactId>
+            <version>3.5.0.I20090525-2000</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.core</groupId>
+            <artifactId>runtime</artifactId>
+            <version>3.6.0.v20091204</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.equinox</groupId>
+            <artifactId>common</artifactId>
+            <version>3.6.0.v20091203</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>jface</artifactId>
+            <version>3.6.0.I20091207-1800</version>
+        </dependency>
+
+        <!-- borg images -->
+        <dependency>
+            <groupId>com.papao</groupId>
+            <artifactId>borg_images</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- aspencloud widgets -->
+        <dependency>
+            <groupId>org.aspen.cloud</groupId>
+            <artifactId>widgets</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- nebula widgets -->
+
+        <dependency>
+            <groupId>org.eclipse.nebula.widgets</groupId>
+            <artifactId>datechooser</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.nebula.widgets</groupId>
+            <artifactId>formattedtext</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.nebula.widgets</groupId>
+            <artifactId>pshelf</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.nebula.widgets</groupId>
+            <artifactId>pgroup</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.nebula.widgets</groupId>
+            <artifactId>tablecombo</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -94,6 +159,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>
