@@ -2,8 +2,6 @@ package com.papao.books.auth;
 
 import com.papao.books.BooksApplication;
 import com.papao.books.model.AbstractDB;
-import com.papao.books.model.Carte;
-import com.papao.books.repository.CarteRepository;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.custom.ComboImage;
 import com.papao.books.ui.custom.XButton;
@@ -20,15 +18,12 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-@Service
 public class LoginShell extends AbstractCView implements Listener {
 
     private static Logger logger = Logger.getLogger(LoginShell.class);
@@ -39,9 +34,7 @@ public class LoginShell extends AbstractCView implements Listener {
     private final List<AbstractDB> arrayUsers = new ArrayList<AbstractDB>();
     private XButton buttonLogin;
     private XButton buttonExit;
-
-    @Autowired
-    private CarteRepository carteRepository;
+    private XButton buttonInfo;
 
     public LoginShell() {
         super(null, AbstractView.MODE_NONE);
@@ -211,7 +204,6 @@ public class LoginShell extends AbstractCView implements Listener {
     }
 
     private void quit() {
-        carteRepository.save(new Carte());
         if (SWTeXtension.displayMessageQ("Sunteti sigur ca doriti sa inchideti aplicatia?", "Inchidere aplicatie") == SWT.YES) {
             BooksApplication.closeApp(false);
         }
