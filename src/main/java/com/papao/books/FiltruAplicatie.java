@@ -213,4 +213,7 @@ public final class FiltruAplicatie {
         }
     }
 
+    public static boolean isLeftTreeShowRecentActivity() {
+        return true;
+    }
 }
