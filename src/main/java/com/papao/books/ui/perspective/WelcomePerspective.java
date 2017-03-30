@@ -70,6 +70,7 @@ public final class WelcomePerspective extends Composite {
 
 		this.barDocking = new ToolBar(lowerCompBarDocking, SWT.FLAT | SWT.WRAP | SWT.RIGHT);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(this.barDocking);
+		GridLayoutFactory.fillDefaults().margins(0,0).applyTo(this.barDocking);
 		this.barDocking.setMenu(createBarDockingMenu());
 
 		setStatusLine(new WelcomeStatusLine(this));
@@ -110,9 +111,31 @@ public final class WelcomePerspective extends Composite {
 	    Composite composite = new Composite(this.mainTabFolder, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(composite);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(composite);
+
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(composite);
+        GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(0, 0, 0, 0).applyTo(composite);
+        Composite group = new Canvas(composite, SWT.NONE);
+        group.setBackground(ColorUtil.COLOR_FOCUS_YELLOW);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(group);
+        GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 5, 2).applyTo(group);
+        group.addListener(SWT.Paint, new Listener() {
+
+            @Override
+            public void handleEvent(final Event e) {
+                e.gc.setForeground(ColorUtil.COLOR_ALBASTRU_FACEBOOK);
+                e.gc.drawRoundRectangle(0,
+                        0,
+                        getClientArea().width - 8,
+                        getClientArea().height -6,
+                        8,
+                        8);
+
+            }
+        });
+
 //        composite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
-        Composite up = new Group(composite, SWT.BORDER);
+        Composite up = new Group(group, SWT.BORDER);
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(up);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(up);
 
