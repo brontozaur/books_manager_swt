@@ -1,7 +1,6 @@
 package com.papao.books;
 
 import com.papao.books.auth.LoginShell;
-import com.papao.books.ui.AppImages;
 import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.view.SWTeXtension;
 import org.eclipse.swt.widgets.Display;
@@ -9,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
+@EnableMongoRepositories("com.papao.books.repository")
 public class BooksApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(BooksApplication.class);
@@ -22,22 +23,6 @@ public class BooksApplication {
 
     public static void open() {
         try {
-
-            /*
-             * initializing current skin. Feel free to choose another and make sure u have the
-             * required images in \[CHOOSED_SKIN] folder
-             */
-            logger.info("initializing current skin.....");
-            AppImages.setSkin(AppImages.SKIN_01);
-
-            /**
-             * loads elementary data from db, like, app users and config
-             */
-            logger.info("\t\t**********INIT APPLICATION COMPLETE**********");
-            /**
-             * opening the login screen
-             */
-            // new DummyJobProcessor().start();
 
             new LoginShell().open(false, true);
 

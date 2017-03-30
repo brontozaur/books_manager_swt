@@ -15,7 +15,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.2.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <properties>
@@ -80,8 +80,9 @@
             <version>2.6</version>
         </dependency>
         <dependency>
-            <groupId>org.aspencloud.cdatetime</groupId>
-            <artifactId>org.aspencloud.cdatetime</artifactId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.4.1.Final</version>
         </dependency>
     </dependencies>
 
