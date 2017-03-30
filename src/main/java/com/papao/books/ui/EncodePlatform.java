@@ -189,7 +189,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             } else {
                 getShell().removeListener(SWT.Close, this);
                 getShell().notifyListeners(SWT.Close, e);
-                BooksApplication.closeApp(true);
+                BooksApplication.closeApp(false);
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
