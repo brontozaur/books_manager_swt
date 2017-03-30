@@ -93,8 +93,8 @@ public final class WelcomePerspective extends Composite {
         });
 
         item = new ToolItem(bar, SWT.NONE);
-        item.setImage(AppImages.getImage24(AppImages.IMG_STOP));
-        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_STOP));
+        item.setImage(AppImages.getImage24(AppImages.IMG_CANCEL));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CANCEL));
         item.setToolTipText("Exit");
         item.setText("Exit");
         item.addListener(SWT.Selection, new Listener() {
@@ -108,7 +108,66 @@ public final class WelcomePerspective extends Composite {
 
 	private Composite createBooksGrid(){
 	    Composite composite = new Composite(this.mainTabFolder, SWT.NONE);
-	    new Label(composite, SWT.NONE).setText("Grid-ul cu carti");
+        GridLayoutFactory.fillDefaults().numColumns(1).applyTo(composite);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(composite);
+//        composite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+
+        Composite up = new Group(composite, SWT.BORDER);
+        GridLayoutFactory.fillDefaults().numColumns(1).applyTo(up);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(up);
+
+        ToolBar bar = new ToolBar(up, SWT.NONE);
+//        bar.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+
+        ToolItem item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_PLUS));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_PLUS));
+        item.setToolTipText("Adauga o carte noua");
+        item.setText("Adauga");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_UPDATE));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_UPDATE));
+        item.setToolTipText("Schimba detaliile cartii selectate");
+        item.setText("Modifica");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_STOP));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_STOP));
+        item.setToolTipText("Sterge cartea selectata");
+        item.setText("Sterge");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_DETAILS_NEW));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_DETAILS_NEW));
+        item.setToolTipText("Vizualizare detalii");
+        item.setText("Vezi");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+
+            }
+        });
+
+
 	    return composite;
     }
 
