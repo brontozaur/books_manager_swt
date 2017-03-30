@@ -16,7 +16,7 @@ public class SimpleTextNode implements ITreeNode {
 	private String[] nodes = new String[0];
 	private static ViewerFilter filter;
 	private static ViewerFilter[] filters;
-	private Map<Long, AbstractDB> dbElements = new TreeMap<Long, AbstractDB>();
+	private Map<String, AbstractDB> dbElements = new TreeMap<>();
 	private Image image;
 	private Font font;
 	private Color background;
@@ -112,11 +112,11 @@ public class SimpleTextNode implements ITreeNode {
 		return SimpleTextNode.filters;
 	}
 
-	public final Map<Long, AbstractDB> getDbElements() {
+	public final Map<String, AbstractDB> getDbElements() {
 		return this.dbElements;
 	}
 
-	public final void setDbElements(final Map<Long, AbstractDB> dbElements) {
+	public final void setDbElements(final Map<String, AbstractDB> dbElements) {
 		this.dbElements = dbElements;
 	}
 

@@ -83,12 +83,6 @@ public final class Constants {
         return str;
     }
 
-    public static Map<Integer, String> mapPrioritati = new HashMap<Integer, String>();
-
-    static {
-        linkTypes(Constants.class, "LEVEL_", "_STR", mapLevels);
-        linkTypes(Constants.class, "PRIORITATE_", "_STR", mapPrioritati);
-    }
 
     public final static String ROOT_PACKAGE = "com.encode";
     public final static String ENCODE_SHELL_TEXT = "Encode Borg \u00A9 Encode Systems";
@@ -126,29 +120,4 @@ public final class Constants {
     public static String getSWTVersion() {
         return String.valueOf(org.eclipse.swt.SWT.getVersion());
     }
-
-    public static Map<Integer, String> linkTypes(final Class<?> clazz, final String startStr, final String endStr, final Map<Integer, String> result) {
-        Field[] fieldsAbd;
-        HashMap<String, Field> byName;
-        Field tmp;
-        try {
-            byName = new HashMap<String, Field>();
-            fieldsAbd = clazz.getFields();
-            for (Field field : fieldsAbd) {
-                byName.put(field.getName(), field);
-            }
-            final Iterator<Field> it = byName.values().iterator();
-            while (it.hasNext()) {
-                tmp = it.next();
-                if (tmp.getName().endsWith(endStr) && tmp.getName().startsWith(startStr)) {
-                    result.put(byName.get(tmp.getName().substring(0, tmp.getName().indexOf(endStr))).getInt(null), (String) tmp.get(null));
-                }
-            }
-        } catch (Exception exc) {
-            result.clear();
-            logger.error(exc.getMessage(), exc);
-        }
-        return result;
-    }
-
 }

@@ -24,8 +24,8 @@ public class AdbSelectorData {
 	private String uiTextMethod;
 	private String prefsKey;
 	private Class<? extends AbstractDB> clazz;
-	private Map<Long, ? extends AbstractDB> cacheMap = new HashMap<Long, AbstractDB>();
-	private Map<Long, ? extends AbstractDB> selectedMap = new HashMap<Long, AbstractDB>();
+	private Map<String, ? extends AbstractDB> cacheMap = new HashMap<>();
+	private Map<String, ? extends AbstractDB> selectedMap = new HashMap<>();
 	private String inputShellName;
 	private String databaseColumnForFilter;
 	public static final String SEPARATOR = ";";
@@ -157,7 +157,7 @@ public class AdbSelectorData {
 	 * 
 	 * @return
 	 */
-	public Map<Long, ? extends AbstractDB> getCacheMap() {
+	public Map<String, ? extends AbstractDB> getCacheMap() {
 		return this.cacheMap;
 	}
 
@@ -168,7 +168,7 @@ public class AdbSelectorData {
 	 * 
 	 * @return
 	 */
-	public void setCacheMap(final Map<Long, ? extends AbstractDB> cacheMap) {
+	public void setCacheMap(final Map<String, ? extends AbstractDB> cacheMap) {
 		this.cacheMap = cacheMap;
 	}
 
@@ -179,7 +179,7 @@ public class AdbSelectorData {
 	 * 
 	 * @param cacheMap
 	 */
-	public void setCacheMapForString(final Map<Integer, String> cacheMap) {
+	public void setCacheMapForString(final Map<String, String> cacheMap) {
 		this.clazz = BlankDbObject.class;
 		this.getterMethods = new String[] {
 			BlankDbObject.EXTERNAL_REFLECT_GET_NAME };
@@ -187,14 +187,13 @@ public class AdbSelectorData {
 			150 };
 		this.uiTextMethod = BlankDbObject.EXTERNAL_REFLECT_GET_NAME;
 		if ((cacheMap == null) || cacheMap.isEmpty()) {
-			this.cacheMap = new HashMap<Long, AbstractDB>();
+			this.cacheMap = new HashMap<>();
 		} else {
 			this.cacheMap.clear();
-			Map<Long, AbstractDB> tmpMap = new HashMap<Long, AbstractDB>();
-			for (Iterator<Map.Entry<Integer, String>> it = cacheMap.entrySet().iterator(); it.hasNext();) {
-				Map.Entry<Integer, String> entry = it.next();
-				Long dboId = Long.valueOf(entry.getKey());
-				BlankDbObject dummy = new BlankDbObject(entry.getValue(), dboId);
+			Map<String, AbstractDB> tmpMap = new HashMap<>();
+			for (Iterator<Map.Entry<String, String>> it = cacheMap.entrySet().iterator(); it.hasNext();) {
+				Map.Entry<String, String> entry = it.next();
+				BlankDbObject dummy = new BlankDbObject(entry.getValue(), entry.getKey());
 				tmpMap.put(dummy.getId(), dummy);
 			}
 			setCacheMap(tmpMap);
@@ -229,9 +228,9 @@ public class AdbSelectorData {
 	 * 
 	 * @return
 	 */
-	public Map<Long, ? extends AbstractDB> getSelectedMap() {
+	public Map<String, ? extends AbstractDB> getSelectedMap() {
 		if (this.selectedMap == null) {
-			this.selectedMap = new TreeMap<Long, AbstractDB>();
+			this.selectedMap = new TreeMap<String, AbstractDB>();
 		}
 		return this.selectedMap;
 	}
@@ -246,7 +245,7 @@ public class AdbSelectorData {
 	 * 
 	 * @return
 	 */
-	public void setSelectedMap(final Map<Long, ? extends AbstractDB> selectedMap) {
+	public void setSelectedMap(final Map<String, ? extends AbstractDB> selectedMap) {
 		this.selectedMap = selectedMap;
 	}
 
@@ -282,7 +281,7 @@ public class AdbSelectorData {
 	 * @return
 	 */
 	public final String getSelectionAsText() {
-		final Map<Long, ? extends AbstractDB> selected = getSelectedMap();
+		final Map<String, ? extends AbstractDB> selected = getSelectedMap();
 		StringBuilder sb = new StringBuilder(500);
 		for (Iterator<? extends AbstractDB> it = selected.values().iterator(); it.hasNext();) {
 			AbstractDB adb = it.next();

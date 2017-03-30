@@ -19,7 +19,7 @@ public class DboSearch extends AbstractSearchType {
     public DboSearch(final BorgSearchSystem searchSystem, final AdbSelectorData data, final String colName) {
         super(searchSystem, colName);
         this.data = data;
-        data.setSelectedMap(new TreeMap<Long, AbstractDB>());
+        data.setSelectedMap(new TreeMap<String, AbstractDB>());
         GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).extendedMargins(2, 0, 0, 0).spacing(1, 0).applyTo(this);
         this.selectorComp = new AdbSelectorComposite(this, this.data);
 

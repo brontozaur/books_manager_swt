@@ -4,24 +4,19 @@ import java.util.UUID;
 
 public class AbstractDBDummy extends AbstractDB {
 
-	private final long id;
+    private final String id;
 
-	public AbstractDBDummy() {
-		this(UUID.randomUUID().getMostSignificantBits());
-	}
+    public AbstractDBDummy() {
+        this(UUID.randomUUID().toString());
+    }
 
-	public AbstractDBDummy(long id) {
-		this.id = id;
-	}
+    public AbstractDBDummy(String id) {
+        this.id = id;
+    }
 
-	@Override
-	public AbstractDB cloneObject() {
-		return null;
-	}
-
-	@Override
-	public long getId() {
-		return this.id;
-	}
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
 }

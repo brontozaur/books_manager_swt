@@ -35,8 +35,8 @@ public final class AtomUtils {
     public final static String MODUL_ASOCIATIE_STR = "Asociatie";
     public final static String MODUL_ASOCIATIE_DESC = AtomUtils.MODUL_ASOCIATIE_STR + " - evidente asociatii de locatari";
 
-    public static Map<Integer, String> mapModules = new TreeMap<Integer, String>();
-    private static Map<Integer, String> mapModulesDesc = new TreeMap<Integer, String>();
+    public static Map<String, String> mapModules = new TreeMap<>();
+    private static Map<String, String> mapModulesDesc = new TreeMap<>();
 
     public static final String FIELD_MODULE_PREFIX = "MODUL_";
     public static final String FIELD_MODULE_SUFIX = "_STR";
@@ -58,8 +58,6 @@ public final class AtomUtils {
     public static final String MODUL_ASOCIATIE_CLASS = "com.encode.borg.module.as.AsociatieAtom";
 
     static {
-        Constants.linkTypes(AtomUtils.class, AtomUtils.FIELD_MODULE_PREFIX, AtomUtils.FIELD_MODULE_SUFIX, AtomUtils.mapModules);
-        Constants.linkTypes(AtomUtils.class, AtomUtils.FIELD_MODULE_PREFIX, AtomUtils.FIELD_MODULE_DESC_SUFIX, AtomUtils.mapModulesDesc);
         try {
             Class.forName(AtomUtils.MODUL_ADMIN_CLASS);
             AtomUtils.IS_MODUL_ADMIN_AVAILABLE = true;

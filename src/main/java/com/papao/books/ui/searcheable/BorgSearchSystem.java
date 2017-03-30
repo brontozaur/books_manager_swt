@@ -147,7 +147,7 @@ public class BorgSearchSystem extends Composite implements Listener, IEncodeRese
 	public final void computeTotal() {
 	}
 
-	private void addFilters(final Map<Long, AbstractDB> mapSelectie) {
+	private void addFilters(final Map<String, AbstractDB> mapSelectie) {
 		if ((mapSelectie == null) || mapSelectie.isEmpty()) {
 			return;
 		}
@@ -250,17 +250,17 @@ public class BorgSearchSystem extends Composite implements Listener, IEncodeRese
 	}
 
 	public void initCacheMap() {
-		Map<Integer, String> cacheMap = new HashMap<Integer, String>();
+		Map<String, String> cacheMap = new HashMap<>();
 		for (Iterator<AbstractSearchType> it = this.hiddenFilters.values().iterator(); it.hasNext();) {
 			final String str = it.next().getColName();
-			cacheMap.put(str.hashCode(), str);
+			cacheMap.put(str, str);
 		}
 		for (Iterator<AbstractSearchType> it = this.visibleFilters.values().iterator(); it.hasNext();) {
 			final String str = it.next().getColName();
-			cacheMap.put(str.hashCode(), str);
+			cacheMap.put(str, str);
 		}
 		getDataTransport().setCacheMapForString(cacheMap);
-		Map<Long, AbstractDB> selectedMap = (Map<Long, AbstractDB>) getDataTransport().getSelectedMap();
+		Map<String, AbstractDB> selectedMap = (Map<String, AbstractDB>) getDataTransport().getSelectedMap();
 		for (Iterator<AbstractSearchType> it = this.visibleFilters.values().iterator(); it.hasNext();) {
 			AbstractSearchType ast = it.next();
 			ast.moveAbove(this.compCriterii.getChildren()[0]);
@@ -287,7 +287,7 @@ public class BorgSearchSystem extends Composite implements Listener, IEncodeRese
 		if (view.getUserAction() == SWT.CANCEL) {
 			return;
 		}
-		Map<Long, AbstractDB> map = new HashMap<Long, AbstractDB>();
+		Map<String, AbstractDB> map = new HashMap<>();
 		map.putAll(view.getDataTransport().getSelectedMap());
 		reset();
 		addFilters(map);

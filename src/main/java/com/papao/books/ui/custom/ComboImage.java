@@ -71,7 +71,7 @@ public class ComboImage extends Composite implements Listener {
      * autocomplete, cum e cazul lui {@link ContentProposalProvider}. Cum am spus in zeci de
      * randuri, editarea in combo ESTE O MARE TAMPENIE!! dar whatever, e comod pt user.
      */
-    private long lastId = 0;
+    private String lastId = "";
 
     private static final int SIZE = 19;
     /**
@@ -229,8 +229,8 @@ public class ComboImage extends Composite implements Listener {
         return (AbstractDB) getViewer().getElementAt(getCombo().getSelectionIndex());
     }
 
-    public final long getSelectedObjectId() {
-        return getSelectedElement() != null ? getSelectedElement().getId() : 0;
+    public final String getSelectedObjectId() {
+        return getSelectedElement() != null ? getSelectedElement().getId() : "";
     }
 
     public final void select(final String str) {
@@ -263,21 +263,21 @@ public class ComboImage extends Composite implements Listener {
         ContentProposalProvider.addContentProposal(getCombo(), getCombo().getItems(), true);
     }
 
-    public final void select(final long id) {
-        if (getCombo().getItemCount() <= 0) {
-            return;
-        }
-        for (int i = 0; i < getCombo().getItemCount(); i++) {
-            AbstractDB element = (AbstractDB) getViewer().getElementAt(i);
-            if (element.getId() == id) {
-                getCombo().select(i);
-                if (element.getId() != this.lastId) {
-                    this.lastId = element.getId();
-                    getCombo().notifyListeners(SWT.Selection, new Event());
-                }
-            }
-        }
-    }
+//    public final void select(final String id) {
+//        if (getCombo().getItemCount() <= 0) {
+//            return;
+//        }
+//        for (int i = 0; i < getCombo().getItemCount(); i++) {
+//            AbstractDB element = (AbstractDB) getViewer().getElementAt(i);
+//            if (element.getId() == id) {
+//                getCombo().select(i);
+//                if (element.getId() != this.lastId) {
+//                    this.lastId = element.getId();
+//                    getCombo().notifyListeners(SWT.Selection, new Event());
+//                }
+//            }
+//        }
+//    }
 
     private AbstractDB[] getElements() {
         try {

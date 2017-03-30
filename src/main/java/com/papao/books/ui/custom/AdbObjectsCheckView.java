@@ -33,9 +33,9 @@ public class AdbObjectsCheckView extends AbstractCView implements IEncodeHelp, L
 
 	private static Logger logger = Logger.getLogger(AdbObjectsCheckView.class);
 
-	private Map<Long, ? extends AbstractDB> mapAllValues = new HashMap<Long, AbstractDB>();
+	private Map<String, ? extends AbstractDB> mapAllValues = new HashMap<>();
 	protected TableViewer tableViewer;
-	private Map<Long, AbstractDB> mapSelected = new HashMap<Long, AbstractDB>();
+	private Map<String, AbstractDB> mapSelected = new HashMap<>();
 	private final Class<? extends AbstractDB> clazz;
 	private final String[] tableCols;
 	private final int[] tableDims;
@@ -62,9 +62,9 @@ public class AdbObjectsCheckView extends AbstractCView implements IEncodeHelp, L
 		this.clazz = data.getClazz();
 		this.methods = data.getGetterMethods();
 		this.mapAllValues = data.getCacheMap();
-		this.mapSelected = (Map<Long, AbstractDB>) data.getSelectedMap();
+		this.mapSelected = (Map<String, AbstractDB>) data.getSelectedMap();
 		if (this.mapSelected == null) {
-			this.mapSelected = new HashMap<Long, AbstractDB>();
+			this.mapSelected = new HashMap<>();
 		}
 		if (this.mapAllValues == null) {
 		}
@@ -442,7 +442,7 @@ public class AdbObjectsCheckView extends AbstractCView implements IEncodeHelp, L
 		updateMessage();
 	}
 
-	public final Map<Long, AbstractDB> getSelection() {
+	public final Map<String, AbstractDB> getSelection() {
 		return this.mapSelected;
 	}
 

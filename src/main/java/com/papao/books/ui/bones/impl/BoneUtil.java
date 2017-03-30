@@ -34,8 +34,8 @@ public final class BoneUtil {
      * @param methodName some method of that class
      * @return a structured map, ready to be processed by a method that actually creates a tree structure of items, usually in the left corner of the component.
      */
-    public static Map<Object, TreeMap<Long, AbstractDB>> processDBElements(final Map<Long, AbstractDB> startMap, final Class<? extends AbstractDB> clazz, final String methodName) {
-        Map<Object, TreeMap<Long, AbstractDB>> map = new TreeMap<Object, TreeMap<Long, AbstractDB>>();
+    public static Map<Object, TreeMap<String, AbstractDB>> processDBElements(final Map<String, AbstractDB> startMap, final Class<? extends AbstractDB> clazz, final String methodName) {
+        Map<Object, TreeMap<String, AbstractDB>> map = new TreeMap<>();
         AbstractDB adb;
         Method meth;
         try {
@@ -50,9 +50,9 @@ public final class BoneUtil {
             while (iterStartMap.hasNext()) {
                 adb = iterStartMap.next();
                 final Object currentKey = meth.invoke(adb, (Object[]) null);
-                TreeMap<Long, AbstractDB> temp = map.get(currentKey);
+                TreeMap<String, AbstractDB> temp = map.get(currentKey);
                 if (temp == null) {
-                    temp = new TreeMap<Long, AbstractDB>();
+                    temp = new TreeMap();
                 }
                 temp.put(adb.getId(), adb);
                 map.put(currentKey, temp);
@@ -60,7 +60,7 @@ public final class BoneUtil {
 
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
-            return new TreeMap<Object, TreeMap<Long, AbstractDB>>();
+            return new TreeMap<>();
         }
         return map;
     }
@@ -72,8 +72,8 @@ public final class BoneUtil {
      * @return a structured map, based on letters, parsed by the string result of invocation of the specified method, having <code>methodName</code> name, ready to be processed by a method that
      * actually creates a tree structure of items, usually in the left corner of the component.
      */
-    public static Map<Object, TreeMap<Long, AbstractDB>> processDBElementsAZ(final Map<Long, AbstractDB> startMap, final Class<? extends AbstractDB> clazz, final String methodName) {
-        Map<Object, TreeMap<Long, AbstractDB>> map = new TreeMap<Object, TreeMap<Long, AbstractDB>>();
+    public static Map<Object, TreeMap<String, AbstractDB>> processDBElementsAZ(final Map<String, AbstractDB> startMap, final Class<? extends AbstractDB> clazz, final String methodName) {
+        Map<Object, TreeMap<String, AbstractDB>> map = new TreeMap<>();
         AbstractDB adb;
         Method meth;
         try {
@@ -101,9 +101,9 @@ public final class BoneUtil {
                 } else {
                     key = BoneUtil.SPECIAL_AZ_STR;
                 }
-                TreeMap<Long, AbstractDB> temp = map.get(key);
+                TreeMap<String, AbstractDB> temp = map.get(key);
                 if (temp == null) {
-                    temp = new TreeMap<Long, AbstractDB>();
+                    temp = new TreeMap<String, AbstractDB>();
                 }
                 temp.put(adb.getId(), adb);
                 map.put(key, temp);
@@ -111,75 +111,11 @@ public final class BoneUtil {
 
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
-            return new TreeMap<Object, TreeMap<Long, AbstractDB>>();
+            return new TreeMap<>();
         }
         return map;
     }
 
-    public static void populateTreeByModul(final TreeViewer treeViewer, final AbstractBone bone, final String methodName) {
-        Map<Object, TreeMap<Long, AbstractDB>> map;
-        SimpleTextNode invisibleRoot;
-        Map<Long, AbstractDB> mapStart = new HashMap<>();
-        SimpleTextNode baseNode;
-        AbstractBoneFilter filter = bone.getFiltru();
-        if ((treeViewer == null) || treeViewer.getControl().isDisposed()) {
-            return;
-        }
-
-        SimpleTextNode root = (SimpleTextNode) treeViewer.getInput();
-        if (root != null) {
-            mapStart = root.getDbElements();
-        }
-        map = BoneUtil.processDBElements(mapStart, filter.getClassObject(), methodName);
-
-        if ((map == null) || map.isEmpty()) {
-            treeViewer.setInput(null);
-            return;
-        }
-
-        invisibleRoot = new SimpleTextNode(null);
-        invisibleRoot.setDbElements(mapStart);
-
-        if (FiltruAplicatie.isLeftTreeShowRecentActivity()) {
-            SimpleTextNode nodeRecent = new SimpleTextNode(invisibleRoot, SimpleTextNode.RECENT_NODE);
-            nodeRecent.setDbElements(new HashMap<Long, AbstractDB>());
-            if (filter.isTreeShowingElementCount()) {
-                nodeRecent.setName(SimpleTextNode.RECENT_NODE + nodeRecent.getItemCountStr());
-            }
-            nodeRecent.setImage(AppImages.getImage16(AppImages.IMG_HOME));
-            invisibleRoot.add(nodeRecent);
-        }
-
-        if (FiltruAplicatie.isLeftTreeShowingAll()) {
-            SimpleTextNode allNode = new SimpleTextNode(ViewModeDetails.ALL_STR);
-            allNode.setFont(FontUtil.TAHOMA8_BOLD);
-            allNode.getDbElements().putAll(mapStart);
-            allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
-            if (filter.isTreeShowingElementCount()) {
-                allNode.setName(ViewModeDetails.ALL_STR + allNode.getItemCountStr());
-            }
-            invisibleRoot.add(allNode);
-            baseNode = allNode;
-        } else {
-            baseNode = invisibleRoot;
-        }
-
-        final Iterator<Map.Entry<Object, TreeMap<Long, AbstractDB>>> iterator = map.entrySet().iterator();
-        while (iterator.hasNext()) {
-            final Map.Entry<Object, TreeMap<Long, AbstractDB>> entry = iterator.next();
-            final int idModul = ((Integer) entry.getKey()).intValue();
-            String numeModul = AtomUtils.getNumeModul(idModul);
-            if (filter.isTreeShowingElementCount()) {
-                numeModul += " (" + entry.getValue().size() + ")";
-            }
-            SimpleTextNode node = new SimpleTextNode(numeModul);
-            node.setImage(AppImages.getImage16(AtomUtils.getImageNameForModul(idModul)));
-            node.setDbElements(entry.getValue());
-            baseNode.add(node);
-        }
-        treeViewer.setInput(invisibleRoot);
-
-    }
 
     /**
      * @param details an DTO containing all the necessary data to perform computations :
@@ -207,9 +143,9 @@ public final class BoneUtil {
      *                </ol>
      */
     public static void populateTreeByLongFK(final ViewModeDetails details, final AbstractBone bone) {
-        Map<Object, TreeMap<Long, AbstractDB>> map;
+        Map<Object, TreeMap<String, AbstractDB>> map;
         SimpleTextNode invisibleRoot;
-        Map<Long, AbstractDB> mapStart = new HashMap<>();
+        Map<String, AbstractDB> mapStart = new HashMap<>();
         TreeViewer treeViewer;
         String fkMethodName;
         String methodName;
@@ -252,7 +188,7 @@ public final class BoneUtil {
 
         if (details.isAddRecentOpNode() && FiltruAplicatie.isLeftTreeShowRecentActivity()) {
             SimpleTextNode nodeRecent = new SimpleTextNode(invisibleRoot, SimpleTextNode.RECENT_NODE);
-            nodeRecent.setDbElements(new HashMap<Long, AbstractDB>());
+            nodeRecent.setDbElements(new HashMap<String, AbstractDB>());
             if (filter.isTreeShowingElementCount()) {
                 nodeRecent.setName(SimpleTextNode.RECENT_NODE + nodeRecent.getItemCountStr());
             }
@@ -276,9 +212,9 @@ public final class BoneUtil {
 
 //            final Map<Long, ? extends AbstractDB> cacheMap = Database.getAbstractDBObjectsWithLongKey(details.getFkClass(), null);
         Map<Long, ? extends AbstractDB> cacheMap = new HashMap<>();
-        final Iterator<Map.Entry<Object, TreeMap<Long, AbstractDB>>> iterator = map.entrySet().iterator();
+        final Iterator<Map.Entry<Object, TreeMap<String, AbstractDB>>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
-            final Map.Entry<Object, TreeMap<Long, AbstractDB>> entry = iterator.next();
+            final Map.Entry<Object, TreeMap<String, AbstractDB>> entry = iterator.next();
             final long idObject = ((Long) entry.getKey()).longValue();
             AbstractDB obj = cacheMap.get(idObject);
             String itemText = "";
@@ -333,8 +269,8 @@ public final class BoneUtil {
     }
 
     public static void populateTreeByDateExt(final TreeViewer treeViewer, final AbstractBone bone, final String methodName) {
-        Map<Long, AbstractDB> mapStart = new HashMap<>();
-        Map<Object, TreeMap<Long, AbstractDB>> map;
+        Map<String, AbstractDB> mapStart = new HashMap<>();
+        Map<Object, TreeMap<String, AbstractDB>> map;
         SimpleTextNode invisibleRoot;
         String keyAn; // cheie string de genul "2009"
         String keyLuna; // cheie string de genul "2009-10"
@@ -363,7 +299,7 @@ public final class BoneUtil {
 
         if (FiltruAplicatie.isLeftTreeShowRecentActivity()) {
             SimpleTextNode nodeRecent = new SimpleTextNode(invisibleRoot, SimpleTextNode.RECENT_NODE);
-            nodeRecent.setDbElements(new HashMap<Long, AbstractDB>());
+            nodeRecent.setDbElements(new HashMap<String, AbstractDB>());
             if (filter.isTreeShowingElementCount()) {
                 nodeRecent.setName(SimpleTextNode.RECENT_NODE + nodeRecent.getItemCountStr());
             }
@@ -371,9 +307,9 @@ public final class BoneUtil {
             invisibleRoot.add(nodeRecent);
         }
 
-        final Iterator<Map.Entry<Object, TreeMap<Long, AbstractDB>>> iterator = map.entrySet().iterator();
+        final Iterator<Map.Entry<Object, TreeMap<String, AbstractDB>>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
-            final Map.Entry<Object, TreeMap<Long, AbstractDB>> entry = iterator.next();
+            final Map.Entry<Object, TreeMap<String, AbstractDB>> entry = iterator.next();
             final java.sql.Date data = (java.sql.Date) entry.getKey();
             Calendar cal = Calendar.getInstance();
             cal.setTime(data);
@@ -457,8 +393,8 @@ public final class BoneUtil {
     }
 
     public static void populateTreeByAZ(final TreeViewer treeViewer, final AbstractBoneFilter filter, final String methodName, final boolean addToti) {
-        Map<Long, AbstractDB> mapStart = new HashMap<>();
-        Map<Object, TreeMap<Long, AbstractDB>> map;
+        Map<String, AbstractDB> mapStart = new HashMap<>();
+        Map<Object, TreeMap<String, AbstractDB>> map;
         SimpleTextNode invisibleRoot;
         String keyLetter; // cheie string de genul "A", "B", etc..prima litera a numelui
         StringBuilder sbItem = new StringBuilder();
@@ -485,7 +421,7 @@ public final class BoneUtil {
 
         if (FiltruAplicatie.isLeftTreeShowRecentActivity()) {
             SimpleTextNode nodeRecent = new SimpleTextNode(invisibleRoot, SimpleTextNode.RECENT_NODE);
-            nodeRecent.setDbElements(new HashMap<Long, AbstractDB>());
+            nodeRecent.setDbElements(new HashMap<String, AbstractDB>());
             if (filter.isTreeShowingElementCount()) {
                 nodeRecent.setName(SimpleTextNode.RECENT_NODE + nodeRecent.getItemCountStr());
             }
@@ -507,9 +443,9 @@ public final class BoneUtil {
             baseNode = invisibleRoot;
         }
 
-        final Iterator<Map.Entry<Object, TreeMap<Long, AbstractDB>>> iterator = map.entrySet().iterator();
+        final Iterator<Map.Entry<Object, TreeMap<String, AbstractDB>>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
-            final Map.Entry<Object, TreeMap<Long, AbstractDB>> entry = iterator.next();
+            final Map.Entry<Object, TreeMap<String, AbstractDB>> entry = iterator.next();
             keyLetter = (String) entry.getKey();
             SimpleTextNode letterNode = new SimpleTextNode(keyLetter);
             letterNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));

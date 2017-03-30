@@ -12,7 +12,6 @@ public final class BlankDbObject extends AbstractDBDummy {
     public static final String TABLE_NAME = "";
 
     public static final String EXTERNAL_REFLECT_GET_NAME = "getName";
-    public static final String EXTERNAL_REFLECT_GET_IMAGE = "getImage";
 
 	private static Logger logger = Logger.getLogger(BlankDbObject.class);
 
@@ -21,20 +20,9 @@ public final class BlankDbObject extends AbstractDBDummy {
 		setName(name);
 	}
 
-	public BlankDbObject(final String name, final long id) {
+	public BlankDbObject(final String name, final String id) {
 		super(id);
         setName(name);
-    }
-
-    @Override
-    public BlankDbObject cloneObject() {
-        BlankDbObject clone = null;
-        try {
-            clone = (BlankDbObject) this.clone();
-        } catch (CloneNotSupportedException exc) {
-			logger.error(exc.getMessage(), exc);
-        }
-        return clone;
     }
 
     public String getName() {
