@@ -6,26 +6,23 @@ import com.papao.books.ui.view.SWTeXtension;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import javax.annotation.PostConstruct;
+
 @SpringBootApplication
 @EnableMongoRepositories("com.papao.books.repository")
-public class BooksApplication implements CommandLineRunner{
+public class BooksApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(BooksApplication.class);
 
-	public static void main(String[] args) {
-		SpringApplication.run(BooksApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BooksApplication.class, args);
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		open();
-	}
-
+    @PostConstruct
     public void open() {
         try {
             new LoginShell().open(false, true);
@@ -48,25 +45,25 @@ public class BooksApplication implements CommandLineRunner{
         }
     }
 
-	public static void closeApp(final boolean forced) {
-		try {
-			if ((EncodePlatform.instance != null) && (EncodePlatform.instance.getAppTray() != null)) {
-				EncodePlatform.instance.getAppTray().dispose();
-			}
-			if (forced) {
-				logger.error("forced shutdown sequence initiated..");
-				logger.info("**********APPLICATION TERMINATED WITH ERROR**********");
-				Display.getDefault().dispose();
-				Runtime.getRuntime().exit(-1);
-			} else {
-				logger.info("normal shutdown sequence initiated..");
-			}
-		} catch (Exception exc) {
+    public static void closeApp(final boolean forced) {
+        try {
+            if ((EncodePlatform.instance != null) && (EncodePlatform.instance.getAppTray() != null)) {
+                EncodePlatform.instance.getAppTray().dispose();
+            }
+            if (forced) {
+                logger.error("forced shutdown sequence initiated..");
+                logger.info("**********APPLICATION TERMINATED WITH ERROR**********");
+                Display.getDefault().dispose();
+                Runtime.getRuntime().exit(-1);
+            } else {
+                logger.info("normal shutdown sequence initiated..");
+            }
+        } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
-		} finally {
-			Display.getDefault().readAndDispatch();// nu sunt sigur daca trebuie sau nu.
-			Display.getDefault().dispose();
-			Runtime.getRuntime().exit(0);
-		}
-	}
+        } finally {
+            Display.getDefault().readAndDispatch();// nu sunt sigur daca trebuie sau nu.
+            Display.getDefault().dispose();
+            Runtime.getRuntime().exit(0);
+        }
+    }
 }

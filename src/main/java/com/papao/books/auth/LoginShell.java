@@ -34,7 +34,6 @@ public class LoginShell extends AbstractCView implements Listener {
     private final List<AbstractDB> arrayUsers = new ArrayList<AbstractDB>();
     private XButton buttonLogin;
     private XButton buttonExit;
-    private XButton buttonInfo;
 
     public LoginShell() {
         super(null, AbstractView.MODE_NONE);
