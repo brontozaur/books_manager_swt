@@ -6,27 +6,31 @@ import com.papao.books.ui.view.SWTeXtension;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
 @EnableMongoRepositories("com.papao.books.repository")
-public class BooksApplication {
+public class BooksApplication implements CommandLineRunner{
 
     private static final Logger logger = LoggerFactory.getLogger(BooksApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(BooksApplication.class, args);
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
 		open();
 	}
 
-    public static void open() {
+    public void open() {
         try {
-
             new LoginShell().open(false, true);
 
-            /**
+            /*
              * the guardian code lines that prevent the app from dying, in normal running mode
              */
             while (!Display.getDefault().isDisposed()) {
