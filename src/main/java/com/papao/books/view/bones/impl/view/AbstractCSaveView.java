@@ -9,16 +9,16 @@ public abstract class AbstractCSaveView extends AbstractCView {
 
     private static final Logger logger = Logger.getLogger(AbstractCSaveView.class);
 
-    private long objectId;
+    private String objectId;
     private AbstractDB editedObject;
 
     protected abstract Class<? extends AbstractDB> getClazz();
 
-    public AbstractCSaveView(Shell parent, int viewMode, long objectId) {
+    public AbstractCSaveView(Shell parent, int viewMode, String objectId) {
         this(parent, null, viewMode, objectId);
     }
 
-    public AbstractCSaveView(Shell parent, Rectangle parentPos, int viewMode, long objectId) {
+    public AbstractCSaveView(Shell parent, Rectangle parentPos, int viewMode, String objectId) {
         super(parent, parentPos, viewMode);
         this.objectId = objectId;
 
@@ -37,11 +37,11 @@ public abstract class AbstractCSaveView extends AbstractCView {
 //        }
     }
 
-    protected long getIdObject() {
+    protected String getIdObject() {
         return this.objectId;
     }
 
-    protected void setIdObject(long idObject) {
+    protected void setIdObject(String idObject) {
         this.objectId = idObject;
         extractEditedObject();
     }

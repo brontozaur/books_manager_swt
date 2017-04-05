@@ -114,7 +114,7 @@ public final class WelcomePerspective extends Composite {
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-                encodePlatform.logout(true);
+                encodePlatform.logout();
             }
         });
 

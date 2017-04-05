@@ -73,7 +73,7 @@ public abstract class AbstractView {
      */
     private boolean addCloseListener;
 
-    private boolean automaticallyShowSaveOKMessage = true;
+    private boolean automaticallyShowSaveOKMessage = false;
 
     private final static String COORD_X = "#x";
     private final static String COORD_Y = "#y";

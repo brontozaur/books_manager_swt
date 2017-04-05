@@ -1,9 +1,10 @@
 package com.papao.books.view;
 
-import com.papao.books.BooksApplication;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.repository.CarteRepository;
+import com.papao.books.repository.UserRepository;
 import com.papao.books.view.perspective.WelcomePerspective;
+import com.papao.books.view.user.UsersView;
 import com.papao.books.view.view.AbstractCViewAdapter;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
@@ -31,11 +32,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private ToolTip appToolTip;
     private Tray appTray;
     private CarteRepository carteRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public EncodePlatform(CarteRepository carteRepository) {
+    public EncodePlatform(CarteRepository carteRepository, UserRepository userRepository) {
         super(null, AbstractView.MODE_NONE);
         this.carteRepository = carteRepository;
+        this.userRepository = userRepository;
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
@@ -172,7 +175,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event event) {
-                    logout(true);
+                    logout();
                 }
             });
 
@@ -220,22 +223,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         }
     }
 
-    public final void logout(final boolean ask) {
-        try {
-            if (ask
-                    && (SWTeXtension.displayMessageQ("Sunteti sigur ca doriti schimbarea firmei/utilizatorului/datei curente?", "Confirmare relogare") == SWT.NO)) {
-                return;
-            }
-            getShell().removeListener(SWT.Close, this);
-            close(SWT.OK);
-            if (getAppTray() != null) {
-                getAppTray().dispose();
-            }
-
-            open(false, true);
-        } catch (Exception exc) {
-            logger.error(exc.getMessage(), exc);
-        }
+    public final void logout() {
+        new UsersView(getShell(), userRepository).open();
     }
 
     @Override
