@@ -47,8 +47,8 @@ public final class WelcomePerspective extends Composite {
     TreeViewer leftTreeViewer;
     UnifiedStyledLabelProvider leftTreeColumnProvider;
 
-    public WelcomePerspective() {
-        super(EncodePlatform.instance.getAppMainForm(), SWT.DOUBLE_BUFFERED | SWT.NO_REDRAW_RESIZE
+    public WelcomePerspective(Composite parent) {
+        super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_REDRAW_RESIZE
                 | SWT.EMBEDDED | SWT.NO_FOCUS);
         WelcomePerspective.instance = this;
 
@@ -112,7 +112,7 @@ public final class WelcomePerspective extends Composite {
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-                EncodePlatform.instance.logout(true);
+                EncodePlatform.getInstance().logout(true);
             }
         });
 
@@ -124,7 +124,7 @@ public final class WelcomePerspective extends Composite {
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-                EncodePlatform.instance.performShellClose(new Event());
+                EncodePlatform.getInstance().performShellClose(new Event());
             }
         });
         this.mainTabFolder.setTopRight(bar);
@@ -217,7 +217,7 @@ public final class WelcomePerspective extends Composite {
             }
         });
 
-        verticalSash.setWeights(new int[]{2,8});
+        verticalSash.setWeights(new int[]{2, 8});
         return canvas;
     }
 
@@ -356,7 +356,7 @@ public final class WelcomePerspective extends Composite {
             @Override
             public void handleEvent(Event event) {
                 /*
-					 * linia asta rezolva un bug legat de apelul getViewer().setInput(null). Din
+                     * linia asta rezolva un bug legat de apelul getViewer().setInput(null). Din
 					 * cand in cand (destul de des) crapa aici, daca existau si totaluri afisate in
 					 * tabela, pt ca probabil se facea intern o de-mapare a elementelor din tabela,
 					 * si liniile cu total nu erau mapate. Clasa care genera eroarea este
@@ -463,12 +463,12 @@ public final class WelcomePerspective extends Composite {
         int ALIGN = SWT.LEFT;
         if (compLeftTree.getLocation().x < compRight.getLocation().x) {
             compLeftTree.moveBelow(compRight);
-            verticalSash.setWeights(new int[] {
-                    10, 3 });
+            verticalSash.setWeights(new int[]{
+                    10, 3});
         } else {
             compLeftTree.moveAbove(compRight);
-            verticalSash.setWeights(new int[] {
-                    3, 10 });
+            verticalSash.setWeights(new int[]{
+                    3, 10});
         }
     }
 

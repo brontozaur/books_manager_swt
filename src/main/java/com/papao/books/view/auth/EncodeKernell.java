@@ -13,14 +13,14 @@ public final class EncodeKernell extends EncodePlatform {
         dlg.setMessageLabel("Va rugam asteptati incarcarea aplicatiei");
         dlg.open();
         dlg.advance(5);
-        getAppMainForm().setContent(new WelcomePerspective().getContent());
+        getAppMainForm().setContent(new WelcomePerspective(this.getAppMainForm()).getContent());
 //        getShell().setMenuBar(PlatformMenu.createShellMenu(getShell()));
         dlg.close();
     }
 
     public static Shell getApplicationShell() {
-        if (EncodePlatform.instance != null) {
-            return EncodePlatform.instance.getShell();
+        if (EncodePlatform.getInstance() != null) {
+            return EncodePlatform.getInstance().getShell();
         }
         return new Shell();
     }

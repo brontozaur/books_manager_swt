@@ -6,6 +6,7 @@ import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -22,10 +23,13 @@ public class BooksApplication {
         SpringApplication.run(BooksApplication.class, args);
     }
 
+    @Autowired
+    private LoginShell loginShell;
+
     @PostConstruct
     public void open() {
         try {
-            new LoginShell().open(false, true);
+            loginShell.open(false, true);
 
             /*
              * the guardian code lines that prevent the app from dying, in normal running mode
@@ -47,8 +51,8 @@ public class BooksApplication {
 
     public static void closeApp(final boolean forced) {
         try {
-            if ((EncodePlatform.instance != null) && (EncodePlatform.instance.getAppTray() != null)) {
-                EncodePlatform.instance.getAppTray().dispose();
+            if ((EncodePlatform.getInstance() != null) && (EncodePlatform.getInstance().getAppTray() != null)) {
+                EncodePlatform.getInstance().getAppTray().dispose();
             }
             if (forced) {
                 logger.error("forced shutdown sequence initiated..");

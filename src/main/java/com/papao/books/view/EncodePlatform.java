@@ -27,13 +27,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private ViewForm appMainForm;
     private ToolTip appToolTip;
     private Tray appTray;
-    public static EncodePlatform instance;
+    private LoginShell loginShell;
+    private static EncodePlatform instance;
 
-    /**
-     * The core of the sistem.
-     */
     public EncodePlatform() {
         super(null, AbstractView.MODE_NONE);
+        instance = this;
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
@@ -45,7 +44,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         try {
             setExitChoice(SWT.OK);
             setAddCloseListener(true);
-            EncodePlatform.instance = this;
             setUseDocking(false);
 
             getShell().setImage(AppImages.getImage16(AppImages.IMG_BORG_MAIN));
@@ -274,5 +272,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         strName.append("]");
 
         setShellText(strName.toString());
+    }
+
+    public static EncodePlatform getInstance() {
+        return instance;
     }
 }

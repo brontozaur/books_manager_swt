@@ -18,12 +18,14 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
+@Component
 public class LoginShell extends AbstractCView implements Listener {
 
     private static Logger logger = Logger.getLogger(LoginShell.class);
@@ -54,7 +56,7 @@ public class LoginShell extends AbstractCView implements Listener {
         getShell().addListener(SWT.Close, this);
         getShell().setBackground(ColorUtil.COLOR_WHITE);
         GridLayoutFactory.fillDefaults().spacing(0, 0).margins(0, 0).applyTo(getContainer());
-        getShell().setImages(new Image[] { AppImages.getImage16(AppImages.IMG_BORG_MAIN), AppImages.getImage24(AppImages.IMG_BORG_MAIN), AppImages.getImage32(AppImages.IMG_BORG_MAIN) });
+        getShell().setImages(new Image[]{AppImages.getImage16(AppImages.IMG_BORG_MAIN), AppImages.getImage24(AppImages.IMG_BORG_MAIN), AppImages.getImage32(AppImages.IMG_BORG_MAIN)});
         GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(getShell());
 
         Composite upperComp = new Composite(getContainer(), SWT.BORDER);
@@ -164,25 +166,25 @@ public class LoginShell extends AbstractCView implements Listener {
     public void handleEvent(final Event e) {
         try {
             switch (e.type) {
-            case SWT.KeyDown: {
-                if (e.widget == this.textPassword) {
-                    if (e.character == SWT.CR) {
-                        saveAndClose(true);
-                    } else if (e.character == SWT.ESC) {
-                        quit();
+                case SWT.KeyDown: {
+                    if (e.widget == this.textPassword) {
+                        if (e.character == SWT.CR) {
+                            saveAndClose(true);
+                        } else if (e.character == SWT.ESC) {
+                            quit();
+                        }
                     }
+                    break;
                 }
-                break;
-            }
-            case SWT.Close: {
-                if (e.widget == getShell()) {
-                    if (super.getUserAction() != SWT.OK) {
-                        performShellClose(e);
+                case SWT.Close: {
+                    if (e.widget == getShell()) {
+                        if (super.getUserAction() != SWT.OK) {
+                            performShellClose(e);
+                        }
                     }
+                    break;
                 }
-                break;
-            }
-            default:
+                default:
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
