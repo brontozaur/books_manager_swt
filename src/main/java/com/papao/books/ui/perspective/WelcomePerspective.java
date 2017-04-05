@@ -78,6 +78,7 @@ public final class WelcomePerspective extends Composite {
         booksTabItem.setText("Carti");
         booksTabItem.setImage(AppImages.getImage32(AppImages.IMG_DETAILS_NEW));
         booksTabItem.setControl(createBooksGrid(this.mainTabFolder));
+        this.mainTabFolder.setSelection(booksTabItem);
 
         createTopRightComponents(mainTabFolder);
 

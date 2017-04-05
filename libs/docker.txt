@@ -1,0 +1,10 @@
+docker pull mongo
+-- docker run --name database -d -p 27017:27017 mongo --noauth --bind_ip=0.0.0.0
+
+cd C:\devtools\_Dev\books_manager_swt
+docker-compose up
+
+ip: 192.168.99.100
+
+Mongo local are nevoie de folderul c:\data\db
+download: https://www.mongodb.com/dr/fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.4.3-signed.msi/download
