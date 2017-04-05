@@ -76,7 +76,7 @@ public abstract class AbstractBone extends Composite {
 			SWTeXtension.displayMessageE("A intervenit o eroare. Pentru a preveni erorile succesive care ar putea sa apara, aplicatia se va inchide acum.",
 					"Eroare aplicatie",
 					exc);
-			BooksApplication.closeApp(true);
+//			BooksApplication.closeApp(true);
 		}
 	}
 
@@ -103,7 +103,7 @@ public abstract class AbstractBone extends Composite {
 					+ "erorile succesive care ar putea sa apara, aplicatia se va inchide acum.",
 					"Eroare in aplicatie",
 					exc);
-			BooksApplication.closeApp(true);
+//			BooksApplication.closeApp(true);
 		}
 	}
 

@@ -2,7 +2,8 @@ package com.papao.books.view;
 
 import com.papao.books.BooksApplication;
 import com.papao.books.FiltruAplicatie;
-import com.papao.books.view.auth.LoginShell;
+import com.papao.books.repository.CarteRepository;
+import com.papao.books.view.perspective.WelcomePerspective;
 import com.papao.books.view.view.AbstractCViewAdapter;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
@@ -17,22 +18,24 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;
 import java.util.Calendar;
 
+@org.springframework.stereotype.Component
 public class EncodePlatform extends AbstractCViewAdapter implements Listener {
 
     private static Logger logger = Logger.getLogger(EncodePlatform.class);
     private ViewForm appMainForm;
     private ToolTip appToolTip;
     private Tray appTray;
-    private LoginShell loginShell;
-    private static EncodePlatform instance;
+    private CarteRepository carteRepository;
 
-    public EncodePlatform() {
+    @Autowired
+    public EncodePlatform(CarteRepository carteRepository) {
         super(null, AbstractView.MODE_NONE);
-        instance = this;
+        this.carteRepository = carteRepository;
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
@@ -81,9 +84,32 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(getAppMainForm());
             }
             GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(getAppMainForm());
+            getAppMainForm().setContent(new WelcomePerspective(this).getContent());
 
         } catch (Exception exc) {
-            BooksApplication.closeApp(true);
+            closeApplication(true);
+        }
+    }
+
+    public void closeApplication(boolean forced) {
+        try {
+            if (appTray != null) {
+                appTray.dispose();
+            }
+            if (forced) {
+                logger.error("forced shutdown sequence initiated..");
+                logger.info("**********APPLICATION TERMINATED WITH ERROR**********");
+                Display.getDefault().dispose();
+                Runtime.getRuntime().exit(-1);
+            } else {
+                logger.info("normal shutdown sequence initiated..");
+            }
+        } catch (Exception exc) {
+            logger.error(exc.getMessage(), exc);
+        } finally {
+            Display.getDefault().readAndDispatch();// nu sunt sigur daca trebuie sau nu.
+            Display.getDefault().dispose();
+            Runtime.getRuntime().exit(0);
         }
     }
 
@@ -187,7 +213,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             } else {
                 getShell().removeListener(SWT.Close, this);
                 getShell().notifyListeners(SWT.Close, e);
-                BooksApplication.closeApp(false);
+                closeApplication(false);
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -206,7 +232,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 getAppTray().dispose();
             }
 
-            new LoginShell().open(false, true);
+            open(false, true);
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
         }
@@ -274,7 +300,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         setShellText(strName.toString());
     }
 
-    public static EncodePlatform getInstance() {
-        return instance;
+    public CarteRepository getCarteRepository() {
+        return this.carteRepository;
     }
 }

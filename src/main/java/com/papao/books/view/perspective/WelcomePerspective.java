@@ -1,5 +1,6 @@
 package com.papao.books.view.perspective;
 
+import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.bones.AbstractBone;
@@ -46,11 +47,12 @@ public final class WelcomePerspective extends Composite {
     private Text textUpperSearch;
     TreeViewer leftTreeViewer;
     UnifiedStyledLabelProvider leftTreeColumnProvider;
+    private EncodePlatform encodePlatform;
 
-    public WelcomePerspective(Composite parent) {
-        super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_REDRAW_RESIZE
+    public WelcomePerspective(EncodePlatform encodePlatform) {
+        super(encodePlatform.getAppMainForm(), SWT.DOUBLE_BUFFERED | SWT.NO_REDRAW_RESIZE
                 | SWT.EMBEDDED | SWT.NO_FOCUS);
-        WelcomePerspective.instance = this;
+        this.encodePlatform = encodePlatform;
 
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(this);
         GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).margins(0, 0).extendedMargins(0,
@@ -112,7 +114,7 @@ public final class WelcomePerspective extends Composite {
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-                EncodePlatform.getInstance().logout(true);
+                encodePlatform.logout(true);
             }
         });
 
@@ -124,7 +126,7 @@ public final class WelcomePerspective extends Composite {
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-                EncodePlatform.getInstance().performShellClose(new Event());
+                encodePlatform.performShellClose(new Event());
             }
         });
         this.mainTabFolder.setTopRight(bar);
@@ -177,7 +179,9 @@ public final class WelcomePerspective extends Composite {
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-
+                Carte carte = new Carte();
+                carte.setTitlu("O calatorie spre centrul Pamantului");
+                encodePlatform.getCarteRepository().save(carte);
             }
         });
 

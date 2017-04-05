@@ -1,7 +1,6 @@
 package com.papao.books;
 
 import com.papao.books.view.EncodePlatform;
-import com.papao.books.view.auth.LoginShell;
 import com.papao.books.view.auth.TestView;
 import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.swt.widgets.Display;
@@ -27,7 +26,7 @@ public class BooksApplication {
         SpringApplication.run(BooksApplication.class, args);
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void test() {
         testView.open();
         while (!Display.getDefault().isDisposed()) {
@@ -38,12 +37,12 @@ public class BooksApplication {
     }
 
     @Autowired
-    private LoginShell loginShell;
+    private EncodePlatform encodePlatform;
 
-//    @PostConstruct
+    @PostConstruct
     public void open() {
         try {
-            loginShell.open(false, true);
+            encodePlatform.open(false, true);
 
             /*
              * the guardian code lines that prevent the app from dying, in normal running mode
@@ -63,25 +62,7 @@ public class BooksApplication {
         }
     }
 
-    public static void closeApp(final boolean forced) {
-        try {
-            if ((EncodePlatform.getInstance() != null) && (EncodePlatform.getInstance().getAppTray() != null)) {
-                EncodePlatform.getInstance().getAppTray().dispose();
-            }
-            if (forced) {
-                logger.error("forced shutdown sequence initiated..");
-                logger.info("**********APPLICATION TERMINATED WITH ERROR**********");
-                Display.getDefault().dispose();
-                Runtime.getRuntime().exit(-1);
-            } else {
-                logger.info("normal shutdown sequence initiated..");
-            }
-        } catch (Exception exc) {
-            logger.error(exc.getMessage(), exc);
-        } finally {
-            Display.getDefault().readAndDispatch();// nu sunt sigur daca trebuie sau nu.
-            Display.getDefault().dispose();
-            Runtime.getRuntime().exit(0);
-        }
+    public void closeApp(final boolean forced) {
+        encodePlatform.closeApplication(forced);
     }
 }
