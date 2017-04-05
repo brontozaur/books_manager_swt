@@ -2,6 +2,7 @@ package com.papao.books;
 
 import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.auth.LoginShell;
+import com.papao.books.view.auth.TestView;
 import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
@@ -17,16 +18,29 @@ import javax.annotation.PostConstruct;
 @EnableMongoRepositories
 public class BooksApplication {
 
+    @Autowired
+    private TestView testView;
+
     private static final Logger logger = LoggerFactory.getLogger(BooksApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(BooksApplication.class, args);
     }
 
+    @PostConstruct
+    public void test() {
+        testView.open();
+        while (!Display.getDefault().isDisposed()) {
+            if (!Display.getDefault().readAndDispatch()) {
+                Display.getDefault().sleep();
+            }
+        }
+    }
+
     @Autowired
     private LoginShell loginShell;
 
-    @PostConstruct
+//    @PostConstruct
     public void open() {
         try {
             loginShell.open(false, true);
