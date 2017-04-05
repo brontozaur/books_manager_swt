@@ -1,6 +1,6 @@
 package com.papao.books;
 
-import com.papao.books.util.ColorUtil;
+import com.papao.books.view.util.ColorUtil;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;

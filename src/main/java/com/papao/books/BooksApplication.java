@@ -1,8 +1,8 @@
 package com.papao.books;
 
-import com.papao.books.auth.LoginShell;
-import com.papao.books.ui.EncodePlatform;
-import com.papao.books.ui.view.SWTeXtension;
+import com.papao.books.view.EncodePlatform;
+import com.papao.books.view.auth.LoginShell;
+import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import javax.annotation.PostConstruct;
 
 @SpringBootApplication
-@EnableMongoRepositories("com.papao.books.repository")
+@EnableMongoRepositories
 public class BooksApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(BooksApplication.class);

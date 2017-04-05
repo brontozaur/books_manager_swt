@@ -1,6 +1,6 @@
 package com.papao.books.model;
 
-import com.papao.books.ui.AppImages;
+import com.papao.books.view.AppImages;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.graphics.Image;
 
