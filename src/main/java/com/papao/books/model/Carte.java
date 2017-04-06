@@ -9,6 +9,7 @@ public class Carte extends AbstractDB {
     @Id
     private String id;
 
+    private Autor autor;
     private String titlu;
 
     @Override
@@ -18,6 +19,14 @@ public class Carte extends AbstractDB {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Autor getAutor() {
+        return autor;
+    }
+
+    public void setAutor(Autor autor) {
+        this.autor = autor;
     }
 
     public String getTitlu() {
