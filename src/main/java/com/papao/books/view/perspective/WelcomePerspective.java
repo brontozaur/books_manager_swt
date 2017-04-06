@@ -33,7 +33,6 @@ public final class WelcomePerspective extends Composite {
 
     private static Logger logger = Logger.getLogger(WelcomePerspective.class);
 
-    private WelcomeStatusLine statusLine;
     private ToolBar barDocking;
     public static WelcomePerspective instance;
     private CTabFolder mainTabFolder;
@@ -60,6 +59,7 @@ public final class WelcomePerspective extends Composite {
                 0,
                 0).spacing(0, 0).applyTo(this);
         addComponents();
+        instance = this;
     }
 
     public void addComponents() {
@@ -73,7 +73,7 @@ public final class WelcomePerspective extends Composite {
         this.mainTabFolder.setMRUVisible(true);
         this.mainTabFolder.setMinimizeVisible(false);
         this.mainTabFolder.setMaximizeVisible(false);
-        this.mainTabFolder.setSelectionBackground(ColorUtil.COLOR_ALBASTRU_DESCHIS_WINDOWS);
+        this.mainTabFolder.setSelectionBackground(ColorUtil.COLOR_WHITE);
 
         CTabItem booksTabItem = new CTabItem(this.mainTabFolder, SWT.NONE);
         booksTabItem.setText("Carti");
@@ -83,23 +83,33 @@ public final class WelcomePerspective extends Composite {
 
         createTopRightComponents(mainTabFolder);
 
-        Composite lowerCompBarDocking = new Composite(this, SWT.NONE);
+        final Canvas lowerCompBarDocking = new Canvas(this, SWT.NONE);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.END).grab(true, false).applyTo(lowerCompBarDocking);
-        GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).extendedMargins(0,
+        GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).extendedMargins(2,
                 0,
                 0,
-                0).spacing(0, 0).applyTo(lowerCompBarDocking);
-        lowerCompBarDocking.setBackground(ColorUtil.COLOR_WHITE);
+                2).spacing(0, 0).applyTo(lowerCompBarDocking);
+//        lowerCompBarDocking.setBackground(ColorUtil.COLOR_WHITE);
         lowerCompBarDocking.setBackgroundMode(SWT.INHERIT_DEFAULT);
+        lowerCompBarDocking.addListener(SWT.Paint, new Listener() {
+
+            @Override
+            public void handleEvent(final Event e) {
+                e.gc.setForeground(ColorUtil.COLOR_ALBASTRU_FACEBOOK);
+                e.gc.drawRoundRectangle(2,
+                        0,
+                        lowerCompBarDocking.getClientArea().width - 5,
+                        lowerCompBarDocking.getClientArea().height - 3,
+                        8,
+                        8);
+
+            }
+        });
 
         this.barDocking = new ToolBar(lowerCompBarDocking, SWT.FLAT | SWT.WRAP | SWT.RIGHT);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.barDocking);
         GridLayoutFactory.fillDefaults().margins(0, 0).applyTo(this.barDocking);
-        new ToolItem(barDocking, SWT.NONE).setText("Test");
         this.barDocking.setMenu(createBarDockingMenu());
-
-        setStatusLine(new WelcomeStatusLine(this));
-        getStatusLine().getLabelNumeModul().setText("Selectati un modul");
     }
 
     private void createTopRightComponents(Composite parent) {
@@ -543,13 +553,4 @@ public final class WelcomePerspective extends Composite {
     public Composite getContent() {
         return this;
     }
-
-    public WelcomeStatusLine getStatusLine() {
-        return this.statusLine;
-    }
-
-    public void setStatusLine(final WelcomeStatusLine statusLine) {
-        this.statusLine = statusLine;
-    }
-
 }

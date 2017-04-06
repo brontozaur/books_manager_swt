@@ -169,7 +169,7 @@ public class MsgBox implements Listener {
 
 			if (StringUtils.isNotEmpty(boldMessage)) {
 				Label temp = new Label(comp, SWT.NONE);
-				temp.setFont(FontUtil.TAHOMA8_BOLD);
+				temp.setFont(FontUtil.TAHOMA12_NORMAL);
 				temp.setText(boldMessage);
 			}
 

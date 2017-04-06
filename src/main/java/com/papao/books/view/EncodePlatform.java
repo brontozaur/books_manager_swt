@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;
-import java.util.Calendar;
 
 @org.springframework.stereotype.Component
 public class EncodePlatform extends AbstractCViewAdapter implements Listener {
