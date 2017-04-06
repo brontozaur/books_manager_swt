@@ -7,6 +7,7 @@ import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCView;
 import com.papao.books.view.interfaces.*;
 import com.papao.books.view.providers.AdbContentProvider;
+import com.papao.books.view.searcheable.AbstractSearchType;
 import com.papao.books.view.searcheable.BorgSearchSystem;
 import com.papao.books.view.util.WidgetCursorUtil;
 import com.papao.books.view.util.WidgetTableUtil;
@@ -16,15 +17,14 @@ import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete, IEncodeSearch, Listener {
 
@@ -254,8 +254,44 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
     }
 
     @Override
-    public void search() {
-
+    public final void search() {
+        this.tableViewer.resetFilters();
+        java.util.List<ViewerFilter> listFilters = new ArrayList<ViewerFilter>();
+        for (Iterator<AbstractSearchType> it = this.searchSystem.getVisibleFilters().values().iterator(); it.hasNext();) {
+            ViewerFilter filter = null;
+            final AbstractSearchType searchType = it.next();
+            if (!searchType.isModified()) {
+                continue;
+            }
+            switch (this.searchSystem.getColumnIndex(searchType.getColName())) {
+                case IDX_NUME: {
+                    filter = new ViewerFilter() {
+                        @Override
+                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                            User usr = (User) element;
+                            return searchType.compareValues(usr.getNume());
+                        }
+                    };
+                    break;
+                }
+                case IDX_PRENUME: {
+                    filter = new ViewerFilter() {
+                        @Override
+                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                            User usr = (User) element;
+                            return searchType.compareValues(usr.getPrenume());
+                        }
+                    };
+                    break;
+                }
+                default:
+            }
+            if (filter != null) {
+                listFilters.add(filter);
+                searchType.filter = filter;
+            }
+        }
+        this.tableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
     }
 
     private void addComponents() {
