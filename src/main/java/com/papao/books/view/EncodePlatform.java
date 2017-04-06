@@ -207,6 +207,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, IE
         });
 
         this.tableViewer.setInput(carteRepository.findAll());
+        getContainer().layout();
     }
 
     public final void createViewerFilters() {
@@ -426,7 +427,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, IE
     }
 
     public final void configUsers() {
-        new UsersView(getShell(), userRepository).open();
+        new UsersView(new Shell(), userRepository).open();
     }
 
     @Override
