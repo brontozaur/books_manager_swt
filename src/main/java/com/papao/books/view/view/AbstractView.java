@@ -1,9 +1,9 @@
 package com.papao.books.view.view;
 
 import com.papao.books.view.AppImages;
+import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.custom.CWaitDlgClassic;
 import com.papao.books.view.interfaces.*;
-import com.papao.books.view.perspective.WelcomePerspective;
 import com.papao.books.view.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -275,6 +275,14 @@ public abstract class AbstractView {
             if (getShell() == null) {
                 setShell(new Shell(Display.getDefault(), getShellStyle()));
             }
+            getShell().addListener(SWT.Dispose, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    if (getDockingItem() != null && !getDockingItem().isDisposed()) {
+                        getDockingItem().dispose();
+                    }
+                }
+            });
             getShell().setLayout(new GridLayout(1, true));
             ((GridLayout) getShell().getLayout()).verticalSpacing = 0;
             getShell().setSize(getShellWidth(), getShellHeight());
@@ -1010,8 +1018,8 @@ public abstract class AbstractView {
             if ((getDockingItem() != null) && !getDockingItem().isDisposed()) {
                 getDockingItem().dispose();
                 getDockingBar().layout();
+                getDockingBar().setVisible(getDockingBar().getItemCount() > 0);
                 getDockingBar().getParent().layout();
-                getDockingBar().getParent().getParent().layout();
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -1068,7 +1076,6 @@ public abstract class AbstractView {
                                     }
                                 });
                                 getDockingBar().getParent().layout();
-                                getDockingBar().getParent().getParent().layout();
                             }
                             break;
                         }
@@ -1517,11 +1524,8 @@ public abstract class AbstractView {
         if ((this.shellStyle & SWT.MIN) != SWT.MIN) {
             return null;
         }
-        if ((WelcomePerspective.instance == null) || WelcomePerspective.instance.isDisposed()) {
-            return null;
-        }
         if ((this.dockingBar == null) || this.dockingBar.isDisposed()) {
-            this.dockingBar = WelcomePerspective.getBarDocking();
+            this.dockingBar = EncodePlatform.getBarDocking();
         }
         return this.dockingBar;
     }

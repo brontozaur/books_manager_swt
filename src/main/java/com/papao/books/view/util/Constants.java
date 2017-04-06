@@ -82,8 +82,7 @@ public final class Constants {
     }
 
 
-    public final static String ROOT_PACKAGE = "com.encode";
-    public final static String ENCODE_SHELL_TEXT = "Encode Borg \u00A9 Encode Systems";
+    public final static String ENCODE_SHELL_TEXT = "Books Manager \u00A9 brontozaur";
     public final static String TOTI = "- To\u0163i -";
     public final static String TOATE = "- Toate -";
 
