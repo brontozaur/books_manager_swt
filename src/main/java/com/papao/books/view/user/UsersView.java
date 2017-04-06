@@ -47,7 +47,6 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
 
         getShell().setText("Utilizatori aplicatie");
         getShell().setImage(AppImages.getImage16(AppImages.IMG_CONFIG));
-        updateDetailImage(AppImages.getImage16(AppImages.IMG_USER));
 
         addComponents();
 
@@ -147,10 +146,9 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
     @Override
     protected void customizeView() {
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
-        setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK | AbstractView.SHOW_OPS_LABELS);
-
-        setBigViewImage(AppImages.getImage24(AppImages.IMG_CONFIG));
+        setViewOptions(AbstractView.ADD_CANCEL | AbstractView.SHOW_OPS_LABELS);
         setBigViewMessage("Configurare utilizatori aplicatie");
+        setBigViewImage(AppImages.getImage24(AppImages.IMG_USER));
     }
 
     @Override
@@ -319,7 +317,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         }
 
         this.tableViewer.setContentProvider(new AdbContentProvider());
-        int[] dims = new int[]{100, 100};
+        int[] dims = new int[]{250, 250};
         int[] aligns = new int[]{SWT.LEFT, SWT.LEFT};
         boolean[] visible = new boolean[]{true, true};
         for (int i = 0; i < UsersView.COLS.length; i++) {

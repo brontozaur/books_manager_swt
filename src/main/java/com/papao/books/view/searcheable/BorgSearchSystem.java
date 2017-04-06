@@ -99,7 +99,7 @@ public class BorgSearchSystem extends Composite implements Listener, IEncodeRese
 		data.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
 		data.setMainText("Cautare");
 		data.setToolTip("Cautare in tabela (se iau in calcul doar valorile completate/selectate)");
-		data.setWidth(70);
+		data.setWidth(80);
 		data.setTextAlignment(SWT.RIGHT);
 
 		this.buttonCauta = new XButton(comp, data);
@@ -121,7 +121,7 @@ public class BorgSearchSystem extends Composite implements Listener, IEncodeRese
 
 		this.compCriterii = new Composite(this.scrolledComp, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.compCriterii);
-		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(SWT.DEFAULT, 0).numColumns(1).equalWidth(true).applyTo(this.compCriterii);
+		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(SWT.DEFAULT, 0).spacing(0, 5).numColumns(1).equalWidth(true).applyTo(this.compCriterii);
 
 		this.compCriterii.addListener(SWT.Resize, this);
 

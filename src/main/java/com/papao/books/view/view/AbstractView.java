@@ -144,8 +144,6 @@ public abstract class AbstractView {
 
     private Image bigViewImage;
 
-    private Label labelImage16x;
-
     private final boolean addHelp;
     private final boolean addExport;
     private final boolean addPrint;
@@ -261,7 +259,7 @@ public abstract class AbstractView {
             createViewListener();
             initViewMode();
 
-            appIsUsingRichWindows = (getBigViewMessage() != null) && (getBigViewImage() != null);
+            appIsUsingRichWindows = StringUtils.isNotEmpty(this.bigViewMessage) || this.bigViewImage != null;
             if (appIsUsingRichWindows) {
                 appIsUsingRichWindows = true;
             }
@@ -325,7 +323,7 @@ public abstract class AbstractView {
                 setBigLabelText(new Label(bigUpperComp, SWT.NONE));
                 data = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
                 getBigLabelText().setLayoutData(data);
-                getBigLabelText().setFont(FontUtil.TAHOMA8_BOLD);
+                getBigLabelText().setFont(FontUtil.TAHOMA12_NORMAL);
                 getBigLabelText().setText(getBigViewMessage());
 
                 setBigLabelImage(new Label(bigUpperComp, SWT.NONE));
@@ -334,28 +332,17 @@ public abstract class AbstractView {
                 getBigLabelImage().setLayoutData(data);
                 getBigLabelImage().setImage(getBigViewImage());
 
-                Composite temp = new Composite(bigUpperComp, SWT.DOUBLE_BUFFERED);
-                lay = new GridLayout(2, false);
-                lay.marginWidth = lay.marginHeight = 0;
-                temp.setLayout(lay);
-                data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-                temp.setLayoutData(data);
-                temp.setBackgroundMode(SWT.INHERIT_FORCE);
-
-                this.labelImage16x = new Label(temp, SWT.NONE);
-                data = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-                data.verticalSpan = 2;
-                data.widthHint = 16;
-                data.heightHint = 16;
-                this.labelImage16x.setLayoutData(data);
-
-                this.textDetail = new StyledText(temp, SWT.WRAP);
+                this.textDetail = new StyledText(bigUpperComp, SWT.WRAP);
                 this.textDetail.setEditable(false);
                 this.textDetail.setAlignment(SWT.FILL);
                 data = new GridData(SWT.FILL, SWT.CENTER, true, false);
                 this.textDetail.setLayoutData(data);
                 this.textDetail.setEnabled(false);
                 this.textDetail.setForeground(ColorUtil.COLOR_ALBASTRU_INCHIS_ATOM);
+                this.textDetail.setFont(FontUtil.TAHOMA10_NORMAL);
+                if (this.detailMessage != null) {
+                    this.textDetail.setText(getDetailMessage());
+                }
 
                 separator = new Label(getShell(), SWT.SEPARATOR | SWT.HORIZONTAL);
                 data = new GridData(SWT.FILL, SWT.END, true, false);
@@ -676,7 +663,7 @@ public abstract class AbstractView {
                     this.compSaveButtons = new Composite(getLowerComp(), SWT.NONE);
                     lay = new GridLayout(numColsCompSaveBtn, true);
                     lay.verticalSpacing = 0;
-                    lay.horizontalSpacing = 5;
+                    lay.horizontalSpacing = 0;
                     lay.marginHeight = 0;
                     lay.marginWidth = 0;
                     lay.marginRight = 2;
@@ -1026,13 +1013,6 @@ public abstract class AbstractView {
                 getDockingBar().getParent().layout();
                 getDockingBar().getParent().getParent().layout();
             }
-
-            if (!isAddCloseListener()) {
-                return;
-            }
-            if ((getExitChoice() != SWT.OK) && (SWTeXtension.displayMessageQ("Inchideti fereastra curenta?", "Inchidere fereastra") == SWT.NO)) {
-                e.doit = false;
-            }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
         }
@@ -1117,9 +1097,6 @@ public abstract class AbstractView {
             WidgetMenuUtil.customizeMenuLocation(this.toolItemExport.getParent().getMenu(), this.toolItemExport);
             this.toolItemExport.getParent().getMenu().setVisible(true);
         } else if (e.widget == this.toolItemReset) {
-            if (SWTeXtension.displayMessageQ("Atentie! Datele existente vor fi resetate. Continuam?", "Reinitializare forma curenta") == SWT.NO) {
-                return;
-            }
             ((IEncodeReset) AbstractView.this).reset();
         } else if (e.widget == this.buttonOk) {
             saveAndClose(true);
@@ -1154,22 +1131,13 @@ public abstract class AbstractView {
         if ((this.textDetail == null) || this.textDetail.isDisposed()) {
             return;
         }
-        this.labelImage16x.setImage(null);
         if (StringUtils.isEmpty(message)) {
             setDetailMessage(AbstractView.SPACESX5);
             this.textDetail.setText(getDetailMessage());
             return;
         }
         this.textDetail.setText(message);
-        updateDetailImage(AppImages.getImage16(AppImages.IMG_INFO));
         getShell().layout();
-    }
-
-    public final void updateDetailImage(final Image image) {
-        if ((this.labelImage16x == null) || this.labelImage16x.isDisposed() || (image == null) || image.isDisposed()) {
-            return;
-        }
-        this.labelImage16x.setImage(image);
     }
 
     public final int getUserAction() {

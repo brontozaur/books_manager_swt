@@ -17,9 +17,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class UserView extends AbstractCSaveView implements IEncodeReset {
-
-    private static final Logger logger = Logger.getLogger(UserView.class);
+public class UserView extends AbstractCSaveView {
 
     private User user;
     private UserRepository userRepository;
@@ -59,7 +57,6 @@ public class UserView extends AbstractCSaveView implements IEncodeReset {
             WidgetCompositeUtil.enableGUI(getContainer(), false);
             WidgetCompositeUtil.enableGUI(getCompHIRE(), false);
             getContainer().setEnabled(true);
-            getToolItemReset().setEnabled(false);
         }
     }
 
@@ -89,11 +86,6 @@ public class UserView extends AbstractCSaveView implements IEncodeReset {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public void reset() {
-        populateFields();
     }
 
     public final User getUser() {

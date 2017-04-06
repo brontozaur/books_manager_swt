@@ -167,7 +167,7 @@ public abstract class AbstractBoneUnifiedLV2 extends AbstractBoneUnifiedLV1 {
 
 		final TreeViewerColumn treeCol = new TreeViewerColumn(getLeftTreeViewer(), SWT.NONE);
 		treeCol.getColumn().setText("Grupare elemente");
-		treeCol.getColumn().setWidth(100);
+		treeCol.getColumn().setWidth(200);
 		treeCol.getColumn().setAlignment(SWT.CENTER);
 		treeCol.getColumn().setResizable(true);
 		treeCol.getColumn().setMoveable(false);

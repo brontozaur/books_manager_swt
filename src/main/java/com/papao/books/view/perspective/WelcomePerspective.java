@@ -107,22 +107,22 @@ public final class WelcomePerspective extends Composite {
         bar.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
         ToolItem item = new ToolItem(bar, SWT.NONE);
-        item.setImage(AppImages.getImage24(AppImages.IMG_ARROW_RIGHT));
-        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_RIGHT));
-        item.setToolTipText("Logout");
-        item.setText("Logout");
+        item.setImage(AppImages.getImage24(AppImages.IMG_USER));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_USER));
+        item.setToolTipText("Configurare cititori");
+        item.setText("Utilizatori");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-                encodePlatform.logout();
+                encodePlatform.configUsers();
             }
         });
 
         item = new ToolItem(bar, SWT.NONE);
-        item.setImage(AppImages.getImage24(AppImages.IMG_CANCEL));
-        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CANCEL));
-        item.setToolTipText("Exit");
-        item.setText("Exit");
+        item.setImage(AppImages.getImage24(AppImages.IMG_STOP));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_STOP));
+        item.setToolTipText("Inchidere aplicatie");
+        item.setText("Inchide aplicatia");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {

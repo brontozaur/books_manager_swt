@@ -70,7 +70,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 if (Display.getDefault().getPrimaryMonitor().getBounds().width > 1280) {
                     width = 1280;
                 } else if (Display.getDefault().getPrimaryMonitor().getBounds().width > 1024) {
-                    width = 1024;
+                    width = 1200;
                 } else {
                     width = 800;
                 }
@@ -83,6 +83,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                     height = 480;
                 }
                 GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).hint(width, height).applyTo(getAppMainForm());
+                getShell().setSize(width, height);
             } else {
                 GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(getAppMainForm());
             }
@@ -175,7 +176,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event event) {
-                    logout();
+                    configUsers();
                 }
             });
 
@@ -223,8 +224,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         }
     }
 
-    public final void logout() {
-        new UsersView(getShell(), userRepository).open();
+    public final void configUsers() {
+        new UsersView(null, userRepository).open();
     }
 
     @Override
@@ -265,28 +266,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
 
     @Override
     public void customizeView() {
-        StringBuilder strName;
-        strName = new StringBuilder();
-        strName.append("Books Manager");
-        strName.append(" [ora logare : ");
-        Calendar cal = Calendar.getInstance();
-        if (cal.get(Calendar.HOUR_OF_DAY) < 10) {
-            strName.append('0');
-        }
-        strName.append(cal.get(Calendar.HOUR_OF_DAY));
-        strName.append(':');
-        if (cal.get(Calendar.MINUTE) < 10) {
-            strName.append('0');
-        }
-        strName.append(cal.get(Calendar.MINUTE));
-        strName.append(':');
-        if (cal.get(Calendar.SECOND) < 10) {
-            strName.append('0');
-        }
-        strName.append(cal.get(Calendar.SECOND));
-        strName.append("]");
-
-        setShellText(strName.toString());
+        setShellText("Books Manager");
     }
 
     public CarteRepository getCarteRepository() {

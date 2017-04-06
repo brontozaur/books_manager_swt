@@ -64,8 +64,6 @@ public final class StringUtil {
 
 	public static boolean compareStrings(	final String sirCautat,
 											final String domeniuCautare,
-											final boolean caseSenzitiv,
-											final boolean exactMatch,
 											final boolean contains,
 											final boolean startsWith,
 											final boolean endsWith) {
@@ -74,16 +72,8 @@ public final class StringUtil {
 		}
 		String str1 = sirCautat;
 		String str2 = domeniuCautare;
-		if (exactMatch) {
-			if (caseSenzitiv) {
-				return sirCautat.equals(domeniuCautare);
-			}
-			return sirCautat.equalsIgnoreCase(domeniuCautare);
-		}
-		if (!caseSenzitiv) {
 			str1 = sirCautat.toUpperCase();
 			str2 = domeniuCautare.toUpperCase();
-		}
 
 		if (startsWith) {
 			return str2.startsWith(str1);
@@ -96,12 +86,8 @@ public final class StringUtil {
 		return str2.indexOf(str1) != -1;
 	}
 
-	public static boolean compareStrings(final String sirCautat, final String domeniuCautare, final boolean caseSenzitiv) {
-		return StringUtil.compareStrings(sirCautat, domeniuCautare, caseSenzitiv, false, false, false, false);
-	}
-
 	public static boolean compareStrings(final String sirCautat, final String domeniuCautare) {
-		return StringUtil.compareStrings(sirCautat, domeniuCautare, false, false, false, false, false);
+		return StringUtil.compareStrings(sirCautat, domeniuCautare, false, false, false);
 	}
 
 	public static boolean compareStrings(final String sirCautat[], final String domeniuCautare) {
@@ -109,45 +95,11 @@ public final class StringUtil {
 			return false;
 		}
 		for (int i = 0; i < sirCautat.length; i++) {
-			if (StringUtil.compareStrings(sirCautat[i], domeniuCautare, false, false, false, false, false)) {
+			if (StringUtil.compareStrings(sirCautat[i], domeniuCautare, false, false, false)) {
 				return true;
 			}
 		}
 		return false;
-	}
-
-	public boolean nonCompareStrings(final String[] sirCautat, final String full) {
-		if ((sirCautat == null) || ((sirCautat.length == 1) && StringUtils.isEmpty(sirCautat[0]))) {
-			return true;
-		}
-		for (int i = 0; i < sirCautat.length; i++) {
-			if (StringUtil.nonCompareStrings(sirCautat[i], full, false, false, false)) {
-				continue;
-			}
-			return false;
-		}
-		return true;
-	}
-
-	public static boolean nonCompareStrings(final String sirCautat, final String domeniuCautare, final boolean nonContains, final boolean nonStartsWith, final boolean nonEndsWith) {
-		if (StringUtils.isEmpty(sirCautat)) {
-			return true;
-		}
-		String str1 = sirCautat;
-		String str2 = domeniuCautare;
-
-		str1 = sirCautat.toUpperCase();
-		str2 = domeniuCautare.toUpperCase();
-
-		if (nonStartsWith) {
-			return !str2.startsWith(str1);
-		} else if (nonEndsWith) {
-			return !str2.endsWith(str1);
-		} else if (nonContains) {
-			return str2.indexOf(str1) == -1;
-		}
-		// comportamentul default, daca nu s-a bifat nimic
-		return str2.indexOf(str1) == -1;
 	}
 
 	/**
@@ -160,19 +112,18 @@ public final class StringUtil {
 	 * @return an array of string
 	 */
 	public static String[] splitString(final String text, final String token) {
-		String s = text;
 		int fromHere = 0;
 		int toHere;
 		Vector<String> temp = new Vector<String>();
-		while (s.indexOf(token, fromHere) != -1) {
-			toHere = s.indexOf(token, fromHere);
-			String z = s.substring(fromHere, toHere);
+		while (text.indexOf(token, fromHere) != -1) {
+			toHere = text.indexOf(token, fromHere);
+			String z = text.substring(fromHere, toHere);
 			temp.addElement(z);
 			fromHere = toHere + token.length();
 		}
 		toHere = text.length();
-		temp.addElement(s.substring(fromHere, toHere));
-		if (temp.firstElement().toString().length() == 0) {
+		temp.addElement(text.substring(fromHere, toHere));
+		if (temp.firstElement().length() == 0) {
 			return new String[0];
 		}
 		String[] splitted_string = new String[temp.size()];
@@ -209,7 +160,7 @@ public final class StringUtil {
 		return c;
 	}
 
-	public final static String getShortedStr(final String str, final int maxChars) {
+	public static String getShortedStr(final String str, final int maxChars) {
 		if (str == null) {
 			return "";
 		}

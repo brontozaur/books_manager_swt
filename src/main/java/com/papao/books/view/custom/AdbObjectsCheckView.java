@@ -42,8 +42,6 @@ public class AdbObjectsCheckView extends AbstractCView implements IEncodeHelp, L
 	private static final int COL_WIDTH = 100;
 	private final String[] methods;
 	private final AdbSelectorData data;
-	private Button buttonExactMatch;
-	private Button buttonCaseSensitive;
 	private Button buttonContains;
 	private Button buttonStartsWith;
 	private Button buttonEndsWith;
@@ -132,14 +130,6 @@ public class AdbObjectsCheckView extends AbstractCView implements IEncodeHelp, L
 		GridDataFactory.fillDefaults().span(2, 1).applyTo(this.textFilter);
 		this.textFilter.addListener(SWT.KeyUp, this);
 		this.textFilter.setToolTipText("Introduceti una sau mai multe valori, separate prin virgula");
-
-		this.buttonCaseSensitive = new Button(compFilters, SWT.CHECK);
-		this.buttonCaseSensitive.setText("case senzitiv");
-		this.buttonCaseSensitive.addListener(SWT.Selection, this);
-
-		this.buttonExactMatch = new Button(compFilters, SWT.CHECK);
-		this.buttonExactMatch.setText("cautare exacta");
-		this.buttonExactMatch.addListener(SWT.Selection, this);
 
 		this.buttonContains = new Button(compFilters, SWT.CHECK);
 		this.buttonContains.setText("contine");
@@ -362,34 +352,16 @@ public class AdbObjectsCheckView extends AbstractCView implements IEncodeHelp, L
 	public void handleEvent(final Event e) {
 		try {
 			if (e.type == SWT.Selection) {
-				if (e.widget == this.buttonContains) {
-					this.buttonExactMatch.setSelection(false);
-				} else if (e.widget == this.buttonExactMatch) {
-					this.buttonStartsWith.setSelection(false);
-					this.buttonEndsWith.setSelection(false);
-					this.buttonContains.setSelection(false);
-				} else if (e.widget == this.buttonStartsWith) {
-					this.buttonExactMatch.setSelection(false);
+				if (e.widget == this.buttonStartsWith) {
 					this.buttonEndsWith.setSelection(false);
 				} else if (e.widget == this.buttonEndsWith) {
-					this.buttonExactMatch.setSelection(false);
 					this.buttonStartsWith.setSelection(false);
-				} else if (e.widget == this.buttonExactMatch) {
-					this.buttonContains.setSelection(false);
 				} else if (e.widget == this.itemSelectAll) {
 					selectAll(true);
 				} else if (e.widget == this.itemDeSelectAll) {
 					selectAll(false);
 				}
 				if (!(e.widget instanceof ToolItem)) {
-					this.buttonContains.setEnabled(!this.buttonExactMatch.getSelection());
-					this.buttonExactMatch.setEnabled(!this.buttonContains.getSelection()
-							&& !this.buttonStartsWith.getSelection()
-							&& !this.buttonEndsWith.getSelection());
-					this.buttonStartsWith.setEnabled(!this.buttonExactMatch.getSelection()
-							&& !this.buttonEndsWith.getSelection());
-					this.buttonEndsWith.setEnabled(!this.buttonExactMatch.getSelection()
-							&& !this.buttonStartsWith.getSelection());
 					search();
 				}
 			} else if (e.type == SWT.KeyUp) {
@@ -428,8 +400,6 @@ public class AdbObjectsCheckView extends AbstractCView implements IEncodeHelp, L
 				}
 				if (StringUtil.compareStrings(str,
 						itemName,
-						this.buttonCaseSensitive.getSelection(),
-						this.buttonExactMatch.getSelection(),
 						this.buttonContains.getSelection(),
 						this.buttonStartsWith.getSelection(),
 						this.buttonEndsWith.getSelection())) {

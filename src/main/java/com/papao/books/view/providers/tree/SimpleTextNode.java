@@ -85,8 +85,8 @@ public class SimpleTextNode implements ITreeNode {
 	public final static boolean isPassingFilterNume(final SimpleTextNode node,
 													final String searchedValue) {
 		if (!node.hasChildrens()) {
-			return StringUtil.compareStrings(searchedValue, node.getName(), false);
-		} else if (StringUtil.compareStrings(searchedValue, node.getName(), false)) {
+			return StringUtil.compareStrings(searchedValue, node.getName());
+		} else if (StringUtil.compareStrings(searchedValue, node.getName())) {
 			return true;
 		}
 		List<ITreeNode> childrens = node.getChildrens();

@@ -84,15 +84,8 @@ public class AdbSelectorComposite extends Composite implements Listener {
 		}
 	}
 
-	public final void populate() {
-	}
-
 	public AdbSelectorData getDataTransport() {
 		return this.data;
-	}
-
-	public String parse() {
-		return "";
 	}
 
 	public final void setText(final String text) {
