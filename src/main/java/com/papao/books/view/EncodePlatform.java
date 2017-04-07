@@ -8,14 +8,16 @@ import com.papao.books.repository.UserRepository;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbContentProvider;
+import com.papao.books.view.providers.UnifiedStyledLabelProvider;
+import com.papao.books.view.providers.tree.SimpleTextNode;
+import com.papao.books.view.providers.tree.TreeContentProvider;
 import com.papao.books.view.searcheable.AbstractSearchType;
 import com.papao.books.view.searcheable.BorgSearchSystem;
 import com.papao.books.view.user.UsersView;
-import com.papao.books.view.util.ColorUtil;
-import com.papao.books.view.util.WidgetCursorUtil;
-import com.papao.books.view.util.WidgetTableUtil;
+import com.papao.books.view.util.*;
 import com.papao.books.view.util.sorter.AbstractColumnViewerSorter;
 import com.papao.books.view.util.sorter.AbstractTableColumnViewerSorter;
+import com.papao.books.view.util.sorter.AbstractTreeColumnViewerSorter;
 import com.papao.books.view.view.AbstractCViewAdapter;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
@@ -25,6 +27,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
@@ -72,6 +75,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private ToolItem toolItemRefresh;
     private ToolItem toolItemSearch;
     private Composite compRight;
+    private UnifiedStyledLabelProvider leftTreeColumnProvider;
+    private Link linkViewMode;
+    private TreeViewer leftTreeViewer;
 
     @Autowired
     public EncodePlatform(CarteRepository carteRepository, UserRepository userRepository) {
@@ -146,13 +152,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         this.mainTabFolder = new CTabFolder(parent, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.mainTabFolder);
         this.mainTabFolder.setSimple(true);
-        this.mainTabFolder.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         this.mainTabFolder.setUnselectedImageVisible(true);
         this.mainTabFolder.setUnselectedCloseVisible(false);
         this.mainTabFolder.setMRUVisible(true);
         this.mainTabFolder.setMinimizeVisible(false);
         this.mainTabFolder.setMaximizeVisible(false);
-        this.mainTabFolder.setSelectionBackground(ColorUtil.COLOR_WHITE);
+        mainTabFolder.setSelectionBackground(ColorUtil.COLOR_SYSTEM);
 
         CTabItem booksTabItem = new CTabItem(this.mainTabFolder, SWT.NONE);
         booksTabItem.setText("Carti");
@@ -166,12 +171,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         GridDataFactory.fillDefaults().grab(true, true).span(((org.eclipse.swt.layout.GridLayout) getContainer().getLayout()).numColumns,
                 1).applyTo(verticalSash);
 
-        compLeftTree = new Composite(verticalSash, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(false, true).applyTo(compLeftTree);
-        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(2, 2).extendedMargins(0,
-                0,
-                0,
-                0).spacing(5, 3).applyTo(compLeftTree);
+        createCompLeftTree(verticalSash);
 
         this.compRight = new Composite(verticalSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this.compRight);
@@ -230,13 +230,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         this.bottomInnerTabFolderRight = new CTabFolder(rightInnerSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.bottomInnerTabFolderRight);
         this.bottomInnerTabFolderRight.setSimple(true);
-        this.bottomInnerTabFolderRight.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         this.bottomInnerTabFolderRight.setUnselectedImageVisible(true);
         this.bottomInnerTabFolderRight.setUnselectedCloseVisible(false);
         this.bottomInnerTabFolderRight.setMRUVisible(true);
         this.bottomInnerTabFolderRight.setMinimizeVisible(false);
         this.bottomInnerTabFolderRight.setMaximizeVisible(false);
-        this.bottomInnerTabFolderRight.setSelectionBackground(ColorUtil.COLOR_WHITE);
+        bottomInnerTabFolderRight.setSelectionBackground(ColorUtil.COLOR_SYSTEM);
 
         CTabItem tabItemDetaliiCarte = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
         tabItemDetaliiCarte.setText("Detalii carte");
@@ -267,6 +266,258 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
 
         this.tableViewer.setInput(carteRepository.findAll());
         getContainer().layout();
+    }
+
+    private void createCompLeftTree(SashForm verticalSash) {
+        compLeftTree = new Composite(verticalSash, SWT.NONE);
+        GridDataFactory.fillDefaults().grab(false, true).applyTo(compLeftTree);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(2, 2).extendedMargins(0,
+                0,
+                0,
+                0).spacing(5, 3).applyTo(compLeftTree);
+
+        Composite comp = new CLabel(compLeftTree, SWT.NONE);
+        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT,
+                25).applyTo(comp);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).extendedMargins(5, 5, 3, 2).applyTo(comp);
+
+        new Label(comp, SWT.NONE).setText("Filtru");
+        final Text textUpperSearch = new Text(comp, SWT.SEARCH);
+        GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(textUpperSearch);
+        SWTeXtension.addColoredFocusListener(textUpperSearch, ColorUtil.COLOR_FOCUS_YELLOW);
+        textUpperSearch.setMessage("Filtrare");
+        textUpperSearch.addListener(SWT.Modify, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                leftTreeColumnProvider.setSearchText(textUpperSearch.getText());
+                leftTreeViewer.setFilters(SimpleTextNode.getFilter(textUpperSearch.getText()));
+                leftTreeViewer.expandToLevel(AbstractTreeViewer.ALL_LEVELS);
+            }
+        });
+        textUpperSearch.addListener(SWT.FocusIn, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (textUpperSearch.getText().equals("Filtrare")) {
+                    textUpperSearch.setText("");
+                }
+            }
+        });
+
+        leftTreeViewer = new TreeViewer(compLeftTree, SWT.SINGLE | SWT.FULL_SELECTION
+                | SWT.BORDER);
+        leftTreeViewer.setUseHashlookup(true);
+        SWTeXtension.addColoredFocusListener(leftTreeViewer.getTree(),
+                ColorUtil.COLOR_FOCUS_YELLOW);
+
+        leftTreeViewer.setContentProvider(new TreeContentProvider());
+        leftTreeViewer.getTree().setHeaderVisible(true);
+        GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(leftTreeViewer.getTree());
+        leftTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+
+        final TreeViewerColumn treeCol = new TreeViewerColumn(leftTreeViewer, SWT.NONE);
+        treeCol.getColumn().setText("Grupare elemente");
+        treeCol.getColumn().setWidth(160);
+        treeCol.getColumn().setAlignment(SWT.CENTER);
+        treeCol.getColumn().setResizable(true);
+        treeCol.getColumn().setMoveable(false);
+        this.leftTreeColumnProvider = new UnifiedStyledLabelProvider();
+        treeCol.setLabelProvider(this.leftTreeColumnProvider);
+
+        AbstractTreeColumnViewerSorter cSorter = new AbstractTreeColumnViewerSorter(
+                leftTreeViewer,
+                treeCol) {
+            @Override
+            protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                SimpleTextNode a = ((SimpleTextNode) e1);
+                SimpleTextNode b = ((SimpleTextNode) e2);
+                if (a == null) {
+                    return -1;
+                } else if (b == null) {
+                    return 1;
+                } else {
+                    int x1 = 0, x2 = 0;
+                    if (a.getName().startsWith(BorgDateUtil.IAN)) {
+                        x1 = 1;
+                    } else if (a.getName().startsWith(BorgDateUtil.FEB)) {
+                        x1 = 2;
+                    } else if (a.getName().startsWith(BorgDateUtil.MAR)) {
+                        x1 = 3;
+                    } else if (a.getName().startsWith(BorgDateUtil.APR)) {
+                        x1 = 4;
+                    } else if (a.getName().startsWith(BorgDateUtil.MAI)) {
+                        x1 = 5;
+                    } else if (a.getName().startsWith(BorgDateUtil.IUN)) {
+                        x1 = 6;
+                    } else if (a.getName().startsWith(BorgDateUtil.IUL)) {
+                        x1 = 7;
+                    } else if (a.getName().startsWith(BorgDateUtil.AUG)) {
+                        x1 = 8;
+                    } else if (a.getName().startsWith(BorgDateUtil.SEP)) {
+                        x1 = 9;
+                    } else if (a.getName().startsWith(BorgDateUtil.OCT)) {
+                        x1 = 10;
+                    } else if (a.getName().startsWith(BorgDateUtil.NOI)) {
+                        x1 = 11;
+                    } else if (a.getName().startsWith(BorgDateUtil.DEC)) {
+                        x1 = 12;
+                    }
+                    if (x1 == 0) {
+                        return a.getName().compareToIgnoreCase(b.getName());
+                    }
+
+                    if (b.getName().startsWith(BorgDateUtil.IAN)) {
+                        x2 = 1;
+                    } else if (b.getName().startsWith(BorgDateUtil.FEB)) {
+                        x2 = 2;
+                    } else if (b.getName().startsWith(BorgDateUtil.MAR)) {
+                        x2 = 3;
+                    } else if (b.getName().startsWith(BorgDateUtil.APR)) {
+                        x2 = 4;
+                    } else if (b.getName().startsWith(BorgDateUtil.MAI)) {
+                        x2 = 5;
+                    } else if (b.getName().startsWith(BorgDateUtil.IUN)) {
+                        x2 = 6;
+                    } else if (b.getName().startsWith(BorgDateUtil.IUL)) {
+                        x2 = 7;
+                    } else if (b.getName().startsWith(BorgDateUtil.AUG)) {
+                        x2 = 8;
+                    } else if (b.getName().startsWith(BorgDateUtil.SEP)) {
+                        x2 = 9;
+                    } else if (b.getName().startsWith(BorgDateUtil.OCT)) {
+                        x2 = 10;
+                    } else if (b.getName().startsWith(BorgDateUtil.NOI)) {
+                        x2 = 11;
+                    } else if (b.getName().startsWith(BorgDateUtil.DEC)) {
+                        x2 = 12;
+                    }
+
+                    return x1 - x2;
+                }
+            }
+
+        };
+        cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+        leftTreeViewer.getTree().setSortColumn(null);
+
+        leftTreeViewer.getTree().setCursor(WidgetCursorUtil.getCursor(SWT.CURSOR_HAND));
+        leftTreeViewer.getTree().setMenu(createLeftTreeMenu());
+        WidgetTreeUtil.customizeTree(leftTreeViewer.getTree(), getClass(), "aaa");
+
+        leftTreeViewer.getTree().addListener(SWT.Selection, this);
+
+        comp = new Composite(compLeftTree, SWT.NONE);
+        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).align(SWT.FILL, SWT.CENTER).applyTo(comp);
+        GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(5, 0, 0, 2).applyTo(comp);
+        this.linkViewMode = new Link(comp, SWT.NONE);
+        this.linkViewMode.setToolTipText("Schimba modul de afisare");
+        this.linkViewMode.addListener(SWT.Selection, this);
+        GridDataFactory.fillDefaults().grab(true, false).span(1, 1).align(SWT.BEGINNING, SWT.CENTER).applyTo(this.linkViewMode);
+    }
+
+    private Menu createLeftTreeMenu() {
+        if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
+            return null;
+        }
+        final Menu menu = new Menu(leftTreeViewer.getTree());
+        MenuItem menuItem;
+        menu.addListener(SWT.Show, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                int idx = 0;
+                final boolean flagItemCount = (leftTreeViewer.getTree().getItemCount() > 0);
+//                final boolean isDateView = getFiltru().getTreeViewMode() == AbstractFilterViewMode.AFISARE_DUPA_DATA;
+                boolean isDateView = false;
+                menu.getItem(idx++).setEnabled(flagItemCount && isDateView); // expand all
+                menu.getItem(idx++).setEnabled(flagItemCount && isDateView); // colapse all
+//                menu.getItem(idx++).setEnabled(getFiltru().getTreeAlignment() == SWT.RIGHT);
+//                menu.getItem(idx++).setEnabled(getFiltru().getTreeAlignment() == SWT.LEFT);
+                menu.getItem(idx++).setEnabled(true); // separator
+                menu.getItem(idx++).setEnabled(true); // selectie tip afisare
+                menu.getItem(idx++).setEnabled(FiltruAplicatie.isLeftTreeShowRecentActivity());
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Expandare");
+        menuItem.setImage(AppImages.getImage16(AppImages.IMG_EXPAND));
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                leftTreeViewer.expandAll();
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Colapsare");
+        menuItem.setImage(AppImages.getImage16(AppImages.IMG_COLLAPSE));
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                leftTreeViewer.collapseAll();
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Aliniere la stanga");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                swap(false);
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Aliniere la dreapta");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                swap(false);
+            }
+        });
+
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setImage(AppImages.getImage16(AppImages.IMG_MOD_VIZUALIZARE));
+        menuItem.setText("Selectie mod afisare");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                handleSelectTreeViewMode();
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Distribuire operatii recente");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+//                populateLeftTree(false);
+//                enableOps();
+            }
+        });
+        return menu;
+    }
+
+    public final void handleSelectTreeViewMode() {
+//        FiltruErrorsViewMode view = new FiltruErrorsViewMode(getTable().getShell(), getFiltru());
+//        view.open();
+//        if (view.getUserAction() == SWT.OK) {
+//            setNumeCriteriuAfisare(view.getSelectionTypeName());
+//            populateLeftTree(false);
+//        }
+    }
+
+    public void swap(final boolean isCodeSelection) {
+        if (compLeftTree.getLocation().x < compRight.getLocation().x) {
+            compLeftTree.moveBelow(compRight);
+            verticalSash.setWeights(new int[] {
+                    10, 3 });
+        } else {
+            compLeftTree.moveAbove(compRight);
+            verticalSash.setWeights(new int[] {
+                    3, 10 });
+        }
     }
 
     private void createBarOps(Composite parent) {
@@ -333,7 +584,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
 
     private void createTopRightComponents(Composite parent) {
         ToolBar bar = new ToolBar(parent, SWT.FLAT | SWT.RIGHT | SWT.WRAP);
-        bar.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
         ToolItem item = new ToolItem(bar, SWT.NONE);
         item.setImage(AppImages.getImage24(AppImages.IMG_USER));
