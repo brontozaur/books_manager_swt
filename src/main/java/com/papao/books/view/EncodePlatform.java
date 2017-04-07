@@ -10,6 +10,7 @@ import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbContentProvider;
 import com.papao.books.view.searcheable.BorgSearchSystem;
 import com.papao.books.view.user.UsersView;
+import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.WidgetCursorUtil;
 import com.papao.books.view.util.WidgetTableUtil;
 import com.papao.books.view.util.sorter.AbstractColumnViewerSorter;
@@ -26,6 +27,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
@@ -48,6 +51,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, IE
     private UserRepository userRepository;
     private static ToolBar barDocking;
     private static EncodePlatform instance;
+    private CTabFolder mainTabFolder;
     private SashForm verticalSash;
     private Composite compLeftTree;
     private Composite compRight;
@@ -129,7 +133,26 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, IE
     }
 
     private void createComponents(Composite parent) {
-        verticalSash = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
+
+        this.mainTabFolder = new CTabFolder(parent, SWT.NONE);
+        GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.mainTabFolder);
+        this.mainTabFolder.setSimple(true);
+        this.mainTabFolder.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+        this.mainTabFolder.setUnselectedImageVisible(true);
+        this.mainTabFolder.setUnselectedCloseVisible(false);
+        this.mainTabFolder.setMRUVisible(true);
+        this.mainTabFolder.setMinimizeVisible(false);
+        this.mainTabFolder.setMaximizeVisible(false);
+        this.mainTabFolder.setSelectionBackground(ColorUtil.COLOR_WHITE);
+
+        CTabItem booksTabItem = new CTabItem(this.mainTabFolder, SWT.NONE);
+        booksTabItem.setText("Carti");
+        booksTabItem.setImage(AppImages.getImage32(AppImages.IMG_DETAILS_NEW));
+        this.mainTabFolder.setSelection(booksTabItem);
+
+        createTopRightComponents(mainTabFolder);
+
+        verticalSash = new SashForm(mainTabFolder, SWT.HORIZONTAL | SWT.SMOOTH);
         verticalSash.SASH_WIDTH = 4;
         GridDataFactory.fillDefaults().grab(true, true).span(((org.eclipse.swt.layout.GridLayout) getContainer().getLayout()).numColumns,
                 1).applyTo(verticalSash);
@@ -206,8 +229,40 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, IE
             }
         });
 
+        booksTabItem.setControl(verticalSash);
+
         this.tableViewer.setInput(carteRepository.findAll());
         getContainer().layout();
+    }
+
+    private void createTopRightComponents(Composite parent) {
+        ToolBar bar = new ToolBar(parent, SWT.FLAT | SWT.RIGHT | SWT.WRAP);
+        bar.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+
+        ToolItem item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_USER));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_USER));
+        item.setToolTipText("Configurare cititori");
+        item.setText("Utilizatori");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                configUsers();
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_STOP));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_STOP));
+        item.setToolTipText("Inchidere aplicatie");
+        item.setText("Inchide aplicatia");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                performShellClose(new Event());
+            }
+        });
+        this.mainTabFolder.setTopRight(bar);
     }
 
     public final void createViewerFilters() {
@@ -466,8 +521,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, IE
     public void customizeView() {
         setShellText("Books Manager");
         setViewOptions(AbstractView.SHOW_OPS_LABELS);
-        setBigViewMessage("12:15. Press return.");
-        setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
+//        setBigViewMessage("12:15. Press return.");
+//        setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
     }
 
     public CarteRepository getCarteRepository() {
