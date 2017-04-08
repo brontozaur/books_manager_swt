@@ -4,10 +4,13 @@ import java.util.Date;
 
 public class Autor {
 
-    private String nume;
+    private String nume = "";
     private Date dataNasterii;
 
     public String getNume() {
+        if (nume == null) {
+            nume = "#";
+        }
         return nume;
     }
 

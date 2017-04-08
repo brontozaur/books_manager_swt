@@ -5,6 +5,7 @@ import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
 import com.papao.books.repository.CarteRepository;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
+import com.papao.books.view.providers.ContentProposalProvider;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
@@ -15,19 +16,24 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.List;
 
 public class CarteView extends AbstractCSaveView {
 
     private Carte carte;
     private CarteRepository carteRepository;
+    private MongoTemplate mongoTemplate;
 
     private Text textAutor;
     private Text textTitlu;
 
-    public CarteView(final Shell parent, final Carte carte, final CarteRepository carteRepository, final int viewMode) {
+    public CarteView(final Shell parent, final Carte carte, final CarteRepository carteRepository, MongoTemplate mongoTemplate, final int viewMode) {
         super(parent, viewMode, carte.getId());
         this.carte = carte;
         this.carteRepository = carteRepository;
+        this.mongoTemplate = mongoTemplate;
 
         addComponents();
         populateFields();
@@ -40,6 +46,8 @@ public class CarteView extends AbstractCSaveView {
         new Label(getContainer(), SWT.NONE).setText("Autor");
         this.textAutor = new Text(getContainer(), SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).span(1, 1).applyTo(this.textAutor);
+        List<String> autori = mongoTemplate.getCollection("carte").distinct("autor.nume");
+        ContentProposalProvider.addContentProposal(textAutor, autori.toArray(new String[autori.size()]), false);
 
         new Label(getContainer(), SWT.NONE).setText("Titlu");
         this.textTitlu = new Text(getContainer(), SWT.BORDER);
@@ -49,7 +57,6 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private void populateFields() {
-        this.textAutor.setText(StringUtils.defaultIfBlank(this.carte.getAutor() != null ? carte.getAutor().getNume() : "", ""));
         this.textTitlu.setText(StringUtils.defaultIfBlank(this.carte.getTitlu(), ""));
 
         if (!isViewEnabled()) {
@@ -63,15 +70,11 @@ public class CarteView extends AbstractCSaveView {
     public final void customizeView() {
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
-        setObjectName("utilizator");
+        setObjectName("carte");
     }
 
     @Override
     protected void saveData() {
-        if (carte.getAutor() != null) {
-            carte.setAutor(new Autor());
-        }
-        this.carte.getAutor().setNume(this.textAutor.getText());
         this.carte.setTitlu(this.textTitlu.getText());
         carteRepository.save(carte);
     }

@@ -40,11 +40,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.List;
 
 @org.springframework.stereotype.Component
@@ -78,12 +78,16 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private UnifiedStyledLabelProvider leftTreeColumnProvider;
     private Link linkViewMode;
     private TreeViewer leftTreeViewer;
+    private MongoTemplate mongoTemplate;
 
     @Autowired
-    public EncodePlatform(CarteRepository carteRepository, UserRepository userRepository) {
+    public EncodePlatform(CarteRepository carteRepository,
+                          UserRepository userRepository,
+                          MongoTemplate mongoTemplate) {
         super(null, AbstractView.MODE_NONE);
         this.carteRepository = carteRepository;
         this.userRepository = userRepository;
+        this.mongoTemplate = mongoTemplate;
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
@@ -638,10 +642,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            if (carte.getAutor() != null) {
-                                return carte.getAutor().getNume();
-                            }
-                            return "";
+                            return carte.getNumeAutori();
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
@@ -649,14 +650,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            Autor a1 = a.getAutor();
-                            Autor b1 = b.getAutor();
-                            if (a1 == null) {
-                                return 1;
-                            } else if (b1 == null) {
-                                return -1;
-                            }
-                            return a1.getNume().compareTo(b1.getNume());
+                            return a.getNumeAutori().compareTo(b.getNumeAutori());
                         }
 
                     };
@@ -676,11 +670,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            if (a.getTitlu() == null) {
-                                return 1;
-                            } else if (b.getTitlu() == null) {
-                                return -1;
-                            }
                             return a.getTitlu().compareTo(b.getTitlu());
                         }
 
@@ -880,7 +869,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), carteRepository, AbstractView.MODE_ADD);
+        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), carteRepository, mongoTemplate, AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -932,7 +921,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, AbstractView.MODE_MODIFY);
+        view = new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, AbstractView.MODE_MODIFY);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -956,7 +945,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         @Override
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                             Carte carte = (Carte) element;
-                            return searchType.compareValues(carte.getAutor());
+                            return searchType.compareValues(carte.getNumeAutori());
                         }
                     };
                     break;
@@ -994,7 +983,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return;
         }
-        new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, AbstractView.MODE_VIEW).open();
+        new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, AbstractView.MODE_VIEW).open();
     }
 
     public void refresh() {
