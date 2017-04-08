@@ -14,7 +14,7 @@ public class Carte extends AbstractDB {
     @Id
     private String id;
 
-    private List<Autor> autori = new ArrayList<>();
+    private List<String> autori = new ArrayList<>();
     private String titlu = "";
 
     @Override
@@ -24,23 +24,6 @@ public class Carte extends AbstractDB {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public List<Autor> getAutori() {
-        return autori;
-    }
-
-    public void setAutori(List<Autor> autori) {
-        if (autori == null || autori.isEmpty()) {
-            autori = new ArrayList<>();
-        }
-        Collections.sort(autori, new Comparator<Autor>() {
-            @Override
-            public int compare(Autor o1, Autor o2) {
-                return o1.getNume().compareTo(o2.getNume());
-            }
-        });
-        this.autori = autori;
     }
 
     public String getTitlu() {
@@ -54,11 +37,19 @@ public class Carte extends AbstractDB {
         this.titlu = titlu;
     }
 
-    public String getNumeAutori() {
+    public List<String> getAutori() {
+        return autori;
+    }
+
+    public void setAutori(List<String> autori) {
+        this.autori = autori;
+    }
+
+    public String getNumeAutori(List<Autor> autori) {
         StringBuilder numeAutori = new StringBuilder();
         for (Autor autor : autori) {
             if (numeAutori.length() > 0) {
-                numeAutori.append(",");
+                numeAutori.append(", ");
             }
             numeAutori.append(autor.getNume());
         }

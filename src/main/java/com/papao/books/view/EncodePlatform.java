@@ -1,9 +1,10 @@
 package com.papao.books.view;
 
 import com.papao.books.FiltruAplicatie;
-import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
+import com.papao.books.repository.AutorRepository;
 import com.papao.books.repository.CarteRepository;
+import com.papao.books.repository.EdituraRepository;
 import com.papao.books.repository.UserRepository;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.menu.PlatformMenu;
@@ -79,15 +80,21 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private Link linkViewMode;
     private TreeViewer leftTreeViewer;
     private MongoTemplate mongoTemplate;
+    private AutorRepository autorRepository;
+    private EdituraRepository edituraRepository;
 
     @Autowired
     public EncodePlatform(CarteRepository carteRepository,
                           UserRepository userRepository,
+                          AutorRepository autorRepository,
+                          EdituraRepository edituraRepository,
                           MongoTemplate mongoTemplate) {
         super(null, AbstractView.MODE_NONE);
         this.carteRepository = carteRepository;
         this.userRepository = userRepository;
         this.mongoTemplate = mongoTemplate;
+        this.autorRepository = autorRepository;
+        this.edituraRepository = edituraRepository;
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
@@ -642,7 +649,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return carte.getNumeAutori();
+                            return carte.getNumeAutori(autorRepository.findByIdInOrderByNumeAsc(carte.getAutori()));
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
@@ -650,7 +657,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return a.getNumeAutori().compareTo(b.getNumeAutori());
+                            return a.getNumeAutori(autorRepository.findByIdInOrderByNumeAsc(a.getAutori())).compareTo(b.getNumeAutori(autorRepository.findByIdInOrderByNumeAsc(b.getAutori())));
                         }
 
                     };
@@ -945,7 +952,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         @Override
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                             Carte carte = (Carte) element;
-                            return searchType.compareValues(carte.getNumeAutori());
+                            return searchType.compareValues(carte.getNumeAutori(autorRepository.findByIdInOrderByNumeAsc(carte.getAutori())));
                         }
                     };
                     break;

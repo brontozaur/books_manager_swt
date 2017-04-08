@@ -5,14 +5,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document(collection = "autor")
-public class Autor extends AbstractDB{
+@Document(collection = "editura")
+public class Editura extends AbstractDB{
 
     @Id
     private String id;
-
     private String nume = "";
-    private Date dataNasterii;
 
     public String getId() {
         return id;
@@ -33,11 +31,4 @@ public class Autor extends AbstractDB{
         this.nume = nume;
     }
 
-    public Date getDataNasterii() {
-        return dataNasterii;
-    }
-
-    public void setDataNasterii(Date dataNasterii) {
-        this.dataNasterii = dataNasterii;
-    }
 }
