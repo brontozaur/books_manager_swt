@@ -307,9 +307,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractDB;
         }
         toolItemAdd.setEnabled(true); // add
-        toolItemClone.setEnabled(enable); // mod
         toolItemMod.setEnabled(enable); // mod
         toolItemDel.setEnabled(enable); // del
+        toolItemClone.setEnabled(enable); // clone
     }
 
     private void createCompLeftTree(SashForm verticalSash) {
@@ -578,6 +578,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 add();
             }
         });
+
         this.toolItemMod = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
         this.toolItemMod.setImage(AppImages.getImage16(AppImages.IMG_MODIFICARE));
         this.toolItemMod.setHotImage(AppImages.getImage16Focus(AppImages.IMG_MODIFICARE));
@@ -589,17 +590,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 modify(false);
             }
         });
-        this.toolItemClone = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
-        this.toolItemClone.setImage(AppImages.getImage16(AppImages.IMG_COPY));
-        this.toolItemClone.setHotImage(AppImages.getImage16Focus(AppImages.IMG_COPY));
-        this.toolItemClone.setToolTipText("Duplicare");
-        this.toolItemClone.setText("&Duplicare");
-        this.toolItemClone.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                modify(true);
-            }
-        });
+
         this.toolItemDel = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
         this.toolItemDel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
         this.toolItemDel.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
@@ -611,7 +602,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 delete();
             }
         });
+
         new ToolItem(barOps, SWT.SEPARATOR);
+
         this.toolItemSearch = new ToolItem(barOps, SWT.CHECK);
         this.toolItemSearch.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
         this.toolItemSearch.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
@@ -623,7 +616,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 handleSearchDisplay();
             }
         });
+
         new ToolItem(barOps, SWT.SEPARATOR);
+
         this.toolItemRefresh = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
         this.toolItemRefresh.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
         this.toolItemRefresh.setHotImage(AppImages.getImage16Focus(AppImages.IMG_REFRESH));
@@ -633,6 +628,20 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             @Override
             public void handleEvent(Event event) {
                 refresh();
+            }
+        });
+
+        new ToolItem(barOps, SWT.SEPARATOR);
+
+        this.toolItemClone = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
+        this.toolItemClone.setImage(AppImages.getImage16(AppImages.IMG_COPY));
+        this.toolItemClone.setHotImage(AppImages.getImage16Focus(AppImages.IMG_COPY));
+        this.toolItemClone.setToolTipText("Duplicare");
+        this.toolItemClone.setText("&Duplicare");
+        this.toolItemClone.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                modify(true);
             }
         });
     }
@@ -749,10 +758,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 idx++; // separator
                 idx++; // add
                 menu.getItem(idx++).setEnabled(selIdx != -1); // mod
-                menu.getItem(idx++).setEnabled(selIdx != -1); // clone
                 menu.getItem(idx++).setEnabled(selIdx != -1); // del
                 idx++; // sep
                 menu.getItem(idx++).setEnabled(selIdx != -1); // view
+                idx++;
+                menu.getItem(idx++).setEnabled(selIdx != -1); // clone
             }
         });
 

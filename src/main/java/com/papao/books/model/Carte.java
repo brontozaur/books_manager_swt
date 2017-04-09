@@ -5,39 +5,40 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Document(collection = "carte")
-public class Carte extends AbstractDB implements Serializable{
+public class Carte extends AbstractDB implements Serializable {
 
     @Id
     private String id;
 
-    private List<String> autori = new ArrayList<>();
-    private String titlu = "";
-    private String editura = "";
-    private String anAparitie = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
-    private String titluOriginal = "";
-    private String editia = "";
-    private int latime = 0;
-    private int lungime = 0;
-    private int greutate = 0;
-    private int nrPagini = 0;
-    private String serie = "";
-    private List<String> traducatori = new ArrayList<>();
-    private String isbn = "";
+    private List<String> autori;
+    private String titlu;
+    private String editura;
+    private String anAparitie;
+    private String titluOriginal;
+    private String editia;
+    private int latime;
+    private int inaltime;
+    private int greutate;
+    private int nrPagini;
+    private String serie;
+    private List<String> traducatori;
+    private String isbn;
     private boolean cuIlustratii;
-    private List<String>autorIlustratii = new ArrayList<>();
-    private List<String>tehnoredactor = new ArrayList<>();
-    private String tiparitLa = "";
-    private List<Personaj> personaje = new ArrayList<>();
-    private TipCoperta tipCoperta = TipCoperta.BROSATA;
-    private Limba limba = Limba.Romana;
-    private Limba traducereDin = Limba.Romana;
-    private Limba limbaOriginala = Limba.Romana;
-    private List<String> distinctiiAcordate = new ArrayList<>();
-    private boolean autograf;
+    private List<String> autoriIlustratii;
+    private List<String> tehnoredactori;
+    private String imprimerie;
+    private List<Personaj> personaje;
+    private TipCoperta tipCoperta;
+    private Limba limba;
+    private Limba traducereDin;
+    private Limba limbaOriginala;
+    private List<String> distinctiiAcordate;
+    private boolean cuAutograf;
+    private String goodreadsUrl;
+    private String wikiUrl;
 
     List<InfoCititori> cititori = new ArrayList<>();
 
@@ -52,7 +53,7 @@ public class Carte extends AbstractDB implements Serializable{
 
     public String getTitlu() {
         if (titlu == null) {
-            return "#";
+            return "";
         }
         return titlu;
     }
@@ -62,6 +63,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public List<String> getAutori() {
+        if (autori == null) {
+            return new ArrayList<>();
+        }
         return autori;
     }
 
@@ -81,6 +85,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public String getEditura() {
+        if (editura == null) {
+            return "";
+        }
         return editura;
     }
 
@@ -89,6 +96,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public String getAnAparitie() {
+        if (anAparitie == null) {
+            return "";
+        }
         return anAparitie;
     }
 
@@ -97,6 +107,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public String getTitluOriginal() {
+        if (titluOriginal == null) {
+            return "";
+        }
         return titluOriginal;
     }
 
@@ -105,6 +118,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public String getEditia() {
+        if (editia == null) {
+            return "";
+        }
         return editia;
     }
 
@@ -120,12 +136,12 @@ public class Carte extends AbstractDB implements Serializable{
         this.latime = latime;
     }
 
-    public int getLungime() {
-        return lungime;
+    public int getInaltime() {
+        return inaltime;
     }
 
-    public void setLungime(int lungime) {
-        this.lungime = lungime;
+    public void setInaltime(int inaltime) {
+        this.inaltime = inaltime;
     }
 
     public int getGreutate() {
@@ -145,6 +161,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public String getSerie() {
+        if (serie == null) {
+            return "";
+        }
         return serie;
     }
 
@@ -153,6 +172,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public List<String> getTraducatori() {
+        if (traducatori == null) {
+            return new ArrayList<>();
+        }
         return traducatori;
     }
 
@@ -161,6 +183,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public String getIsbn() {
+        if (isbn == null) {
+            return "";
+        }
         return isbn;
     }
 
@@ -176,31 +201,43 @@ public class Carte extends AbstractDB implements Serializable{
         this.cuIlustratii = cuIlustratii;
     }
 
-    public List<String> getAutorIlustratii() {
-        return autorIlustratii;
+    public List<String> getAutoriIlustratii() {
+        if (autoriIlustratii == null) {
+            return new ArrayList<>();
+        }
+        return autoriIlustratii;
     }
 
-    public void setAutorIlustratii(List<String> autorIlustratii) {
-        this.autorIlustratii = autorIlustratii;
+    public void setAutoriIlustratii(List<String> autoriIlustratii) {
+        this.autoriIlustratii = autoriIlustratii;
     }
 
-    public List<String> getTehnoredactor() {
-        return tehnoredactor;
+    public List<String> getTehnoredactori() {
+        if (tehnoredactori == null) {
+            return new ArrayList<>();
+        }
+        return tehnoredactori;
     }
 
-    public void setTehnoredactor(List<String> tehnoredactor) {
-        this.tehnoredactor = tehnoredactor;
+    public void setTehnoredactori(List<String> tehnoredactori) {
+        this.tehnoredactori = tehnoredactori;
     }
 
-    public String getTiparitLa() {
-        return tiparitLa;
+    public String getImprimerie() {
+        if (imprimerie == null) {
+            return "";
+        }
+        return imprimerie;
     }
 
-    public void setTiparitLa(String tiparitLa) {
-        this.tiparitLa = tiparitLa;
+    public void setImprimerie(String imprimerie) {
+        this.imprimerie = imprimerie;
     }
 
     public List<Personaj> getPersonaje() {
+        if (personaje == null) {
+            return new ArrayList<>();
+        }
         return personaje;
     }
 
@@ -209,6 +246,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public TipCoperta getTipCoperta() {
+        if (tipCoperta == null) {
+            return TipCoperta.Nespecificat;
+        }
         return tipCoperta;
     }
 
@@ -217,6 +257,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public Limba getLimba() {
+        if (limba == null) {
+            return Limba.Nespecificat;
+        }
         return limba;
     }
 
@@ -225,6 +268,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public Limba getTraducereDin() {
+        if (traducereDin == null) {
+            return Limba.Nespecificat;
+        }
         return traducereDin;
     }
 
@@ -233,6 +279,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public Limba getLimbaOriginala() {
+        if (limbaOriginala == null) {
+            return Limba.Nespecificat;
+        }
         return limbaOriginala;
     }
 
@@ -241,6 +290,9 @@ public class Carte extends AbstractDB implements Serializable{
     }
 
     public List<String> getDistinctiiAcordate() {
+        if (distinctiiAcordate == null) {
+            return new ArrayList<>();
+        }
         return distinctiiAcordate;
     }
 
@@ -248,15 +300,40 @@ public class Carte extends AbstractDB implements Serializable{
         this.distinctiiAcordate = distinctiiAcordate;
     }
 
-    public boolean isAutograf() {
-        return autograf;
+    public boolean isCuAutograf() {
+        return cuAutograf;
     }
 
-    public void setAutograf(boolean autograf) {
-        this.autograf = autograf;
+    public void setCuAutograf(boolean cuAutograf) {
+        this.cuAutograf = cuAutograf;
+    }
+
+    public String getGoodreadsUrl() {
+        if (goodreadsUrl == null) {
+            goodreadsUrl = "";
+        }
+        return goodreadsUrl;
+    }
+
+    public void setGoodreadsUrl(String goodreadsUrl) {
+        this.goodreadsUrl = goodreadsUrl;
+    }
+
+    public String getWikiUrl() {
+        if (wikiUrl == null) {
+            wikiUrl = "";
+        }
+        return wikiUrl;
+    }
+
+    public void setWikiUrl(String wikiUrl) {
+        this.wikiUrl = wikiUrl;
     }
 
     public List<InfoCititori> getCititori() {
+        if (cititori == null) {
+            return new ArrayList<>();
+        }
         return cititori;
     }
 
