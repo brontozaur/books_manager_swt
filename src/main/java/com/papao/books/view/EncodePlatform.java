@@ -6,6 +6,7 @@ import com.papao.books.model.Carte;
 import com.papao.books.repository.CarteRepository;
 import com.papao.books.repository.UserRepository;
 import com.papao.books.view.carte.CarteView;
+import com.papao.books.view.menu.HelpBrowser;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbContentProvider;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
@@ -33,6 +34,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Event;
@@ -45,6 +47,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.List;
 
 @org.springframework.stereotype.Component
@@ -80,6 +83,31 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private Link linkViewMode;
     private TreeViewer leftTreeViewer;
     private MongoTemplate mongoTemplate;
+
+    private Label detalii_titlu;
+    private Label detalii_editura;
+    private Label detalii_an_aparitie;
+    private Label detalii_titlu_original;
+    private Label detalii_editia;
+    private Label detalii_inaltime;
+    private Label detalii_latime;
+    private Label detalii_greutate;
+    private Label detalii_nr_pagini;
+    private Label detalii_serie;
+    private Label detalii_traducatori;
+    private Label detalii_isbn;
+    private Button detalii_buttonCuIlustratii;
+    private Button detalii_buttonCuAutograf;
+    private Label detalii_autori_ilustratii;
+    private Label detalii_tehnoredactori;
+    private Label detalii_imprimerie;
+    private Label detalii_tip_coperta;
+    private Label detalii_limba;
+    private Label detalii_traducere_din;
+    private Label detalii_limba_originala;
+    private Label detalii_distinctii_acordate;
+    private Link linkGoodreadsUrl;
+    private Link linkWikiUrl;
 
     @Autowired
     public EncodePlatform(CarteRepository carteRepository,
@@ -215,6 +243,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             @Override
             public void handleEvent(Event event) {
                 enableOps();
+                displayBookData();
             }
         });
         this.tableViewer.getTable().addListener(SWT.KeyDown, new Listener() {
@@ -251,7 +280,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             @Override
             public final void handleEvent(final Event e) {
                 search();
-//                enableOps();
+                enableOps();
             }
         });
 
@@ -270,30 +299,71 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         tabItemDetaliiCarte.setImage(AppImages.getImage16(AppImages.IMG_DETAILS_NEW));
         this.mainTabFolder.setSelection(tabItemDetaliiCarte);
 
-        Label bookTitle = new Label(bottomInnerTabFolderRight, SWT.NONE);
-        bookTitle.setText("Test");
-        tabItemDetaliiCarte.setControl(bookTitle);
-
-//        createTopRightComponents(mainTabFolder);
+        tabItemDetaliiCarte.setControl(createTabDetaliiCarteContent(bottomInnerTabFolderRight));
+        bottomInnerTabFolderRight.setSelection(tabItemDetaliiCarte);
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
-//        this.rightInnerSash.setMaximizedControl(topInnerCompRight);
 
         WidgetCursorUtil.addHandCursorListener(this.tableViewer.getTable());
         SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
-
-        this.searchSystem.getSearchButton().registerListeners(SWT.MouseUp, new Listener() {
-            @Override
-            public final void handleEvent(final Event e) {
-                search();
-//                enableOps();
-            }
-        });
 
         booksTabItem.setControl(verticalSash);
 
         this.tableViewer.setInput(carteRepository.findAll());
         getContainer().layout();
+    }
+
+    private Composite createTabDetaliiCarteContent(CTabFolder bottomInnerTabFolderRight) {
+        final Composite comp = new Composite(bottomInnerTabFolderRight, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comp);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
+        comp.setVisible(false);
+
+        new Label(comp, SWT.NONE).setText("Titlu");
+        detalii_titlu = new Label(comp, SWT.READ_ONLY);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(detalii_titlu);
+
+        new Label(comp, SWT.NONE).setText("Editura");
+        detalii_editura = new Label(comp, SWT.READ_ONLY);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(detalii_editura);
+
+        new Label(comp, SWT.NONE).setText("Wiki url");
+        linkWikiUrl = new Link(comp, SWT.NONE);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(linkWikiUrl);
+        linkWikiUrl.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                new HelpBrowser(comp.getShell(), linkWikiUrl.getData().toString(), false).open();
+            }
+        });
+
+        new Label(comp, SWT.NONE).setText("Goodreads url");
+        linkGoodreadsUrl = new Link(comp, SWT.NONE);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(linkGoodreadsUrl);
+        linkGoodreadsUrl.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                new HelpBrowser(comp.getShell(), linkGoodreadsUrl.getData().toString(), false).open();
+            }
+        });
+
+        return comp;
+    }
+
+    private void displayBookData() {
+        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
+            return;
+        }
+        if (this.tableViewer.getTable().getSelectionCount() != 0) {
+            Carte carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
+            detalii_editura.setText(carte.getEditura());
+            detalii_titlu.setText(carte.getTitlu());
+            linkWikiUrl.setText("<a>" + carte.getWikiUrl() + "</a>");
+            linkWikiUrl.setData(carte.getWikiUrl());
+
+            linkGoodreadsUrl.setText("<a>" + carte.getGoodreadsUrl() + "</a>");
+            linkGoodreadsUrl.setData(carte.getGoodreadsUrl());
+        }
     }
 
     protected final void enableOps() {
@@ -537,7 +607,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             @Override
             public final void handleEvent(final Event e) {
 //                populateLeftTree(false);
-//                enableOps();
+                enableOps();
             }
         });
         return menu;
@@ -1069,7 +1139,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         }
         int viewMode = MODE_MODIFY;
         if (createDuplicate) {
-            carte = (Carte)ObjectCloner.copy(carte);
+            carte = (Carte) ObjectCloner.copy(carte);
             carte.setId(null);
             viewMode = MODE_CLONE;
         }

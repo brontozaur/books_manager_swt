@@ -68,7 +68,7 @@ public class LinkedinComposite extends Composite {
 
     private void populateFields() {
         int additionalShellHeight = 0;
-        for (String valoareInitiala: valoriInitiale) {
+        for (String valoareInitiala : valoriInitiale) {
             final ClosableCanvas canvas = new ClosableCanvas(LinkedinComposite.this, valoareInitiala);
             valoriIntroduse.add(valoareInitiala);
             textSearch.setText("");

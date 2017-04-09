@@ -39,7 +39,6 @@ public final class HelpBrowser implements Listener {
     private static Browser browser = null;
     private Shell shell;
     private Map<String, TreeItem> locations = new LinkedHashMap<String, TreeItem>();
-    private final static String WEB_START_ADRESS = "http://goodreads.com";
 
     /**
      * @param parent
@@ -56,7 +55,7 @@ public final class HelpBrowser implements Listener {
      *            3. Enjoy the newly Mozilla flavoured browser!
      *            </p>
      */
-    public HelpBrowser(final Shell parent, final boolean USE_MOZILLA) {
+    public HelpBrowser(final Shell parent, String url, final boolean USE_MOZILLA) {
         int width;
         int height;
         Composite bigUpperComp;
@@ -103,7 +102,7 @@ public final class HelpBrowser implements Listener {
             bigLabelText = new Label(bigUpperComp, SWT.NONE);
             data = new GridData(SWT.FILL, SWT.CENTER, true, true);
             bigLabelText.setLayoutData(data);
-            bigLabelText.setText("Manual aplicatie");
+            bigLabelText.setText("Web browser integrat");
 
             bigLabelImage = new Label(bigUpperComp, SWT.NONE);
             data = new GridData(SWT.END, SWT.FILL, false, true);
@@ -169,7 +168,7 @@ public final class HelpBrowser implements Listener {
             setComboAdress(new Combo(getCLabelNavigare(), SWT.BORDER | SWT.DROP_DOWN));
             gd = new GridData(GridData.FILL_HORIZONTAL);
             getComboAdress().setLayoutData(gd);
-            getComboAdress().setText(HelpBrowser.WEB_START_ADRESS);
+            getComboAdress().setText(url);
             SWTeXtension.addColoredFocusListener(getComboAdress(), ColorUtil.COLOR_FOCUS_YELLOW);
             getComboAdress().addListener(SWT.Selection, this);
 
@@ -197,8 +196,8 @@ public final class HelpBrowser implements Listener {
 				logger.error(exc.getMessage(), exc);
             }
             if (HelpBrowser.getBrowser() != null) {
-                setComboItems(HelpBrowser.WEB_START_ADRESS);
-                HelpBrowser.getBrowser().setUrl(HelpBrowser.WEB_START_ADRESS);
+                setComboItems(url);
+                HelpBrowser.getBrowser().setUrl(url);
             }
 
             setCLabelStatus(new CLabel(getCompBrowser(), SWT.BORDER));

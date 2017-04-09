@@ -139,7 +139,7 @@ public final class PlatformMenu {
 
     public static void launchHelp() {
         try {
-            HelpBrowser hb = new HelpBrowser(null, false);
+            HelpBrowser hb = new HelpBrowser(null, "https://www.goodreads.com", false);
             hb.open();
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
