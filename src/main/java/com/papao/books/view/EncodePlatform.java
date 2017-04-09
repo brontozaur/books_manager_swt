@@ -1,10 +1,9 @@
 package com.papao.books.view;
 
 import com.papao.books.FiltruAplicatie;
+import com.papao.books.model.AbstractDB;
 import com.papao.books.model.Carte;
-import com.papao.books.repository.AutorRepository;
 import com.papao.books.repository.CarteRepository;
-import com.papao.books.repository.EdituraRepository;
 import com.papao.books.repository.UserRepository;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.menu.PlatformMenu;
@@ -80,21 +79,15 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private Link linkViewMode;
     private TreeViewer leftTreeViewer;
     private MongoTemplate mongoTemplate;
-    private AutorRepository autorRepository;
-    private EdituraRepository edituraRepository;
 
     @Autowired
     public EncodePlatform(CarteRepository carteRepository,
                           UserRepository userRepository,
-                          AutorRepository autorRepository,
-                          EdituraRepository edituraRepository,
                           MongoTemplate mongoTemplate) {
         super(null, AbstractView.MODE_NONE);
         this.carteRepository = carteRepository;
         this.userRepository = userRepository;
         this.mongoTemplate = mongoTemplate;
-        this.autorRepository = autorRepository;
-        this.edituraRepository = edituraRepository;
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
@@ -217,9 +210,32 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         this.tableViewer.getTable().setHeaderVisible(true);
         this.tableViewer.getTable().setLinesVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this.tableViewer.getControl());
-        this.tableViewer.getTable().addListener(SWT.Selection, this);
-        this.tableViewer.getTable().addListener(SWT.KeyDown, this);
-        this.tableViewer.getTable().addListener(SWT.DefaultSelection, this);
+        this.tableViewer.getTable().addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                enableOps();
+            }
+        });
+        this.tableViewer.getTable().addListener(SWT.KeyDown, new Listener() {
+            @Override
+            public void handleEvent(Event e) {
+                if (e.keyCode == SWT.F3) {
+                    handleSearchDisplay();
+                }
+                if (e.character == SWT.DEL) {
+                    delete();
+                }
+                if (e.keyCode == SWT.F5) {
+                    refresh();
+                }
+            }
+        });
+        this.tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                modify();
+            }
+        });
         this.tableViewer.getTable().setMenu(createTableMenu());
 
         initViewerCols();
@@ -277,6 +293,21 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
 
         this.tableViewer.setInput(carteRepository.findAll());
         getContainer().layout();
+    }
+
+    protected final void enableOps() {
+        boolean enable = true;
+        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
+            return;
+        }
+        if (this.tableViewer.getTable().getSelectionCount() == 0) {
+            enable = false;
+        } else {
+            enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractDB;
+        }
+        toolItemAdd.setEnabled(true); // add
+        toolItemMod.setEnabled(enable); // mod
+        toolItemDel.setEnabled(enable); // del
     }
 
     private void createCompLeftTree(SashForm verticalSash) {
@@ -522,12 +553,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     public void swap(final boolean isCodeSelection) {
         if (compLeftTree.getLocation().x < compRight.getLocation().x) {
             compLeftTree.moveBelow(compRight);
-            verticalSash.setWeights(new int[] {
-                    10, 3 });
+            verticalSash.setWeights(new int[]{
+                    10, 3});
         } else {
             compLeftTree.moveAbove(compRight);
-            verticalSash.setWeights(new int[] {
-                    3, 10 });
+            verticalSash.setWeights(new int[]{
+                    3, 10});
         }
     }
 
@@ -649,7 +680,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return carte.getNumeAutori(autorRepository.findByIdInOrderByNumeAsc(carte.getAutori()));
+                            return carte.getNumeAutori(carte.getAutori());
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
@@ -657,7 +688,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return a.getNumeAutori(autorRepository.findByIdInOrderByNumeAsc(a.getAutori())).compareTo(b.getNumeAutori(autorRepository.findByIdInOrderByNumeAsc(b.getAutori())));
+                            return a.getNumeAutori(a.getAutori()).compareTo(b.getNumeAutori(b.getAutori()));
                         }
 
                     };
@@ -690,8 +721,81 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         this.tableViewer.getTable().setSortColumn(null);
     }
 
-    private Menu createTableMenu() {
-        return null;
+    protected Menu createTableMenu() {
+        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
+            return null;
+        }
+        final Menu menu = new Menu(this.tableViewer.getTable());
+        MenuItem menuItem;
+        menu.addListener(SWT.Show, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                int idx = 0;
+                final int selIdx = tableViewer.getTable().getSelectionIndex();
+                idx++; // refresh
+                idx++; // separator
+                idx++; // add
+                menu.getItem(idx++).setEnabled(selIdx != -1); // mod
+                menu.getItem(idx++).setEnabled(selIdx != -1); // del
+                idx++; // sep
+                menu.getItem(idx++).setEnabled(selIdx != -1); // view
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Refresh   F5");
+        menuItem.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                refresh();
+            }
+        });
+
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Adaugare");
+        menuItem.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                add();
+                enableOps();
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Modificare");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                modify();
+                enableOps();
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Stergere  Del");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                delete();
+                enableOps();
+            }
+        });
+
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Vizualizare   Enter");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                view();
+            }
+        });
+        return menu;
     }
 
     public void closeApplication(boolean forced) {
@@ -876,7 +980,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), carteRepository, autorRepository,  mongoTemplate, AbstractView.MODE_ADD);
+        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), carteRepository, mongoTemplate, AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -928,7 +1032,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, autorRepository,  mongoTemplate, AbstractView.MODE_MODIFY);
+        view = new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, AbstractView.MODE_MODIFY);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -952,7 +1056,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                         @Override
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                             Carte carte = (Carte) element;
-                            return searchType.compareValues(carte.getNumeAutori(autorRepository.findByIdInOrderByNumeAsc(carte.getAutori())));
+                            return searchType.compareValues(carte.getNumeAutori(carte.getAutori()));
                         }
                     };
                     break;
@@ -990,7 +1094,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return;
         }
-        new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, autorRepository, mongoTemplate, AbstractView.MODE_VIEW).open();
+        new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, AbstractView.MODE_VIEW).open();
     }
 
     public void refresh() {

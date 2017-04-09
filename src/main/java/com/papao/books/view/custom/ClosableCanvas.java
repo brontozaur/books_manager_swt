@@ -14,7 +14,7 @@ public class ClosableCanvas extends Canvas {
         super(parent, SWT.NONE);
         this.text = text;
 
-        GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(3, 2, 0, 0).equalWidth(false).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(0, 2, 0, 0).equalWidth(false).applyTo(this);
         this.setData(text);
 
         new Label(this, SWT.NONE).setText(text);

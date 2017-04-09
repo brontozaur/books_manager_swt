@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete, IEncodeSearch, Listener {
+public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete, IEncodeSearch {
 
     private static Logger logger = LoggerFactory.getLogger(UsersView.class);
 
@@ -313,9 +313,32 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         this.tableViewer.getTable().setHeaderVisible(true);
         this.tableViewer.getTable().setLinesVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).hint(480, 320).applyTo(this.tableViewer.getControl());
-        this.tableViewer.getTable().addListener(SWT.Selection, this);
-        this.tableViewer.getTable().addListener(SWT.KeyDown, this);
-        this.tableViewer.getTable().addListener(SWT.DefaultSelection, this);
+        this.tableViewer.getTable().addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                enableOps();
+            }
+        });
+        this.tableViewer.getTable().addListener(SWT.KeyDown, new Listener() {
+            @Override
+            public void handleEvent(Event e) {
+                if (e.keyCode == SWT.F3) {
+                    handleSearchDisplay(true);
+                }
+                if (e.character == SWT.DEL) {
+                    delete();
+                }
+                if (e.keyCode == SWT.F5) {
+                    refresh();
+                }
+            }
+        });
+        this.tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                modify();
+            }
+        });
         this.tableViewer.getTable().setMenu(createTableMenu());
 
         initViewerCols();
@@ -340,6 +363,13 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
 
         WidgetCursorUtil.addHandCursorListener(this.tableViewer.getTable());
         SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
+
+        getToolItemSearch().addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                handleSearchDisplay(false);
+            }
+        });
     }
 
     public final void createViewerFilters() {
@@ -419,41 +449,6 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             this.sash.setMaximizedControl(null);
         } else {
             this.sash.setMaximizedControl(this.compRight);
-        }
-    }
-
-    @Override
-    public final void handleEvent(final Event e) {
-        switch (e.type) {
-            case SWT.Selection: {
-                if (e.widget == getToolItemSearch()) {
-                    handleSearchDisplay(false);
-                } else if (e.widget == this.tableViewer.getTable()) {
-                    enableOps();
-                }
-                break;
-            }
-            case SWT.KeyDown: {
-                if (e.widget == this.tableViewer.getTable()) {
-                    if (e.keyCode == SWT.F3) {
-                        handleSearchDisplay(true);
-                    }
-                    if (e.character == SWT.DEL) {
-                        delete();
-                    }
-                    if (e.keyCode == SWT.F5) {
-                        refresh();
-                    }
-                }
-                break;
-            }
-            case SWT.DefaultSelection: {
-                if (e.widget == this.tableViewer.getTable()) {
-                    view();
-                }
-                break;
-            }
-            default:
         }
     }
 }

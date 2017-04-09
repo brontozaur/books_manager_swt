@@ -81,6 +81,14 @@ public final class ContentProposalProvider implements IContentProposalProvider {
 	}
 
 	public static void addContentProposal(	final Control control,
+											  List<String> proposals) {
+		if (proposals == null) {
+			proposals = new ArrayList<>();
+		}
+		addContentProposal(control, proposals.toArray(new String[proposals.size()]), false);
+	}
+
+	public static void addContentProposal(	final Control control,
 											final String[] proposals,
 											final boolean isCursorAtZeroIndex) {
 		try {
