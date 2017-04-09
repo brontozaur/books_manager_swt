@@ -3,12 +3,13 @@ package com.papao.books.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 @Document(collection = "carte")
-public class Carte extends AbstractDB {
+public class Carte extends AbstractDB implements Serializable{
 
     @Id
     private String id;

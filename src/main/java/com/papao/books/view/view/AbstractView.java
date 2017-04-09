@@ -48,6 +48,10 @@ public abstract class AbstractView {
      * a special view mode, to allow the users to modify some of the fields, resulting in partial update of the window's DBO.
      */
     public final static int MODE_MODIFY_PARTIAL = 6;
+    /**
+     * Style suggesting the clone of the object
+     */
+    public final static int MODE_CLONE = 7;
 
     /**
      * adds the Save button
@@ -759,6 +763,21 @@ public abstract class AbstractView {
                     }
                 }
                 setBigViewImage(AppImages.getImage24(AppImages.IMG_MODIFICARE));
+                break;
+            }
+            case MODE_CLONE: {
+                if (getShellImage() == null) {
+                    setShellImage(AppImages.getImage16(AppImages.IMG_COPY));
+                }
+                if (StringUtils.isNotEmpty(this.objectName)) {
+                    if (StringUtils.isEmpty(getShellText())) {
+                        setShellText("Duplicare " + this.objectName);
+                    }
+                    if (StringUtils.isEmpty(getBigViewMessage())) {
+                        setBigViewMessage(StringUtil.capitalizeCharAtIdx(this.objectName, 0));
+                    }
+                }
+                setBigViewImage(AppImages.getImage24(AppImages.IMG_COPY));
                 break;
             }
             case MODE_MODIFY_PARTIAL: {
@@ -1492,7 +1511,9 @@ public abstract class AbstractView {
     }
 
     protected final boolean isViewEnabled() {
-        return (this.viewMode == AbstractView.MODE_ADD) || (this.viewMode == AbstractView.MODE_MODIFY);
+        return this.viewMode == AbstractView.MODE_ADD
+                || this.viewMode == AbstractView.MODE_MODIFY
+                || this.viewMode == AbstractView.MODE_CLONE;
     }
 
     protected void setShowSaveOKMessage(final boolean automaticallyShowSaveOKMessage) {

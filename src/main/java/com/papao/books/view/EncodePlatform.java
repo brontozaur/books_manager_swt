@@ -71,6 +71,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
 
     private ToolItem toolItemAdd;
     private ToolItem toolItemMod;
+    private ToolItem toolItemClone;
     private ToolItem toolItemDel;
     private ToolItem toolItemRefresh;
     private ToolItem toolItemSearch;
@@ -233,7 +234,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         this.tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                modify();
+                modify(false);
             }
         });
         this.tableViewer.getTable().setMenu(createTableMenu());
@@ -306,6 +307,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractDB;
         }
         toolItemAdd.setEnabled(true); // add
+        toolItemClone.setEnabled(enable); // mod
         toolItemMod.setEnabled(enable); // mod
         toolItemDel.setEnabled(enable); // del
     }
@@ -584,7 +586,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         this.toolItemMod.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                modify();
+                modify(false);
+            }
+        });
+        this.toolItemClone = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
+        this.toolItemClone.setImage(AppImages.getImage16(AppImages.IMG_COPY));
+        this.toolItemClone.setHotImage(AppImages.getImage16Focus(AppImages.IMG_COPY));
+        this.toolItemClone.setToolTipText("Duplicare");
+        this.toolItemClone.setText("&Duplicare");
+        this.toolItemClone.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                modify(true);
             }
         });
         this.toolItemDel = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
@@ -736,6 +749,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 idx++; // separator
                 idx++; // add
                 menu.getItem(idx++).setEnabled(selIdx != -1); // mod
+                menu.getItem(idx++).setEnabled(selIdx != -1); // clone
                 menu.getItem(idx++).setEnabled(selIdx != -1); // del
                 idx++; // sep
                 menu.getItem(idx++).setEnabled(selIdx != -1); // view
@@ -770,7 +784,17 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                modify();
+                modify(false);
+                enableOps();
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Duplicare");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                modify(true);
                 enableOps();
             }
         });
@@ -1002,14 +1026,15 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cartea selectata?", "Confirmare stergere carte") == SWT.NO) {
                 return true;
             }
-            carte = carteRepository.findOne(carte.getId());
-            if (carte == null) {
+            Carte carteDb = carteRepository.findOne(carte.getId());
+            if (carteDb == null) {
                 SWTeXtension.displayMessageW("Cartea nu mai exista in baza de date!");
                 return false;
             }
-            carteRepository.delete(carte);
+            carteRepository.delete(carteDb);
             List<Carte> input = (List) tableViewer.getInput();
             input.remove(input.indexOf(carte));
+            tableViewer.setInput(input);
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -1018,7 +1043,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         return true;
     }
 
-    public boolean modify() {
+    public boolean modify(boolean createDuplicate) {
         CarteView view;
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
             return false;
@@ -1032,7 +1057,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, AbstractView.MODE_MODIFY);
+        int viewMode = MODE_MODIFY;
+        if (createDuplicate) {
+            carte = (Carte)ObjectCloner.copy(carte);
+            carte.setId(null);
+            viewMode = MODE_CLONE;
+        }
+        view = new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, viewMode);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
