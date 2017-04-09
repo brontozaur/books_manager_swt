@@ -876,7 +876,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), carteRepository, mongoTemplate, AbstractView.MODE_ADD);
+        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), carteRepository, autorRepository,  mongoTemplate, AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -928,7 +928,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, AbstractView.MODE_MODIFY);
+        view = new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, autorRepository,  mongoTemplate, AbstractView.MODE_MODIFY);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -990,7 +990,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return;
         }
-        new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, AbstractView.MODE_VIEW).open();
+        new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, autorRepository, mongoTemplate, AbstractView.MODE_VIEW).open();
     }
 
     public void refresh() {

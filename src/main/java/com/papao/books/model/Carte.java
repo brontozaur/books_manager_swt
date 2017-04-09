@@ -45,6 +45,15 @@ public class Carte extends AbstractDB {
         this.autori = autori;
     }
 
+    public String[] getNumeAutoriList(List<Autor> autori) {
+        String[] numeAutori = new String[autori.size()];
+        int i = 0;
+        for (Autor autor : autori) {
+            numeAutori[i++] = autor.getNume();
+        }
+        return numeAutori;
+    }
+
     public String getNumeAutori(List<Autor> autori) {
         StringBuilder numeAutori = new StringBuilder();
         for (Autor autor : autori) {
