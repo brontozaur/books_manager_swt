@@ -242,7 +242,7 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setInaltime(Integer.valueOf(textInaltime.getValue().toString()));
         this.carte.setLatime(Integer.valueOf(textLatime.getValue().toString()));
         this.carte.setNrPagini(Integer.valueOf(textNrPagini.getValue().toString()));
-        this.carte.setGreutate(Integer.valueOf(textGreutate.getValue().toString()));
+        this.carte.setGreutate(Double.valueOf(textGreutate.getValue().toString()));
         this.carte.setSerie(textSerie.getText());
         this.carte.setEditia(textEditia.getText());
         this.carte.setTraducatori(compositeTraducatori.getValoriIntroduse());

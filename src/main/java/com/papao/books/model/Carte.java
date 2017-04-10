@@ -21,7 +21,7 @@ public class Carte extends AbstractDB implements Serializable {
     private String editia;
     private int latime;
     private int inaltime;
-    private int greutate;
+    private double greutate;
     private int nrPagini;
     private String serie;
     private List<String> traducatori;
@@ -144,11 +144,11 @@ public class Carte extends AbstractDB implements Serializable {
         this.inaltime = inaltime;
     }
 
-    public int getGreutate() {
+    public double getGreutate() {
         return greutate;
     }
 
-    public void setGreutate(int greutate) {
+    public void setGreutate(double greutate) {
         this.greutate = greutate;
     }
 
