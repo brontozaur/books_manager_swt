@@ -1,15 +1,13 @@
 package com.papao.books.view.custom;
 
 import com.papao.books.view.providers.ContentProposalProvider;
+import com.papao.books.view.util.ColorUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.RowDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,46 +17,45 @@ public class LinkedinComposite extends Composite {
     private Text textSearch;
     private List<String> valoriIntroduse = new ArrayList<>();
     private List<String> valoriInitiale;
+    private Composite compSelections;
 
     public LinkedinComposite(Composite parent, final List<String> proposals, List<String> valoriInitiale) {
-        super(parent, SWT.NONE);
+        super(parent, SWT.BORDER);
+        this.setBackground(ColorUtil.COLOR_WHITE);
 
         this.valoriInitiale = valoriInitiale;
-        this.setLayout(new RowLayout(SWT.HORIZONTAL));
-        GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).hint(350, SWT.DEFAULT).applyTo(this);
+        GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 1, 0).spacing(SWT.DEFAULT, 0).numColumns(2).equalWidth(false).applyTo(this);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(this);
 
         textSearch = new Text(this, SWT.SEARCH);
         textSearch.setMessage("Cautare/adaugare. Validare cu Enter.");
-        RowDataFactory.swtDefaults().hint(300, SWT.DEFAULT).applyTo(textSearch);
+        GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).align(SWT.FILL, SWT.CENTER).applyTo(textSearch);
+
+        Button buttonAdd = new Button(this, SWT.PUSH);
+        buttonAdd.setText("Adauga");
+        GridDataFactory.fillDefaults().align(SWT.END, SWT.END).applyTo(buttonAdd);
+        buttonAdd.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                final String text = textSearch.getText().trim();
+                if (StringUtils.isNotEmpty(text)) {
+                    createClosableCanvas(text, true);
+                }
+            }
+        });
+
+        compSelections = new Composite(this, SWT.BORDER);
+        compSelections.setBackground(ColorUtil.COLOR_WHITE);
+        GridDataFactory.fillDefaults().grab(true, true).hint(350, SWT.DEFAULT).span(2, 1).applyTo(compSelections);
+        RowLayoutFactory.fillDefaults().margins(2, 2).spacing(1).pack(true).wrap(true).applyTo(compSelections);
+
         ContentProposalProvider.addContentProposal(textSearch, proposals);
         textSearch.addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                final String widgetText = textSearch.getText();
+                final String widgetText = textSearch.getText().trim();
                 if (StringUtils.isNotEmpty(widgetText) && event.keyCode == SWT.CR) {
-                    if (!valoriIntroduse.contains(widgetText)) {
-                        final ClosableCanvas canvas = new ClosableCanvas(LinkedinComposite.this, widgetText);
-                        valoriIntroduse.add(widgetText);
-                        textSearch.setText("");
-                        canvas.moveAbove(textSearch);
-                        canvas.addListener(SWT.Dispose, new Listener() {
-                            @Override
-                            public void handleEvent(Event event) {
-                                getShell().setSize(getShell().getBounds().width, getShell().getBounds().height - canvas.getBounds().height);
-                                LinkedinComposite.this.layout();
-                                LinkedinComposite.this.getParent().layout();
-                                if (!textSearch.isDisposed()) {
-                                    textSearch.setText("");
-                                    valoriIntroduse.remove(valoriIntroduse.indexOf(((ClosableCanvas) event.widget).getText()));
-                                }
-                            }
-                        });
-                        getShell().setSize(getShell().getBounds().width, getShell().getBounds().height + canvas.getBounds().height);
-                        LinkedinComposite.this.layout();
-                        LinkedinComposite.this.getParent().layout();
-                    } else {
-                        textSearch.setText("");
-                    }
+                    createClosableCanvas(widgetText, true);
                 }
             }
         });
@@ -67,29 +64,42 @@ public class LinkedinComposite extends Composite {
     }
 
     private void populateFields() {
-        int additionalShellHeight = 0;
         for (String valoareInitiala : valoriInitiale) {
-            final ClosableCanvas canvas = new ClosableCanvas(LinkedinComposite.this, valoareInitiala);
-            valoriIntroduse.add(valoareInitiala);
+            createClosableCanvas(valoareInitiala, false);
+        }
+        if (valoriInitiale.size() > 0) {
+            layoutEverything();
+        }
+    }
+
+    private void layoutEverything() {
+        compSelections.setSize(compSelections.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        LinkedinComposite.this.setSize(compSelections.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        LinkedinComposite.this.getParent().layout();
+        getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+    }
+
+    private void createClosableCanvas(String text, boolean layoutParent) {
+        if (!valoriIntroduse.contains(text)) {
+            final ClosableCanvas canvas = new ClosableCanvas(compSelections, text);
+            valoriIntroduse.add(text);
             textSearch.setText("");
-            canvas.moveAbove(textSearch);
-            additionalShellHeight = canvas.getBounds().height;
             canvas.addListener(SWT.Dispose, new Listener() {
                 @Override
                 public void handleEvent(Event event) {
-                    getShell().setSize(getShell().getBounds().width, getShell().getBounds().height - canvas.getBounds().height);
-                    LinkedinComposite.this.layout();
-                    LinkedinComposite.this.getParent().layout();
                     if (!textSearch.isDisposed()) {
                         textSearch.setText("");
                         valoriIntroduse.remove(valoriIntroduse.indexOf(((ClosableCanvas) event.widget).getText()));
                     }
+                    layoutEverything();
                 }
             });
+            if (layoutParent) {
+                layoutEverything();
+            }
+        } else {
+            textSearch.setText("");
         }
-        getShell().setSize(getShell().getBounds().width, getShell().getBounds().height + additionalShellHeight);
-        LinkedinComposite.this.layout();
-        LinkedinComposite.this.getParent().layout();
     }
 
     public Text getTextSearch() {
