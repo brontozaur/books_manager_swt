@@ -870,16 +870,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Duplicare");
-        menuItem.addListener(SWT.Selection, new Listener() {
-            @Override
-            public final void handleEvent(final Event e) {
-                modify(true);
-                enableOps();
-            }
-        });
-
-        menuItem = new MenuItem(menu, SWT.NONE);
         menuItem.setText("Stergere  Del");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -899,6 +889,19 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 view();
             }
         });
+
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Duplicare");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                modify(true);
+                enableOps();
+            }
+        });
+
         return menu;
     }
 
