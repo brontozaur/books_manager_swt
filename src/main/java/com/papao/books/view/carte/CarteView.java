@@ -1,14 +1,10 @@
 package com.papao.books.view.carte;
 
 import com.mongodb.gridfs.GridFS;
-import com.mongodb.gridfs.GridFSDBFile;
-import com.mongodb.gridfs.GridFSInputFile;
 import com.papao.books.model.*;
 import com.papao.books.repository.CarteRepository;
-import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.custom.ComboImage;
-import com.papao.books.view.custom.FileSelectorComposite;
 import com.papao.books.view.custom.ImageViewerComposite;
 import com.papao.books.view.custom.LinkedinComposite;
 import com.papao.books.view.providers.ContentProposalProvider;
@@ -18,19 +14,15 @@ import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
 import org.eclipse.nebula.widgets.formattedtext.NumberFormatter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.imageio.ImageIO;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -41,6 +33,9 @@ public class CarteView extends AbstractCSaveView {
     private CarteRepository carteRepository;
     private MongoTemplate mongoTemplate;
     private GridFS gridFS;
+
+    private Composite compLeft;
+    private Composite compRight;
 
     private LinkedinComposite compositeAutori;
     private Text textTitlu;
@@ -84,38 +79,60 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private void addComponents() {
-        setWidgetLayout(new GridLayout(4, false));
+        setWidgetLayout(new GridLayout(2, true));
         getContainer().setLayout(getWidgetLayout());
 
-        Label labelAutor = new Label(getContainer(), SWT.NONE);
-        labelAutor.setText("Autori");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutor);
-        this.compositeAutori = new LinkedinComposite(getContainer(), mongoTemplate.getCollection("carte").distinct("autori"), carte.getAutori());
+        compLeft = new Composite(getContainer(), SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(0,0).applyTo(compLeft);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(compLeft);
 
-        new Label(getContainer(), SWT.NONE).setText("Titlu");
-        this.textTitlu = new Text(getContainer(), SWT.BORDER);
+        createCompLeftComponents(compLeft);
+
+        compRight = new Composite(getContainer(), SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(0,0).applyTo(compRight);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(compRight);
+
+        createCompRightComponents(compRight);
+
+        WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
+    }
+
+    private void createCompLeftComponents(Composite parent) {
+
+        new Label(parent, SWT.NONE).setText("Titlu");
+        this.textTitlu = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(300, SWT.DEFAULT).hint(300, SWT.DEFAULT).applyTo(this.textTitlu);
 
-        new Label(getContainer(), SWT.NONE).setText("Titlu original");
-        this.textTitluOriginal = new Text(getContainer(), SWT.BORDER);
+        Label labelAutor = new Label(parent, SWT.NONE);
+        labelAutor.setText("Autori");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutor);
+        this.compositeAutori = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("autori"), carte.getAutori());
+
+        Label labelTraducatori = new Label(parent, SWT.NONE);
+        labelTraducatori.setText("Traducatori");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
+        this.compositeTraducatori = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("traducatori"), carte.getTraducatori());
+
+        new Label(parent, SWT.NONE).setText("Titlu original");
+        this.textTitluOriginal = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(300, SWT.DEFAULT).hint(300, SWT.DEFAULT).applyTo(this.textTitluOriginal);
 
-        new Label(getContainer(), SWT.NONE).setText("Editura");
-        this.textEditura = new Text(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Editura");
+        this.textEditura = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.textEditura);
         ContentProposalProvider.addContentProposal(textEditura, mongoTemplate.getCollection("carte").distinct("editura"));
 
-        new Label(getContainer(), SWT.NONE).setText("Serie");
-        this.textSerie = new Text(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Serie");
+        this.textSerie = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.textSerie);
         ContentProposalProvider.addContentProposal(textSerie, mongoTemplate.getCollection("carte").distinct("serie"));
 
-        new Label(getContainer(), SWT.NONE).setText("Editia");
-        this.textEditia = new Text(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Editia");
+        this.textEditia = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.textEditia);
 
-        new Label(getContainer(), SWT.NONE).setText("ISBN");
-        this.textIsbn = new Text(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("ISBN");
+        this.textIsbn = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.textIsbn);
 
         List<BlankDbObject> aniObjects = new ArrayList<>();
@@ -123,124 +140,101 @@ public class CarteView extends AbstractCSaveView {
             final String currentYear = String.valueOf(i);
             aniObjects.add(new BlankDbObject(currentYear, currentYear));
         }
-        new Label(getContainer(), SWT.NONE).setText("An aparitie");
+        new Label(parent, SWT.NONE).setText("An aparitie");
         ComboImage.CIDescriptor comboDescriptor = new ComboImage.CIDescriptor();
         comboDescriptor.setTextMethodName(BlankDbObject.EXTERNAL_REFLECT_GET_NAME);
         comboDescriptor.setAddEmptyElement(false);
         comboDescriptor.setAddContentProposal(false);
         comboDescriptor.setClazz(BlankDbObject.class);
         comboDescriptor.setInput(aniObjects);
-        comboAnAparitie = new ComboImage(getContainer(), comboDescriptor);
+        comboAnAparitie = new ComboImage(parent, comboDescriptor);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(75, SWT.DEFAULT).hint(75, SWT.DEFAULT).applyTo(this.comboAnAparitie);
 
-        new Label(getContainer(), SWT.NONE).setText("Lungime (cm)");
-        this.textInaltime = new FormattedText(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Lungime (cm)");
+        this.textInaltime = new FormattedText(parent, SWT.BORDER);
         this.textInaltime.setFormatter(NumberUtil.getFormatter(0, true));
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(this.textInaltime.getControl());
         ((NumberFormatter) this.textInaltime.getFormatter()).setFixedLengths(false, true);
 
-        new Label(getContainer(), SWT.NONE).setText("Latime (cm)");
-        this.textLatime = new FormattedText(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Latime (cm)");
+        this.textLatime = new FormattedText(parent, SWT.BORDER);
         this.textLatime.setFormatter(NumberUtil.getFormatter(0, true));
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(this.textLatime.getControl());
         ((NumberFormatter) this.textLatime.getFormatter()).setFixedLengths(false, true);
 
-        new Label(getContainer(), SWT.NONE).setText("Greutate (kg)");
-        this.textGreutate = new FormattedText(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Greutate (kg)");
+        this.textGreutate = new FormattedText(parent, SWT.BORDER);
         this.textGreutate.setFormatter(NumberUtil.getFormatter(2, true));
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(this.textGreutate.getControl());
         ((NumberFormatter) this.textGreutate.getFormatter()).setFixedLengths(false, true);
 
-        new Label(getContainer(), SWT.NONE).setText("Nr pagini");
-        this.textNrPagini = new FormattedText(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Nr pagini");
+        this.textNrPagini = new FormattedText(parent, SWT.BORDER);
         this.textNrPagini.setFormatter(NumberUtil.getFormatter(0, true));
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(this.textNrPagini.getControl());
         ((NumberFormatter) this.textNrPagini.getFormatter()).setFixedLengths(false, true);
+    }
 
-        Label labelTraducatori = new Label(getContainer(), SWT.NONE);
-        labelTraducatori.setText("Traducatori");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
-        this.compositeTraducatori = new LinkedinComposite(getContainer(), mongoTemplate.getCollection("carte").distinct("traducatori"), carte.getTraducatori());
+    private void createCompRightComponents(Composite parent) {
+        this.coversComposite = new ImageViewerComposite(parent, gridFS, carte.getCopertaFata(), carte.getCopertaSpate());
+        ((GridData)this.coversComposite.getLayoutData()).horizontalSpan = 2;
 
-        Label labelAutoriIlustratii = new Label(getContainer(), SWT.NONE);
+        Label labelAutoriIlustratii = new Label(parent, SWT.NONE);
         labelAutoriIlustratii.setText("Autori ilustratii");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutoriIlustratii);
-        this.compositeAutoriIlustratii = new LinkedinComposite(getContainer(), mongoTemplate.getCollection("carte").distinct("autoriIlustratii"), carte.getAutoriIlustratii());
+        this.compositeAutoriIlustratii = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("autoriIlustratii"), carte.getAutoriIlustratii());
 
-        Label labelTehnoredactori = new Label(getContainer(), SWT.NONE);
+        Label labelTehnoredactori = new Label(parent, SWT.NONE);
         labelTehnoredactori.setText("Tehnoredactori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTehnoredactori);
-        this.compositeTehnoredactori = new LinkedinComposite(getContainer(), mongoTemplate.getCollection("carte").distinct("tehnoredactori"), carte.getTehnoredactori());
+        this.compositeTehnoredactori = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("tehnoredactori"), carte.getTehnoredactori());
 
-        Label labelDistinctii = new Label(getContainer(), SWT.NONE);
+        Label labelDistinctii = new Label(parent, SWT.NONE);
         labelDistinctii.setText("Distinctii acordate");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelDistinctii);
-        this.compositeDistinctiiAcordate = new LinkedinComposite(getContainer(), mongoTemplate.getCollection("carte").distinct("distinctiiAcordate"), carte.getDistinctiiAcordate());
+        this.compositeDistinctiiAcordate = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("distinctiiAcordate"), carte.getDistinctiiAcordate());
 
-        this.buttonCuIlustratii = new Button(getContainer(), SWT.CHECK);
+        this.buttonCuIlustratii = new Button(parent, SWT.CHECK);
         buttonCuIlustratii.setText("cu ilustratii");
 
-        this.buttonCuAutograf = new Button(getContainer(), SWT.CHECK);
+        this.buttonCuAutograf = new Button(parent, SWT.CHECK);
         buttonCuAutograf.setText("cu autograf");
 
-        new Label(getContainer(), SWT.NONE).setText("Imprimerie");
-        this.textImprimerie = new Text(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Imprimerie");
+        this.textImprimerie = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.textImprimerie);
 
-        new Label(getContainer(), SWT.NONE).setText("Tip coperta");
-        comboTipCoperta = new Combo(getContainer(), SWT.READ_ONLY);
+        new Label(parent, SWT.NONE).setText("Tip coperta");
+        comboTipCoperta = new Combo(parent, SWT.READ_ONLY);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboTipCoperta);
         comboTipCoperta.setItems(TipCoperta.getComboItems());
 
-        new Label(getContainer(), SWT.NONE).setText("Limba");
-        comboLimba = new Combo(getContainer(), SWT.READ_ONLY);
+        new Label(parent, SWT.NONE).setText("Limba");
+        comboLimba = new Combo(parent, SWT.READ_ONLY);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboLimba);
         comboLimba.setItems(Limba.getComboItems());
 
-        new Label(getContainer(), SWT.NONE).setText("Limba originala");
-        comboLimbaOriginala = new Combo(getContainer(), SWT.READ_ONLY);
+        new Label(parent, SWT.NONE).setText("Limba originala");
+        comboLimbaOriginala = new Combo(parent, SWT.READ_ONLY);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
                 .minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboLimbaOriginala);
         comboLimbaOriginala.setItems(Limba.getComboItems());
 
-        new Label(getContainer(), SWT.NONE).setText("Traducere din");
-        comboTraducereDin = new Combo(getContainer(), SWT.READ_ONLY);
+        new Label(parent, SWT.NONE).setText("Traducere din");
+        comboTraducereDin = new Combo(parent, SWT.READ_ONLY);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
                 .minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboTraducereDin);
         comboTraducereDin.setItems(Limba.getComboItems());
 
-        new Label(getContainer(), SWT.NONE).setText("Goodreads url");
-        this.textGoodreadsUrl = new Text(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Goodreads url");
+        this.textGoodreadsUrl = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
                 .minSize(300, SWT.DEFAULT).hint(300, SWT.DEFAULT).applyTo(this.textGoodreadsUrl);
 
-        new Label(getContainer(), SWT.NONE).setText("Wikipedia url");
-        this.textWikiUrl = new Text(getContainer(), SWT.BORDER);
+        new Label(parent, SWT.NONE).setText("Wikipedia url");
+        this.textWikiUrl = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
                 .minSize(300, SWT.DEFAULT).hint(300, SWT.DEFAULT).applyTo(this.textWikiUrl);
-
-        this.coversComposite = new ImageViewerComposite(getContainer(), gridFS, carte.getCopertaFata(), carte.getCopertaSpate());
-//        this.copertaFataSelector.getTextSelectie().addListener(SWT.Modify, new Listener() {
-//            @Override
-//            public void handleEvent(Event event) {
-//                try {
-//                    File imageFile = new File(copertaFataSelector.getSelectedFilePath());
-//                    GridFSInputFile gfsFile = gridFS.createFile(imageFile);
-//                    gfsFile.setFilename(copertaFataSelector.getTextSelectie().getText());
-//                    System.out.println(gfsFile.getId());
-//                    //gridFS.find(new ObjectId("58ebe9e94374473834db93a4"))
-//                    gfsFile.save();
-//
-//                    GridFSDBFile imageForOutput = gridFS.findOne(copertaFataSelector.getTextSelectie().getText());
-//                    System.out.println(imageForOutput);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
-
-        WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
 
     private void populateFields() {

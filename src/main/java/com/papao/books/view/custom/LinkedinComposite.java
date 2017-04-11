@@ -25,7 +25,7 @@ public class LinkedinComposite extends Composite {
 
         this.valoriInitiale = valoriInitiale;
         GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 1, 0).spacing(SWT.DEFAULT, 0).numColumns(2).equalWidth(false).applyTo(this);
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(this);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(this);
 
         textSearch = new Text(this, SWT.SEARCH);
         textSearch.setMessage("Cautare/adaugare. Validare cu Enter.");
@@ -44,10 +44,10 @@ public class LinkedinComposite extends Composite {
             }
         });
 
-        compSelections = new Composite(this, SWT.BORDER);
+        compSelections = new Composite(this, SWT.NONE);
         compSelections.setBackground(ColorUtil.COLOR_WHITE);
         GridDataFactory.fillDefaults().grab(true, true).hint(350, SWT.DEFAULT).span(2, 1).applyTo(compSelections);
-        RowLayoutFactory.fillDefaults().margins(2, 2).spacing(1).pack(true).wrap(true).applyTo(compSelections);
+        RowLayoutFactory.fillDefaults().extendedMargins(5, 5, 0, 5).spacing(1).pack(true).wrap(true).applyTo(compSelections);
 
         ContentProposalProvider.addContentProposal(textSearch, proposals);
         textSearch.addListener(SWT.KeyDown, new Listener() {

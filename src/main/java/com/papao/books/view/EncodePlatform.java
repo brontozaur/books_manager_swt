@@ -116,6 +116,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private GridFS gridFS;
     private Canvas labelBackCover;
     private Canvas labelFrontCover;
+    private Shell viewerShell;
 
     @Autowired
     public EncodePlatform(CarteRepository carteRepository,
@@ -382,18 +383,22 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         if (event.widget.getData() instanceof Image) {
             Image image = (Image) event.widget.getData();
             if (!image.isDisposed()) {
-                final Shell shell = new Shell(getShell());
-                shell.setLayout(new FillLayout());
-                shell.setSize(image.getBounds().width, image.getBounds().height);
-                shell.setBackgroundImage(image);
-                WidgetCompositeUtil.centerInDisplay(shell);
-                shell.addListener(SWT.MouseExit, new Listener() {
+                if (viewerShell != null && !viewerShell.isDisposed()) {
+                    viewerShell.close();
+                    viewerShell = null;
+                }
+                viewerShell = new Shell(getShell());
+                viewerShell.setLayout(new FillLayout());
+                viewerShell.setSize(image.getBounds().width, image.getBounds().height);
+                viewerShell.setBackgroundImage(image);
+                WidgetCompositeUtil.centerInDisplay(viewerShell);
+                viewerShell.addListener(SWT.MouseExit, new Listener() {
                     @Override
                     public void handleEvent(Event event) {
-                        shell.dispose();
+                        viewerShell.close();
                     }
                 });
-                shell.open();
+                viewerShell.open();
             }
         }
     }
