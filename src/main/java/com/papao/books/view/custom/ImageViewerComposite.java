@@ -24,6 +24,8 @@ import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class ImageViewerComposite extends Composite {
 
@@ -178,6 +180,7 @@ public class ImageViewerComposite extends Composite {
         }
         GridFSInputFile gfsFile = gridFS.createFile(file);
         gfsFile.setFilename(file.getName());
+        gfsFile.setContentType(Files.probeContentType(Paths.get(imagePath)));
         DBObject meta = new BasicDBObject();
         meta.put("fileName", file.getName());
         meta.put("fileOriginalFilePath", imagePath);
