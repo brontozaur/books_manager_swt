@@ -26,7 +26,7 @@ public class ImageSelectorComposite extends Composite {
 
     private Label labelImage;
     private Shell previewShell;
-    private Label textFileName;
+    private Text textFileName;
     private boolean imageChanged;
     private final int WIDTH = 180;
     private final int HEIGHT = 180;
@@ -42,14 +42,14 @@ public class ImageSelectorComposite extends Composite {
 //        GridDataFactory.fillDefaults().grab(false, false).applyTo(this);
         GridDataFactory.fillDefaults().grab(false, false).hint(200, 230).applyTo(this);
 
-        this.textFileName = new Label(this, SWT.NONE);
+        this.textFileName = new Text(this, SWT.BORDER | SWT.READ_ONLY);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textFileName);
         if (imageName != null && fullImage != null) {
             this.textFileName.setText(imageName);
         }
 
         labelImage = new Label(this, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.BEGINNING).applyTo(labelImage);
+        GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(labelImage);
         labelImage.addListener(SWT.MouseEnter, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -147,6 +147,7 @@ public class ImageSelectorComposite extends Composite {
                 labelImage.getImage().dispose();
             }
             labelImage.setImage(null);
+            textFileName.setText("");
             imageChanged = true;
         }
     }
@@ -174,6 +175,7 @@ public class ImageSelectorComposite extends Composite {
             labelImage.setData(OS_FILE, file);
             Image resizedImage = AppImages.getImage(fullImage, WIDTH, HEIGHT);
             labelImage.setImage(resizedImage);
+            textFileName.setText(file.getName());
             imageChanged = true;
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
