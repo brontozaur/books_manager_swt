@@ -24,7 +24,7 @@ public class LinkedinComposite extends Composite {
         this.setBackground(ColorUtil.COLOR_WHITE);
 
         this.valoriInitiale = valoriInitiale;
-        GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 1, 0).spacing(SWT.DEFAULT, 0).numColumns(2).equalWidth(false).applyTo(this);
+        GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 1, 0).spacing(2, 0).numColumns(2).equalWidth(false).applyTo(this);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this);
 
         textSearch = new Text(this, SWT.SEARCH);

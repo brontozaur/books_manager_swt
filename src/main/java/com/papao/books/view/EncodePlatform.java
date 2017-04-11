@@ -387,7 +387,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                     viewerShell.close();
                     viewerShell = null;
                 }
-                viewerShell = new Shell(getShell());
+                viewerShell = new Shell(getShell(), SWT.NO_TRIM);
                 viewerShell.setLayout(new FillLayout());
                 viewerShell.setSize(image.getBounds().width, image.getBounds().height);
                 viewerShell.setBackgroundImage(image);
