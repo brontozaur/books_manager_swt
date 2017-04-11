@@ -1,5 +1,7 @@
 package com.papao.books.view.custom;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
@@ -175,7 +177,12 @@ public class ImageViewerComposite extends Composite {
             return null;
         }
         GridFSInputFile gfsFile = gridFS.createFile(file);
-        gfsFile.setFilename(imagePath);
+        gfsFile.setFilename(file.getName());
+        DBObject meta = new BasicDBObject();
+        meta.put("fileName", file.getName());
+        meta.put("fileOriginalFilePath", imagePath);
+        meta.put("fileSize", file.length());
+        gfsFile.setMetaData(meta);
         gfsFile.save();
 
         return gridFS.findOne((ObjectId) gfsFile.getId());
