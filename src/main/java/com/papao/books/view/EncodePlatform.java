@@ -431,18 +431,22 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
 
             if (carte.getCopertaFata() != null) {
                 GridFSDBFile frontCover = gridFS.find(carte.getCopertaFata().getId());
-                Image fullImage = new Image(labelFrontCover.getDisplay(), frontCover.getInputStream());
-                labelFrontCover.setData(fullImage);
-                Image resized = AppImages.getImage(fullImage, 128, 128);
-                labelFrontCover.setBackgroundImage(resized);
+                if (frontCover != null) {
+                    Image fullImage = new Image(labelFrontCover.getDisplay(), frontCover.getInputStream());
+                    labelFrontCover.setData(fullImage);
+                    Image resized = AppImages.getImage(fullImage, 128, 128);
+                    labelFrontCover.setBackgroundImage(resized);
+                }
             }
 
             if (carte.getCopertaSpate() != null) {
                 GridFSDBFile backCover = gridFS.find(carte.getCopertaSpate().getId());
-                Image fullImage = new Image(labelBackCover.getDisplay(), backCover.getInputStream());
-                labelBackCover.setData(fullImage);
-                Image resized = AppImages.getImage(fullImage, 128, 128);
-                labelBackCover.setBackgroundImage(resized);
+                if (backCover != null) {
+                    Image fullImage = new Image(labelBackCover.getDisplay(), backCover.getInputStream());
+                    labelBackCover.setData(fullImage);
+                    Image resized = AppImages.getImage(fullImage, 128, 128);
+                    labelBackCover.setBackgroundImage(resized);
+                }
             }
 
         }

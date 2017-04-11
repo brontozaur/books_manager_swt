@@ -910,7 +910,7 @@ public abstract class AbstractView {
      */
     protected abstract boolean validate();
 
-    protected abstract void saveData();
+    protected abstract void saveData() throws Exception;
 
     public final void createExportMenu(final Control exportMainControl) {
         Menu menu = null;

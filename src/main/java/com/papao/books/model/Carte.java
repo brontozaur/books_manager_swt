@@ -341,6 +341,9 @@ public class Carte extends AbstractDB implements Serializable {
     }
 
     public GridFsImageData getCopertaFata() {
+        if (copertaFata == null) {
+            return new GridFsImageData();
+        }
         return copertaFata;
     }
 
@@ -349,6 +352,9 @@ public class Carte extends AbstractDB implements Serializable {
     }
 
     public GridFsImageData getCopertaSpate() {
+        if (copertaSpate == null) {
+            return new GridFsImageData();
+        }
         return copertaSpate;
     }
 

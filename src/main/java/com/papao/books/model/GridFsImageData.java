@@ -4,8 +4,8 @@ import org.bson.types.ObjectId;
 
 public class GridFsImageData {
 
-    private ObjectId id;
-    private String fileName;
+    private ObjectId id = new ObjectId();
+    private String fileName = "";
 
     public ObjectId getId() {
         return id;

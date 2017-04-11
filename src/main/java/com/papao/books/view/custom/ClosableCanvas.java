@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.*;
 public class ClosableCanvas extends Canvas {
 
     private String text;
+    private ToolItem itemClose;
 
     public ClosableCanvas(final Composite parent, String text) {
         super(parent, SWT.NONE);
@@ -19,7 +20,7 @@ public class ClosableCanvas extends Canvas {
 
         new Label(this, SWT.NONE).setText(text);
 
-        ToolItem itemClose = new ToolItem(new ToolBar(this, SWT.FLAT), SWT.NONE);
+        itemClose = new ToolItem(new ToolBar(this, SWT.FLAT), SWT.NONE);
         itemClose.setImage(AppImages.getGrayImageMiscByName(AppImages.IMG_MISC_SIMPLE_X));
         itemClose.setHotImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_X_RED));
         itemClose.addListener(SWT.Selection, new Listener() {
@@ -29,7 +30,6 @@ public class ClosableCanvas extends Canvas {
                 parent.layout();
             }
         });
-        parent.layout();
 
         this.addListener(SWT.Paint, new Listener() {
 
@@ -49,5 +49,9 @@ public class ClosableCanvas extends Canvas {
 
     public String getText() {
         return this.text;
+    }
+
+    public ToolItem getItemClose() {
+        return this.itemClose;
     }
 }

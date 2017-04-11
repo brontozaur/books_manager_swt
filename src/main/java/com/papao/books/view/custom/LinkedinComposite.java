@@ -84,7 +84,7 @@ public class LinkedinComposite extends Composite {
             final ClosableCanvas canvas = new ClosableCanvas(compSelections, text);
             valoriIntroduse.add(text);
             textSearch.setText("");
-            canvas.addListener(SWT.Dispose, new Listener() {
+            canvas.getItemClose().addListener(SWT.Selection, new Listener() {
                 @Override
                 public void handleEvent(Event event) {
                     if (!textSearch.isDisposed()) {
