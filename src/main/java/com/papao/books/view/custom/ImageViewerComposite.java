@@ -9,7 +9,6 @@ import com.papao.books.model.GridFsImageData;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
-import org.bson.BSON;
 import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -20,12 +19,11 @@ import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class ImageViewerComposite extends Composite {
 
@@ -180,11 +178,9 @@ public class ImageViewerComposite extends Composite {
         }
         GridFSInputFile gfsFile = gridFS.createFile(file);
         gfsFile.setFilename(file.getName());
-        gfsFile.setContentType(Files.probeContentType(Paths.get(imagePath)));
+        gfsFile.setContentType(new MimetypesFileTypeMap().getContentType(file));
         DBObject meta = new BasicDBObject();
-        meta.put("fileName", file.getName());
         meta.put("fileOriginalFilePath", imagePath);
-        meta.put("fileSize", file.length());
         gfsFile.setMetaData(meta);
         gfsFile.save();
 
