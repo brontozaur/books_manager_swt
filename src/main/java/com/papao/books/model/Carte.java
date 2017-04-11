@@ -39,6 +39,9 @@ public class Carte extends AbstractDB implements Serializable {
     private boolean cuAutograf;
     private String goodreadsUrl;
     private String wikiUrl;
+    private GridFsImageData copertaFata;
+    private GridFsImageData copertaSpate;
+    private GridFsImageData autograf;
 
     List<InfoCititori> cititori = new ArrayList<>();
 
@@ -335,6 +338,30 @@ public class Carte extends AbstractDB implements Serializable {
             return new ArrayList<>();
         }
         return cititori;
+    }
+
+    public GridFsImageData getCopertaFata() {
+        return copertaFata;
+    }
+
+    public void setCopertaFata(GridFsImageData copertaFata) {
+        this.copertaFata = copertaFata;
+    }
+
+    public GridFsImageData getCopertaSpate() {
+        return copertaSpate;
+    }
+
+    public void setCopertaSpate(GridFsImageData copertaSpate) {
+        this.copertaSpate = copertaSpate;
+    }
+
+    public GridFsImageData getAutograf() {
+        return autograf;
+    }
+
+    public void setAutograf(GridFsImageData autograf) {
+        this.autograf = autograf;
     }
 
     public void setCititori(List<InfoCititori> cititori) {

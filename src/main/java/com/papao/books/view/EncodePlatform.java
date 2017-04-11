@@ -1,5 +1,7 @@
 package com.papao.books.view;
 
+import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.model.AbstractDB;
 import com.papao.books.model.Carte;
@@ -33,8 +35,10 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Event;
@@ -109,6 +113,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private Link linkGoodreadsUrl;
     private Link linkWikiUrl;
 
+    private GridFS gridFS;
+    private Canvas labelBackCover;
+    private Canvas labelFrontCover;
+
     @Autowired
     public EncodePlatform(CarteRepository carteRepository,
                           UserRepository userRepository,
@@ -117,6 +125,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         this.carteRepository = carteRepository;
         this.userRepository = userRepository;
         this.mongoTemplate = mongoTemplate;
+        this.gridFS = new GridFS(mongoTemplate.getDb());
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
@@ -135,9 +144,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             getShell().setImage(AppImages.getImage16(AppImages.IMG_BORG_MAIN));
             GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).margins(0, 0).spacing(SWT.DEFAULT, 0).applyTo(getShell());
             getShell().addListener(SWT.Close, this);
-            getShell().setImages(new Image[]{
-                    AppImages.getImage16(AppImages.IMG_BORG_MAIN), AppImages.getImage24(AppImages.IMG_BORG_MAIN),
-                    AppImages.getImage32(AppImages.IMG_BORG_MAIN)});
+            getShell().setImages(new Image[]{AppImages.getImage32(AppImages.IMG_BORG_MAIN)});
 
             createTraySystem();
 
@@ -316,8 +323,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private Composite createTabDetaliiCarteContent(CTabFolder bottomInnerTabFolderRight) {
         final Composite comp = new Composite(bottomInnerTabFolderRight, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comp);
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
-        comp.setVisible(false);
+        GridDataFactory.fillDefaults().grab(false, false).applyTo(comp);
 
         new Label(comp, SWT.NONE).setText("Titlu");
         detalii_titlu = new Label(comp, SWT.READ_ONLY);
@@ -347,7 +353,49 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
             }
         });
 
+        Composite compCovers = new Composite(comp, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(compCovers);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(compCovers);
+
+        labelFrontCover = new Canvas(compCovers, SWT.NONE);
+        GridDataFactory.fillDefaults().hint(128, 128).grab(false, false).applyTo(labelFrontCover);
+        labelFrontCover.addListener(SWT.MouseEnter, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                displayImage(event);
+            }
+        });
+
+        labelBackCover = new Canvas(compCovers, SWT.NONE);
+        GridDataFactory.fillDefaults().hint(128, 128).grab(false, false).applyTo(labelBackCover);
+        labelBackCover.addListener(SWT.MouseEnter, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                displayImage(event);
+            }
+        });
+
         return comp;
+    }
+
+    private void displayImage(Event event) {
+        if (event.widget.getData() instanceof Image) {
+            Image image = (Image) event.widget.getData();
+            if (!image.isDisposed()) {
+                final Shell shell = new Shell(getShell());
+                shell.setLayout(new FillLayout());
+                shell.setSize(image.getBounds().width, image.getBounds().height);
+                shell.setBackgroundImage(image);
+                WidgetCompositeUtil.centerInDisplay(shell);
+                shell.addListener(SWT.MouseExit, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        shell.dispose();
+                    }
+                });
+                shell.open();
+            }
+        }
     }
 
     private void displayBookData() {
@@ -363,6 +411,35 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
 
             linkGoodreadsUrl.setText("<a>" + carte.getGoodreadsUrl() + "</a>");
             linkGoodreadsUrl.setData(carte.getGoodreadsUrl());
+
+            if (labelFrontCover.getBackgroundImage() != null && !labelFrontCover.getBackgroundImage().isDisposed()) {
+                labelFrontCover.getBackgroundImage().dispose();
+                ((Image) labelFrontCover.getData()).dispose();
+            }
+            labelFrontCover.setBackgroundImage(null);
+
+            if (labelBackCover.getBackgroundImage() != null && !labelBackCover.getBackgroundImage().isDisposed()) {
+                labelBackCover.getBackgroundImage().dispose();
+                ((Image) labelBackCover.getData()).dispose();
+            }
+            labelBackCover.setBackgroundImage(null);
+
+            if (carte.getCopertaFata() != null) {
+                GridFSDBFile frontCover = gridFS.find(carte.getCopertaFata().getId());
+                Image fullImage = new Image(labelFrontCover.getDisplay(), frontCover.getInputStream());
+                labelFrontCover.setData(fullImage);
+                Image resized = AppImages.getImage(fullImage, 128, 128);
+                labelFrontCover.setBackgroundImage(resized);
+            }
+
+            if (carte.getCopertaSpate() != null) {
+                GridFSDBFile backCover = gridFS.find(carte.getCopertaSpate().getId());
+                Image fullImage = new Image(labelBackCover.getDisplay(), backCover.getInputStream());
+                labelBackCover.setData(fullImage);
+                Image resized = AppImages.getImage(fullImage, 128, 128);
+                labelBackCover.setBackgroundImage(resized);
+            }
+
         }
     }
 

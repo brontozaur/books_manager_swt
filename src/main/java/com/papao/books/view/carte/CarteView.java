@@ -1,9 +1,15 @@
 package com.papao.books.view.carte;
 
+import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSDBFile;
+import com.mongodb.gridfs.GridFSInputFile;
 import com.papao.books.model.*;
 import com.papao.books.repository.CarteRepository;
+import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.custom.ComboImage;
+import com.papao.books.view.custom.FileSelectorComposite;
+import com.papao.books.view.custom.ImageViewerComposite;
 import com.papao.books.view.custom.LinkedinComposite;
 import com.papao.books.view.providers.ContentProposalProvider;
 import com.papao.books.view.util.NumberUtil;
@@ -15,10 +21,16 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
 import org.eclipse.nebula.widgets.formattedtext.NumberFormatter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.imageio.ImageIO;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -28,6 +40,7 @@ public class CarteView extends AbstractCSaveView {
     private Carte carte;
     private CarteRepository carteRepository;
     private MongoTemplate mongoTemplate;
+    private GridFS gridFS;
 
     private LinkedinComposite compositeAutori;
     private Text textTitlu;
@@ -54,6 +67,7 @@ public class CarteView extends AbstractCSaveView {
     private LinkedinComposite compositeDistinctiiAcordate;
     private Text textGoodreadsUrl;
     private Text textWikiUrl;
+    private ImageViewerComposite coversComposite;
 
     public CarteView(final Shell parent, final Carte carte,
                      final CarteRepository carteRepository,
@@ -63,6 +77,7 @@ public class CarteView extends AbstractCSaveView {
         this.carte = carte;
         this.carteRepository = carteRepository;
         this.mongoTemplate = mongoTemplate;
+        this.gridFS = new GridFS(mongoTemplate.getDb());
 
         addComponents();
         populateFields();
@@ -184,21 +199,46 @@ public class CarteView extends AbstractCSaveView {
 
         new Label(getContainer(), SWT.NONE).setText("Limba originala");
         comboLimbaOriginala = new Combo(getContainer(), SWT.READ_ONLY);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboLimbaOriginala);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
+                .minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboLimbaOriginala);
         comboLimbaOriginala.setItems(Limba.getComboItems());
 
         new Label(getContainer(), SWT.NONE).setText("Traducere din");
         comboTraducereDin = new Combo(getContainer(), SWT.READ_ONLY);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboTraducereDin);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
+                .minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboTraducereDin);
         comboTraducereDin.setItems(Limba.getComboItems());
 
         new Label(getContainer(), SWT.NONE).setText("Goodreads url");
         this.textGoodreadsUrl = new Text(getContainer(), SWT.BORDER);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(300, SWT.DEFAULT).hint(300, SWT.DEFAULT).applyTo(this.textGoodreadsUrl);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
+                .minSize(300, SWT.DEFAULT).hint(300, SWT.DEFAULT).applyTo(this.textGoodreadsUrl);
 
         new Label(getContainer(), SWT.NONE).setText("Wikipedia url");
         this.textWikiUrl = new Text(getContainer(), SWT.BORDER);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(300, SWT.DEFAULT).hint(300, SWT.DEFAULT).applyTo(this.textWikiUrl);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
+                .minSize(300, SWT.DEFAULT).hint(300, SWT.DEFAULT).applyTo(this.textWikiUrl);
+
+        this.coversComposite = new ImageViewerComposite(getContainer(), gridFS, carte.getCopertaFata(), carte.getCopertaSpate());
+//        this.copertaFataSelector.getTextSelectie().addListener(SWT.Modify, new Listener() {
+//            @Override
+//            public void handleEvent(Event event) {
+//                try {
+//                    File imageFile = new File(copertaFataSelector.getSelectedFilePath());
+//                    GridFSInputFile gfsFile = gridFS.createFile(imageFile);
+//                    gfsFile.setFilename(copertaFataSelector.getTextSelectie().getText());
+//                    System.out.println(gfsFile.getId());
+//                    //gridFS.find(new ObjectId("58ebe9e94374473834db93a4"))
+//                    gfsFile.save();
+//
+//                    GridFSDBFile imageForOutput = gridFS.findOne(copertaFataSelector.getTextSelectie().getText());
+//                    System.out.println(imageForOutput);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        });
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
@@ -225,11 +265,11 @@ public class CarteView extends AbstractCSaveView {
         this.textGoodreadsUrl.setText(this.carte.getGoodreadsUrl());
         this.textWikiUrl.setText(this.carte.getWikiUrl());
 
-        if (!isViewEnabled()) {
-            WidgetCompositeUtil.enableGUI(getContainer(), false);
-            WidgetCompositeUtil.enableGUI(getCompHIRE(), false);
-            getContainer().setEnabled(true);
-        }
+            if (!isViewEnabled()) {
+                WidgetCompositeUtil.enableGUI(getContainer(), false);
+                WidgetCompositeUtil.enableGUI(getCompHIRE(), false);
+                getContainer().setEnabled(true);
+            }
     }
 
     @Override
@@ -259,6 +299,8 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setCuAutograf(buttonCuAutograf.getSelection());
         this.carte.setGoodreadsUrl(textGoodreadsUrl.getText());
         this.carte.setWikiUrl(textWikiUrl.getText());
+        this.carte.setCopertaFata(coversComposite.getFrontCoverData());
+        this.carte.setCopertaSpate(coversComposite.getBackCoverData());
 
         carteRepository.save(carte);
     }
