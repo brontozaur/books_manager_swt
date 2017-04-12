@@ -2,18 +2,22 @@ package com.papao.books.view;
 
 import com.mongodb.gridfs.GridFS;
 import com.papao.books.FiltruAplicatie;
+import com.papao.books.controller.CartePaginationController;
 import com.papao.books.model.AbstractDB;
+import com.papao.books.model.BlankDbObject;
 import com.papao.books.model.Carte;
 import com.papao.books.repository.CarteRepository;
 import com.papao.books.repository.UserRepository;
 import com.papao.books.view.bones.impl.bones.ViewModeDetails;
 import com.papao.books.view.carte.CarteView;
+import com.papao.books.view.custom.PaginationComposite;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbContentProvider;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
 import com.papao.books.view.providers.tree.SimpleTextNode;
 import com.papao.books.view.providers.tree.TreeContentProvider;
 import com.papao.books.view.searcheable.AbstractSearchType;
+import com.papao.books.view.searcheable.BookSearchType;
 import com.papao.books.view.searcheable.BorgSearchSystem;
 import com.papao.books.view.user.UsersView;
 import com.papao.books.view.util.*;
@@ -44,6 +48,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.awt.*;
@@ -52,7 +57,7 @@ import java.util.*;
 import java.util.List;
 
 @org.springframework.stereotype.Component
-public class EncodePlatform extends AbstractCViewAdapter implements Listener {
+public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer {
 
     private static Logger logger = Logger.getLogger(EncodePlatform.class);
     private ToolTip appToolTip;
@@ -89,16 +94,22 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private Canvas labelBackCover;
     private Canvas labelFrontCover;
     private Shell viewerShell;
+    private PaginationComposite paginationComposite;
+    private BookSearchType searchType = BookSearchType.EDITURA;
+    private CartePaginationController cartePaginationController;
 
     @Autowired
     public EncodePlatform(CarteRepository carteRepository,
                           UserRepository userRepository,
-                          MongoTemplate mongoTemplate) {
+                          MongoTemplate mongoTemplate,
+                          CartePaginationController cartePaginationController) {
         super(null, AbstractView.MODE_NONE);
         this.carteRepository = carteRepository;
         this.userRepository = userRepository;
         this.mongoTemplate = mongoTemplate;
         this.gridFS = new GridFS(mongoTemplate.getDb());
+        this.cartePaginationController = cartePaginationController;
+        this.cartePaginationController.addObserver(this);
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
@@ -213,8 +224,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         rightSash.setWeights(new int[]{2, 8});
         rightSash.setMaximizedControl(rightInnerSash);
 
+        Composite secondaryComRight = new Composite(rightInnerSash, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(secondaryComRight);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(secondaryComRight);
+
         int style = SWT.FULL_SELECTION | SWT.VIRTUAL | SWT.BORDER | SWT.SINGLE;
-        this.tableViewer = new TableViewer(rightInnerSash, style);
+        this.tableViewer = new TableViewer(secondaryComRight, style);
         this.tableViewer.setUseHashlookup(true);
         this.tableViewer.getTable().setHeaderVisible(true);
         this.tableViewer.getTable().setLinesVisible(true);
@@ -263,6 +278,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 enableOps();
             }
         });
+
+        paginationComposite = new PaginationComposite(secondaryComRight, cartePaginationController, searchType);
+        GridDataFactory.fillDefaults().grab(true, false).align(SWT.END, SWT.END).applyTo(paginationComposite);
 
         this.bottomInnerTabFolderRight = new CTabFolder(rightInnerSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.bottomInnerTabFolderRight);
@@ -493,10 +511,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         if (item.getText().contains(ViewModeDetails.ALL_STR)) {
             tableViewer.setInput(mongoTemplate.findAll(Carte.class));
         }
-        tableViewer.setInput(((SimpleTextNode) item.getData()).getDbElements());
-        if (tableViewer.getTable().getItemCount() > 0) {
-            tableViewer.getTable().setSelection(tableViewer.getTable().getItemCount() - 1);
-        }
+        cartePaginationController.requestSearch(searchType, ((BlankDbObject)((SimpleTextNode)item.getData()).getDbElement()).getName(), paginationComposite.getPageable());
+        //population is done in the observe method
     }
 
     private void populateLeftTreeByAuthor() {
@@ -574,6 +590,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 numeEditura.append(")");
             }
             SimpleTextNode node = new SimpleTextNode(numeEditura.toString());
+            node.setDbElement(new BlankDbObject(entry.getKey()));
             node.setDbElements(entry.getValue());
             node.setImage(AppImages.getImage16(AppImages.IMG_BANCA));
             baseNode.add(node);
@@ -1376,5 +1393,17 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
 
     public static EncodePlatform getInstance() {
         return instance;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        CartePaginationController controller = (CartePaginationController) o;
+        Page<Carte> page = controller.getSearchResult();
+        if (!tableViewer.getTable().isDisposed()) {
+            tableViewer.setInput(page.getContent());
+            if (tableViewer.getTable().getItemCount() > 0) {
+                tableViewer.getTable().setSelection(tableViewer.getTable().getItemCount() - 1);
+            }
+        }
     }
 }

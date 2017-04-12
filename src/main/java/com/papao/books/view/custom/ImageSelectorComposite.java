@@ -14,15 +14,10 @@ import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.IOException;
 
 public class ImageSelectorComposite extends Composite {
-
-    private final static String[] imageExtensions = new FileNameExtensionFilter(
-            "Image files", ImageIO.getReaderFileSuffixes()).getExtensions();
 
     private Label labelImage;
     private Shell previewShell;
@@ -40,7 +35,7 @@ public class ImageSelectorComposite extends Composite {
 
         GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(5, 5, 5, 5).applyTo(this);
 //        GridDataFactory.fillDefaults().grab(false, false).applyTo(this);
-        GridDataFactory.fillDefaults().grab(false, false).hint(200, 230).applyTo(this);
+        GridDataFactory.fillDefaults().grab(false, false).hint(190, 250).applyTo(this);
 
         this.textFileName = new Text(this, SWT.BORDER | SWT.READ_ONLY);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textFileName);
@@ -49,11 +44,21 @@ public class ImageSelectorComposite extends Composite {
         }
 
         labelImage = new Label(this, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(labelImage);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(labelImage);
         labelImage.addListener(SWT.MouseEnter, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 displayImage(event);
+            }
+        });
+
+        labelImage.addListener(SWT.MouseExit, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (previewShell != null && !previewShell.isDisposed()) {
+                    previewShell.close();
+                    previewShell = null;
+                }
             }
         });
 
@@ -89,7 +94,6 @@ public class ImageSelectorComposite extends Composite {
         }
 
         this.addListener(SWT.Paint, new Listener() {
-
             @Override
             public void handleEvent(final Event e) {
                 e.gc.setForeground(ColorUtil.COLOR_BLACK);
@@ -156,12 +160,8 @@ public class ImageSelectorComposite extends Composite {
         FileDialog dlg;
         try {
             dlg = new FileDialog(getShell(), SWT.OPEN);
-            dlg.setFilterExtensions(imageExtensions);
-            String[] descriptions = new String[imageExtensions.length];
-            for (int i = 0; i < imageExtensions.length; i++) {
-                descriptions[i] = "Imagini *." + imageExtensions[i];
-            }
-            dlg.setFilterNames(descriptions);
+            dlg.setFilterExtensions(new String[]{"*.jpg;*.png;*.jpeg;*.bmp;*.gif"});
+            dlg.setFilterNames(new String[]{"Imagini (*.*)"});
             String selectedFile = dlg.open();
             if (StringUtils.isEmpty(selectedFile)) {
                 return;

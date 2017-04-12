@@ -2,7 +2,9 @@ package com.papao.books.model;
 
 import org.bson.types.ObjectId;
 
-public class GridFsImageData {
+import java.io.Serializable;
+
+public class GridFsImageData implements Serializable{
 
     private ObjectId id = new ObjectId();
     private String fileName = "";
