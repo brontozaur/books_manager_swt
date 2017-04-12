@@ -512,13 +512,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         final TreeItem item = leftTreeViewer.getTree().getSelection()[0];
         tableViewer.setInput(null);
-        cartePaginationController.requestSearch(searchType, ((SimpleTextNode) item.getData()).getQueryValue(), paginationComposite.getPageable());
-        //population is done in the observe method
-    }
-
-    private void populateLeftTreeByAuthor() {
-        List<String> autori = mongoTemplate.getCollection("carte").distinct("autori");
-
+        SimpleTextNode selectedNode = (SimpleTextNode) item.getData();
+        //TODO need to fix the empty query value scenario.
+        cartePaginationController.requestSearch(searchType, selectedNode.getQueryValue(), paginationComposite.getPageable());
     }
 
     private void populateLeftTreeByEditura() {
