@@ -16,7 +16,6 @@ public class SimpleTextNode implements ITreeNode {
 	private String[] nodes = new String[0];
 	private static ViewerFilter filter;
 	private static ViewerFilter[] filters;
-	private Map<String, AbstractDB> dbElements = new TreeMap<>();
 	private Image image;
 	private Font font;
 	private Color background;
@@ -24,10 +23,12 @@ public class SimpleTextNode implements ITreeNode {
 	private Object key;
 	private final List<SimpleTextNode> ancestors;
 	private static final String INVISIBLE_ROOT = "invisibleRoot";
-	public static final String RECENT_NODE = " >> Operatii recente";
 	private AbstractDB dbElement;
 	private ITreeNode parent;
 	private List<ITreeNode> childrens;
+	private int count;
+	private boolean isAllNode;
+	private String queryValue;
 
 	public SimpleTextNode(final String node) {
 		this(null, node);
@@ -110,14 +111,6 @@ public class SimpleTextNode implements ITreeNode {
 		SimpleTextNode.filters = new ViewerFilter[] {
 			SimpleTextNode.filter };
 		return SimpleTextNode.filters;
-	}
-
-	public final Map<String, AbstractDB> getDbElements() {
-		return this.dbElements;
-	}
-
-	public final void setDbElements(final Map<String, AbstractDB> dbElements) {
-		this.dbElements = dbElements;
 	}
 
 	@Override
@@ -235,10 +228,7 @@ public class SimpleTextNode implements ITreeNode {
 	}
 
 	public String getItemCountStr() {
-		if (getDbElements() == null) {
-			return "(0)";
-		}
-		return "(" + getDbElements().size() + ")";
+		return "(" + count+")";
 	}
 
 	public static void decrementByOne(	final SimpleTextNode node,
@@ -248,7 +238,6 @@ public class SimpleTextNode implements ITreeNode {
 		if (node == null) {
 			return;
 		}
-		node.getDbElements().remove(element.getId());
 		String numeNod = node.getName();
 		if (showItemCount) {
 			if (numeNod.indexOf('(') != -1) {
@@ -283,129 +272,6 @@ public class SimpleTextNode implements ITreeNode {
 		return null;
 	}
 
-	public static SimpleTextNode getRecentNode(final SimpleTextNode invisibleRoot) {
-		List<ITreeNode> childrens = invisibleRoot.getChildrens();
-		for (ITreeNode child : childrens) {
-			String name = ((SimpleTextNode) child).getName();
-			if (name.indexOf('(') != -1) {
-				name = name.substring(0, name.indexOf('('));
-			}
-			if (name.equals(SimpleTextNode.RECENT_NODE)) {
-				return (SimpleTextNode) child;
-			}
-		}
-		return null;
-	}
-//
-//	public static void addViewerElement(final AbstractBoneUnifiedLV2 bone,
-//										final AbstractDB adb,
-//										final boolean showItemCount) throws Exception {
-//		if (!(bone instanceof ITableBone)) {
-//			return;
-//		}
-//		final TreeViewer treeViewer = bone.getLeftTreeViewer();
-//		final ColumnViewer columnViewer = ((ITableBone) bone).getViewer();
-//		if ((treeViewer == null) || treeViewer.getControl().isDisposed()) {
-//			return;
-//		}
-//		if (!(treeViewer.getInput() instanceof SimpleTextNode)) {
-//			treeViewer.setInput(new SimpleTextNode(null));
-//		}
-//		((SimpleTextNode) treeViewer.getInput()).getDbElements().put(adb.getId(), adb);
-//		if (FiltruAplicatie.isLeftTreeShowRecentActivity()) {
-//			SimpleTextNode recentNode = SimpleTextNode.getRecentNode(treeViewer.getInput());
-//			if (recentNode == null) {
-//				recentNode = new SimpleTextNode(
-//					(SimpleTextNode) treeViewer.getInput(),
-//					SimpleTextNode.RECENT_NODE);
-//				recentNode.setDbElements(new HashMap<Long, AbstractDB>());
-//				if (showItemCount) {
-//					recentNode.setName(SimpleTextNode.RECENT_NODE + recentNode.getItemCountStr());
-//				}
-//				recentNode.setImage(AppImages.getImage16(AppImages.IMG_INFO));
-//				((SimpleTextNode) treeViewer.getInput()).add(recentNode);
-//			}
-//			recentNode.getDbElements().put(adb.getId(), adb);
-//			if (showItemCount) {
-//				recentNode.setName(SimpleTextNode.RECENT_NODE + recentNode.getItemCountStr());
-//			}
-//			ISelection sel = treeViewer.getSelection();
-//			if ((sel instanceof TreeSelection)
-//					&& recentNode.equals(((TreeSelection) sel).getFirstElement())) {
-//				columnViewer.setInput(((SimpleTextNode) ((TreeSelection) sel).getFirstElement()).getDbElements());
-//			}
-//			treeViewer.refresh();
-//		} else {
-//			bone.populateLeftTree(false);
-//		}
-//	}
-//
-//	public static void modifyViewerElement(	final AbstractBoneUnifiedLV2 bone,
-//											final AbstractDB oldAdb,
-//											final AbstractDB newAdb,
-//											final boolean showItemCount) throws Exception {
-//		SimpleTextNode.removeViewerElement(bone, oldAdb, showItemCount, true);
-//		SimpleTextNode.addViewerElement(bone, newAdb, showItemCount);
-//	}
-//
-//	public static void removeViewerElement(	final AbstractBoneUnifiedLV2 bone,
-//											final AbstractDB element,
-//											final boolean showNumbers) {
-//		SimpleTextNode.removeViewerElement(bone, element, showNumbers, true);
-//	}
-//
-//	/**
-//	 * Metoda face remove in mod recursiv din map-ul de elemente al fiecarui nod implicat, si
-//	 * actualizeaza afisarea in interfata (ex - s-a selectat luna, si s-a sters un element : se va
-//	 * decrementa si din map-ul anului si al zilei, dupa cheia elementului, etc).
-//	 */
-//	public static void removeViewerElement(	final AbstractBoneUnifiedLV2 bone,
-//											final AbstractDB element,
-//											final boolean showNumbers,
-//											final boolean recalculTotaluri) {
-//		ITreeSelection leftSelection = null;
-//		if (!(bone instanceof ITableBone)) {
-//			return;
-//		}
-//		try {
-//			final ColumnViewer viewer = ((ITableBone) bone).getViewer();
-//			final TreeViewer treeViewer = bone.getLeftTreeViewer();
-//			if ((viewer == null) || !(viewer.getContentProvider() instanceof AdbContentProvider)) {
-//				return;
-//			}
-//			AbstractDB[] elements = ((AdbContentProvider) viewer.getContentProvider()).getElements();
-//			for (int i = 0; i < elements.length; i++) {
-//				if (element.getId() == elements[i].getId()) {
-//					AbstractDB[] temp = new AbstractDB[elements.length - 1];
-//					System.arraycopy(elements, 0, temp, 0, i);
-//					System.arraycopy(elements, i + 1, temp, i, temp.length - i);
-//					elements = temp;
-//					viewer.setInput(elements);
-//					if (treeViewer != null) {
-//						leftSelection = (ITreeSelection) treeViewer.getSelection();
-//						if (treeViewer.getInput() instanceof SimpleTextNode) {
-//							((SimpleTextNode) treeViewer.getInput()).getDbElements().remove(element.getId());
-//						}
-//						if (leftSelection != null) {
-//							Object obj = leftSelection.getFirstElement();
-//							if (obj instanceof SimpleTextNode) {
-//								SimpleTextNode.decrementByOne((SimpleTextNode) obj,
-//										element,
-//										showNumbers,
-//										showNumbers);
-//							}
-//						}
-//						treeViewer.refresh();
-//					}
-//				}
-//			}
-//		}
-//		finally {
-//			if (recalculTotaluri) {
-//				bone.computeTotal();
-//			}
-//		}
-//	}
 
 	@Override
 	public List<ITreeNode> getChildrens() {
@@ -413,6 +279,14 @@ public class SimpleTextNode implements ITreeNode {
 			createChildrens();
 		}
 		return this.childrens;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public int getCount() {
+		return count;
 	}
 
 	@Override
@@ -438,4 +312,19 @@ public class SimpleTextNode implements ITreeNode {
 		}
 	}
 
+	public boolean isAllNode() {
+		return isAllNode;
+	}
+
+	public void setAllNode(boolean allNode) {
+		isAllNode = allNode;
+	}
+
+	public String getQueryValue() {
+		return queryValue;
+	}
+
+	public void setQueryValue(String queryValue) {
+		this.queryValue = queryValue;
+	}
 }

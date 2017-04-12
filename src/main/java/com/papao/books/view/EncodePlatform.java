@@ -1,10 +1,13 @@
 package com.papao.books.view;
 
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFS;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.CartePaginationController;
 import com.papao.books.model.AbstractDB;
-import com.papao.books.model.BlankDbObject;
 import com.papao.books.model.Carte;
 import com.papao.books.repository.CarteRepository;
 import com.papao.books.repository.UserRepository;
@@ -14,6 +17,7 @@ import com.papao.books.view.custom.PaginationComposite;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbContentProvider;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
+import com.papao.books.view.providers.tree.IntValuePair;
 import com.papao.books.view.providers.tree.SimpleTextNode;
 import com.papao.books.view.providers.tree.TreeContentProvider;
 import com.papao.books.view.searcheable.AbstractSearchType;
@@ -508,10 +512,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         final TreeItem item = leftTreeViewer.getTree().getSelection()[0];
         tableViewer.setInput(null);
-        if (item.getText().contains(ViewModeDetails.ALL_STR)) {
-            tableViewer.setInput(mongoTemplate.findAll(Carte.class));
-        }
-        cartePaginationController.requestSearch(searchType, ((BlankDbObject)((SimpleTextNode)item.getData()).getDbElement()).getName(), paginationComposite.getPageable());
+        cartePaginationController.requestSearch(searchType, ((SimpleTextNode) item.getData()).getQueryValue(), paginationComposite.getPageable());
         //population is done in the observe method
     }
 
@@ -523,7 +524,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private void populateLeftTreeByEditura() {
         SimpleTextNode invisibleRoot;
         boolean showNumbers;
-        List<Carte> mapStart;
         SimpleTextNode baseNode;
         showNumbers = true;//getFiltru().isTreeShowingElementCount();
 
@@ -531,102 +531,57 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             return;
         }
 
-        SimpleTextNode root = (SimpleTextNode) leftTreeViewer.getInput();
-//        if (root != null) {
-//            mapStart = root.getDbElements();
-//        } else {
-//            Query query = new Query();
-//            query.addCriteria(Criteria.where(""))
-        mapStart = mongoTemplate.findAll(Carte.class);
-//        }
+        DBCollection colllection = mongoTemplate.getCollection("carte");
 
-
-        Map<String, TreeMap<String, AbstractDB>> map = processDBElements(mapStart, Carte.class, "getEditura");
-
-        if ((map == null) || map.isEmpty()) {
-            leftTreeViewer.setInput(null);
-            return;
-        }
+        /* http://stackoverflow.com/questions/21452674/mongos-distinct-value-count-for-two-fields-in-java */
+        DBObject fields = new BasicDBObject("editura", "$editura");
+        DBObject groupFields = new BasicDBObject("_id", fields);
+        groupFields.put("count", new BasicDBObject("$sum", 1));
+        DBObject group = new BasicDBObject("$group", groupFields);
+        List<DBObject> pipeline = Arrays.<DBObject>asList(group);
+        AggregationOutput output = colllection.aggregate(pipeline);
 
         invisibleRoot = new SimpleTextNode(null);
-        Map<String, AbstractDB> rootMap = new HashMap<>();
-        for (String key : map.keySet()) {
-            rootMap.put(StringUtils.defaultIfBlank(key, "#"), new Carte());
+        int totalCount = 0;
+        List<IntValuePair> occurrences = new ArrayList<>();
+
+        for (DBObject distinctEditura : output.results()) {
+            String editura = ((Map) distinctEditura.get("_id")).get("editura").toString();
+            int count = Integer.valueOf(distinctEditura.get("count").toString());
+            occurrences.add(new IntValuePair(editura, count));
+            totalCount += count;
         }
-        invisibleRoot.setDbElements(rootMap);
 
-//        if (FiltruAplicatie.isLeftTreeShowRecentActivity()) {
-//            SimpleTextNode nodeRecent = new SimpleTextNode(invisibleRoot, SimpleTextNode.RECENT_NODE);
-//            nodeRecent.setDbElements(new HashMap<String, AbstractDB>());
-//            if (showNumbers) {
-//                nodeRecent.setName(SimpleTextNode.RECENT_NODE + nodeRecent.getItemCountStr());
-//            }
-//            nodeRecent.setImage(AppImages.getImage16(AppImages.IMG_HOME));
-//            invisibleRoot.add(nodeRecent);
-//        }
-
-//        if (FiltruAplicatie.isLeftTreeShowingAll()) {
-        SimpleTextNode allNode = new SimpleTextNode(ViewModeDetails.ALL_STR);
-//            allNode.setFont(FontUtil.TAHOMA8_BOLD);
-        allNode.getDbElements().putAll(rootMap);
-        allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
-        if (showNumbers) {
-            allNode.setName(ViewModeDetails.ALL_STR + " (" + mapStart.size() + ")");
+        boolean showAllNode = true;
+        if (showAllNode) {
+            SimpleTextNode allNode = new SimpleTextNode(ViewModeDetails.ALL_STR);
+            allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+            allNode.setCount(totalCount);
+            allNode.setAllNode(true);
+            allNode.setQueryValue(null); //all
+            if (showNumbers) {
+                allNode.setName(ViewModeDetails.ALL_STR + " (" + allNode.getCount() + ")");
+            }
+            invisibleRoot.add(allNode);
+            baseNode = allNode;
+        } else {
+            baseNode = invisibleRoot;
         }
-        invisibleRoot.add(allNode);
-        baseNode = allNode;
-//        } else {
-//            baseNode = invisibleRoot;
-//        }
 
-        final Iterator<Map.Entry<String, TreeMap<String, AbstractDB>>> iterator = map.entrySet().iterator();
-        while (iterator.hasNext()) {
-            final Map.Entry<String, TreeMap<String, AbstractDB>> entry = iterator.next();
-            StringBuilder numeEditura = new StringBuilder();
-            numeEditura.append(StringUtils.defaultIfBlank(entry.getKey(), "#"));
+        for (IntValuePair valuePair : occurrences) {
+            StringBuilder numeEditura = new StringBuilder(valuePair.getValue());
             if (showNumbers) {
                 numeEditura.append(" (");
-                numeEditura.append(entry.getValue().size());
+                numeEditura.append(valuePair.getCount());
                 numeEditura.append(")");
             }
             SimpleTextNode node = new SimpleTextNode(numeEditura.toString());
-            node.setDbElement(new BlankDbObject(entry.getKey()));
-            node.setDbElements(entry.getValue());
             node.setImage(AppImages.getImage16(AppImages.IMG_BANCA));
+            node.setCount(valuePair.getCount());
+            node.setQueryValue(valuePair.getQueryValue());
             baseNode.add(node);
         }
         leftTreeViewer.setInput(invisibleRoot);
-    }
-
-    public static Map<String, TreeMap<String, AbstractDB>> processDBElements(final List<Carte> allBooks, final Class<? extends AbstractDB> clazz, final String methodName) {
-        Map<String, TreeMap<String, AbstractDB>> map = new TreeMap<>();
-        AbstractDB adb;
-        Method meth;
-        try {
-            if (allBooks == null) {
-                return map;
-            }
-            meth = clazz.getMethod(methodName, (Class<?>[]) null);
-            if (meth == null) {
-                throw new IllegalArgumentException("Class " + clazz.getCanonicalName() + " doesnt have the specified method [" + methodName + "]");
-            }
-            final Iterator<Carte> iterStartMap = allBooks.iterator();
-            while (iterStartMap.hasNext()) {
-                adb = iterStartMap.next();
-                final String currentKey = meth.invoke(adb, (Object[]) null).toString();
-                TreeMap<String, AbstractDB> temp = map.get(currentKey);
-                if (temp == null) {
-                    temp = new TreeMap<>();
-                }
-                temp.put(adb.getId(), adb);
-                map.put(currentKey, temp);
-            }
-
-        } catch (Exception exc) {
-            logger.error(exc.getMessage(), exc);
-            return new TreeMap<>();
-        }
-        return map;
     }
 
     private Menu createLeftTreeMenu() {
