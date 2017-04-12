@@ -9,5 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CarteRepository extends MongoRepository<Carte, String> {
 
+    Page<Carte> getByEdituraIsNullOrEdituraIs(String emptyString, Pageable pageable);
+
     Page<Carte> getByEdituraContainsOrderByTitluAsc(String editura, Pageable pageable);
 }

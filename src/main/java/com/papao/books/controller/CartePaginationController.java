@@ -27,7 +27,7 @@ public class CartePaginationController extends Observable {
             if (StringUtils.isNotEmpty(value)) {
                 carti = repository.getByEdituraContainsOrderByTitluAsc(value, pageable);
             } else {
-                carti = repository.findAll(pageable);
+                carti = repository.getByEdituraIsNullOrEdituraIs("", pageable);
             }
         }
         setChanged();

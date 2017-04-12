@@ -513,7 +513,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         final TreeItem item = leftTreeViewer.getTree().getSelection()[0];
         tableViewer.setInput(null);
         SimpleTextNode selectedNode = (SimpleTextNode) item.getData();
-        //TODO need to fix the empty query value scenario.
         cartePaginationController.requestSearch(searchType, selectedNode.getQueryValue(), paginationComposite.getPageable());
     }
 
@@ -529,7 +528,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         DBCollection colllection = mongoTemplate.getCollection("carte");
 
-        /* http://stackoverflow.com/questions/21452674/mongos-distinct-value-count-for-two-fields-in-java */
+        /*
+            http://stackoverflow.com/questions/21452674/mongos-distinct-value-count-for-two-fields-in-java
+        */
+
         DBObject fields = new BasicDBObject("editura", "$editura");
         DBObject groupFields = new BasicDBObject("_id", fields);
         groupFields.put("count", new BasicDBObject("$sum", 1));
@@ -541,11 +543,24 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         int totalCount = 0;
         List<IntValuePair> occurrences = new ArrayList<>();
 
+        int emptyOrNullCount = 0;
         for (DBObject distinctEditura : output.results()) {
-            String editura = ((Map) distinctEditura.get("_id")).get("editura").toString();
+            Object editura = ((Map) distinctEditura.get("_id")).get("editura");
+            if (editura == null) {
+                emptyOrNullCount++;
+                continue;
+            }
             int count = Integer.valueOf(distinctEditura.get("count").toString());
-            occurrences.add(new IntValuePair(editura, count));
-            totalCount += count;
+            if (StringUtils.isNotEmpty((String) editura)) {
+                occurrences.add(new IntValuePair((String) editura, count));
+                totalCount += count;
+            } else {
+                emptyOrNullCount++;
+            }
+        }
+        if (emptyOrNullCount > 0) {
+            totalCount += emptyOrNullCount;
+            occurrences.add(new IntValuePair(null, emptyOrNullCount));
         }
 
         boolean showAllNode = true;
