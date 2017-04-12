@@ -28,7 +28,7 @@ public class LinkedinComposite extends Composite {
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this);
 
         textSearch = new Text(this, SWT.SEARCH);
-        textSearch.setMessage("Cautare/adaugare. Validare cu Enter.");
+        textSearch.setMessage("Cautare...");
         GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).align(SWT.FILL, SWT.CENTER).applyTo(textSearch);
 
         Button buttonAdd = new Button(this, SWT.PUSH);
