@@ -1,14 +1,13 @@
 package com.papao.books.view;
 
 import com.mongodb.gridfs.GridFS;
-import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.model.AbstractDB;
 import com.papao.books.model.Carte;
 import com.papao.books.repository.CarteRepository;
 import com.papao.books.repository.UserRepository;
+import com.papao.books.view.bones.impl.bones.ViewModeDetails;
 import com.papao.books.view.carte.CarteView;
-import com.papao.books.view.menu.HelpBrowser;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbContentProvider;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
@@ -37,7 +36,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.*;
@@ -49,9 +47,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.List;
 
 @org.springframework.stereotype.Component
@@ -87,31 +84,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
     private Link linkViewMode;
     private TreeViewer leftTreeViewer;
     private MongoTemplate mongoTemplate;
-
-    private Label detalii_titlu;
-    private Label detalii_editura;
-    private Label detalii_an_aparitie;
-    private Label detalii_titlu_original;
-    private Label detalii_editia;
-    private Label detalii_inaltime;
-    private Label detalii_latime;
-    private Label detalii_greutate;
-    private Label detalii_nr_pagini;
-    private Label detalii_serie;
-    private Label detalii_traducatori;
-    private Label detalii_isbn;
-    private Button detalii_buttonCuIlustratii;
-    private Button detalii_buttonCuAutograf;
-    private Label detalii_autori_ilustratii;
-    private Label detalii_tehnoredactori;
-    private Label detalii_imprimerie;
-    private Label detalii_tip_coperta;
-    private Label detalii_limba;
-    private Label detalii_traducere_din;
-    private Label detalii_limba_originala;
-    private Label detalii_distinctii_acordate;
-    private Link linkGoodreadsUrl;
-    private Link linkWikiUrl;
 
     private GridFS gridFS;
     private Canvas labelBackCover;
@@ -307,7 +279,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         tabItemDetaliiCarte.setImage(AppImages.getImage16(AppImages.IMG_DETAILS_NEW));
         this.mainTabFolder.setSelection(tabItemDetaliiCarte);
 
-        tabItemDetaliiCarte.setControl(createTabDetaliiCarteContent(bottomInnerTabFolderRight));
+        tabItemDetaliiCarte.setControl(createTabDocuments(bottomInnerTabFolderRight));
         bottomInnerTabFolderRight.setSelection(tabItemDetaliiCarte);
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
@@ -321,61 +293,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         getContainer().layout();
     }
 
-    private Composite createTabDetaliiCarteContent(CTabFolder bottomInnerTabFolderRight) {
+    private Composite createTabDocuments(CTabFolder bottomInnerTabFolderRight) {
         final Composite comp = new Composite(bottomInnerTabFolderRight, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comp);
         GridDataFactory.fillDefaults().grab(false, false).applyTo(comp);
-
-        new Label(comp, SWT.NONE).setText("Titlu");
-        detalii_titlu = new Label(comp, SWT.READ_ONLY);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(detalii_titlu);
-
-        new Label(comp, SWT.NONE).setText("Editura");
-        detalii_editura = new Label(comp, SWT.READ_ONLY);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(detalii_editura);
-
-        new Label(comp, SWT.NONE).setText("Wiki url");
-        linkWikiUrl = new Link(comp, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(linkWikiUrl);
-        linkWikiUrl.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                new HelpBrowser(comp.getShell(), linkWikiUrl.getData().toString(), false).open();
-            }
-        });
-
-        new Label(comp, SWT.NONE).setText("Goodreads url");
-        linkGoodreadsUrl = new Link(comp, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(linkGoodreadsUrl);
-        linkGoodreadsUrl.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                new HelpBrowser(comp.getShell(), linkGoodreadsUrl.getData().toString(), false).open();
-            }
-        });
-
-        Composite compCovers = new Composite(comp, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(compCovers);
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(compCovers);
-
-        labelFrontCover = new Canvas(compCovers, SWT.NONE);
-        GridDataFactory.fillDefaults().hint(128, 128).grab(false, false).applyTo(labelFrontCover);
-        labelFrontCover.addListener(SWT.MouseEnter, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                displayImage(event);
-            }
-        });
-
-        labelBackCover = new Canvas(compCovers, SWT.NONE);
-        GridDataFactory.fillDefaults().hint(128, 128).grab(false, false).applyTo(labelBackCover);
-        labelBackCover.addListener(SWT.MouseEnter, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                displayImage(event);
-            }
-        });
-
+        new Label(comp, SWT.NONE).setText("Documents");
         return comp;
     }
 
@@ -409,46 +331,42 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         }
         if (this.tableViewer.getTable().getSelectionCount() != 0) {
             Carte carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
-            detalii_editura.setText(carte.getEditura());
-            detalii_titlu.setText(carte.getTitlu());
-            linkWikiUrl.setText("<a>" + carte.getWikiUrl() + "</a>");
-            linkWikiUrl.setData(carte.getWikiUrl());
 
-            linkGoodreadsUrl.setText("<a>" + carte.getGoodreadsUrl() + "</a>");
-            linkGoodreadsUrl.setData(carte.getGoodreadsUrl());
+//            linkGoodreadsUrl.setText("<a>" + carte.getGoodreadsUrl() + "</a>");
+//            linkGoodreadsUrl.setData(carte.getGoodreadsUrl());
 
-            if (labelFrontCover.getBackgroundImage() != null && !labelFrontCover.getBackgroundImage().isDisposed()) {
-                labelFrontCover.getBackgroundImage().dispose();
-                ((Image) labelFrontCover.getData()).dispose();
-            }
-            labelFrontCover.setBackgroundImage(null);
-
-            if (labelBackCover.getBackgroundImage() != null && !labelBackCover.getBackgroundImage().isDisposed()) {
-                labelBackCover.getBackgroundImage().dispose();
-                ((Image) labelBackCover.getData()).dispose();
-            }
-            labelBackCover.setBackgroundImage(null);
-
-            if (carte.getCopertaFata() != null) {
-                GridFSDBFile frontCover = gridFS.find(carte.getCopertaFata().getId());
-                if (frontCover != null) {
-                    Image fullImage = new Image(labelFrontCover.getDisplay(), frontCover.getInputStream());
-                    labelFrontCover.setData(fullImage);
-                    Image resized = AppImages.getImage(fullImage, 128, 128);
-                    labelFrontCover.setBackgroundImage(resized);
-                }
-            }
-
-            if (carte.getCopertaSpate() != null) {
-                GridFSDBFile backCover = gridFS.find(carte.getCopertaSpate().getId());
-                if (backCover != null) {
-                    Image fullImage = new Image(labelBackCover.getDisplay(), backCover.getInputStream());
-                    labelBackCover.setData(fullImage);
-                    Image resized = AppImages.getImage(fullImage, 128, 128);
-                    labelBackCover.setBackgroundImage(resized);
-                }
-            }
-
+//            if (labelFrontCover.getBackgroundImage() != null && !labelFrontCover.getBackgroundImage().isDisposed()) {
+//                labelFrontCover.getBackgroundImage().dispose();
+//                ((Image) labelFrontCover.getData()).dispose();
+//            }
+//            labelFrontCover.setBackgroundImage(null);
+//
+//            if (labelBackCover.getBackgroundImage() != null && !labelBackCover.getBackgroundImage().isDisposed()) {
+//                labelBackCover.getBackgroundImage().dispose();
+//                ((Image) labelBackCover.getData()).dispose();
+//            }
+//            labelBackCover.setBackgroundImage(null);
+//
+//            if (carte.getCopertaFata() != null) {
+//                GridFSDBFile frontCover = gridFS.find(carte.getCopertaFata().getId());
+//                if (frontCover != null) {
+//                    Image fullImage = new Image(labelFrontCover.getDisplay(), frontCover.getInputStream());
+//                    labelFrontCover.setData(fullImage);
+//                    Image resized = AppImages.getImage(fullImage, 128, 128);
+//                    labelFrontCover.setBackgroundImage(resized);
+//                }
+//            }
+//
+//            if (carte.getCopertaSpate() != null) {
+//                GridFSDBFile backCover = gridFS.find(carte.getCopertaSpate().getId());
+//                if (backCover != null) {
+//                    Image fullImage = new Image(labelBackCover.getDisplay(), backCover.getInputStream());
+//                    labelBackCover.setData(fullImage);
+//                    Image resized = AppImages.getImage(fullImage, 128, 128);
+//                    labelBackCover.setBackgroundImage(resized);
+//                }
+//            }
+//
         }
     }
 
@@ -535,63 +453,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
                 } else if (b == null) {
                     return 1;
                 } else {
-                    int x1 = 0, x2 = 0;
-                    if (a.getName().startsWith(BorgDateUtil.IAN)) {
-                        x1 = 1;
-                    } else if (a.getName().startsWith(BorgDateUtil.FEB)) {
-                        x1 = 2;
-                    } else if (a.getName().startsWith(BorgDateUtil.MAR)) {
-                        x1 = 3;
-                    } else if (a.getName().startsWith(BorgDateUtil.APR)) {
-                        x1 = 4;
-                    } else if (a.getName().startsWith(BorgDateUtil.MAI)) {
-                        x1 = 5;
-                    } else if (a.getName().startsWith(BorgDateUtil.IUN)) {
-                        x1 = 6;
-                    } else if (a.getName().startsWith(BorgDateUtil.IUL)) {
-                        x1 = 7;
-                    } else if (a.getName().startsWith(BorgDateUtil.AUG)) {
-                        x1 = 8;
-                    } else if (a.getName().startsWith(BorgDateUtil.SEP)) {
-                        x1 = 9;
-                    } else if (a.getName().startsWith(BorgDateUtil.OCT)) {
-                        x1 = 10;
-                    } else if (a.getName().startsWith(BorgDateUtil.NOI)) {
-                        x1 = 11;
-                    } else if (a.getName().startsWith(BorgDateUtil.DEC)) {
-                        x1 = 12;
-                    }
-                    if (x1 == 0) {
-                        return a.getName().compareToIgnoreCase(b.getName());
-                    }
-
-                    if (b.getName().startsWith(BorgDateUtil.IAN)) {
-                        x2 = 1;
-                    } else if (b.getName().startsWith(BorgDateUtil.FEB)) {
-                        x2 = 2;
-                    } else if (b.getName().startsWith(BorgDateUtil.MAR)) {
-                        x2 = 3;
-                    } else if (b.getName().startsWith(BorgDateUtil.APR)) {
-                        x2 = 4;
-                    } else if (b.getName().startsWith(BorgDateUtil.MAI)) {
-                        x2 = 5;
-                    } else if (b.getName().startsWith(BorgDateUtil.IUN)) {
-                        x2 = 6;
-                    } else if (b.getName().startsWith(BorgDateUtil.IUL)) {
-                        x2 = 7;
-                    } else if (b.getName().startsWith(BorgDateUtil.AUG)) {
-                        x2 = 8;
-                    } else if (b.getName().startsWith(BorgDateUtil.SEP)) {
-                        x2 = 9;
-                    } else if (b.getName().startsWith(BorgDateUtil.OCT)) {
-                        x2 = 10;
-                    } else if (b.getName().startsWith(BorgDateUtil.NOI)) {
-                        x2 = 11;
-                    } else if (b.getName().startsWith(BorgDateUtil.DEC)) {
-                        x2 = 12;
-                    }
-
-                    return x1 - x2;
+                    return a.getName().compareTo(b.getName());
                 }
             }
 
@@ -603,7 +465,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         leftTreeViewer.getTree().setMenu(createLeftTreeMenu());
         WidgetTreeUtil.customizeTree(leftTreeViewer.getTree(), getClass(), "aaa");
 
-        leftTreeViewer.getTree().addListener(SWT.Selection, this);
+        leftTreeViewer.getTree().addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                handleSelectionOnTree();
+            }
+        });
+
+        populateLeftTreeByEditura();
 
         comp = new Composite(compLeftTree, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, false).span(2, 1).align(SWT.FILL, SWT.CENTER).applyTo(comp);
@@ -612,6 +481,135 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener {
         this.linkViewMode.setToolTipText("Schimba modul de afisare");
         this.linkViewMode.addListener(SWT.Selection, this);
         GridDataFactory.fillDefaults().grab(true, false).span(1, 1).align(SWT.BEGINNING, SWT.CENTER).applyTo(this.linkViewMode);
+    }
+
+    private void handleSelectionOnTree() {
+        if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()
+                || (leftTreeViewer.getTree().getSelectionCount() <= 0)) {
+            return;
+        }
+        final TreeItem item = leftTreeViewer.getTree().getSelection()[0];
+        tableViewer.setInput(null);
+        if (item.getText().contains(ViewModeDetails.ALL_STR)) {
+            tableViewer.setInput(mongoTemplate.findAll(Carte.class));
+        }
+        tableViewer.setInput(((SimpleTextNode) item.getData()).getDbElements());
+        if (tableViewer.getTable().getItemCount() > 0) {
+            tableViewer.getTable().setSelection(tableViewer.getTable().getItemCount() - 1);
+        }
+    }
+
+    private void populateLeftTreeByAuthor() {
+        List<String> autori = mongoTemplate.getCollection("carte").distinct("autori");
+
+    }
+
+    private void populateLeftTreeByEditura() {
+        SimpleTextNode invisibleRoot;
+        boolean showNumbers;
+        List<Carte> mapStart;
+        SimpleTextNode baseNode;
+        showNumbers = true;//getFiltru().isTreeShowingElementCount();
+
+        if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
+            return;
+        }
+
+        SimpleTextNode root = (SimpleTextNode) leftTreeViewer.getInput();
+//        if (root != null) {
+//            mapStart = root.getDbElements();
+//        } else {
+//            Query query = new Query();
+//            query.addCriteria(Criteria.where(""))
+        mapStart = mongoTemplate.findAll(Carte.class);
+//        }
+
+
+        Map<String, TreeMap<String, AbstractDB>> map = processDBElements(mapStart, Carte.class, "getEditura");
+
+        if ((map == null) || map.isEmpty()) {
+            leftTreeViewer.setInput(null);
+            return;
+        }
+
+        invisibleRoot = new SimpleTextNode(null);
+        Map<String, AbstractDB> rootMap = new HashMap<>();
+        for (String key : map.keySet()) {
+            rootMap.put(StringUtils.defaultIfBlank(key, "#"), new Carte());
+        }
+        invisibleRoot.setDbElements(rootMap);
+
+//        if (FiltruAplicatie.isLeftTreeShowRecentActivity()) {
+//            SimpleTextNode nodeRecent = new SimpleTextNode(invisibleRoot, SimpleTextNode.RECENT_NODE);
+//            nodeRecent.setDbElements(new HashMap<String, AbstractDB>());
+//            if (showNumbers) {
+//                nodeRecent.setName(SimpleTextNode.RECENT_NODE + nodeRecent.getItemCountStr());
+//            }
+//            nodeRecent.setImage(AppImages.getImage16(AppImages.IMG_HOME));
+//            invisibleRoot.add(nodeRecent);
+//        }
+
+//        if (FiltruAplicatie.isLeftTreeShowingAll()) {
+        SimpleTextNode allNode = new SimpleTextNode(ViewModeDetails.ALL_STR);
+//            allNode.setFont(FontUtil.TAHOMA8_BOLD);
+        allNode.getDbElements().putAll(rootMap);
+        allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+        if (showNumbers) {
+            allNode.setName(ViewModeDetails.ALL_STR + " (" + mapStart.size() + ")");
+        }
+        invisibleRoot.add(allNode);
+        baseNode = allNode;
+//        } else {
+//            baseNode = invisibleRoot;
+//        }
+
+        final Iterator<Map.Entry<String, TreeMap<String, AbstractDB>>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            final Map.Entry<String, TreeMap<String, AbstractDB>> entry = iterator.next();
+            StringBuilder numeEditura = new StringBuilder();
+            numeEditura.append(StringUtils.defaultIfBlank(entry.getKey(), "#"));
+            if (showNumbers) {
+                numeEditura.append(" (");
+                numeEditura.append(entry.getValue().size());
+                numeEditura.append(")");
+            }
+            SimpleTextNode node = new SimpleTextNode(numeEditura.toString());
+            node.setDbElements(entry.getValue());
+            node.setImage(AppImages.getImage16(AppImages.IMG_BANCA));
+            baseNode.add(node);
+        }
+        leftTreeViewer.setInput(invisibleRoot);
+    }
+
+    public static Map<String, TreeMap<String, AbstractDB>> processDBElements(final List<Carte> allBooks, final Class<? extends AbstractDB> clazz, final String methodName) {
+        Map<String, TreeMap<String, AbstractDB>> map = new TreeMap<>();
+        AbstractDB adb;
+        Method meth;
+        try {
+            if (allBooks == null) {
+                return map;
+            }
+            meth = clazz.getMethod(methodName, (Class<?>[]) null);
+            if (meth == null) {
+                throw new IllegalArgumentException("Class " + clazz.getCanonicalName() + " doesnt have the specified method [" + methodName + "]");
+            }
+            final Iterator<Carte> iterStartMap = allBooks.iterator();
+            while (iterStartMap.hasNext()) {
+                adb = iterStartMap.next();
+                final String currentKey = meth.invoke(adb, (Object[]) null).toString();
+                TreeMap<String, AbstractDB> temp = map.get(currentKey);
+                if (temp == null) {
+                    temp = new TreeMap<>();
+                }
+                temp.put(adb.getId(), adb);
+                map.put(currentKey, temp);
+            }
+
+        } catch (Exception exc) {
+            logger.error(exc.getMessage(), exc);
+            return new TreeMap<>();
+        }
+        return map;
     }
 
     private Menu createLeftTreeMenu() {
