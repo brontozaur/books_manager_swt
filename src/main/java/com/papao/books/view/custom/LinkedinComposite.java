@@ -89,7 +89,7 @@ public class LinkedinComposite extends Composite {
                 public void handleEvent(Event event) {
                     if (!textSearch.isDisposed()) {
                         textSearch.setText("");
-                        valoriIntroduse.remove(valoriIntroduse.indexOf(((ClosableCanvas) event.widget).getText()));
+                        valoriIntroduse.remove(valoriIntroduse.indexOf(canvas.getText()));
                     }
                     layoutEverything();
                 }
