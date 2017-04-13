@@ -174,14 +174,14 @@ public class PaginationComposite extends Composite implements Observer {
 
     private String getLabelText() {
         if (totalCount == 0) {
-            return "No documents found.";
+            return "Nu exista documente.";
         }
         long min = (currentPage - 1) * pageSize;
         long max = pageSize * currentPage;
         if (max > totalCount) {
             max = totalCount;
         }
-        return min + "-" + max + " of " + totalCount;
+        return min + "-" + max + " din " + totalCount;
     }
 
     public Pageable getPageable() {
