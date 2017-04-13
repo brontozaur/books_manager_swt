@@ -2,11 +2,10 @@ package com.papao.books.view.carte;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
+import com.papao.books.controller.BookController;
 import com.papao.books.model.*;
-import com.papao.books.repository.CarteRepository;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.custom.ComboImage;
@@ -35,7 +34,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
@@ -49,9 +47,7 @@ public class CarteView extends AbstractCSaveView {
     private static final Logger logger = LoggerFactory.getLogger(CarteView.class);
 
     private Carte carte;
-    private CarteRepository carteRepository;
-    private MongoTemplate mongoTemplate;
-    private GridFS gridFS;
+    private final BookController controller;
 
     private Composite compLeft;
     private Composite compRight;
@@ -85,14 +81,11 @@ public class CarteView extends AbstractCSaveView {
     private ImageSelectorComposite backCoverComposite;
 
     public CarteView(final Shell parent, final Carte carte,
-                     final CarteRepository carteRepository,
-                     MongoTemplate mongoTemplate,
+                     final BookController carteController,
                      final int viewMode) {
         super(parent, viewMode, carte.getId());
         this.carte = carte;
-        this.carteRepository = carteRepository;
-        this.mongoTemplate = mongoTemplate;
-        this.gridFS = new GridFS(mongoTemplate.getDb());
+        this.controller = carteController;
 
         addComponents();
         populateFields();
@@ -165,7 +158,7 @@ public class CarteView extends AbstractCSaveView {
         new Label(parent, SWT.NONE).setText("Editura");
         this.textEditura = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textEditura);
-        ContentProposalProvider.addContentProposal(textEditura, mongoTemplate.getCollection("carte").distinct("editura"));
+        ContentProposalProvider.addContentProposal(textEditura, controller.getDistinctFieldAsContentProposal("editura"));
 
         new Label(parent, SWT.NONE).setText("ISBN");
         this.textIsbn = new Text(parent, SWT.BORDER);
@@ -177,7 +170,7 @@ public class CarteView extends AbstractCSaveView {
         new Label(parent, SWT.NONE).setText("Serie");
         this.textSerie = new Text(parent, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textSerie);
-        ContentProposalProvider.addContentProposal(textSerie, mongoTemplate.getCollection("carte").distinct("serie"));
+        ContentProposalProvider.addContentProposal(textSerie, controller.getDistinctFieldAsContentProposal("serie"));
 
         new Label(parent, SWT.NONE).setText("Editia");
         this.textEditia = new Text(parent, SWT.BORDER);
@@ -189,7 +182,7 @@ public class CarteView extends AbstractCSaveView {
         Label labelAutor = new Label(parent, SWT.NONE);
         labelAutor.setText("Autori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutor);
-        this.compositeAutori = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("autori"), carte.getAutori());
+        this.compositeAutori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("autori"), carte.getAutori());
 //        ((GridData)compositeAutori.getLayoutData()).horizontalSpan = 2;
         this.compositeAutori.getTextSearch().addTraverseListener(new TraverseListener() {
             @Override
@@ -203,7 +196,7 @@ public class CarteView extends AbstractCSaveView {
         Label labelTraducatori = new Label(parent, SWT.NONE);
         labelTraducatori.setText("Traducatori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
-        this.compositeTraducatori = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("traducatori"), carte.getTraducatori());
+        this.compositeTraducatori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("traducatori"), carte.getTraducatori());
 //        ((GridData)compositeTraducatori.getLayoutData()).horizontalSpan = 2;
         this.compositeTraducatori.getTextSearch().addTraverseListener(new TraverseListener() {
             @Override
@@ -237,7 +230,7 @@ public class CarteView extends AbstractCSaveView {
         Label labelTehnoredactori = new Label(parent, SWT.NONE);
         labelTehnoredactori.setText("Tehnoredactori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTehnoredactori);
-        this.compositeTehnoredactori = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("tehnoredactori"), carte.getTehnoredactori());
+        this.compositeTehnoredactori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("tehnoredactori"), carte.getTehnoredactori());
 
         List<BlankDbObject> aniObjects = new ArrayList<>();
         for (int i = 1900; i < Calendar.getInstance().get(Calendar.YEAR); i++) {
@@ -257,7 +250,7 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private Image getSWTImage(ObjectId imageId) {
-        GridFSDBFile imageForOutput = gridFS.findOne(imageId);
+        GridFSDBFile imageForOutput = controller.getImageData(imageId) ;
         if (imageForOutput != null) {
             return new Image(Display.getDefault(), imageForOutput.getInputStream());
         }
@@ -268,12 +261,12 @@ public class CarteView extends AbstractCSaveView {
         Label labelAutoriIlustratii = new Label(parent, SWT.NONE);
         labelAutoriIlustratii.setText("Autori ilustratii");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutoriIlustratii);
-        this.compositeAutoriIlustratii = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("autoriIlustratii"), carte.getAutoriIlustratii());
+        this.compositeAutoriIlustratii = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("autoriIlustratii"), carte.getAutoriIlustratii());
 
         Label labelDistinctii = new Label(parent, SWT.NONE);
         labelDistinctii.setText("Distinctii acordate");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelDistinctii);
-        this.compositeDistinctiiAcordate = new LinkedinComposite(parent, mongoTemplate.getCollection("carte").distinct("distinctiiAcordate"), carte.getDistinctiiAcordate());
+        this.compositeDistinctiiAcordate = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("distinctiiAcordate"), carte.getDistinctiiAcordate());
 
         backCoverComposite = new ImageSelectorComposite(parent, getSWTImage(carte.getCopertaSpate().getId()), carte.getCopertaSpate().getFileName());
         ((GridData) backCoverComposite.getLayoutData()).verticalSpan = 6;
@@ -371,7 +364,7 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setWikiUrl(textWikiUrl.getText());
 
         if (frontCoverComposite.imageChanged()) {
-            gridFS.remove(carte.getCopertaFata().getId());
+            controller.removeImageData(carte.getCopertaFata().getId());
             carte.setCopertaFata(null);
 
             if (frontCoverComposite.getSelectedFile() != null) {
@@ -384,7 +377,7 @@ public class CarteView extends AbstractCSaveView {
         }
 
         if (backCoverComposite.imageChanged()) {
-            gridFS.remove(carte.getCopertaSpate().getId());
+            controller.removeImageData(carte.getCopertaSpate().getId());
             carte.setCopertaSpate(null);
 
             if (backCoverComposite.getSelectedFile() != null) {
@@ -396,18 +389,18 @@ public class CarteView extends AbstractCSaveView {
             }
         }
 
-        carteRepository.save(carte);
+        controller.save(carte);
     }
 
     private GridFSDBFile saveImage(File imageFile) throws IOException {
-        GridFSInputFile gfsFile = gridFS.createFile(imageFile);
+        GridFSInputFile gfsFile = controller.createFile(imageFile);
         gfsFile.setFilename(imageFile.getName());
         gfsFile.setContentType(new MimetypesFileTypeMap().getContentType(imageFile));
         DBObject meta = new BasicDBObject();
         meta.put("fileOriginalFilePath", imageFile.getAbsolutePath());
         gfsFile.setMetaData(meta);
         gfsFile.save();
-        return gridFS.findOne((ObjectId) gfsFile.getId());
+        return controller.getImageData((ObjectId) gfsFile.getId());
     }
 
     @Override

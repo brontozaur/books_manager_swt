@@ -1,15 +1,11 @@
 package com.papao.books.view;
 
 import com.mongodb.AggregationOutput;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.gridfs.GridFS;
 import com.papao.books.FiltruAplicatie;
-import com.papao.books.controller.CartePaginationController;
+import com.papao.books.controller.BookController;
 import com.papao.books.model.AbstractDB;
 import com.papao.books.model.Carte;
-import com.papao.books.repository.CarteRepository;
 import com.papao.books.repository.UserRepository;
 import com.papao.books.view.bones.impl.bones.ViewModeDetails;
 import com.papao.books.view.carte.CarteView;
@@ -53,10 +49,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.domain.Pageable;
 
 import java.awt.*;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
 
@@ -66,7 +61,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static Logger logger = Logger.getLogger(EncodePlatform.class);
     private ToolTip appToolTip;
     private Tray appTray;
-    private CarteRepository carteRepository;
     private UserRepository userRepository;
     private static ToolBar barDocking;
     private static EncodePlatform instance;
@@ -92,28 +86,21 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private UnifiedStyledLabelProvider leftTreeColumnProvider;
     private Link linkViewMode;
     private TreeViewer leftTreeViewer;
-    private MongoTemplate mongoTemplate;
 
-    private GridFS gridFS;
     private Canvas labelBackCover;
     private Canvas labelFrontCover;
     private Shell viewerShell;
     private PaginationComposite paginationComposite;
     private BookSearchType searchType = BookSearchType.EDITURA;
-    private CartePaginationController cartePaginationController;
+    private BookController bookController;
 
     @Autowired
-    public EncodePlatform(CarteRepository carteRepository,
-                          UserRepository userRepository,
-                          MongoTemplate mongoTemplate,
-                          CartePaginationController cartePaginationController) {
+    public EncodePlatform(UserRepository userRepository,
+                          BookController bookController) {
         super(null, AbstractView.MODE_NONE);
-        this.carteRepository = carteRepository;
         this.userRepository = userRepository;
-        this.mongoTemplate = mongoTemplate;
-        this.gridFS = new GridFS(mongoTemplate.getDb());
-        this.cartePaginationController = cartePaginationController;
-        this.cartePaginationController.addObserver(this);
+        this.bookController = bookController;
+        this.bookController.addObserver(this);
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
@@ -283,7 +270,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        paginationComposite = new PaginationComposite(secondaryComRight, cartePaginationController, searchType);
+        paginationComposite = new PaginationComposite(secondaryComRight, bookController, searchType);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.END, SWT.END).applyTo(paginationComposite);
 
         this.bottomInnerTabFolderRight = new CTabFolder(rightInnerSash, SWT.NONE);
@@ -311,7 +298,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         booksTabItem.setControl(verticalSash);
 
-        this.tableViewer.setInput(carteRepository.findAll());
+        refresh();
         getContainer().layout();
     }
 
@@ -506,14 +493,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     private void handleSelectionOnTree() {
-        if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()
-                || (leftTreeViewer.getTree().getSelectionCount() <= 0)) {
+        if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
             return;
         }
-        final TreeItem item = leftTreeViewer.getTree().getSelection()[0];
-        tableViewer.setInput(null);
-        SimpleTextNode selectedNode = (SimpleTextNode) item.getData();
-        cartePaginationController.requestSearch(searchType, selectedNode.getQueryValue(), paginationComposite.getPageable());
+        refresh();
     }
 
     private void populateLeftTreeByEditura() {
@@ -526,18 +509,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             return;
         }
 
-        DBCollection colllection = mongoTemplate.getCollection("carte");
-
-        /*
-            http://stackoverflow.com/questions/21452674/mongos-distinct-value-count-for-two-fields-in-java
-        */
-
-        DBObject fields = new BasicDBObject("editura", "$editura");
-        DBObject groupFields = new BasicDBObject("_id", fields);
-        groupFields.put("count", new BasicDBObject("$sum", 1));
-        DBObject group = new BasicDBObject("$group", groupFields);
-        List<DBObject> pipeline = Arrays.<DBObject>asList(group);
-        AggregationOutput output = colllection.aggregate(pipeline);
+        AggregationOutput output = bookController.getDistinctEdituraValue();
 
         invisibleRoot = new SimpleTextNode(null);
         int totalCount = 0;
@@ -569,7 +541,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
             allNode.setCount(totalCount);
             allNode.setAllNode(true);
-            allNode.setQueryValue(null); //all
+            allNode.setQueryValue(null);
             if (showNumbers) {
                 allNode.setName(ViewModeDetails.ALL_STR + " (" + allNode.getCount() + ")");
             }
@@ -1145,16 +1117,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 //        setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
     }
 
-    public CarteRepository getCarteRepository() {
-        return this.carteRepository;
-    }
-
     public boolean add() {
         CarteView view;
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), carteRepository, mongoTemplate, AbstractView.MODE_ADD);
+        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), bookController, AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -1176,12 +1144,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cartea selectata?", "Confirmare stergere carte") == SWT.NO) {
                 return true;
             }
-            Carte carteDb = carteRepository.findOne(carte.getId());
+            Carte carteDb = bookController.findOne(carte.getId());
             if (carteDb == null) {
                 SWTeXtension.displayMessageW("Cartea nu mai exista in baza de date!");
                 return false;
             }
-            carteRepository.delete(carteDb);
+            bookController.delete(carteDb);
             List<Carte> input = (List) tableViewer.getInput();
             input.remove(input.indexOf(carte));
             tableViewer.setInput(input);
@@ -1203,7 +1171,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             SWTeXtension.displayMessageI("Cartea selectata este invalida!");
             return false;
         }
-        if (carteRepository.findOne(carte.getId()) == null) {
+        if (bookController.findOne(carte.getId()) == null) {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return false;
         }
@@ -1213,7 +1181,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             carte.setId(null);
             viewMode = MODE_CLONE;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, viewMode);
+        view = new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, viewMode);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -1271,15 +1239,28 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             SWTeXtension.displayMessageI("Cartea selectata este invalida!");
             return;
         }
-        if (carteRepository.findOne(carte.getId()) == null) {
+        if (bookController.findOne(carte.getId()) == null) {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return;
         }
-        new CarteView(this.tableViewer.getTable().getShell(), carte, carteRepository, mongoTemplate, AbstractView.MODE_VIEW).open();
+        new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, AbstractView.MODE_VIEW).open();
     }
 
     public void refresh() {
-        this.tableViewer.setInput(carteRepository.findAll());
+        String value = null;
+        boolean all = true;
+        if (!leftTreeViewer.getSelection().isEmpty()) {
+            TreeItem item = leftTreeViewer.getTree().getSelection()[0];
+            SimpleTextNode selectedNode = (SimpleTextNode) item.getData();
+            all = selectedNode.isAllNode();
+            value = selectedNode.getQueryValue();
+        }
+        tableViewer.setInput(null);
+        bookController.requestSearch(this.searchType, value, getPageable(), all);
+    }
+
+    private Pageable getPageable() {
+        return paginationComposite.getPageable();
     }
 
     public void handleSearchDisplay() {
@@ -1363,7 +1344,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     @Override
     public void update(Observable o, Object arg) {
-        CartePaginationController controller = (CartePaginationController) o;
+        BookController controller = (BookController) o;
         Page<Carte> page = controller.getSearchResult();
         if (!tableViewer.getTable().isDisposed()) {
             tableViewer.setInput(page.getContent());

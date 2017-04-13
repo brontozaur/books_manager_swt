@@ -1,6 +1,6 @@
 package com.papao.books.view.custom;
 
-import com.papao.books.controller.CartePaginationController;
+import com.papao.books.controller.BookController;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.searcheable.BookSearchType;
@@ -29,14 +29,12 @@ public class PaginationComposite extends Composite implements Observer {
     private long totalPages = 0;
     private int currentPage = 0;
     private int pageSize = 0;
-    private CartePaginationController paginationController;
-    private BookSearchType searchType;
+    private BookController paginationController;
 
-    public PaginationComposite(Composite parent, CartePaginationController paginationController, BookSearchType searchType) {
+    public PaginationComposite(Composite parent, BookController paginationController, BookSearchType searchType) {
         super(parent, SWT.NONE);
         this.paginationController = paginationController;
         paginationController.addObserver(this);
-        this.searchType = searchType;
 
         GridLayoutFactory.fillDefaults().numColumns(6).equalWidth(false).applyTo(this);
 
@@ -106,8 +104,6 @@ public class PaginationComposite extends Composite implements Observer {
                 search();
             }
         });
-
-        search();
     }
 
     private boolean validatePageNumber(Event event) {
@@ -145,7 +141,7 @@ public class PaginationComposite extends Composite implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        CartePaginationController controller = (CartePaginationController) o;
+        BookController controller = (BookController) o;
         Page<Carte> page = controller.getSearchResult();
         totalCount = page.getTotalElements();
         totalPages = page.getTotalPages();
@@ -153,16 +149,8 @@ public class PaginationComposite extends Composite implements Observer {
         textGoToPage.setValue(page.getNumber());
     }
 
-    public BookSearchType getSearchType() {
-        return searchType;
-    }
-
-    public void setSearchType(BookSearchType searchType) {
-        this.searchType = searchType;
-    }
-
     private void search() {
-        paginationController.requestSearch(searchType, null, getPageable());
+        paginationController.requestSearch(getPageable());
         itemNext.setEnabled(currentPage < totalPages - 1 && totalCount > 0);
         itemPrevious.setEnabled(currentPage > 0 && totalCount > 0);
     }
