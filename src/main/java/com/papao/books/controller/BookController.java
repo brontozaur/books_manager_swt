@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
@@ -83,11 +84,39 @@ public class BookController extends Observable {
             http://stackoverflow.com/questions/21452674/mongos-distinct-value-count-for-two-fields-in-java
         */
 
-        DBObject fields = new BasicDBObject("editura", "$editura");
-        DBObject groupFields = new BasicDBObject("_id", fields);
+        DBObject groupFields = new BasicDBObject("_id", "$editura");
         groupFields.put("count", new BasicDBObject("$sum", 1));
         DBObject group = new BasicDBObject("$group", groupFields);
         List<DBObject> pipeline = Arrays.<DBObject>asList(group);
+        return colllection.aggregate(pipeline);
+    }
+
+    /*
+    http://stackoverflow.com/questions/17628786/translating-mongodb-query-to-a-mongodb-java-driver-query
+        db.carte.aggregate(
+
+        // Unpack the autori array
+        { $unwind: "$autori" },
+
+        // Group by the autori values
+        { $group: {
+            _id: "$autori",
+            count: { $sum: 1 }
+        }}
+        )
+     */
+    public AggregationOutput getDistinctAutoriValue() {
+        DBCollection colllection = mongoTemplate.getCollection("carte");
+
+        //unwind
+        DBObject unwind = new BasicDBObject("$unwind", "$autori");
+        //group
+        UnwindOperation uw = UnwindOperation.UnwindOperationBuilder.newBuilder().path("$autori").noArrayIndex().preserveNullAndEmptyArrays();
+        DBObject groupFields = new BasicDBObject("_id", "$autori");
+        groupFields.put("count", new BasicDBObject("$sum", 1));
+        DBObject group = new BasicDBObject("$group", groupFields);
+
+        List<DBObject> pipeline = Arrays.<DBObject>asList(unwind, group);
         return colllection.aggregate(pipeline);
     }
 
@@ -95,13 +124,19 @@ public class BookController extends Observable {
         this.searchType = searchType;
         this.value = value;
         this.all = all;
-        if (searchType == BookSearchType.EDITURA) {
-            if (all) {
-                carti = repository.findAll(pageable);
-            } else if (StringUtils.isNotEmpty(value)) {
+        if (all) {
+            carti = repository.findAll(pageable);
+        } else if (searchType == BookSearchType.EDITURA) {
+            if (StringUtils.isNotEmpty(value)) {
                 carti = repository.getByEdituraContainsOrderByTitluAsc(value, pageable);
             } else {
                 carti = repository.getByEdituraIsNullOrEdituraIs("", pageable);
+            }
+        } else if (searchType == BookSearchType.AUTOR) {
+            if (StringUtils.isNotEmpty(value)) {
+                carti = repository.getByAutoriContainsOrderByTitluAsc(value, pageable);
+            } else {
+                carti = repository.getByAutoriIsNullOrAutoriIs(new String[]{""}, pageable);
             }
         }
         setChanged();

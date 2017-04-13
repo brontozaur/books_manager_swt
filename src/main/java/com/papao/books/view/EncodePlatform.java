@@ -92,7 +92,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private Canvas labelFrontCover;
     private Shell viewerShell;
     private PaginationComposite paginationComposite;
-    private BookSearchType searchType = BookSearchType.EDITURA;
+    private BookSearchType searchType = BookSearchType.AUTOR;
     private BookController bookController;
 
     @Autowired
@@ -483,8 +483,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        populateLeftTree();
-
         comp = new Composite(compLeftTree, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, false).span(2, 1).align(SWT.FILL, SWT.CENTER).applyTo(comp);
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(5, 0, 0, 2).applyTo(comp);
@@ -503,8 +501,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     private void populateLeftTree() {
         switch (searchType) {
-            case EDITURA:
+            case EDITURA: {
                 populateLeftTreeByEditura();
+                break;
+            }
+            case AUTOR: {
+                populateLeftTreeByAutori();
+                break;
+            }
             default:
                 populateLeftTreeByEditura();
         }
@@ -528,14 +532,82 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         int emptyOrNullCount = 0;
         for (DBObject distinctEditura : output.results()) {
-            Object editura = ((Map) distinctEditura.get("_id")).get("editura");
-            if (editura == null) {
+            Object numeEditura = distinctEditura.get("_id");
+            if (numeEditura == null) {
                 emptyOrNullCount++;
                 continue;
             }
             int count = Integer.valueOf(distinctEditura.get("count").toString());
-            if (StringUtils.isNotEmpty((String) editura)) {
-                occurrences.add(new IntValuePair((String) editura, count));
+            if (StringUtils.isNotEmpty((String) numeEditura)) {
+                occurrences.add(new IntValuePair((String) numeEditura, count));
+                totalCount += count;
+            } else {
+                emptyOrNullCount += count;
+            }
+        }
+        if (emptyOrNullCount > 0) {
+            totalCount += emptyOrNullCount;
+            occurrences.add(new IntValuePair(null, emptyOrNullCount));
+        }
+
+        boolean showAllNode = true;
+        if (showAllNode) {
+            SimpleTextNode allNode = new SimpleTextNode(ViewModeDetails.ALL_STR);
+            allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+            allNode.setCount(totalCount);
+            allNode.setAllNode(true);
+            allNode.setQueryValue(null);
+            if (showNumbers) {
+                allNode.setName(ViewModeDetails.ALL_STR + " (" + allNode.getCount() + ")");
+            }
+            invisibleRoot.add(allNode);
+            baseNode = allNode;
+        } else {
+            baseNode = invisibleRoot;
+        }
+
+        for (IntValuePair valuePair : occurrences) {
+            StringBuilder numeEditura = new StringBuilder(valuePair.getValue());
+            if (showNumbers) {
+                numeEditura.append(" (");
+                numeEditura.append(valuePair.getCount());
+                numeEditura.append(")");
+            }
+            SimpleTextNode node = new SimpleTextNode(numeEditura.toString());
+            node.setImage(AppImages.getImage16(AppImages.IMG_BANCA));
+            node.setCount(valuePair.getCount());
+            node.setQueryValue(valuePair.getQueryValue());
+            baseNode.add(node);
+        }
+        leftTreeViewer.setInput(invisibleRoot);
+    }
+
+    private void populateLeftTreeByAutori() {
+        SimpleTextNode invisibleRoot;
+        boolean showNumbers;
+        SimpleTextNode baseNode;
+        showNumbers = true;//getFiltru().isTreeShowingElementCount();
+
+        if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
+            return;
+        }
+
+        AggregationOutput output = bookController.getDistinctAutoriValue();
+
+        invisibleRoot = new SimpleTextNode(null);
+        int totalCount = 0;
+        List<IntValuePair> occurrences = new ArrayList<>();
+
+        int emptyOrNullCount = 0;
+        for (DBObject distinctValues : output.results()) {
+            Object numeAutor = distinctValues.get("_id");
+            if (numeAutor == null) {
+                emptyOrNullCount++;
+                continue;
+            }
+            int count = Integer.valueOf(distinctValues.get("count").toString());
+            if (StringUtils.isNotEmpty((String) numeAutor)) {
+                occurrences.add(new IntValuePair((String) numeAutor, count));
                 totalCount += count;
             } else {
                 emptyOrNullCount += count;
@@ -1259,8 +1331,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     public void fullRefresh(boolean resetPage) {
-        refreshTableViewer(resetPage);
         populateLeftTree();
+        refreshTableViewer(resetPage);
     }
 
     public void refreshTableViewer(boolean resetPage) {
