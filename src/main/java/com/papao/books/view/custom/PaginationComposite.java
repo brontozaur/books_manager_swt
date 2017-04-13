@@ -24,10 +24,14 @@ public class PaginationComposite extends Composite implements Observer {
     private Combo comboItemsPerPage;
     private Label labelShowingXItemsOfTotal;
     private ToolItem itemPrevious;
+    private ToolItem itemFirstPage;
     private ToolItem itemNext;
+    private ToolItem itemLastPage;
+    private Label labelDin;
+
     private long totalCount = 0;
     private long totalPages = 0;
-    private int currentPage = 0;
+    private long currentPage = 1;
     private int pageSize = 0;
     private BookController paginationController;
 
@@ -36,15 +40,45 @@ public class PaginationComposite extends Composite implements Observer {
         this.paginationController = paginationController;
         paginationController.addObserver(this);
 
-        GridLayoutFactory.fillDefaults().numColumns(6).equalWidth(false).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(8).equalWidth(false).applyTo(this);
+
+        ToolBar barFirstpage = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(barFirstpage);
+
+        itemFirstPage = new ToolItem(barFirstpage, SWT.NONE);
+        itemFirstPage.setToolTipText("Prima pagina");
+        itemFirstPage.setText("Prima pagina");
+        itemFirstPage.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT));
+        itemFirstPage.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_LEFT));
+        itemFirstPage.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                currentPage = 1;
+                search();
+            }
+        });
+
+        itemPrevious = new ToolItem(barFirstpage, SWT.NONE);
+        itemPrevious.setImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_BACK));
+        itemPrevious.setToolTipText("Pagina anterioara");
+        itemPrevious.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (currentPage > 0) {
+                    currentPage--;
+                }
+                search();
+            }
+        });
+
 
         Label tmp = new Label(this, SWT.NONE);
-        tmp.setText("Afisare pagina");
-        GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(tmp);
+        tmp.setText("pagina");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(tmp);
 
         textGoToPage = new FormattedText(this, SWT.BORDER);
         textGoToPage.setFormatter(NumberUtil.getFormatter(0, true));
-        GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(textGoToPage.getControl());
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(textGoToPage.getControl());
         textGoToPage.getControl().addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -56,6 +90,36 @@ public class PaginationComposite extends Composite implements Observer {
                     currentPage = Integer.valueOf(textGoToPage.getValue().toString());
                     search();
                 }
+            }
+        });
+
+        labelDin = new Label(this, SWT.NONE);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(labelDin);
+
+        ToolBar barLastPage = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(barLastPage);
+
+        itemNext = new ToolItem(barLastPage, SWT.NONE);
+        itemNext.setImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_NEXT));
+        itemPrevious.setToolTipText("Pagina urmatoare");
+        itemNext.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                currentPage++;
+                search();
+            }
+        });
+
+        itemLastPage = new ToolItem(barLastPage, SWT.NONE);
+        itemLastPage.setToolTipText("Ultima pagina");
+        itemLastPage.setText("Ultima pagina");
+        itemLastPage.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
+        itemLastPage.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT));
+        itemLastPage.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                currentPage = totalPages;
+                search();
             }
         });
 
@@ -71,7 +135,7 @@ public class PaginationComposite extends Composite implements Observer {
             @Override
             public void handleEvent(Event event) {
                 pageSize = Integer.parseInt(comboItemsPerPage.getText());
-                currentPage = 0;
+                currentPage = 1;
                 totalPages = 0;
                 totalCount = 0;
                 search();
@@ -80,33 +144,6 @@ public class PaginationComposite extends Composite implements Observer {
 
         labelShowingXItemsOfTotal = new Label(this, SWT.NONE);
         GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).hint(150, SWT.DEFAULT).applyTo(labelShowingXItemsOfTotal);
-
-        ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
-        GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(bar);
-
-        itemPrevious = new ToolItem(bar, SWT.NONE);
-        itemPrevious.setImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_BACK));
-        itemPrevious.setToolTipText("Pagina anterioara");
-        itemPrevious.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (currentPage > 0) {
-                    currentPage--;
-                }
-                search();
-            }
-        });
-
-        itemNext = new ToolItem(bar, SWT.NONE);
-        itemNext.setImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_NEXT));
-        itemPrevious.setToolTipText("Pagina urmatoare");
-        itemNext.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                currentPage++;
-                search();
-            }
-        });
     }
 
     private boolean validatePageNumber(Event event) {
@@ -119,7 +156,7 @@ public class PaginationComposite extends Composite implements Observer {
         } else {
             proposedNewPage = Integer.valueOf(String.valueOf(event.character));
         }
-        if (totalCount == 0 || totalPages - 1 < proposedNewPage) {
+        if (totalCount == 0 || totalPages < proposedNewPage) {
             return false;
         }
         return true;
@@ -129,8 +166,8 @@ public class PaginationComposite extends Composite implements Observer {
         if (totalCount == 0) {
             return "No documents found.";
         }
-        long min = currentPage * pageSize;
-        long max = pageSize * (currentPage + 1);
+        long min = (currentPage - 1) * pageSize;
+        long max = pageSize * currentPage;
         if (max > totalCount) {
             max = totalCount;
         }
@@ -139,7 +176,7 @@ public class PaginationComposite extends Composite implements Observer {
 
     public Pageable getPageable() {
         pageSize = Integer.parseInt(comboItemsPerPage.getText());
-        return new PageRequest(currentPage, pageSize);
+        return new PageRequest((int) currentPage - 1, pageSize);
     }
 
     @Override
@@ -148,23 +185,28 @@ public class PaginationComposite extends Composite implements Observer {
         Page<Carte> page = controller.getSearchResult();
         totalCount = page.getTotalElements();
         totalPages = page.getTotalPages();
-        currentPage = page.getNumber();
+        currentPage = page.getNumber() + 1;
 
         updateUI();
     }
 
     private void search() {
         paginationController.requestSearch(getPageable());
-        itemNext.setEnabled(currentPage < totalPages - 1 && totalCount > 0);
-        itemPrevious.setEnabled(currentPage > 0 && totalCount > 0);
+        itemNext.setEnabled(currentPage < totalPages && totalCount > 0);
+        itemPrevious.setEnabled(currentPage - 1 > 0 && totalCount > 0);
 
         updateUI();
     }
 
     private void updateUI() {
-        itemNext.setEnabled(currentPage < totalPages - 1 && totalCount > 0);
-        itemPrevious.setEnabled(currentPage > 0 && totalCount > 0);
+        itemNext.setEnabled(currentPage - 1 < totalPages - 1 && totalCount > 0);
+        itemLastPage.setEnabled(totalPages > 1 && itemNext.getEnabled());
+
+        itemPrevious.setEnabled(currentPage - 1 > 0 && totalCount > 0);
+        itemFirstPage.setEnabled(totalPages > 1 && itemPrevious.getEnabled());
+
         labelShowingXItemsOfTotal.setText(getLabelText());
         textGoToPage.setValue(currentPage);
+        labelDin.setText("din " + totalPages);
     }
 }
