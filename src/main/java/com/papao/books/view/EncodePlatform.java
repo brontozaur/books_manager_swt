@@ -473,6 +473,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         leftTreeViewer.getTree().setCursor(WidgetCursorUtil.getCursor(SWT.CURSOR_HAND));
         leftTreeViewer.getTree().setMenu(createLeftTreeMenu());
+        //TODO wtf is this? :)
         WidgetTreeUtil.customizeTree(leftTreeViewer.getTree(), getClass(), "aaaaadsadfsfdf'gljdnvlkj sjklb ds;b f;dakn v;adkj v;dkaj vds;kj vds;k");
 
         leftTreeViewer.getTree().addListener(SWT.Selection, new Listener() {
