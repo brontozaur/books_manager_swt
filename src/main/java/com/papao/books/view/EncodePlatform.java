@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.awt.*;
@@ -242,7 +243,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     delete();
                 }
                 if (e.keyCode == SWT.F5) {
-                    refreshTableViewer();
+                    refreshTableViewer(false);
                 }
             }
         });
@@ -298,7 +299,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         booksTabItem.setControl(verticalSash);
 
-        fullRefresh();
+        fullRefresh(true);
         getContainer().layout();
     }
 
@@ -472,7 +473,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         leftTreeViewer.getTree().setCursor(WidgetCursorUtil.getCursor(SWT.CURSOR_HAND));
         leftTreeViewer.getTree().setMenu(createLeftTreeMenu());
-        WidgetTreeUtil.customizeTree(leftTreeViewer.getTree(), getClass(), "aaa");
+        WidgetTreeUtil.customizeTree(leftTreeViewer.getTree(), getClass(), "aaaaadsadfsfdf'gljdnvlkj sjklb ds;b f;dakn v;adkj v;dkaj vds;kj vds;k");
 
         leftTreeViewer.getTree().addListener(SWT.Selection, new Listener() {
             @Override
@@ -496,7 +497,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
             return;
         }
-        refreshTableViewer();
+        refreshTableViewer(true);
     }
 
     private void populateLeftTree() {
@@ -745,7 +746,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.toolItemRefresh.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                refreshTableViewer();
+                refreshTableViewer(false);
             }
         });
 
@@ -890,7 +891,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                refreshTableViewer();
+                refreshTableViewer(false);
             }
         });
 
@@ -1136,7 +1137,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        fullRefresh();
+        fullRefresh(false);
         return true;
     }
 
@@ -1195,13 +1196,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        fullRefresh();
+        fullRefresh(false);
         return true;
     }
 
     public void search() {
         this.tableViewer.resetFilters();
-        java.util.List<ViewerFilter> listFilters = new ArrayList<ViewerFilter>();
+        java.util.List<ViewerFilter> listFilters = new ArrayList<>();
         for (Iterator<AbstractSearchType> it = this.searchSystem.getVisibleFilters().values().iterator(); it.hasNext(); ) {
             ViewerFilter filter = null;
             final AbstractSearchType searchType = it.next();
@@ -1256,12 +1257,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, AbstractView.MODE_VIEW).open();
     }
 
-    public void fullRefresh() {
-        refreshTableViewer();
+    public void fullRefresh(boolean resetPage) {
+        refreshTableViewer(resetPage);
         populateLeftTree();
     }
 
-    public void refreshTableViewer() {
+    public void refreshTableViewer(boolean resetPage) {
         String value = null;
         boolean all = true;
         if (!leftTreeViewer.getSelection().isEmpty()) {
@@ -1271,7 +1272,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             value = selectedNode.getQueryValue();
         }
         tableViewer.setInput(null);
-        bookController.requestSearch(this.searchType, value, getPageable(), all);
+        Pageable pageable = getPageable();
+        if (resetPage) {
+            pageable = new PageRequest(0, pageable.getPageSize());
+        }
+        bookController.requestSearch(this.searchType, value, pageable, all);
     }
 
     private Pageable getPageable() {

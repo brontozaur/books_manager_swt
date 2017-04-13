@@ -126,7 +126,7 @@ public class PaginationComposite extends Composite implements Observer {
         if (totalCount == 0) {
             return "No documents found.";
         }
-        long min = currentPage * pageSize + 1;
+        long min = currentPage * pageSize;
         long max = pageSize * (currentPage + 1);
         if (max > totalCount) {
             max = totalCount;
@@ -145,13 +145,23 @@ public class PaginationComposite extends Composite implements Observer {
         Page<Carte> page = controller.getSearchResult();
         totalCount = page.getTotalElements();
         totalPages = page.getTotalPages();
-        labelShowingXItemsOfTotal.setText(getLabelText());
-        textGoToPage.setValue(page.getNumber());
+        currentPage = page.getNumber();
+
+        updateUI();
     }
 
     private void search() {
         paginationController.requestSearch(getPageable());
         itemNext.setEnabled(currentPage < totalPages - 1 && totalCount > 0);
         itemPrevious.setEnabled(currentPage > 0 && totalCount > 0);
+
+        updateUI();
+    }
+
+    private void updateUI() {
+        itemNext.setEnabled(currentPage < totalPages - 1 && totalCount > 0);
+        itemPrevious.setEnabled(currentPage > 0 && totalCount > 0);
+        labelShowingXItemsOfTotal.setText(getLabelText());
+        textGoToPage.setValue(currentPage);
     }
 }
