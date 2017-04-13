@@ -71,6 +71,9 @@ public class PaginationComposite extends Composite implements Observer {
             @Override
             public void handleEvent(Event event) {
                 pageSize = Integer.parseInt(comboItemsPerPage.getText());
+                currentPage = 0;
+                totalPages = 0;
+                totalCount = 0;
                 search();
             }
         });
