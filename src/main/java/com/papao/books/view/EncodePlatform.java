@@ -242,7 +242,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     delete();
                 }
                 if (e.keyCode == SWT.F5) {
-                    refresh();
+                    refreshTableViewer();
                 }
             }
         });
@@ -298,7 +298,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         booksTabItem.setControl(verticalSash);
 
-        refresh();
+        fullRefresh();
         getContainer().layout();
     }
 
@@ -443,7 +443,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         final TreeViewerColumn treeCol = new TreeViewerColumn(leftTreeViewer, SWT.NONE);
         treeCol.getColumn().setText("Grupare elemente");
-        treeCol.getColumn().setWidth(160);
+        treeCol.getColumn().setWidth(200);
         treeCol.getColumn().setAlignment(SWT.CENTER);
         treeCol.getColumn().setResizable(true);
         treeCol.getColumn().setMoveable(false);
@@ -481,7 +481,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        populateLeftTreeByEditura();
+        populateLeftTree();
 
         comp = new Composite(compLeftTree, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, false).span(2, 1).align(SWT.FILL, SWT.CENTER).applyTo(comp);
@@ -496,7 +496,16 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
             return;
         }
-        refresh();
+        refreshTableViewer();
+    }
+
+    private void populateLeftTree() {
+        switch (searchType) {
+            case EDITURA:
+                populateLeftTreeByEditura();
+            default:
+                populateLeftTreeByEditura();
+        }
     }
 
     private void populateLeftTreeByEditura() {
@@ -527,7 +536,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 occurrences.add(new IntValuePair((String) editura, count));
                 totalCount += count;
             } else {
-                emptyOrNullCount++;
+                emptyOrNullCount += count;
             }
         }
         if (emptyOrNullCount > 0) {
@@ -736,7 +745,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.toolItemRefresh.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                refresh();
+                refreshTableViewer();
             }
         });
 
@@ -881,7 +890,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                refresh();
+                refreshTableViewer();
             }
         });
 
@@ -1127,7 +1136,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        refresh();
+        fullRefresh();
         return true;
     }
 
@@ -1186,7 +1195,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        refresh();
+        fullRefresh();
         return true;
     }
 
@@ -1228,6 +1237,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         }
         this.tableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
+        populateLeftTree();
     }
 
     public void view() {
@@ -1246,7 +1256,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, AbstractView.MODE_VIEW).open();
     }
 
-    public void refresh() {
+    public void fullRefresh() {
+        refreshTableViewer();
+        populateLeftTree();
+    }
+
+    public void refreshTableViewer() {
         String value = null;
         boolean all = true;
         if (!leftTreeViewer.getSelection().isEmpty()) {
