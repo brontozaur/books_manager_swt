@@ -9,11 +9,21 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CarteRepository extends MongoRepository<Carte, String> {
 
+    //string values
     Page<Carte> getByEdituraIsNullOrEdituraIs(String emptyString, Pageable pageable);
 
-    Page<Carte> getByEdituraContainsOrderByTitluAsc(String editura, Pageable pageable);
+    Page<Carte> getByEdituraContains(String editura, Pageable pageable);
 
-    Page<Carte> getByAutoriIsNullOrAutoriIs(String[] emptyString, Pageable pageable);
+    Page<Carte> getByLimbaIsNullOrLimbaIs(String emptyString, Pageable pageable);
 
-    Page<Carte> getByAutoriContainsOrderByTitluAsc(String autor, Pageable pageable);
+    Page<Carte> getByLimbaContains(String limba, Pageable pageable);
+
+    Page<Carte> getByAnAparitieIsNullOrAnAparitieIs(String emptyString, Pageable pageable);
+
+    Page<Carte> getByAnAparitieContains(String editura, Pageable pageable);
+
+    //string arrays
+    Page<Carte> getByAutoriIsNullOrAutoriIsLessThanEqual(String[] emptyString, Pageable pageable);
+
+    Page<Carte> getByAutoriContains(String autor, Pageable pageable);
 }

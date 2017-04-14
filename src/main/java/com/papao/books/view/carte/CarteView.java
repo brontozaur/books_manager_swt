@@ -8,7 +8,6 @@ import com.papao.books.controller.BookController;
 import com.papao.books.model.*;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
-import com.papao.books.view.custom.ComboImage;
 import com.papao.books.view.custom.ImageSelectorComposite;
 import com.papao.books.view.custom.LinkedinComposite;
 import com.papao.books.view.providers.ContentProposalProvider;
@@ -22,6 +21,7 @@ import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
+import org.eclipse.nebula.widgets.formattedtext.IntegerFormatter;
 import org.eclipse.nebula.widgets.formattedtext.NumberFormatter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -30,7 +30,6 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +37,6 @@ import org.slf4j.LoggerFactory;
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 public class CarteView extends AbstractCSaveView {
 
@@ -55,7 +51,7 @@ public class CarteView extends AbstractCSaveView {
     private LinkedinComposite compositeAutori;
     private Text textTitlu;
     private Text textEditura;
-    private ComboImage comboAnAparitie;
+    private Text textAnAparitie;
     private Text textTitluOriginal;
     private Text textEditia;
     private FormattedText textInaltime;
@@ -137,8 +133,8 @@ public class CarteView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().grab(true, true).applyTo(mainCompLeft);
 
         Composite topCompLeft = new Composite(mainCompLeft, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(0,0).applyTo(topCompLeft);
-        GridDataFactory.fillDefaults().grab(true, false).span(2,1).applyTo(topCompLeft);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).extendedMargins(0, 0, 0, 5 ).applyTo(topCompLeft);
+        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(topCompLeft);
 
         frontCoverComposite = new ImageSelectorComposite(parent, getSWTImage(carte.getCopertaFata().getId()), carte.getCopertaFata().getFileName());
         GridData data = (GridData) frontCoverComposite.getLayoutData();
@@ -164,7 +160,7 @@ public class CarteView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.textWikiUrl);
 
         Composite bottomCompLeft = new Composite(mainCompLeft, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).margins(0,0).applyTo(bottomCompLeft);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).margins(0, 0).applyTo(bottomCompLeft);
         GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(bottomCompLeft);
 
         Composite bottomLeftCompLeft = new Composite(mainCompLeft, SWT.NONE);
@@ -199,13 +195,8 @@ public class CarteView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).applyTo(this.comboTipCoperta);
         comboTipCoperta.setItems(TipCoperta.getComboItems());
 
-        Label labelTehnoredactori = new Label(bottomLeftCompLeft, SWT.NONE);
-        labelTehnoredactori.setText("Tehnoredactori");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTehnoredactori);
-        this.compositeTehnoredactori = new LinkedinComposite(bottomLeftCompLeft, controller.getDistinctFieldAsContentProposal("tehnoredactori"), carte.getTehnoredactori());
-
         Composite bottomRightCompLeft = new Composite(mainCompLeft, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(bottomRightCompLeft);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).extendedMargins(5, 0, 0, 0).applyTo(bottomRightCompLeft);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(bottomRightCompLeft);
 
 
@@ -223,22 +214,9 @@ public class CarteView extends AbstractCSaveView {
         this.textEditia = new Text(bottomRightCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textEditia);
 
-        Label labelTraducatori = new Label(bottomRightCompLeft, SWT.NONE);
-        labelTraducatori.setText("Traducatori");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
-        this.compositeTraducatori = new LinkedinComposite(bottomRightCompLeft, controller.getDistinctFieldAsContentProposal("traducatori"), carte.getTraducatori());
-        this.compositeTraducatori.getTextSearch().addTraverseListener(new TraverseListener() {
-            @Override
-            public void keyTraversed(TraverseEvent e) {
-                if (e.keyCode == SWT.TAB) {
-                    textTitluOriginal.setFocus();
-                }
-            }
-        });
-
         new Label(bottomRightCompLeft, SWT.NONE).setText("Nr pagini");
         this.textNrPagini = new FormattedText(bottomRightCompLeft, SWT.BORDER);
-        this.textNrPagini.setFormatter(NumberUtil.getFormatter(0, true));
+        this.textNrPagini.setFormatter(new IntegerFormatter());
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(this.textNrPagini.getControl());
         ((NumberFormatter) this.textNrPagini.getFormatter()).setFixedLengths(false, true);
 
@@ -247,25 +225,16 @@ public class CarteView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).applyTo(this.comboLimba);
         comboLimba.setItems(Limba.getComboItems());
 
-        List<BlankDbObject> aniObjects = new ArrayList<>();
-        for (int i = 1900; i < Calendar.getInstance().get(Calendar.YEAR); i++) {
-            final String currentYear = String.valueOf(i);
-            aniObjects.add(new BlankDbObject(currentYear, currentYear));
-        }
         new Label(bottomRightCompLeft, SWT.NONE).setText("An aparitie");
-        ComboImage.CIDescriptor comboDescriptor = new ComboImage.CIDescriptor();
-        comboDescriptor.setTextMethodName(BlankDbObject.EXTERNAL_REFLECT_GET_NAME);
-        comboDescriptor.setAddEmptyElement(false);
-        comboDescriptor.setAddContentProposal(false);
-        comboDescriptor.setClazz(BlankDbObject.class);
-        comboDescriptor.setInput(aniObjects);
-        comboAnAparitie = new ComboImage(bottomRightCompLeft, comboDescriptor);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(75, SWT.DEFAULT).hint(75, SWT.DEFAULT).applyTo(this.comboAnAparitie);
+        textAnAparitie = new Text(bottomRightCompLeft, SWT.BORDER);
+        ContentProposalProvider.addContentProposal(textAnAparitie, controller.getDistinctFieldAsContentProposal("anAparitie"));
+        this.textNrPagini.setFormatter(NumberUtil.getFormatter(0, true));
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(75, SWT.DEFAULT).hint(75, SWT.DEFAULT).applyTo(this.textAnAparitie);
 
     }
 
     private Image getSWTImage(ObjectId imageId) {
-        GridFSDBFile imageForOutput = controller.getImageData(imageId) ;
+        GridFSDBFile imageForOutput = controller.getImageData(imageId);
         if (imageForOutput != null) {
             return new Image(Display.getDefault(), imageForOutput.getInputStream());
         }
@@ -282,6 +251,24 @@ public class CarteView extends AbstractCSaveView {
         labelDistinctii.setText("Distinctii acordate");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelDistinctii);
         this.compositeDistinctiiAcordate = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("distinctiiAcordate"), carte.getDistinctiiAcordate());
+
+        Label labelTraducatori = new Label(parent, SWT.NONE);
+        labelTraducatori.setText("Traducatori");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
+        this.compositeTraducatori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("traducatori"), carte.getTraducatori());
+        this.compositeTraducatori.getTextSearch().addTraverseListener(new TraverseListener() {
+            @Override
+            public void keyTraversed(TraverseEvent e) {
+                if (e.keyCode == SWT.TAB) {
+                    textTitluOriginal.setFocus();
+                }
+            }
+        });
+
+        Label labelTehnoredactori = new Label(parent, SWT.NONE);
+        labelTehnoredactori.setText("Tehnoredactori");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTehnoredactori);
+        this.compositeTehnoredactori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("tehnoredactori"), carte.getTehnoredactori());
 
         backCoverComposite = new ImageSelectorComposite(parent, getSWTImage(carte.getCopertaSpate().getId()), carte.getCopertaSpate().getFileName());
         ((GridData) backCoverComposite.getLayoutData()).verticalSpan = 6;
@@ -325,7 +312,7 @@ public class CarteView extends AbstractCSaveView {
         this.textTitlu.setText(this.carte.getTitlu());
         this.textTitluOriginal.setText(this.carte.getTitluOriginal());
         this.textEditura.setText(this.carte.getEditura());
-        this.comboAnAparitie.select(this.carte.getAnAparitie());
+        this.textAnAparitie.setText(this.carte.getAnAparitie());
         this.textInaltime.setValue(this.carte.getInaltime());
         this.textLatime.setValue(this.carte.getLatime());
         this.textNrPagini.setValue(this.carte.getNrPagini());
@@ -356,7 +343,7 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setTitluOriginal(this.textTitluOriginal.getText());
         this.carte.setAutori(compositeAutori.getValoriIntroduse());
         this.carte.setEditura(textEditura.getText());
-        this.carte.setAnAparitie(comboAnAparitie.getText());
+        this.carte.setAnAparitie(textAnAparitie.getText());
         this.carte.setInaltime(Integer.valueOf(textInaltime.getValue().toString()));
         this.carte.setLatime(Integer.valueOf(textLatime.getValue().toString()));
         this.carte.setNrPagini(Integer.valueOf(textNrPagini.getValue().toString()));

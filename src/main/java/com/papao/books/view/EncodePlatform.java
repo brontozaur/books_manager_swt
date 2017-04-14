@@ -1,7 +1,5 @@
 package com.papao.books.view;
 
-import com.mongodb.AggregationOutput;
-import com.mongodb.DBObject;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.BookController;
 import com.papao.books.model.AbstractDB;
@@ -14,6 +12,7 @@ import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbContentProvider;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
 import com.papao.books.view.providers.tree.IntValuePair;
+import com.papao.books.view.providers.tree.IntValuePairsWrapper;
 import com.papao.books.view.providers.tree.SimpleTextNode;
 import com.papao.books.view.providers.tree.TreeContentProvider;
 import com.papao.books.view.searcheable.AbstractSearchType;
@@ -33,7 +32,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
@@ -41,8 +39,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -73,9 +71,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private SashForm rightInnerSash;
     private CTabFolder bottomInnerTabFolderRight;
     private TableViewer tableViewer;
-    private static final String[] COLS = new String[]{"Autor", "Titlu"};
+    private static final String[] COLS = new String[]{"Autor", "Titlu", "Editura", "An aparitie", "Limba"};
     private final static int IDX_AUTOR = 0;
     private final static int IDX_TITLU = 1;
+    private final static int IDX_EDITURA = 2;
+    private final static int IDX_AN_APARITIE = 3;
+    private final static int IDX_LIMBA = 4;
 
     private ToolItem toolItemAdd;
     private ToolItem toolItemMod;
@@ -85,7 +86,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ToolItem toolItemSearch;
     private Composite compRight;
     private UnifiedStyledLabelProvider leftTreeColumnProvider;
-    private Link linkViewMode;
     private TreeViewer leftTreeViewer;
 
     private Canvas labelBackCover;
@@ -404,13 +404,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 0,
                 0).spacing(5, 3).applyTo(compLeftTree);
 
-        Composite comp = new CLabel(compLeftTree, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT,
-                25).applyTo(comp);
-        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).extendedMargins(5, 5, 3, 2).applyTo(comp);
-
-        new Label(comp, SWT.NONE).setText("Filtru");
-        final Text textUpperSearch = new Text(comp, SWT.SEARCH);
+        new Label(compLeftTree, SWT.NONE).setText("Filtru");
+        final Text textUpperSearch = new Text(compLeftTree, SWT.SEARCH);
         GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(textUpperSearch);
         SWTeXtension.addColoredFocusListener(textUpperSearch, ColorUtil.COLOR_FOCUS_YELLOW);
         textUpperSearch.setMessage("Filtrare");
@@ -483,13 +478,20 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        comp = new Composite(compLeftTree, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).align(SWT.FILL, SWT.CENTER).applyTo(comp);
-        GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(5, 0, 0, 2).applyTo(comp);
-        this.linkViewMode = new Link(comp, SWT.NONE);
-        this.linkViewMode.setToolTipText("Schimba modul de afisare");
-        this.linkViewMode.addListener(SWT.Selection, this);
-        GridDataFactory.fillDefaults().grab(true, false).span(1, 1).align(SWT.BEGINNING, SWT.CENTER).applyTo(this.linkViewMode);
+        new Label(compLeftTree, SWT.NONE).setText("Mod vizualizare");
+        final Combo comboModAfisare = new Combo(compLeftTree, SWT.READ_ONLY | SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(comboModAfisare);
+        for (BookSearchType searchType : BookSearchType.values()) {
+            comboModAfisare.add(searchType.name());
+        }
+        comboModAfisare.select(comboModAfisare.indexOf(searchType.name()));
+        comboModAfisare.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                searchType = BookSearchType.valueOf(comboModAfisare.getText());
+                populateLeftTree();
+            }
+        });
     }
 
     private void handleSelectionOnTree() {
@@ -500,61 +502,44 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     private void populateLeftTree() {
+        if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
+            return;
+        }
         switch (searchType) {
             case EDITURA: {
-                populateLeftTreeByEditura();
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("editura");
+                createTreeNodes(wrapper);
                 break;
             }
             case AUTOR: {
-                populateLeftTreeByAutori();
+                IntValuePairsWrapper wrapper = bookController.getDistinctArrayPropertyValues("autori");
+                createTreeNodes(wrapper);
+                break;
+            }
+            case AN_APARITIE: {
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("anAparitie");
+                createTreeNodes(wrapper);
+                break;
+            }
+            case LIMBA: {
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("limba");
+                createTreeNodes(wrapper);
                 break;
             }
             default:
-                populateLeftTreeByEditura();
+                SWTeXtension.displayMessageI("Vizualizarea dupa " + searchType + " nu este implementata inca!");
         }
     }
 
-    private void populateLeftTreeByEditura() {
-        SimpleTextNode invisibleRoot;
-        boolean showNumbers;
+    private void createTreeNodes(IntValuePairsWrapper wrapper) {
         SimpleTextNode baseNode;
-        showNumbers = true;//getFiltru().isTreeShowingElementCount();
-
-        if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
-            return;
-        }
-
-        AggregationOutput output = bookController.getDistinctEdituraValue();
-
-        invisibleRoot = new SimpleTextNode(null);
-        int totalCount = 0;
-        List<IntValuePair> occurrences = new ArrayList<>();
-
-        int emptyOrNullCount = 0;
-        for (DBObject distinctEditura : output.results()) {
-            Object numeEditura = distinctEditura.get("_id");
-            if (numeEditura == null) {
-                emptyOrNullCount++;
-                continue;
-            }
-            int count = Integer.valueOf(distinctEditura.get("count").toString());
-            if (StringUtils.isNotEmpty((String) numeEditura)) {
-                occurrences.add(new IntValuePair((String) numeEditura, count));
-                totalCount += count;
-            } else {
-                emptyOrNullCount += count;
-            }
-        }
-        if (emptyOrNullCount > 0) {
-            totalCount += emptyOrNullCount;
-            occurrences.add(new IntValuePair(null, emptyOrNullCount));
-        }
-
         boolean showAllNode = true;
+        boolean showNumbers = true;
+        SimpleTextNode invisibleRoot = new SimpleTextNode(null);
         if (showAllNode) {
             SimpleTextNode allNode = new SimpleTextNode(ViewModeDetails.ALL_STR);
             allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
-            allNode.setCount(totalCount);
+            allNode.setCount(wrapper.getTotalCount());
             allNode.setAllNode(true);
             allNode.setQueryValue(null);
             if (showNumbers) {
@@ -566,75 +551,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             baseNode = invisibleRoot;
         }
 
-        for (IntValuePair valuePair : occurrences) {
-            StringBuilder numeEditura = new StringBuilder(valuePair.getValue());
-            if (showNumbers) {
-                numeEditura.append(" (");
-                numeEditura.append(valuePair.getCount());
-                numeEditura.append(")");
-            }
-            SimpleTextNode node = new SimpleTextNode(numeEditura.toString());
-            node.setImage(AppImages.getImage16(AppImages.IMG_BANCA));
-            node.setCount(valuePair.getCount());
-            node.setQueryValue(valuePair.getQueryValue());
-            baseNode.add(node);
-        }
-        leftTreeViewer.setInput(invisibleRoot);
-    }
-
-    private void populateLeftTreeByAutori() {
-        SimpleTextNode invisibleRoot;
-        boolean showNumbers;
-        SimpleTextNode baseNode;
-        showNumbers = true;//getFiltru().isTreeShowingElementCount();
-
-        if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
-            return;
-        }
-
-        AggregationOutput output = bookController.getDistinctAutoriValue();
-
-        invisibleRoot = new SimpleTextNode(null);
-        int totalCount = 0;
-        List<IntValuePair> occurrences = new ArrayList<>();
-
-        int emptyOrNullCount = 0;
-        for (DBObject distinctValues : output.results()) {
-            Object numeAutor = distinctValues.get("_id");
-            if (numeAutor == null) {
-                emptyOrNullCount++;
-                continue;
-            }
-            int count = Integer.valueOf(distinctValues.get("count").toString());
-            if (StringUtils.isNotEmpty((String) numeAutor)) {
-                occurrences.add(new IntValuePair((String) numeAutor, count));
-                totalCount += count;
-            } else {
-                emptyOrNullCount += count;
-            }
-        }
-        if (emptyOrNullCount > 0) {
-            totalCount += emptyOrNullCount;
-            occurrences.add(new IntValuePair(null, emptyOrNullCount));
-        }
-
-        boolean showAllNode = true;
-        if (showAllNode) {
-            SimpleTextNode allNode = new SimpleTextNode(ViewModeDetails.ALL_STR);
-            allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
-            allNode.setCount(totalCount);
-            allNode.setAllNode(true);
-            allNode.setQueryValue(null);
-            if (showNumbers) {
-                allNode.setName(ViewModeDetails.ALL_STR + " (" + allNode.getCount() + ")");
-            }
-            invisibleRoot.add(allNode);
-            baseNode = allNode;
-        } else {
-            baseNode = invisibleRoot;
-        }
-
-        for (IntValuePair valuePair : occurrences) {
+        for (IntValuePair valuePair : wrapper.getPairs()) {
             StringBuilder numeEditura = new StringBuilder(valuePair.getValue());
             if (showNumbers) {
                 numeEditura.append(" (");
@@ -870,6 +787,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     public final void createViewerFilters() {
         this.searchSystem.createTextSearch(IDX_AUTOR);
         this.searchSystem.createTextSearch(IDX_TITLU);
+        this.searchSystem.createTextSearch(IDX_EDITURA);
+        this.searchSystem.createTextSearch(IDX_AN_APARITIE);
+        this.searchSystem.createTextSearch(IDX_LIMBA);
     }
 
     public final void initViewerCols() {
@@ -878,9 +798,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
 
         this.tableViewer.setContentProvider(new AdbContentProvider());
-        int[] dims = new int[]{250, 250};
-        int[] aligns = new int[]{SWT.LEFT, SWT.LEFT};
-        boolean[] visible = new boolean[]{true, true};
+        int[] dims = new int[COLS.length];
+        Arrays.fill(dims, 250);
+        int[] aligns = new int[COLS.length];
+        Arrays.fill(aligns, SWT.LEFT);
+        boolean[] visible = new boolean[COLS.length];
+        Arrays.fill(visible, true);
         for (int i = 0; i < COLS.length; i++) {
             final TableViewerColumn col = new TableViewerColumn(this.tableViewer, SWT.NONE);
             col.getColumn().setText(COLS[i]);
@@ -923,6 +846,66 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
                             return a.getTitlu().compareTo(b.getTitlu());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                case IDX_EDITURA: {
+                    col.setLabelProvider(new ColumnLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Carte carte = (Carte) element;
+                            return carte.getEditura();
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Carte a = (Carte) e1;
+                            Carte b = (Carte) e2;
+                            return a.getEditura().compareTo(b.getEditura());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                case IDX_AN_APARITIE: {
+                    col.setLabelProvider(new ColumnLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Carte carte = (Carte) element;
+                            return carte.getAnAparitie();
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Carte a = (Carte) e1;
+                            Carte b = (Carte) e2;
+                            return a.getAnAparitie().compareTo(b.getAnAparitie());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                case IDX_LIMBA: {
+                    col.setLabelProvider(new ColumnLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Carte carte = (Carte) element;
+                            return carte.getLimba().name();
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Carte a = (Carte) e1;
+                            Carte b = (Carte) e2;
+                            return a.getLimba().compareTo(b.getLimba());
                         }
 
                     };
@@ -1299,6 +1282,36 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                             Carte carte = (Carte) element;
                             return searchType.compareValues(carte.getTitlu());
+                        }
+                    };
+                    break;
+                }
+                case IDX_EDITURA: {
+                    filter = new ViewerFilter() {
+                        @Override
+                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                            Carte carte = (Carte) element;
+                            return searchType.compareValues(carte.getEditura());
+                        }
+                    };
+                    break;
+                }
+                case IDX_AN_APARITIE: {
+                    filter = new ViewerFilter() {
+                        @Override
+                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                            Carte carte = (Carte) element;
+                            return searchType.compareValues(carte.getAnAparitie());
+                        }
+                    };
+                    break;
+                }
+                case IDX_LIMBA: {
+                    filter = new ViewerFilter() {
+                        @Override
+                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                            Carte carte = (Carte) element;
+                            return searchType.compareValues(carte.getLimba().name());
                         }
                     };
                     break;

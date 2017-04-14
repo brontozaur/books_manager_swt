@@ -2,14 +2,12 @@ package com.papao.books.view.custom;
 
 import com.papao.books.view.AppImages;
 import com.papao.books.view.util.ColorUtil;
-import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +18,9 @@ import java.io.IOException;
 public class ImageSelectorComposite extends Composite {
 
     private Label labelImage;
-    private Shell previewShell;
-    private Text textFileName;
+    private ImageViewer previewShell;
     private boolean imageChanged;
+    private String imageName;
     private final int WIDTH = 180;
     private final int HEIGHT = 180;
 
@@ -32,16 +30,10 @@ public class ImageSelectorComposite extends Composite {
 
     public ImageSelectorComposite(Composite parent, Image fullImage, String imageName) {
         super(parent, SWT.NONE);
+        this.imageName = imageName;
 
         GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(5, 5, 5, 5).applyTo(this);
-//        GridDataFactory.fillDefaults().grab(false, false).applyTo(this);
         GridDataFactory.fillDefaults().grab(false, false).hint(190, 250).applyTo(this);
-
-        this.textFileName = new Text(this, SWT.BORDER | SWT.READ_ONLY);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textFileName);
-        if (imageName != null && fullImage != null) {
-            this.textFileName.setText(imageName);
-        }
 
         labelImage = new Label(this, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(labelImage);
@@ -49,16 +41,6 @@ public class ImageSelectorComposite extends Composite {
             @Override
             public void handleEvent(Event event) {
                 displayImage(event);
-            }
-        });
-
-        labelImage.addListener(SWT.MouseExit, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (previewShell != null && !previewShell.isDisposed()) {
-                    previewShell.close();
-                    previewShell = null;
-                }
             }
         });
 
@@ -111,6 +93,7 @@ public class ImageSelectorComposite extends Composite {
     private void populateFields(Image fullImage) {
         labelImage.setData(SWT_FULL_IMAGE, fullImage);
         labelImage.setData(OS_FILE, null);
+        labelImage.setData(imageName);
         Image resizedImage = AppImages.getImage(fullImage, WIDTH, HEIGHT);
         labelImage.setImage(resizedImage);
     }
@@ -119,21 +102,12 @@ public class ImageSelectorComposite extends Composite {
         if (event.widget.getData(SWT_FULL_IMAGE) instanceof Image) {
             Image image = (Image) event.widget.getData(SWT_FULL_IMAGE);
             if (!image.isDisposed()) {
-                if (previewShell != null && !previewShell.isDisposed()) {
-                    previewShell.close();
+                if (previewShell != null && !previewShell.getShell().isDisposed()) {
+                    previewShell.getShell().close();
                     previewShell = null;
                 }
-                previewShell = new Shell(getShell(), SWT.NO_TRIM);
-                previewShell.setLayout(new FillLayout());
-                previewShell.setSize(image.getBounds().width, image.getBounds().height);
-                previewShell.setBackgroundImage(image);
-                WidgetCompositeUtil.centerInDisplay(previewShell);
-                previewShell.addListener(SWT.MouseExit, new Listener() {
-                    @Override
-                    public void handleEvent(Event event) {
-                        previewShell.close();
-                    }
-                });
+                previewShell = new ImageViewer(image);
+                previewShell.setImageName(labelImage.getData()+"");
                 previewShell.open();
             }
         }
@@ -147,11 +121,11 @@ public class ImageSelectorComposite extends Composite {
             }
             labelImage.setData(SWT_FULL_IMAGE, null);
             labelImage.setData(OS_FILE, null);
+            labelImage.setData(null);
             if (labelImage.getImage() != null && !labelImage.getImage().isDisposed()) {
                 labelImage.getImage().dispose();
             }
             labelImage.setImage(null);
-            textFileName.setText("");
             imageChanged = true;
         }
     }
@@ -173,9 +147,9 @@ public class ImageSelectorComposite extends Composite {
             Image fullImage = new Image(Display.getDefault(), selectedFile);
             labelImage.setData(SWT_FULL_IMAGE, fullImage);
             labelImage.setData(OS_FILE, file);
+            labelImage.setData(file.getName());
             Image resizedImage = AppImages.getImage(fullImage, WIDTH, HEIGHT);
             labelImage.setImage(resizedImage);
-            textFileName.setText(file.getName());
             imageChanged = true;
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);

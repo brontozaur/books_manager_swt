@@ -4,11 +4,11 @@ import com.papao.books.controller.BookController;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.searcheable.BookSearchType;
-import com.papao.books.view.util.NumberUtil;
 import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
+import org.eclipse.nebula.widgets.formattedtext.IntegerFormatter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.springframework.data.domain.Page;
@@ -82,7 +82,7 @@ public class PaginationComposite extends Composite implements Observer {
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(tmp);
 
         textGoToPage = new FormattedText(compLeft, SWT.BORDER);
-        textGoToPage.setFormatter(NumberUtil.getFormatter(0, true));
+        textGoToPage.setFormatter(new IntegerFormatter());
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(textGoToPage.getControl());
         textGoToPage.getControl().addListener(SWT.KeyDown, new Listener() {
             @Override
