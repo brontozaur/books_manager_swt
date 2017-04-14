@@ -526,6 +526,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 createTreeNodes(wrapper);
                 break;
             }
+            case TITLU: {
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("titlu", true);
+                createTreeNodes(wrapper);
+                break;
+            }
             default:
                 SWTeXtension.displayMessageI("Vizualizarea dupa " + searchType + " nu este implementata inca!");
         }

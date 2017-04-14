@@ -108,23 +108,55 @@ public class BookController extends Observable {
             } else {
                 carti = repository.getByLimbaIsNullOrLimbaIs("", pageable);
             }
+        } else if (searchType == BookSearchType.TITLU) {
+            if (StringUtils.isNotEmpty(value)) {
+                carti = repository.getByTitluStartingWith(value, pageable);
+            } else {
+                carti = repository.getByTitluIsNullOrTitluIs("", pageable);
+            }
         }
         setChanged();
         notifyObservers();
     }
 
     public IntValuePairsWrapper getDistinctStringPropertyValues(String propName) {
-        DBCollection colllection = mongoTemplate.getCollection("carte");
+        return getDistinctStringPropertyValues(propName, false);
+    }
+
+    /*
+
+    db.carte.aggregate([
+      { $group: { _id: { titlu: "$titlu" }, count: { $sum: 1 } } }
+    ])
+
+    //if only the first letter is needed we need this
+    db.carte.aggregate({
+        $group: { _id: { $substr: ['$titlu', 0, 1] }, count: { $sum: 1 } }
+    })
+
+     */
+    public IntValuePairsWrapper getDistinctStringPropertyValues(String propName, boolean useFirstLetter) {
+        DBCollection collection = mongoTemplate.getCollection("carte");
 
         /*
             http://stackoverflow.com/questions/21452674/mongos-distinct-value-count-for-two-fields-in-java
         */
 
+        DBObject project = null;
+        if (useFirstLetter) {
+            project = new BasicDBObject("$project", new BasicDBObject(propName, new BasicDBObject("$substr", Arrays.asList("$" + propName, 0, 1))));
+        }
         DBObject groupFields = new BasicDBObject("_id", "$" + propName);
         groupFields.put("count", new BasicDBObject("$sum", 1));
         DBObject group = new BasicDBObject("$group", groupFields);
-        List<DBObject> pipeline = Arrays.asList(group);
-        AggregationOutput output = colllection.aggregate(pipeline);
+        List<DBObject> pipeline;
+        if (useFirstLetter) {
+            pipeline = Arrays.asList(project, group);
+        } else {
+            pipeline = Arrays.asList(group);
+        }
+        // [{ "$project" : { "titlu" : { "$substr" : [ "$titlu" , 0 , 1]}}}, { "$group" : { "_id" : "$titlu" , "count" : { "$sum" : 1}}}]
+        AggregationOutput output = collection.aggregate(pipeline);
 
         int totalCount = 0;
         List<IntValuePair> occurrences = new ArrayList<>();

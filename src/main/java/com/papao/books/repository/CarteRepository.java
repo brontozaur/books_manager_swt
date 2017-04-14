@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CarteRepository extends MongoRepository<Carte, String> {
 
-    //string values
+    //string values - contains
     Page<Carte> getByEdituraIsNullOrEdituraIs(String emptyString, Pageable pageable);
 
     Page<Carte> getByEdituraContains(String editura, Pageable pageable);
@@ -21,6 +21,11 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
     Page<Carte> getByAnAparitieIsNullOrAnAparitieIs(String emptyString, Pageable pageable);
 
     Page<Carte> getByAnAparitieContains(String editura, Pageable pageable);
+
+    // string values - begins with, for first letter tree items
+    Page<Carte> getByTitluIsNullOrTitluIs(String emptyString, Pageable pageable);
+
+    Page<Carte> getByTitluStartingWith(String titluStartsWith, Pageable pageable);
 
     //string arrays
     Page<Carte> getByAutoriIsNullOrAutoriIsLessThanEqual(String[] emptyString, Pageable pageable);
