@@ -4,16 +4,16 @@ import java.util.List;
 
 public class IntValuePairsWrapper {
 
-    private int totalCount;
+    private int validDistinctValues;
     private List<IntValuePair> pairs;
 
-    public IntValuePairsWrapper(int totalCount, List<IntValuePair> pairs) {
-        this.totalCount = totalCount;
+    public IntValuePairsWrapper(int validDistinctValues, List<IntValuePair> pairs) {
+        this.validDistinctValues = validDistinctValues;
         this.pairs = pairs;
     }
 
-    public int getTotalCount() {
-        return totalCount;
+    public int getValidDistinctValues() {
+        return validDistinctValues;
     }
 
     public List<IntValuePair> getPairs() {

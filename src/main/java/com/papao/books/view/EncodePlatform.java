@@ -5,7 +5,6 @@ import com.papao.books.controller.BookController;
 import com.papao.books.model.AbstractDB;
 import com.papao.books.model.Carte;
 import com.papao.books.repository.UserRepository;
-import com.papao.books.view.bones.impl.bones.ViewModeDetails;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.custom.PaginationComposite;
 import com.papao.books.view.menu.PlatformMenu;
@@ -508,32 +507,32 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         switch (searchType) {
             case EDITURA: {
                 IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("editura");
-                createTreeNodes(wrapper);
+                createTreeNodes(wrapper, "Edituri");
                 break;
             }
             case AUTOR: {
                 IntValuePairsWrapper wrapper = bookController.getDistinctArrayPropertyValues("autori");
-                createTreeNodes(wrapper);
+                createTreeNodes(wrapper, "Autori");
                 break;
             }
             case TRADUCATOR: {
                 IntValuePairsWrapper wrapper = bookController.getDistinctArrayPropertyValues("traducatori");
-                createTreeNodes(wrapper);
+                createTreeNodes(wrapper, "Traducatori");
                 break;
             }
             case AN_APARITIE: {
                 IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("anAparitie");
-                createTreeNodes(wrapper);
+                createTreeNodes(wrapper, "Ani aparitie");
                 break;
             }
             case LIMBA: {
                 IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("limba");
-                createTreeNodes(wrapper);
+                createTreeNodes(wrapper, "Limba textului");
                 break;
             }
             case TITLU: {
                 IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("titlu", true);
-                createTreeNodes(wrapper);
+                createTreeNodes(wrapper, "Toate tilurile");
                 break;
             }
             default:
@@ -541,19 +540,19 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
     }
 
-    private void createTreeNodes(IntValuePairsWrapper wrapper) {
+    private void createTreeNodes(IntValuePairsWrapper wrapper, String rootNodeName) {
         SimpleTextNode baseNode;
         boolean showAllNode = true;
         boolean showNumbers = true;
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
         if (showAllNode) {
-            SimpleTextNode allNode = new SimpleTextNode(ViewModeDetails.ALL_STR);
+            SimpleTextNode allNode = new SimpleTextNode(rootNodeName);
             allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
-            allNode.setCount(wrapper.getTotalCount());
+            allNode.setCount(wrapper.getValidDistinctValues());
             allNode.setAllNode(true);
             allNode.setQueryValue(null);
             if (showNumbers) {
-                allNode.setName(ViewModeDetails.ALL_STR + " (" + allNode.getCount() + ")");
+                allNode.setName(rootNodeName + " (" + allNode.getCount() + ")");
             }
             invisibleRoot.add(allNode);
             baseNode = allNode;
@@ -588,15 +587,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             public final void handleEvent(final Event e) {
                 int idx = 0;
                 final boolean flagItemCount = (leftTreeViewer.getTree().getItemCount() > 0);
-//                final boolean isDateView = getFiltru().getTreeViewMode() == AbstractFilterViewMode.AFISARE_DUPA_DATA;
-                boolean isDateView = false;
-                menu.getItem(idx++).setEnabled(flagItemCount && isDateView); // expand all
-                menu.getItem(idx++).setEnabled(flagItemCount && isDateView); // colapse all
-//                menu.getItem(idx++).setEnabled(getFiltru().getTreeAlignment() == SWT.RIGHT);
-//                menu.getItem(idx++).setEnabled(getFiltru().getTreeAlignment() == SWT.LEFT);
-                menu.getItem(idx++).setEnabled(true); // separator
-                menu.getItem(idx++).setEnabled(true); // selectie tip afisare
-                menu.getItem(idx++).setEnabled(FiltruAplicatie.isLeftTreeShowRecentActivity());
+                menu.getItem(idx++).setEnabled(flagItemCount); // expand all
+                menu.getItem(idx++).setEnabled(flagItemCount); // colapse all
             }
         });
 
@@ -625,7 +617,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                swap(false);
+                swap();
             }
         });
 
@@ -634,44 +626,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                swap(false);
-            }
-        });
-
-        new MenuItem(menu, SWT.SEPARATOR);
-
-        menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setImage(AppImages.getImage16(AppImages.IMG_MOD_VIZUALIZARE));
-        menuItem.setText("Selectie mod afisare");
-        menuItem.addListener(SWT.Selection, new Listener() {
-            @Override
-            public final void handleEvent(final Event e) {
-                handleSelectTreeViewMode();
-            }
-        });
-
-        menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Distribuire operatii recente");
-        menuItem.addListener(SWT.Selection, new Listener() {
-            @Override
-            public final void handleEvent(final Event e) {
-//                populateLeftTree(false);
-                enableOps();
+                swap();
             }
         });
         return menu;
     }
 
-    public final void handleSelectTreeViewMode() {
-//        FiltruErrorsViewMode view = new FiltruErrorsViewMode(getTable().getShell(), getFiltru());
-//        view.open();
-//        if (view.getUserAction() == SWT.OK) {
-//            setNumeCriteriuAfisare(view.getSelectionTypeName());
-//            populateLeftTree(false);
-//        }
-    }
-
-    public void swap(final boolean isCodeSelection) {
+    public void swap() {
         if (compLeftTree.getLocation().x < compRight.getLocation().x) {
             compLeftTree.moveBelow(compRight);
             verticalSash.setWeights(new int[]{

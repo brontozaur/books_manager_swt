@@ -182,26 +182,23 @@ public class BookController extends Observable {
         // [{ "$project" : { "titlu" : {$toUpper: { "$substr" : [ "$titlu" , 0 , 1]}}}}, { "$group" : { "_id" : "$titlu" , "count" : { "$sum" : 1}}}]
         AggregationOutput output = collection.aggregate(pipeline);
 
-        int totalCount = 0;
         List<IntValuePair> occurrences = new ArrayList<>();
 
         int emptyOrNullCount = 0;
-        for (DBObject distinctEditura : output.results()) {
-            Object numeEditura = distinctEditura.get("_id");
-            if (numeEditura == null) {
+        for (DBObject distinctValue : output.results()) {
+            Object itemName = distinctValue.get("_id");
+            if (itemName == null) {
                 emptyOrNullCount++;
                 continue;
             }
-            int count = Integer.valueOf(distinctEditura.get("count").toString());
-            if (StringUtils.isNotEmpty((String) numeEditura)) {
-                occurrences.add(new IntValuePair((String) numeEditura, count));
-                totalCount += count;
+            int count = Integer.valueOf(distinctValue.get("count").toString());
+            if (StringUtils.isNotEmpty((String) itemName)) {
+                occurrences.add(new IntValuePair((String) itemName, count));
             } else {
                 emptyOrNullCount += count;
             }
         }
         if (emptyOrNullCount > 0) {
-            totalCount += emptyOrNullCount;
             occurrences.add(new IntValuePair(null, emptyOrNullCount));
         }
         Collections.sort(occurrences, new Comparator<IntValuePair>() {
@@ -210,7 +207,7 @@ public class BookController extends Observable {
                 return a.getValue().compareTo(b.getValue());
             }
         });
-        return new IntValuePairsWrapper(totalCount, occurrences);
+        return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
     }
 
     /*
@@ -245,20 +242,18 @@ public class BookController extends Observable {
         List<DBObject> pipeline = Arrays.asList(unwind, group);
         AggregationOutput output = colllection.aggregate(pipeline);
 
-        int totalCount = 0;
         List<IntValuePair> occurrences = new ArrayList<>();
 
         int emptyOrNullCount = 0;
-        for (DBObject distinctValues : output.results()) {
-            Object distinctValue = distinctValues.get("_id");
-            if (distinctValue == null) {
+        for (DBObject distinctValue : output.results()) {
+            Object itemName = distinctValue.get("_id");
+            if (itemName == null) {
                 emptyOrNullCount++;
                 continue;
             }
-            int count = Integer.valueOf(distinctValues.get("count").toString());
-            if (StringUtils.isNotEmpty((String) distinctValue)) {
-                occurrences.add(new IntValuePair((String) distinctValue, count));
-                totalCount += count;
+            int count = Integer.valueOf(distinctValue.get("count").toString());
+            if (StringUtils.isNotEmpty((String) itemName)) {
+                occurrences.add(new IntValuePair((String) itemName, count));
             } else {
                 emptyOrNullCount += count;
             }
@@ -273,7 +268,6 @@ public class BookController extends Observable {
         emptyOrNullCount += booksWithNoAuthors;
 
         if (emptyOrNullCount > 0) {
-            totalCount += emptyOrNullCount;
             occurrences.add(new IntValuePair(null, emptyOrNullCount));
         }
         Collections.sort(occurrences, new Comparator<IntValuePair>() {
@@ -282,7 +276,7 @@ public class BookController extends Observable {
                 return a.getValue().compareTo(b.getValue());
             }
         });
-        return new IntValuePairsWrapper(totalCount, occurrences);
+        return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
     }
 
     public Page<Carte> getSearchResult() {

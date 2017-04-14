@@ -10,7 +10,7 @@ import java.util.List;
 @Document(collection = "carte")
 public class Carte extends AbstractDB implements Serializable {
 
-    public static String REPLACEMENT_FOR_NOT_SET = "###";
+    public static String REPLACEMENT_FOR_NOT_SET = "";
 
     @Id
     private String id;
