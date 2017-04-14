@@ -16,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @see http://www.vogella.de/articles/EclipseJFaceTable/ar01s09.html This implementation can be used in two ways:
+ * See <a href=http://www.vogella.de/articles/EclipseJFaceTable/ar01s09.html> this page.</a>
+ * This implementation can be used in two ways:
  *      <ul>
  *      <li>For {@link TreeViewer} usually the beans from the viewer input will implement {@link ITreeNode} and therefore all node properties (text, font, image, color, etc) can be specified on each
  *      node. See {@link } for example. This is required to make possible the diversity of fonts, images, foregrounds, etc in a tree.</li>
@@ -63,7 +64,7 @@ public class UnifiedStyledLabelProvider extends StyledCellLabelProvider implemen
 				StyleRange myStyleRange = new StyleRange(0, 0, null, null);
 				myStyleRange.start = intRangesCorrectSize[i];
 				myStyleRange.length = intRangesCorrectSize[++i];
-					myStyleRange.font = FontUtil.TAHOMA8_BOLD;
+					myStyleRange.font = FontUtil.TAHOMA14_NORMAL;
 					myStyleRange.background = FiltruAplicatie.getHighlightColor();
 				styleRange.add(myStyleRange);
 			}
