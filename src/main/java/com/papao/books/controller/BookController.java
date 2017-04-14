@@ -7,6 +7,7 @@ import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
+import com.papao.books.exception.UnsupportedSearchTypeException;
 import com.papao.books.model.Carte;
 import com.papao.books.repository.CarteRepository;
 import com.papao.books.view.providers.tree.IntValuePair;
@@ -84,35 +85,58 @@ public class BookController extends Observable {
         this.all = all;
         if (all) {
             carti = repository.findAll(pageable);
-        } else if (searchType == BookSearchType.EDITURA) {
-            if (StringUtils.isNotEmpty(value)) {
-                carti = repository.getByEdituraContains(value, pageable);
-            } else {
-                carti = repository.getByEdituraIsNullOrEdituraIs("", pageable);
-            }
-        } else if (searchType == BookSearchType.AUTOR) {
-            if (StringUtils.isNotEmpty(value)) {
-                carti = repository.getByAutoriContains(value, pageable);
-            } else {
-                carti = repository.getByAutoriIsNullOrAutoriIsLessThanEqual(new String[]{""}, pageable);
-            }
-        } else if (searchType == BookSearchType.AN_APARITIE) {
-            if (StringUtils.isNotEmpty(value)) {
-                carti = repository.getByAnAparitieContains(value, pageable);
-            } else {
-                carti = repository.getByAnAparitieIsNullOrAnAparitieIs("", pageable);
-            }
-        } else if (searchType == BookSearchType.LIMBA) {
-            if (StringUtils.isNotEmpty(value)) {
-                carti = repository.getByLimbaContains(value, pageable);
-            } else {
-                carti = repository.getByLimbaIsNullOrLimbaIs("", pageable);
-            }
-        } else if (searchType == BookSearchType.TITLU) {
-            if (StringUtils.isNotEmpty(value)) {
-                carti = repository.getByTitluStartingWith(value, pageable);
-            } else {
-                carti = repository.getByTitluIsNullOrTitluIs("", pageable);
+        } else {
+            switch (searchType) {
+                case EDITURA: {
+                    if (StringUtils.isNotEmpty(value)) {
+                        carti = repository.getByEdituraContains(value, pageable);
+                    } else {
+                        carti = repository.getByEdituraIsNullOrEdituraIs("", pageable);
+                    }
+                    break;
+                }
+                case AUTOR: {
+                    if (StringUtils.isNotEmpty(value)) {
+                        carti = repository.getByAutoriContains(value, pageable);
+                    } else {
+                        carti = repository.getByAutoriIsNullOrAutoriIsLessThanEqual(new String[]{""}, pageable);
+                    }
+                    break;
+                }
+                case TRADUCATOR: {
+                    if (StringUtils.isNotEmpty(value)) {
+                        carti = repository.getByTraducatoriContains(value, pageable);
+                    } else {
+                        carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqual(new String[]{""}, pageable);
+                    }
+                    break;
+                }
+                case AN_APARITIE: {
+                    if (StringUtils.isNotEmpty(value)) {
+                        carti = repository.getByAnAparitieContains(value, pageable);
+                    } else {
+                        carti = repository.getByAnAparitieIsNullOrAnAparitieIs("", pageable);
+                    }
+                    break;
+                }
+                case LIMBA: {
+                    if (StringUtils.isNotEmpty(value)) {
+                        carti = repository.getByLimbaContains(value, pageable);
+                    } else {
+                        carti = repository.getByLimbaIsNullOrLimbaIs("", pageable);
+                    }
+                    break;
+                }
+                case TITLU: {
+                    if (StringUtils.isNotEmpty(value)) {
+                        carti = repository.getByTitluStartingWith(value, pageable);
+                    } else {
+                        carti = repository.getByTitluIsNullOrTitluIs("", pageable);
+                    }
+                    break;
+                }
+                default:
+                    throw new UnsupportedSearchTypeException("The search type " + searchType + " is not (yet) implemented!");
             }
         }
         setChanged();
@@ -212,7 +236,7 @@ public class BookController extends Observable {
 //        unwindMap.put("path", mongoProperty);
 //        unwindMap.put("preserveNullAndEmptyArrays", true);
 //        DBObject unwind = new BasicDBObject("$unwind", unwindMap);
-        DBObject unwind = new BasicDBObject("$unwind", "$autori");
+        DBObject unwind = new BasicDBObject("$unwind", mongoProperty);
         //group
         DBObject groupFields = new BasicDBObject("_id", mongoProperty);
         groupFields.put("count", new BasicDBObject("$sum", 1));
@@ -226,14 +250,14 @@ public class BookController extends Observable {
 
         int emptyOrNullCount = 0;
         for (DBObject distinctValues : output.results()) {
-            Object numeAutor = distinctValues.get("_id");
-            if (numeAutor == null) {
+            Object distinctValue = distinctValues.get("_id");
+            if (distinctValue == null) {
                 emptyOrNullCount++;
                 continue;
             }
             int count = Integer.valueOf(distinctValues.get("count").toString());
-            if (StringUtils.isNotEmpty((String) numeAutor)) {
-                occurrences.add(new IntValuePair((String) numeAutor, count));
+            if (StringUtils.isNotEmpty((String) distinctValue)) {
+                occurrences.add(new IntValuePair((String) distinctValue, count));
                 totalCount += count;
             } else {
                 emptyOrNullCount += count;

@@ -31,4 +31,8 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
     Page<Carte> getByAutoriIsNullOrAutoriIsLessThanEqual(String[] emptyString, Pageable pageable);
 
     Page<Carte> getByAutoriContains(String autor, Pageable pageable);
+
+    Page<Carte> getByTraducatoriIsNullOrTraducatoriIsLessThanEqual(String[] emptyString, Pageable pageable);
+
+    Page<Carte> getByTraducatoriContains(String traducator, Pageable pageable);
 }
