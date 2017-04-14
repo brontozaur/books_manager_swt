@@ -46,7 +46,7 @@ public class LinkedinComposite extends Composite {
 
         compSelections = new Composite(this, SWT.NONE);
         compSelections.setBackground(ColorUtil.COLOR_WHITE);
-        GridDataFactory.fillDefaults().grab(true, true).hint(350, SWT.DEFAULT).span(2, 1).applyTo(compSelections);
+        GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(compSelections);
         RowLayoutFactory.fillDefaults().extendedMargins(5, 5, 0, 5).spacing(1).pack(true).wrap(true).applyTo(compSelections);
 
         ContentProposalProvider.addContentProposal(textSearch, proposals);

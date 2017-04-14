@@ -110,7 +110,7 @@ public class CarteView extends AbstractCSaveView {
         tabFolder.setSelection(firstTabItem);
 
         compLeft = new Composite(tabFolder, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(6).margins(5, 5).equalWidth(false).applyTo(compLeft);
+        GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5).equalWidth(false).applyTo(compLeft);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(compLeft);
 
         createCompLeftComponents(compLeft);
@@ -132,58 +132,59 @@ public class CarteView extends AbstractCSaveView {
 
     private void createCompLeftComponents(Composite parent) {
 
-        new Label(parent, SWT.NONE).setText("Titlu");
-        this.textTitlu = new Text(parent, SWT.BORDER);
-        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(4, 1).applyTo(this.textTitlu);
+        Composite mainCompLeft = new Composite(parent, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).spacing(0, 0).applyTo(mainCompLeft);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(mainCompLeft);
 
-        Composite primaryCompLeft = new Composite(parent, SWT.NONE);
-        primaryCompLeft.setLayout(new GridLayout(2, false));
-        GridDataFactory.fillDefaults().grab(false, false).span(1, 9).applyTo(primaryCompLeft);
+        Composite topCompLeft = new Composite(mainCompLeft, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(0,0).applyTo(topCompLeft);
+        GridDataFactory.fillDefaults().grab(true, false).span(2,1).applyTo(topCompLeft);
 
-        frontCoverComposite = new ImageSelectorComposite(primaryCompLeft, getSWTImage(carte.getCopertaFata().getId()), carte.getCopertaFata().getFileName());
-        ((GridData) frontCoverComposite.getLayoutData()).horizontalSpan = 2;
+        frontCoverComposite = new ImageSelectorComposite(parent, getSWTImage(carte.getCopertaFata().getId()), carte.getCopertaFata().getFileName());
+        GridData data = (GridData) frontCoverComposite.getLayoutData();
+        data.grabExcessHorizontalSpace = false;
+        data.grabExcessVerticalSpace = false;
+        data.verticalAlignment = SWT.BEGINNING;
+        data.horizontalAlignment = SWT.BEGINNING;
 
-        new Label(parent, SWT.NONE).setText("Titlu original");
-        this.textTitluOriginal = new Text(parent, SWT.BORDER);
-        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(4, 1).applyTo(this.textTitluOriginal);
+        new Label(topCompLeft, SWT.NONE).setText("Titlu");
+        this.textTitlu = new Text(topCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.textTitlu);
 
-        new Label(parent, SWT.NONE).setText("Goodreads url");
-        this.textGoodreadsUrl = new Text(parent, SWT.BORDER);
-        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(4, 1).applyTo(this.textGoodreadsUrl);
+        new Label(topCompLeft, SWT.NONE).setText("Titlu original");
+        this.textTitluOriginal = new Text(topCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.textTitluOriginal);
 
-        new Label(parent, SWT.NONE).setText("Wikipedia url");
-        this.textWikiUrl = new Text(parent, SWT.BORDER);
-        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(4, 1).applyTo(this.textWikiUrl);
+        new Label(topCompLeft, SWT.NONE).setText("Goodreads url");
+        this.textGoodreadsUrl = new Text(topCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.textGoodreadsUrl);
 
-        new Label(parent, SWT.NONE).setText("Editura");
-        this.textEditura = new Text(parent, SWT.BORDER);
+        new Label(topCompLeft, SWT.NONE).setText("Wikipedia url");
+        this.textWikiUrl = new Text(topCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.textWikiUrl);
+
+        Composite bottomCompLeft = new Composite(mainCompLeft, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).margins(0,0).applyTo(bottomCompLeft);
+        GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(bottomCompLeft);
+
+        Composite bottomLeftCompLeft = new Composite(mainCompLeft, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(bottomLeftCompLeft);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(bottomLeftCompLeft);
+
+        new Label(bottomLeftCompLeft, SWT.NONE).setText("Editura");
+        this.textEditura = new Text(bottomLeftCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textEditura);
         ContentProposalProvider.addContentProposal(textEditura, controller.getDistinctFieldAsContentProposal("editura"));
 
-        new Label(parent, SWT.NONE).setText("ISBN");
-        this.textIsbn = new Text(parent, SWT.BORDER);
-        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textIsbn);
-
-        this.buttonCuIlustratii = new Button(parent, SWT.CHECK);
-        buttonCuIlustratii.setText("cu ilustratii");
-
-        new Label(parent, SWT.NONE).setText("Serie");
-        this.textSerie = new Text(parent, SWT.BORDER);
+        new Label(bottomLeftCompLeft, SWT.NONE).setText("Serie");
+        this.textSerie = new Text(bottomLeftCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textSerie);
         ContentProposalProvider.addContentProposal(textSerie, controller.getDistinctFieldAsContentProposal("serie"));
 
-        new Label(parent, SWT.NONE).setText("Editia");
-        this.textEditia = new Text(parent, SWT.BORDER);
-        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textEditia);
-
-        this.buttonCuAutograf = new Button(parent, SWT.CHECK);
-        buttonCuAutograf.setText("cu autograf");
-
-        Label labelAutor = new Label(parent, SWT.NONE);
+        Label labelAutor = new Label(bottomLeftCompLeft, SWT.NONE);
         labelAutor.setText("Autori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutor);
-        this.compositeAutori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("autori"), carte.getAutori());
-//        ((GridData)compositeAutori.getLayoutData()).horizontalSpan = 2;
+        this.compositeAutori = new LinkedinComposite(bottomLeftCompLeft, controller.getDistinctFieldAsContentProposal("autori"), carte.getAutori());
         this.compositeAutori.getTextSearch().addTraverseListener(new TraverseListener() {
             @Override
             public void keyTraversed(TraverseEvent e) {
@@ -193,11 +194,39 @@ public class CarteView extends AbstractCSaveView {
             }
         });
 
-        Label labelTraducatori = new Label(parent, SWT.NONE);
+        new Label(bottomLeftCompLeft, SWT.NONE).setText("Tip coperta");
+        comboTipCoperta = new Combo(bottomLeftCompLeft, SWT.READ_ONLY);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).applyTo(this.comboTipCoperta);
+        comboTipCoperta.setItems(TipCoperta.getComboItems());
+
+        Label labelTehnoredactori = new Label(bottomLeftCompLeft, SWT.NONE);
+        labelTehnoredactori.setText("Tehnoredactori");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTehnoredactori);
+        this.compositeTehnoredactori = new LinkedinComposite(bottomLeftCompLeft, controller.getDistinctFieldAsContentProposal("tehnoredactori"), carte.getTehnoredactori());
+
+        Composite bottomRightCompLeft = new Composite(mainCompLeft, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(bottomRightCompLeft);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(bottomRightCompLeft);
+
+
+        new Label(bottomRightCompLeft, SWT.NONE).setText("ISBN");
+        this.textIsbn = new Text(bottomRightCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textIsbn);
+
+        this.buttonCuIlustratii = new Button(bottomRightCompLeft, SWT.CHECK);
+        buttonCuIlustratii.setText("cu ilustratii");
+
+        this.buttonCuAutograf = new Button(bottomRightCompLeft, SWT.CHECK);
+        buttonCuAutograf.setText("cu autograf");
+
+        new Label(bottomRightCompLeft, SWT.NONE).setText("Editia");
+        this.textEditia = new Text(bottomRightCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textEditia);
+
+        Label labelTraducatori = new Label(bottomRightCompLeft, SWT.NONE);
         labelTraducatori.setText("Traducatori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
-        this.compositeTraducatori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("traducatori"), carte.getTraducatori());
-//        ((GridData)compositeTraducatori.getLayoutData()).horizontalSpan = 2;
+        this.compositeTraducatori = new LinkedinComposite(bottomRightCompLeft, controller.getDistinctFieldAsContentProposal("traducatori"), carte.getTraducatori());
         this.compositeTraducatori.getTextSearch().addTraverseListener(new TraverseListener() {
             @Override
             public void keyTraversed(TraverseEvent e) {
@@ -207,44 +236,30 @@ public class CarteView extends AbstractCSaveView {
             }
         });
 
-        new Label(parent, SWT.NONE);
-
-        new Label(primaryCompLeft, SWT.NONE).setText("Nr pagini");
-        this.textNrPagini = new FormattedText(primaryCompLeft, SWT.BORDER);
+        new Label(bottomRightCompLeft, SWT.NONE).setText("Nr pagini");
+        this.textNrPagini = new FormattedText(bottomRightCompLeft, SWT.BORDER);
         this.textNrPagini.setFormatter(NumberUtil.getFormatter(0, true));
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(this.textNrPagini.getControl());
         ((NumberFormatter) this.textNrPagini.getFormatter()).setFixedLengths(false, true);
 
-        new Label(parent, SWT.NONE).setText("Tip coperta");
-        comboTipCoperta = new Combo(parent, SWT.READ_ONLY);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboTipCoperta);
-        comboTipCoperta.setItems(TipCoperta.getComboItems());
-
-        new Label(parent, SWT.NONE).setText("Limba");
-        comboLimba = new Combo(parent, SWT.READ_ONLY);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboLimba);
+        new Label(bottomRightCompLeft, SWT.NONE).setText("Limba");
+        comboLimba = new Combo(bottomRightCompLeft, SWT.READ_ONLY);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).applyTo(this.comboLimba);
         comboLimba.setItems(Limba.getComboItems());
-
-        new Label(parent, SWT.NONE);
-
-        Label labelTehnoredactori = new Label(parent, SWT.NONE);
-        labelTehnoredactori.setText("Tehnoredactori");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTehnoredactori);
-        this.compositeTehnoredactori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("tehnoredactori"), carte.getTehnoredactori());
 
         List<BlankDbObject> aniObjects = new ArrayList<>();
         for (int i = 1900; i < Calendar.getInstance().get(Calendar.YEAR); i++) {
             final String currentYear = String.valueOf(i);
             aniObjects.add(new BlankDbObject(currentYear, currentYear));
         }
-        new Label(primaryCompLeft, SWT.NONE).setText("An aparitie");
+        new Label(bottomRightCompLeft, SWT.NONE).setText("An aparitie");
         ComboImage.CIDescriptor comboDescriptor = new ComboImage.CIDescriptor();
         comboDescriptor.setTextMethodName(BlankDbObject.EXTERNAL_REFLECT_GET_NAME);
         comboDescriptor.setAddEmptyElement(false);
         comboDescriptor.setAddContentProposal(false);
         comboDescriptor.setClazz(BlankDbObject.class);
         comboDescriptor.setInput(aniObjects);
-        comboAnAparitie = new ComboImage(primaryCompLeft, comboDescriptor);
+        comboAnAparitie = new ComboImage(bottomRightCompLeft, comboDescriptor);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(75, SWT.DEFAULT).hint(75, SWT.DEFAULT).applyTo(this.comboAnAparitie);
 
     }
@@ -296,13 +311,13 @@ public class CarteView extends AbstractCSaveView {
         new Label(parent, SWT.NONE).setText("Limba originala");
         comboLimbaOriginala = new Combo(parent, SWT.READ_ONLY);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
-                .minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboLimbaOriginala);
+                .applyTo(this.comboLimbaOriginala);
         comboLimbaOriginala.setItems(Limba.getComboItems());
 
         new Label(parent, SWT.NONE).setText("Traducere din");
         comboTraducereDin = new Combo(parent, SWT.READ_ONLY);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false)
-                .minSize(150, SWT.DEFAULT).hint(150, SWT.DEFAULT).applyTo(this.comboTraducereDin);
+                .applyTo(this.comboTraducereDin);
         comboTraducereDin.setItems(Limba.getComboItems());
     }
 
