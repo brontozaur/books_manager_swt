@@ -478,7 +478,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        new Label(compLeftTree, SWT.NONE).setText("Mod vizualizare");
+        new Label(compLeftTree, SWT.NONE).setText("Grupare dupa");
         final Combo comboModAfisare = new Combo(compLeftTree, SWT.READ_ONLY | SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(comboModAfisare);
         for (BookSearchType searchType : BookSearchType.values()) {

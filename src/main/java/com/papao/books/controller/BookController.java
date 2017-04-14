@@ -89,7 +89,7 @@ public class BookController extends Observable {
             switch (searchType) {
                 case EDITURA: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByEdituraContains(value, pageable);
+                        carti = repository.getByEdituraContainsIgnoreCase(value, pageable);
                     } else {
                         carti = repository.getByEdituraIsNullOrEdituraIs("", pageable);
                     }
@@ -97,7 +97,7 @@ public class BookController extends Observable {
                 }
                 case AUTOR: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByAutoriContains(value, pageable);
+                        carti = repository.getByAutoriContainsIgnoreCase(value, pageable);
                     } else {
                         carti = repository.getByAutoriIsNullOrAutoriIsLessThanEqual(new String[]{""}, pageable);
                     }
@@ -105,7 +105,7 @@ public class BookController extends Observable {
                 }
                 case TRADUCATOR: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByTraducatoriContains(value, pageable);
+                        carti = repository.getByTraducatoriContainsIgnoreCase(value, pageable);
                     } else {
                         carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqual(new String[]{""}, pageable);
                     }
@@ -113,7 +113,7 @@ public class BookController extends Observable {
                 }
                 case AN_APARITIE: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByAnAparitieContains(value, pageable);
+                        carti = repository.getByAnAparitieContainsIgnoreCase(value, pageable);
                     } else {
                         carti = repository.getByAnAparitieIsNullOrAnAparitieIs("", pageable);
                     }
@@ -121,7 +121,7 @@ public class BookController extends Observable {
                 }
                 case LIMBA: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByLimbaContains(value, pageable);
+                        carti = repository.getByLimbaContainsIgnoreCase(value, pageable);
                     } else {
                         carti = repository.getByLimbaIsNullOrLimbaIs("", pageable);
                     }
@@ -129,7 +129,7 @@ public class BookController extends Observable {
                 }
                 case TITLU: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByTitluStartingWith(value, pageable);
+                        carti = repository.getByTitluStartingWithIgnoreCase(value, pageable);
                     } else {
                         carti = repository.getByTitluIsNullOrTitluIs("", pageable);
                     }
@@ -168,7 +168,7 @@ public class BookController extends Observable {
 
         DBObject project = null;
         if (useFirstLetter) {
-            project = new BasicDBObject("$project", new BasicDBObject(propName, new BasicDBObject("$substr", Arrays.asList("$" + propName, 0, 1))));
+            project = new BasicDBObject("$project", new BasicDBObject(propName, new BasicDBObject("$toUpper", new BasicDBObject("$substr", Arrays.asList("$" + propName, 0, 1)))));
         }
         DBObject groupFields = new BasicDBObject("_id", "$" + propName);
         groupFields.put("count", new BasicDBObject("$sum", 1));
@@ -179,7 +179,7 @@ public class BookController extends Observable {
         } else {
             pipeline = Arrays.asList(group);
         }
-        // [{ "$project" : { "titlu" : { "$substr" : [ "$titlu" , 0 , 1]}}}, { "$group" : { "_id" : "$titlu" , "count" : { "$sum" : 1}}}]
+        // [{ "$project" : { "titlu" : {$toUpper: { "$substr" : [ "$titlu" , 0 , 1]}}}}, { "$group" : { "_id" : "$titlu" , "count" : { "$sum" : 1}}}]
         AggregationOutput output = collection.aggregate(pipeline);
 
         int totalCount = 0;
