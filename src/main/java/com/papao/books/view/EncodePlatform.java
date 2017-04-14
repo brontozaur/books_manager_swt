@@ -403,7 +403,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 0).spacing(5, 3).applyTo(compLeftTree);
 
         Composite comp = new Composite(compLeftTree, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, false).span(2,1).applyTo(comp);
+        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(comp);
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comp);
         new Label(comp, SWT.NONE).setText("Filtru");
         final Text textUpperSearch = new Text(comp, SWT.SEARCH);
@@ -641,8 +641,31 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 swap();
             }
         });
+
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        MenuItem itemViewMode = new MenuItem(menu, SWT.CASCADE);
+        itemViewMode.setText("Vizualizare dupa..");
+        itemViewMode.setMenu(createViewModeMenu(itemViewMode));
         return menu;
     }
+
+    private Menu createViewModeMenu(MenuItem itemViewMode) {
+        Menu menu = new Menu(itemViewMode);
+        for (final BookSearchType type : BookSearchType.values()) {
+            MenuItem item = new MenuItem(menu, SWT.PUSH);
+            item.setText(type.name());
+            item.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    searchType = type;
+                    populateLeftTree();
+                }
+            });
+        }
+        return menu;
+    };
+
 
     public void swap() {
         if (compLeftTree.getLocation().x < compRight.getLocation().x) {
