@@ -153,7 +153,7 @@ public class PaginationComposite extends Composite implements Observer {
         });
 
         labelShowingXItemsOfTotal = new Label(compRight, SWT.NONE);
-        GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).hint(150, SWT.DEFAULT).applyTo(labelShowingXItemsOfTotal);
+        GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).hint(200, SWT.DEFAULT).applyTo(labelShowingXItemsOfTotal);
     }
 
     private boolean validatePageNumber(Event event) {
