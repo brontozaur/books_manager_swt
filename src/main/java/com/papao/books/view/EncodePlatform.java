@@ -271,7 +271,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         paginationComposite = new PaginationComposite(secondaryComRight, bookController, searchType);
-        GridDataFactory.fillDefaults().grab(true, false).align(SWT.END, SWT.END).applyTo(paginationComposite);
 
         this.bottomInnerTabFolderRight = new CTabFolder(rightInnerSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.bottomInnerTabFolderRight);
@@ -545,7 +544,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
             case TITLU: {
                 IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("titlu", true);
-                createTreeNodes(wrapper, "Toate tilurile");
+                createTreeNodes(wrapper, "Toate titlurile");
                 break;
             }
             default:

@@ -28,7 +28,6 @@ public class PaginationComposite extends Composite implements Observer {
     private ToolItem itemNext;
     private ToolItem itemLastPage;
     private Label labelDin;
-    private Text textSearch;
 
     private long totalCount = 0;
     private long totalPages = 0;
@@ -41,15 +40,10 @@ public class PaginationComposite extends Composite implements Observer {
         this.paginationController = paginationController;
         paginationController.addObserver(this);
 
-        GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(true).applyTo(this);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(8).equalWidth(false).applyTo(this);
+        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.END).grab(true, false).applyTo(this);
 
-        Composite compLeft = new Composite(this, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(5).equalWidth(false).applyTo(compLeft);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(true, false).applyTo(compLeft);
-
-        ToolBar barFirstpage = new ToolBar(compLeft, SWT.FLAT | SWT.RIGHT);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(barFirstpage);
+        ToolBar barFirstpage = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 
         itemFirstPage = new ToolItem(barFirstpage, SWT.NONE);
         itemFirstPage.setToolTipText("Prima pagina");
@@ -77,13 +71,11 @@ public class PaginationComposite extends Composite implements Observer {
         });
 
 
-        Label tmp = new Label(compLeft, SWT.NONE);
-        tmp.setText("pagina");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(tmp);
+        new Label(this, SWT.NONE).setText("pagina");
 
-        textGoToPage = new FormattedText(compLeft, SWT.BORDER);
+        textGoToPage = new FormattedText(this, SWT.BORDER);
         textGoToPage.setFormatter(new IntegerFormatter());
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(textGoToPage.getControl());
+        GridDataFactory.fillDefaults().minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(textGoToPage.getControl());
         textGoToPage.getControl().addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -98,11 +90,10 @@ public class PaginationComposite extends Composite implements Observer {
             }
         });
 
-        labelDin = new Label(compLeft, SWT.NONE);
+        labelDin = new Label(this, SWT.NONE);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(labelDin);
 
-        ToolBar barLastPage = new ToolBar(compLeft, SWT.FLAT | SWT.RIGHT);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(barLastPage);
+        ToolBar barLastPage = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 
         itemNext = new ToolItem(barLastPage, SWT.NONE);
         itemNext.setImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_NEXT));
@@ -127,18 +118,9 @@ public class PaginationComposite extends Composite implements Observer {
             }
         });
 
-        textSearch = new Text(this, SWT.SEARCH);
-        textSearch.setMessage("Cautare rapida");
-        GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).align(SWT.CENTER, SWT.CENTER).applyTo(textSearch);
+        new Label(this, SWT.NONE).setText("Paginatie");
 
-        Composite compRight = new Composite(this, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(compRight);
-        GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).grab(true, false).applyTo(compRight);
-
-        tmp = new Label(compRight, SWT.NONE);
-        tmp.setText("Documente pe pagina");
-
-        comboItemsPerPage = new Combo(compRight, SWT.BORDER | SWT.READ_ONLY);
+        comboItemsPerPage = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
         comboItemsPerPage.setItems(new String[]{"2", "5", "10", "25", "50", "100", "250", "500"});
         comboItemsPerPage.select(4);
         comboItemsPerPage.addListener(SWT.Selection, new Listener() {
@@ -152,8 +134,8 @@ public class PaginationComposite extends Composite implements Observer {
             }
         });
 
-        labelShowingXItemsOfTotal = new Label(compRight, SWT.NONE);
-        GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).hint(200, SWT.DEFAULT).applyTo(labelShowingXItemsOfTotal);
+        labelShowingXItemsOfTotal = new Label(this, SWT.NONE);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(labelShowingXItemsOfTotal);
     }
 
     private boolean validatePageNumber(Event event) {
@@ -216,7 +198,9 @@ public class PaginationComposite extends Composite implements Observer {
         itemFirstPage.setEnabled(totalPages > 1 && itemPrevious.getEnabled());
 
         labelShowingXItemsOfTotal.setText(getLabelText());
+        labelShowingXItemsOfTotal.setSize(labelShowingXItemsOfTotal.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         textGoToPage.setValue(currentPage);
         labelDin.setText("din " + totalPages);
+        layout();
     }
 }

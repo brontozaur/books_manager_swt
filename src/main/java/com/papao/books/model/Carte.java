@@ -1,10 +1,13 @@
 package com.papao.books.model;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "carte")
@@ -44,6 +47,15 @@ public class Carte extends AbstractDB implements Serializable {
     private GridFsImageData copertaFata;
     private GridFsImageData copertaSpate;
     private GridFsImageData autograf;
+
+    @CreatedDate
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date modifiedAt;
+
+    private String createdBy;
+    private String updatedBy;
 
     List<InfoCititori> cititori = new ArrayList<>();
 
