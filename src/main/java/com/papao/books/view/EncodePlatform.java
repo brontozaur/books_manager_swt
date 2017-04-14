@@ -403,8 +403,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 0,
                 0).spacing(5, 3).applyTo(compLeftTree);
 
-        new Label(compLeftTree, SWT.NONE).setText("Filtru");
-        final Text textUpperSearch = new Text(compLeftTree, SWT.SEARCH);
+        Composite comp = new Composite(compLeftTree, SWT.NONE);
+        GridDataFactory.fillDefaults().grab(true, false).span(2,1).applyTo(comp);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comp);
+        new Label(comp, SWT.NONE).setText("Filtru");
+        final Text textUpperSearch = new Text(comp, SWT.SEARCH);
         GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(textUpperSearch);
         SWTeXtension.addColoredFocusListener(textUpperSearch, ColorUtil.COLOR_FOCUS_YELLOW);
         textUpperSearch.setMessage("Filtrare");
@@ -528,6 +531,16 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             case LIMBA: {
                 IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("limba");
                 createTreeNodes(wrapper, "Limba textului");
+                break;
+            }
+            case LIMBA_ORIGINALA: {
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("limbaOriginala");
+                createTreeNodes(wrapper, "Limba originala");
+                break;
+            }
+            case TIP_COPERTA: {
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("tipCoperta");
+                createTreeNodes(wrapper, " Tipuri coperta");
                 break;
             }
             case TITLU: {

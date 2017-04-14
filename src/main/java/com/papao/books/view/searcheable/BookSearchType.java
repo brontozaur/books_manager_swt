@@ -8,8 +8,8 @@ public enum BookSearchType {
     LIMBA,
     TITLU,
     TRADUCATOR,
-
     TIP_COPERTA,
     LIMBA_ORIGINALA,
+
     CITITORI
 }

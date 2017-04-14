@@ -127,6 +127,22 @@ public class BookController extends Observable {
                     }
                     break;
                 }
+                case LIMBA_ORIGINALA: {
+                    if (StringUtils.isNotEmpty(value)) {
+                        carti = repository.getByLimbaOriginalaContainsIgnoreCase(value, pageable);
+                    } else {
+                        carti = repository.getByLimbaOrLimbaIsNullOrLimbaOriginalaIs("", pageable);
+                    }
+                    break;
+                }
+                case TIP_COPERTA: {
+                    if (StringUtils.isNotEmpty(value)) {
+                        carti = repository.getByTipCopertaContainsIgnoreCase(value, pageable);
+                    } else {
+                        carti = repository.getByTipCopertaIsNullOrTipCopertaIs("", pageable);
+                    }
+                    break;
+                }
                 case TITLU: {
                     if (StringUtils.isNotEmpty(value)) {
                         carti = repository.getByTitluStartingWithIgnoreCase(value, pageable);
