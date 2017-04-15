@@ -93,6 +93,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private PaginationComposite paginationComposite;
     private BookSearchType searchType = BookSearchType.AUTOR;
     private BookController bookController;
+    private Combo comboModAfisare;
 
     @Autowired
     public EncodePlatform(UserRepository userRepository,
@@ -283,7 +284,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         bottomInnerTabFolderRight.setSelectionBackground(ColorUtil.COLOR_SYSTEM);
 
         CTabItem tabItemDetaliiCarte = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
-        tabItemDetaliiCarte.setText("Detalii carte");
+        tabItemDetaliiCarte.setText("Documente");
         tabItemDetaliiCarte.setImage(AppImages.getImage16(AppImages.IMG_DETAILS_NEW));
         this.mainTabFolder.setSelection(tabItemDetaliiCarte);
 
@@ -480,7 +481,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         new Label(compLeftTree, SWT.NONE).setText("Grupare dupa");
-        final Combo comboModAfisare = new Combo(compLeftTree, SWT.READ_ONLY | SWT.BORDER);
+        comboModAfisare = new Combo(compLeftTree, SWT.READ_ONLY | SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(comboModAfisare);
         for (BookSearchType searchType : BookSearchType.values()) {
             comboModAfisare.add(searchType.name());
@@ -659,6 +660,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 @Override
                 public void handleEvent(Event event) {
                     searchType = type;
+                    comboModAfisare.select(comboModAfisare.indexOf(searchType.name()));
                     populateLeftTree();
                 }
             });
