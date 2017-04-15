@@ -238,7 +238,12 @@ public class BookController extends Observable {
 
         int emptyOrNullCount = 0;
         for (DBObject distinctValue : output.results()) {
-            BasicDBObject referenceObject = (BasicDBObject) ((BasicDBList) distinctValue.get("_id")).get(0);
+            BasicDBList refObjectProperties = (BasicDBList) distinctValue.get("_id");
+            if (refObjectProperties.isEmpty()) {
+                //this is the case where the main collection refers to a non-existent ref object
+                continue;
+            }
+            BasicDBObject referenceObject = (BasicDBObject) (refObjectProperties).get(0);
             String objectId = referenceObject.get("_id").toString();
             String itemName = (String) referenceObject.get(refUIProperty);
             int count = Integer.valueOf(distinctValue.get("count").toString());
