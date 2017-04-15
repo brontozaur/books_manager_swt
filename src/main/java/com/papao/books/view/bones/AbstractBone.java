@@ -1,6 +1,5 @@
 package com.papao.books.view.bones;
 
-import com.papao.books.BooksApplication;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.filter.AbstractBoneFilter;
