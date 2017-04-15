@@ -1,9 +1,6 @@
 package com.papao.books.controller;
 
-import com.mongodb.AggregationOutput;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
@@ -133,12 +130,7 @@ public class BookController extends Observable {
                 }
                 case AUTOR: {
                     if (StringUtils.isNotEmpty(value)) {
-                        List<Autor> autori = cacheableAutorRepository.getAutorRepository().getByNumeCompletContainsIgnoreCase(value);
-                        List<String> idAutori = new ArrayList<>();
-                        for (Autor autor : autori) {
-                            idAutori.add(autor.getId());
-                        }
-                        carti = repository.getByIdAutoriContainsIgnoreCase(idAutori, pageable);
+                        carti = repository.getByIdAutoriLike(new ObjectId(value), pageable);
                     } else {
                         carti = repository.getByIdAutoriIsNullOrIdAutoriIsLessThanEqual(new String[]{""}, pageable);
                     }
@@ -200,16 +192,58 @@ public class BookController extends Observable {
         notifyObservers();
     }
 
-    //TODO how to count books?
-    public IntValuePairsWrapper getDistinctValuesForReferenceCollection(String mainCollectionName, String mainPropertyName, String referenceCollectionName, String refPropertyName) {
-        List<String> values = mongoTemplate.getCollection(referenceCollectionName).distinct(refPropertyName);
+    /*
+
+    db.carte.aggregate([
+   {
+      $unwind: "$idAutori"
+   },
+   {
+      $lookup:
+         {
+            from: "autor",
+            localField: "idAutori",
+            foreignField: "_id",
+            as: "ref"
+        }
+   },
+   { $group: { _id: "$ref", count: { $sum: 1 } } }
+   ])
+
+     */
+    public IntValuePairsWrapper getDistinctValuesForReferenceCollection(String mainCollectionName,
+                                                                        String mainPropertyName,
+                                                                        String referenceCollectionName,
+                                                                        String refPropertyName,
+                                                                        String refUIProperty) {
+        DBCollection collection = mongoTemplate.getCollection(mainCollectionName);
+        //unwind
+        DBObject unwind = new BasicDBObject("$unwind", "$" + mainPropertyName);
+        //lookup
+        DBObject lookupArguments = new BasicDBObject();
+        lookupArguments.put("from", referenceCollectionName);
+        lookupArguments.put("localField", mainPropertyName);
+        lookupArguments.put("foreignField", refPropertyName);
+        lookupArguments.put("as", "ref");
+        DBObject lookup = new BasicDBObject("$lookup", lookupArguments);
+        //group - extract complete reference object, as we need both it's id and refUIProperty
+        DBObject groupFields = new BasicDBObject("_id", "$ref");
+        groupFields.put("count", new BasicDBObject("$sum", 1));
+        DBObject group = new BasicDBObject("$group", groupFields);
+
+        List<DBObject> pipeline = Arrays.asList(unwind, lookup, group);
+        AggregationOutput output = collection.aggregate(pipeline);
+
         List<IntValuePair> occurrences = new ArrayList<>();
 
         int emptyOrNullCount = 0;
-        for (String autorName : values) {
-            int count = 0;
-            if (StringUtils.isNotEmpty(autorName)) {
-                occurrences.add(new IntValuePair(autorName, count));
+        for (DBObject distinctValue : output.results()) {
+            BasicDBObject referenceObject = (BasicDBObject) ((BasicDBList) distinctValue.get("_id")).get(0);
+            String objectId = referenceObject.get("_id").toString();
+            String itemName = (String) referenceObject.get(refUIProperty);
+            int count = Integer.valueOf(distinctValue.get("count").toString());
+            if (StringUtils.isNotEmpty(itemName)) {
+                occurrences.add(new IntValuePair(itemName, objectId, count));
             } else {
                 emptyOrNullCount += count;
             }
@@ -225,7 +259,7 @@ public class BookController extends Observable {
         emptyOrNullCount += documentsWithNullOrEmptyMainPropertyName;
 
         if (emptyOrNullCount > 0) {
-            occurrences.add(new IntValuePair(null, emptyOrNullCount));
+            occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
         Collections.sort(occurrences, new Comparator<IntValuePair>() {
             @Override
@@ -242,13 +276,13 @@ public class BookController extends Observable {
 
     /*
 
-    db.carte.aggregate([
-      { $group: { _id: { titlu: "$titlu" }, count: { $sum: 1 } } }
+    db.collectionName.aggregate([
+      { $group: { _id: { propName: "$propName" }, count: { $sum: 1 } } }
     ])
 
     //if only the first letter is needed we need this
-    db.carte.aggregate({
-        $group: { _id: { $substr: ['$titlu', 0, 1] }, count: { $sum: 1 } }
+    db.collectionname.aggregate({
+        $group: { _id: { $substr: ['$propName', 0, 1] }, count: { $sum: 1 } }
     })
 
      */
@@ -279,20 +313,16 @@ public class BookController extends Observable {
 
         int emptyOrNullCount = 0;
         for (DBObject distinctValue : output.results()) {
-            Object itemName = distinctValue.get("_id");
-            if (itemName == null) {
-                emptyOrNullCount++;
-                continue;
-            }
+            String itemName = (String) distinctValue.get("_id");
             int count = Integer.valueOf(distinctValue.get("count").toString());
             if (StringUtils.isNotEmpty((String) itemName)) {
-                occurrences.add(new IntValuePair((String) itemName, count));
+                occurrences.add(new IntValuePair(itemName, itemName, count));
             } else {
                 emptyOrNullCount += count;
             }
         }
         if (emptyOrNullCount > 0) {
-            occurrences.add(new IntValuePair(null, emptyOrNullCount));
+            occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
         Collections.sort(occurrences, new Comparator<IntValuePair>() {
             @Override
@@ -305,20 +335,20 @@ public class BookController extends Observable {
 
     /*
     http://stackoverflow.com/questions/17628786/translating-mongodb-query-to-a-mongodb-java-driver-query
-        db.carte.aggregate(
+        db.collectionName.aggregate(
 
-        // Unpack the autori array
-        { $unwind: "$autori" },
+        // Unpack the propertyName array
+        { $unwind: "$propertyName" },
 
-        // Group by the autori values
+        // Group by the propertyName values
         { $group: {
-            _id: "$autori",
+            _id: "$propertyName",
             count: { $sum: 1 }
         }}
         )
      */
     public IntValuePairsWrapper getDistinctArrayPropertyValues(String collectionName, String propertyName) {
-        DBCollection colllection = mongoTemplate.getCollection(collectionName);
+        DBCollection collection = mongoTemplate.getCollection(collectionName);
         final String mongoProperty = "$" + propertyName;
 
 //  the preserveNullAndEmptyArrays does in fact preserves only the null arays!!
@@ -333,20 +363,16 @@ public class BookController extends Observable {
         DBObject group = new BasicDBObject("$group", groupFields);
 
         List<DBObject> pipeline = Arrays.asList(unwind, group);
-        AggregationOutput output = colllection.aggregate(pipeline);
+        AggregationOutput output = collection.aggregate(pipeline);
 
         List<IntValuePair> occurrences = new ArrayList<>();
 
         int emptyOrNullCount = 0;
         for (DBObject distinctValue : output.results()) {
-            Object itemName = distinctValue.get("_id");
-            if (itemName == null) {
-                emptyOrNullCount++;
-                continue;
-            }
+            String itemName = (String) distinctValue.get("_id");
             int count = Integer.valueOf(distinctValue.get("count").toString());
             if (StringUtils.isNotEmpty((String) itemName)) {
-                occurrences.add(new IntValuePair((String) itemName, count));
+                occurrences.add(new IntValuePair(itemName, itemName, count));
             } else {
                 emptyOrNullCount += count;
             }
@@ -361,7 +387,7 @@ public class BookController extends Observable {
         emptyOrNullCount += booksWithEmptyOrNullArrayProperty;
 
         if (emptyOrNullCount > 0) {
-            occurrences.add(new IntValuePair(null, emptyOrNullCount));
+            occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
         Collections.sort(occurrences, new Comparator<IntValuePair>() {
             @Override

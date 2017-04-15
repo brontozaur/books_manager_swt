@@ -9,9 +9,9 @@ public class IntValuePair {
     private String queryValue;
     private int count;
 
-    public IntValuePair(String value, int count) {
+    public IntValuePair(String value, String queryValue, int count) {
         this.count = count;
-        this.queryValue = value;
+        this.queryValue = queryValue;
         this.value = value;
         if (StringUtils.isEmpty(value)) {
             this.value = Carte.REPLACEMENT_FOR_NOT_SET;
