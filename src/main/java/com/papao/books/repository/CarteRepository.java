@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CarteRepository extends MongoRepository<Carte, String> {
 
@@ -36,11 +38,13 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
     Page<Carte> getByTitluStartingWithIgnoreCase(String titluStartsWith, Pageable pageable);
 
     //string arrays
-    Page<Carte> getByAutoriIsNullOrAutoriIsLessThanEqual(String[] emptyString, Pageable pageable);
-
-    Page<Carte> getByAutoriContainsIgnoreCase(String autor, Pageable pageable);
-
     Page<Carte> getByTraducatoriIsNullOrTraducatoriIsLessThanEqual(String[] emptyString, Pageable pageable);
 
     Page<Carte> getByTraducatoriContainsIgnoreCase(String traducator, Pageable pageable);
+
+    //reference collections
+
+    Page<Carte> getByIdAutoriIsNullOrIdAutoriIsLessThanEqual(String[] emptyString, Pageable pageable);
+
+    Page<Carte> getByIdAutoriContainsIgnoreCase(List<String> idAutori, Pageable pageable);
 }

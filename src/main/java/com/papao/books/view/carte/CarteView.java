@@ -168,12 +168,12 @@ public class CarteView extends AbstractCSaveView {
         new Label(bottomLeftCompLeft, SWT.NONE).setText("Editura");
         this.textEditura = new Text(bottomLeftCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textEditura);
-        ContentProposalProvider.addContentProposal(textEditura, controller.getDistinctFieldAsContentProposal("editura"));
+        ContentProposalProvider.addContentProposal(textEditura, controller.getDistinctFieldAsContentProposal(controller.getBooksCollectionName(), "editura"));
 
         new Label(bottomLeftCompLeft, SWT.NONE).setText("Serie");
         this.textSerie = new Text(bottomLeftCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textSerie);
-        ContentProposalProvider.addContentProposal(textSerie, controller.getDistinctFieldAsContentProposal("serie"));
+        ContentProposalProvider.addContentProposal(textSerie, controller.getDistinctFieldAsContentProposal(controller.getBooksCollectionName(), "serie"));
 
         new Label(bottomLeftCompLeft, SWT.NONE).setText("Tip coperta");
         comboTipCoperta = new Combo(bottomLeftCompLeft, SWT.READ_ONLY);
@@ -212,7 +212,7 @@ public class CarteView extends AbstractCSaveView {
 
         new Label(bottomRightCompLeft, SWT.NONE).setText("An aparitie");
         textAnAparitie = new Text(bottomRightCompLeft, SWT.BORDER);
-        ContentProposalProvider.addContentProposal(textAnAparitie, controller.getDistinctFieldAsContentProposal("anAparitie"));
+        ContentProposalProvider.addContentProposal(textAnAparitie, controller.getDistinctFieldAsContentProposal(controller.getBooksCollectionName(), "anAparitie"));
         this.textNrPagini.setFormatter(NumberUtil.getFormatter(0, true));
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).minSize(75, SWT.DEFAULT).hint(75, SWT.DEFAULT).applyTo(this.textAnAparitie);
 
@@ -230,12 +230,12 @@ public class CarteView extends AbstractCSaveView {
         Label labelAutoriIlustratii = new Label(parent, SWT.NONE);
         labelAutoriIlustratii.setText("Autori ilustratii");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutoriIlustratii);
-        this.compositeAutoriIlustratii = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("autoriIlustratii"), carte.getAutoriIlustratii());
+        this.compositeAutoriIlustratii = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal(controller.getBooksCollectionName(), "autoriIlustratii"), carte.getAutoriIlustratii());
 
         Label labelTraducatori = new Label(parent, SWT.NONE);
         labelTraducatori.setText("Traducatori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
-        this.compositeTraducatori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("traducatori"), carte.getTraducatori());
+        this.compositeTraducatori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal(controller.getBooksCollectionName(), "traducatori"), carte.getTraducatori());
         this.compositeTraducatori.getTextSearch().addTraverseListener(new TraverseListener() {
             @Override
             public void keyTraversed(TraverseEvent e) {
@@ -251,7 +251,7 @@ public class CarteView extends AbstractCSaveView {
         Label labelTehnoredactori = new Label(parent, SWT.NONE);
         labelTehnoredactori.setText("Tehnoredactori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTehnoredactori);
-        this.compositeTehnoredactori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("tehnoredactori"), carte.getTehnoredactori());
+        this.compositeTehnoredactori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal(controller.getBooksCollectionName(), "tehnoredactori"), carte.getTehnoredactori());
 
         new Label(parent, SWT.NONE).setText("Lungime (cm)");
         this.textInaltime = new FormattedText(parent, SWT.BORDER);

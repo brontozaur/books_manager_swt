@@ -6,7 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class Carte extends AbstractDB implements Serializable {
     @Id
     private String id;
 
-    private List<Autor> autori;
+    private List<String> idAutori;
     private String titlu;
     private String subtitlu;
     private String editura;
@@ -94,28 +94,6 @@ public class Carte extends AbstractDB implements Serializable {
 
     public void setTitlu(String titlu) {
         this.titlu = titlu;
-    }
-
-    public List<Autor> getAutori() {
-        if (autori == null) {
-            return new ArrayList<>();
-        }
-        return autori;
-    }
-
-    public void setAutori(List<Autor> autori) {
-        this.autori = autori;
-    }
-
-    public String getNumeAutori(List<Autor> autori) {
-        StringBuilder numeAutori = new StringBuilder();
-        for (Autor autor : autori) {
-            if (numeAutori.length() > 0) {
-                numeAutori.append(", ");
-            }
-            numeAutori.append(autor.getNumeComplet());
-        }
-        return numeAutori.toString();
     }
 
     public String getEditura() {
@@ -207,7 +185,7 @@ public class Carte extends AbstractDB implements Serializable {
 
     public List<String> getTraducatori() {
         if (traducatori == null) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         return traducatori;
     }
@@ -237,7 +215,7 @@ public class Carte extends AbstractDB implements Serializable {
 
     public List<String> getAutoriIlustratii() {
         if (autoriIlustratii == null) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         return autoriIlustratii;
     }
@@ -248,7 +226,7 @@ public class Carte extends AbstractDB implements Serializable {
 
     public List<String> getTehnoredactori() {
         if (tehnoredactori == null) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         return tehnoredactori;
     }
@@ -270,7 +248,7 @@ public class Carte extends AbstractDB implements Serializable {
 
     public List<Personaj> getPersonaje() {
         if (personaje == null) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         return personaje;
     }
@@ -325,7 +303,7 @@ public class Carte extends AbstractDB implements Serializable {
 
     public List<PremiuLiterar> getPremii() {
         if (premii == null) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         return premii;
     }
@@ -396,9 +374,20 @@ public class Carte extends AbstractDB implements Serializable {
 
     public List<GenLiterar> getGenLiterar() {
         if (genLiterar == null) {
-            genLiterar = new ArrayList<>();
+            return Collections.emptyList();
         }
         return genLiterar;
+    }
+
+    public List<String> getIdAutori() {
+        if (idAutori == null) {
+            return Collections.emptyList();
+        }
+        return idAutori;
+    }
+
+    public void setIdAutori(List<String> idAutori) {
+        this.idAutori = idAutori;
     }
 
     public void setGenLiterar(List<GenLiterar> genLiterar) {

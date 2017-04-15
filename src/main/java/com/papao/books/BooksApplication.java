@@ -1,7 +1,6 @@
 package com.papao.books;
 
 import com.papao.books.view.EncodePlatform;
-import com.papao.books.view.auth.TestView;
 import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
@@ -9,31 +8,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import javax.annotation.PostConstruct;
 
 @SpringBootApplication
 @EnableMongoRepositories
+@EnableCaching
 public class BooksApplication {
-
-    @Autowired
-    private TestView testView;
 
     private static final Logger logger = LoggerFactory.getLogger(BooksApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(BooksApplication.class, args);
-    }
-
-//    @PostConstruct
-    public void test() {
-        testView.open();
-        while (!Display.getDefault().isDisposed()) {
-            if (!Display.getDefault().readAndDispatch()) {
-                Display.getDefault().sleep();
-            }
-        }
     }
 
     @Autowired

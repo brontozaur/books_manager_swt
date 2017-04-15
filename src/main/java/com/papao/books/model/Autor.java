@@ -12,7 +12,7 @@ public class Autor extends AbstractDB implements Serializable {
     @Id
     private String id;
 
-    private String numeComplet;
+    private String numeComplet = "";
     private Date dataNastere;
     private Date dataMortii;
     private DocumentData mainImage;

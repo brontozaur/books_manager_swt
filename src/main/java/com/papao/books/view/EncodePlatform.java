@@ -509,42 +509,43 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         switch (searchType) {
             case EDITURA: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("editura");
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "editura");
                 createTreeNodes(wrapper, "Edituri");
                 break;
             }
             case AUTOR: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctArrayPropertyValues("autori");
+                IntValuePairsWrapper wrapper = bookController.getDistinctValuesForReferenceCollection(bookController.getBooksCollectionName(), "idAutori",
+                        bookController.getAutoriCollectionName(), "numeComplet");
                 createTreeNodes(wrapper, "Autori");
                 break;
             }
             case TRADUCATOR: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctArrayPropertyValues("traducatori");
+                IntValuePairsWrapper wrapper = bookController.getDistinctArrayPropertyValues(bookController.getBooksCollectionName(), "traducatori");
                 createTreeNodes(wrapper, "Traducatori");
                 break;
             }
             case AN_APARITIE: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("anAparitie");
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "anAparitie");
                 createTreeNodes(wrapper, "Ani aparitie");
                 break;
             }
             case LIMBA: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("limba");
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "limba");
                 createTreeNodes(wrapper, "Limba textului");
                 break;
             }
             case LIMBA_ORIGINALA: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("limbaOriginala");
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "limbaOriginala");
                 createTreeNodes(wrapper, "Limba originala");
                 break;
             }
             case TIP_COPERTA: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("tipCoperta");
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "tipCoperta");
                 createTreeNodes(wrapper, " Tipuri coperta");
                 break;
             }
             case TITLU: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues("titlu", true);
+                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "titlu", true);
                 createTreeNodes(wrapper, "Toate titlurile");
                 break;
             }
@@ -825,7 +826,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return carte.getNumeAutori(carte.getAutori());
+                            return bookController.getBookAuthorNames(carte);
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
@@ -833,7 +834,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return a.getNumeAutori(a.getAutori()).compareTo(b.getNumeAutori(b.getAutori()));
+                            return bookController.getBookAuthorNames(a).compareTo(bookController.getBookAuthorNames(b));
                         }
 
                     };
@@ -1279,7 +1280,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                             Carte carte = (Carte) element;
-                            return searchType.compareValues(carte.getNumeAutori(carte.getAutori()));
+                            return searchType.compareValues(bookController.getBookAuthorNames(carte));
                         }
                     };
                     break;

@@ -8,7 +8,9 @@ import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.papao.books.exception.UnsupportedSearchTypeException;
+import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
+import com.papao.books.repository.CacheableAutorRepository;
 import com.papao.books.repository.CarteRepository;
 import com.papao.books.view.providers.tree.IntValuePair;
 import com.papao.books.view.providers.tree.IntValuePairsWrapper;
@@ -16,6 +18,7 @@ import com.papao.books.view.searcheable.BookSearchType;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,6 +34,7 @@ import java.util.*;
 public class BookController extends Observable {
 
     private final CarteRepository repository;
+    private final CacheableAutorRepository cacheableAutorRepository;
     private final MongoTemplate mongoTemplate;
     private final GridFS gridFS;
 
@@ -39,12 +43,44 @@ public class BookController extends Observable {
     private String value;
     private boolean all;
 
+    @Value("${app.mongo.books.collection}")
+    private String booksCollectionName;
+
+    @Value("${app.mongo.autori.collection}")
+    private String autoriCollectionName;
+
     @Autowired
     public BookController(CarteRepository repository,
+                          CacheableAutorRepository cacheableAutorRepository,
                           MongoTemplate mongoTemplate) {
         this.repository = repository;
+        this.cacheableAutorRepository = cacheableAutorRepository;
         this.mongoTemplate = mongoTemplate;
         this.gridFS = new GridFS(mongoTemplate.getDb());
+    }
+
+    public String getBooksCollectionName() {
+        return booksCollectionName;
+    }
+
+    public String getAutoriCollectionName() {
+        return autoriCollectionName;
+    }
+
+    public Iterable<Autor> getBookAuthors(Carte carte) {
+        return cacheableAutorRepository.getByIds(carte.getIdAutori());
+    }
+
+    public String getBookAuthorNames(Carte carte) {
+        Iterable<Autor> autori = getBookAuthors(carte);
+        StringBuilder autoriNames = new StringBuilder();
+        for (Autor autor : autori) {
+            if (autoriNames.length() > 0) {
+                autoriNames.append(", ");
+            }
+            autoriNames.append(autor.getNumeComplet());
+        }
+        return autoriNames.toString();
     }
 
     public GridFSDBFile getImageData(ObjectId imageId) {
@@ -63,8 +99,8 @@ public class BookController extends Observable {
         return gridFS.createFile(file);
     }
 
-    public List<String> getDistinctFieldAsContentProposal(String databaseField) {
-        return mongoTemplate.getCollection("carte").distinct(databaseField);
+    public List<String> getDistinctFieldAsContentProposal(String collectionName, String databaseField) {
+        return mongoTemplate.getCollection(collectionName).distinct(databaseField);
     }
 
     public void requestSearch(Pageable pageable) {
@@ -97,9 +133,14 @@ public class BookController extends Observable {
                 }
                 case AUTOR: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByAutoriContainsIgnoreCase(value, pageable);
+                        List<Autor> autori = cacheableAutorRepository.getAutorRepository().getByNumeCompletContainsIgnoreCase(value);
+                        List<String> idAutori = new ArrayList<>();
+                        for (Autor autor : autori) {
+                            idAutori.add(autor.getId());
+                        }
+                        carti = repository.getByIdAutoriContainsIgnoreCase(idAutori, pageable);
                     } else {
-                        carti = repository.getByAutoriIsNullOrAutoriIsLessThanEqual(new String[]{""}, pageable);
+                        carti = repository.getByIdAutoriIsNullOrIdAutoriIsLessThanEqual(new String[]{""}, pageable);
                     }
                     break;
                 }
@@ -159,8 +200,44 @@ public class BookController extends Observable {
         notifyObservers();
     }
 
-    public IntValuePairsWrapper getDistinctStringPropertyValues(String propName) {
-        return getDistinctStringPropertyValues(propName, false);
+    //TODO how to count books?
+    public IntValuePairsWrapper getDistinctValuesForReferenceCollection(String mainCollectionName, String mainPropertyName, String referenceCollectionName, String refPropertyName) {
+        List<String> values = mongoTemplate.getCollection(referenceCollectionName).distinct(refPropertyName);
+        List<IntValuePair> occurrences = new ArrayList<>();
+
+        int emptyOrNullCount = 0;
+        for (String autorName : values) {
+            int count = 0;
+            if (StringUtils.isNotEmpty(autorName)) {
+                occurrences.add(new IntValuePair(autorName, count));
+            } else {
+                emptyOrNullCount += count;
+            }
+        }
+
+        //additional query in the mainCollection to get objects with null or empty main property name
+        Query query = new Query();
+        //array field is null or empty - as a suplement to "valid" fields
+        Criteria criteria = new Criteria().orOperator(Criteria.where(mainPropertyName).is(null),
+                Criteria.where(mainPropertyName).is(new String[]{}));
+        query.addCriteria(criteria);
+        long documentsWithNullOrEmptyMainPropertyName = mongoTemplate.count(query, mainCollectionName);
+        emptyOrNullCount += documentsWithNullOrEmptyMainPropertyName;
+
+        if (emptyOrNullCount > 0) {
+            occurrences.add(new IntValuePair(null, emptyOrNullCount));
+        }
+        Collections.sort(occurrences, new Comparator<IntValuePair>() {
+            @Override
+            public int compare(IntValuePair a, IntValuePair b) {
+                return a.getValue().compareTo(b.getValue());
+            }
+        });
+        return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
+    }
+
+    public IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName, String propName) {
+        return getDistinctStringPropertyValues(collectionName, propName, false);
     }
 
     /*
@@ -175,8 +252,8 @@ public class BookController extends Observable {
     })
 
      */
-    public IntValuePairsWrapper getDistinctStringPropertyValues(String propName, boolean useFirstLetter) {
-        DBCollection collection = mongoTemplate.getCollection("carte");
+    public IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName, String propName, boolean useFirstLetter) {
+        DBCollection collection = mongoTemplate.getCollection(collectionName);
 
         /*
             http://stackoverflow.com/questions/21452674/mongos-distinct-value-count-for-two-fields-in-java
@@ -240,8 +317,8 @@ public class BookController extends Observable {
         }}
         )
      */
-    public IntValuePairsWrapper getDistinctArrayPropertyValues(String propertyName) {
-        DBCollection colllection = mongoTemplate.getCollection("carte");
+    public IntValuePairsWrapper getDistinctArrayPropertyValues(String collectionName, String propertyName) {
+        DBCollection colllection = mongoTemplate.getCollection(collectionName);
         final String mongoProperty = "$" + propertyName;
 
 //  the preserveNullAndEmptyArrays does in fact preserves only the null arays!!
@@ -280,8 +357,8 @@ public class BookController extends Observable {
         Criteria criteria = new Criteria().orOperator(Criteria.where(propertyName).is(null),
                 Criteria.where(propertyName).is(new String[]{}));
         query.addCriteria(criteria);
-        long booksWithNoAuthors = mongoTemplate.count(query, "carte");
-        emptyOrNullCount += booksWithNoAuthors;
+        long booksWithEmptyOrNullArrayProperty = mongoTemplate.count(query, collectionName);
+        emptyOrNullCount += booksWithEmptyOrNullArrayProperty;
 
         if (emptyOrNullCount > 0) {
             occurrences.add(new IntValuePair(null, emptyOrNullCount));
