@@ -18,8 +18,9 @@ public class Carte extends AbstractDB implements Serializable {
     @Id
     private String id;
 
-    private List<String> autori;
+    private List<Autor> autori;
     private String titlu;
+    private String subtitlu;
     private String editura;
     private String anAparitie;
     private String titluOriginal;
@@ -30,7 +31,9 @@ public class Carte extends AbstractDB implements Serializable {
     private int nrPagini;
     private String serie;
     private List<String> traducatori;
-    private String isbn;
+    private String isbn10;
+    private String isbn13;
+    private String asin;
     private boolean cuIlustratii;
     private List<String> autoriIlustratii;
     private List<String> tehnoredactori;
@@ -40,24 +43,38 @@ public class Carte extends AbstractDB implements Serializable {
     private Limba limba;
     private Limba traducereDin;
     private Limba limbaOriginala;
-    private List<String> distinctiiAcordate;
+    private List<PremiuLiterar> premii;
     private boolean cuAutograf;
     private String goodreadsUrl;
     private String wikiUrl;
-    private GridFsImageData copertaFata;
-    private GridFsImageData copertaSpate;
-    private GridFsImageData autograf;
+    private String website;
+    private List<GenLiterar> genLiterar;
+    private DocumentData copertaFata;
+    private DocumentData copertaSpate;
+    private DocumentData autograf;
+    private DocumentData fotoCoperta;
+    private List<DocumentData> documents;
+    private List<String> tags;
+    private String descriere;
+    private String anPrimaEditie;
+    private TipCarte tipCarte;
+    private String motto;
+// ------ user specific data ------
+    private List<Citat> citate;
+    private List<CarteCitita> carteCitita;
+    private List<BookRating> notaCarte;
+    private List<TranslationRating> translationRatings;
 
     @CreatedDate
     private Date createdAt;
 
     @LastModifiedDate
-    private Date modifiedAt;
+    private Date lastModifiedAt;
+
+    private String lastModifiedBy;
 
     private String createdBy;
     private String updatedBy;
-
-    List<InfoCititori> cititori = new ArrayList<>();
 
     @Override
     public String getId() {
@@ -79,24 +96,24 @@ public class Carte extends AbstractDB implements Serializable {
         this.titlu = titlu;
     }
 
-    public List<String> getAutori() {
+    public List<Autor> getAutori() {
         if (autori == null) {
             return new ArrayList<>();
         }
         return autori;
     }
 
-    public void setAutori(List<String> autori) {
+    public void setAutori(List<Autor> autori) {
         this.autori = autori;
     }
 
-    public String getNumeAutori(List<String> autori) {
+    public String getNumeAutori(List<Autor> autori) {
         StringBuilder numeAutori = new StringBuilder();
-        for (String autor : autori) {
+        for (Autor autor : autori) {
             if (numeAutori.length() > 0) {
                 numeAutori.append(", ");
             }
-            numeAutori.append(autor);
+            numeAutori.append(autor.getNumeComplet());
         }
         return numeAutori.toString();
     }
@@ -199,15 +216,15 @@ public class Carte extends AbstractDB implements Serializable {
         this.traducatori = traducatori;
     }
 
-    public String getIsbn() {
-        if (isbn == null) {
+    public String getIsbn10() {
+        if (isbn10 == null) {
             return "";
         }
-        return isbn;
+        return isbn10;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public void setIsbn10(String isbn10) {
+        this.isbn10 = isbn10;
     }
 
     public boolean isCuIlustratii() {
@@ -306,15 +323,15 @@ public class Carte extends AbstractDB implements Serializable {
         this.limbaOriginala = limbaOriginala;
     }
 
-    public List<String> getDistinctiiAcordate() {
-        if (distinctiiAcordate == null) {
+    public List<PremiuLiterar> getPremii() {
+        if (premii == null) {
             return new ArrayList<>();
         }
-        return distinctiiAcordate;
+        return premii;
     }
 
-    public void setDistinctiiAcordate(List<String> distinctiiAcordate) {
-        this.distinctiiAcordate = distinctiiAcordate;
+    public void setPremii(List<PremiuLiterar> premii) {
+        this.premii = premii;
     }
 
     public boolean isCuAutograf() {
@@ -347,44 +364,204 @@ public class Carte extends AbstractDB implements Serializable {
         this.wikiUrl = wikiUrl;
     }
 
-    public List<InfoCititori> getCititori() {
-        if (cititori == null) {
-            return new ArrayList<>();
-        }
-        return cititori;
-    }
-
-    public GridFsImageData getCopertaFata() {
+    public DocumentData getCopertaFata() {
         if (copertaFata == null) {
-            return new GridFsImageData();
+            return new DocumentData();
         }
         return copertaFata;
     }
 
-    public void setCopertaFata(GridFsImageData copertaFata) {
+    public void setCopertaFata(DocumentData copertaFata) {
         this.copertaFata = copertaFata;
     }
 
-    public GridFsImageData getCopertaSpate() {
+    public DocumentData getCopertaSpate() {
         if (copertaSpate == null) {
-            return new GridFsImageData();
+            return new DocumentData();
         }
         return copertaSpate;
     }
 
-    public void setCopertaSpate(GridFsImageData copertaSpate) {
+    public void setCopertaSpate(DocumentData copertaSpate) {
         this.copertaSpate = copertaSpate;
     }
 
-    public GridFsImageData getAutograf() {
+    public DocumentData getAutograf() {
         return autograf;
     }
 
-    public void setAutograf(GridFsImageData autograf) {
+    public void setAutograf(DocumentData autograf) {
         this.autograf = autograf;
     }
 
-    public void setCititori(List<InfoCititori> cititori) {
-        this.cititori = cititori;
+    public List<GenLiterar> getGenLiterar() {
+        if (genLiterar == null) {
+            genLiterar = new ArrayList<>();
+        }
+        return genLiterar;
+    }
+
+    public void setGenLiterar(List<GenLiterar> genLiterar) {
+        this.genLiterar = genLiterar;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getLastModifiedAt() {
+        return lastModifiedAt;
+    }
+
+    public void setLastModifiedAt(Date lastModifiedAt) {
+        this.lastModifiedAt = lastModifiedAt;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public String getSubtitlu() {
+        return subtitlu;
+    }
+
+    public void setSubtitlu(String subtitlu) {
+        this.subtitlu = subtitlu;
+    }
+
+    public String getIsbn13() {
+        return isbn13;
+    }
+
+    public void setIsbn13(String isbn13) {
+        this.isbn13 = isbn13;
+    }
+
+    public String getAsin() {
+        return asin;
+    }
+
+    public void setAsin(String asin) {
+        this.asin = asin;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public DocumentData getFotoCoperta() {
+        return fotoCoperta;
+    }
+
+    public void setFotoCoperta(DocumentData fotoCoperta) {
+        this.fotoCoperta = fotoCoperta;
+    }
+
+    public List<DocumentData> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<DocumentData> documents) {
+        this.documents = documents;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public String getDescriere() {
+        return descriere;
+    }
+
+    public void setDescriere(String descriere) {
+        this.descriere = descriere;
+    }
+
+    public String getAnPrimaEditie() {
+        return anPrimaEditie;
+    }
+
+    public void setAnPrimaEditie(String anPrimaEditie) {
+        this.anPrimaEditie = anPrimaEditie;
+    }
+
+    public TipCarte getTipCarte() {
+        return tipCarte;
+    }
+
+    public void setTipCarte(TipCarte tipCarte) {
+        this.tipCarte = tipCarte;
+    }
+
+    public String getMotto() {
+        return motto;
+    }
+
+    public void setMotto(String motto) {
+        this.motto = motto;
+    }
+
+    public List<Citat> getCitate() {
+        return citate;
+    }
+
+    public void setCitate(List<Citat> citate) {
+        this.citate = citate;
+    }
+
+    public List<CarteCitita> getCarteCitita() {
+        return carteCitita;
+    }
+
+    public void setCarteCitita(List<CarteCitita> carteCitita) {
+        this.carteCitita = carteCitita;
+    }
+
+    public List<BookRating> getNotaCarte() {
+        return notaCarte;
+    }
+
+    public void setNotaCarte(List<BookRating> notaCarte) {
+        this.notaCarte = notaCarte;
+    }
+
+    public List<TranslationRating> getTranslationRatings() {
+        return translationRatings;
+    }
+
+    public void setTranslationRatings(List<TranslationRating> translationRatings) {
+        this.translationRatings = translationRatings;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
     }
 }

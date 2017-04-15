@@ -48,7 +48,6 @@ public class CarteView extends AbstractCSaveView {
     private Composite compLeft;
     private Composite compRight;
 
-    private LinkedinComposite compositeAutori;
     private Text textTitlu;
     private Text textEditura;
     private Text textAnAparitie;
@@ -70,7 +69,6 @@ public class CarteView extends AbstractCSaveView {
     private Combo comboLimba;
     private Combo comboTraducereDin;
     private Combo comboLimbaOriginala;
-    private LinkedinComposite compositeDistinctiiAcordate;
     private Text textGoodreadsUrl;
     private Text textWikiUrl;
     private ImageSelectorComposite frontCoverComposite;
@@ -177,19 +175,6 @@ public class CarteView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1).applyTo(this.textSerie);
         ContentProposalProvider.addContentProposal(textSerie, controller.getDistinctFieldAsContentProposal("serie"));
 
-        Label labelAutor = new Label(bottomLeftCompLeft, SWT.NONE);
-        labelAutor.setText("Autori");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutor);
-        this.compositeAutori = new LinkedinComposite(bottomLeftCompLeft, controller.getDistinctFieldAsContentProposal("autori"), carte.getAutori());
-        this.compositeAutori.getTextSearch().addTraverseListener(new TraverseListener() {
-            @Override
-            public void keyTraversed(TraverseEvent e) {
-                if (e.keyCode == SWT.TAB) {
-                    compositeTraducatori.getTextSearch().setFocus();
-                }
-            }
-        });
-
         new Label(bottomLeftCompLeft, SWT.NONE).setText("Tip coperta");
         comboTipCoperta = new Combo(bottomLeftCompLeft, SWT.READ_ONLY);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).applyTo(this.comboTipCoperta);
@@ -247,11 +232,6 @@ public class CarteView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutoriIlustratii);
         this.compositeAutoriIlustratii = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("autoriIlustratii"), carte.getAutoriIlustratii());
 
-        Label labelDistinctii = new Label(parent, SWT.NONE);
-        labelDistinctii.setText("Distinctii acordate");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelDistinctii);
-        this.compositeDistinctiiAcordate = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("distinctiiAcordate"), carte.getDistinctiiAcordate());
-
         Label labelTraducatori = new Label(parent, SWT.NONE);
         labelTraducatori.setText("Traducatori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
@@ -265,13 +245,13 @@ public class CarteView extends AbstractCSaveView {
             }
         });
 
+        backCoverComposite = new ImageSelectorComposite(parent, getSWTImage(carte.getCopertaSpate().getId()), carte.getCopertaSpate().getFileName());
+        ((GridData) backCoverComposite.getLayoutData()).verticalSpan = 6;
+
         Label labelTehnoredactori = new Label(parent, SWT.NONE);
         labelTehnoredactori.setText("Tehnoredactori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTehnoredactori);
         this.compositeTehnoredactori = new LinkedinComposite(parent, controller.getDistinctFieldAsContentProposal("tehnoredactori"), carte.getTehnoredactori());
-
-        backCoverComposite = new ImageSelectorComposite(parent, getSWTImage(carte.getCopertaSpate().getId()), carte.getCopertaSpate().getFileName());
-        ((GridData) backCoverComposite.getLayoutData()).verticalSpan = 6;
 
         new Label(parent, SWT.NONE).setText("Lungime (cm)");
         this.textInaltime = new FormattedText(parent, SWT.BORDER);
@@ -319,7 +299,7 @@ public class CarteView extends AbstractCSaveView {
         this.textGreutate.setValue(this.carte.getGreutate());
         this.textSerie.setText(this.carte.getSerie());
         this.textEditia.setText(this.carte.getEditia());
-        this.textIsbn.setText(this.carte.getIsbn());
+        this.textIsbn.setText(this.carte.getIsbn10());
         this.buttonCuAutograf.setSelection(this.carte.isCuAutograf());
         this.buttonCuIlustratii.setSelection(this.carte.isCuIlustratii());
         this.textImprimerie.setText(this.carte.getImprimerie());
@@ -341,7 +321,6 @@ public class CarteView extends AbstractCSaveView {
     protected void saveData() throws Exception {
         this.carte.setTitlu(this.textTitlu.getText());
         this.carte.setTitluOriginal(this.textTitluOriginal.getText());
-        this.carte.setAutori(compositeAutori.getValoriIntroduse());
         this.carte.setEditura(textEditura.getText());
         this.carte.setAnAparitie(textAnAparitie.getText());
         this.carte.setInaltime(Integer.valueOf(textInaltime.getValue().toString()));
@@ -351,10 +330,9 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setSerie(textSerie.getText());
         this.carte.setEditia(textEditia.getText());
         this.carte.setTraducatori(compositeTraducatori.getValoriIntroduse());
-        this.carte.setIsbn(textIsbn.getText());
+        this.carte.setIsbn10(textIsbn.getText());
         this.carte.setAutoriIlustratii(compositeAutoriIlustratii.getValoriIntroduse());
         this.carte.setTehnoredactori(compositeTehnoredactori.getValoriIntroduse());
-        this.carte.setDistinctiiAcordate(compositeDistinctiiAcordate.getValoriIntroduse());
         this.carte.setImprimerie(textImprimerie.getText());
         this.carte.setTipCoperta(TipCoperta.valueOf(comboTipCoperta.getText()));
         this.carte.setLimba(Limba.valueOf(comboLimba.getText()));
@@ -371,7 +349,7 @@ public class CarteView extends AbstractCSaveView {
 
             if (frontCoverComposite.getSelectedFile() != null) {
                 GridFSDBFile frontCover = saveImage(frontCoverComposite.getSelectedFile());
-                GridFsImageData copertaFata = new GridFsImageData();
+                DocumentData copertaFata = new DocumentData();
                 copertaFata.setId((ObjectId) frontCover.getId());
                 copertaFata.setFileName(frontCover.getFilename());
                 carte.setCopertaFata(copertaFata);
@@ -384,7 +362,7 @@ public class CarteView extends AbstractCSaveView {
 
             if (backCoverComposite.getSelectedFile() != null) {
                 GridFSDBFile backCover = saveImage(backCoverComposite.getSelectedFile());
-                GridFsImageData copertaSpate = new GridFsImageData();
+                DocumentData copertaSpate = new DocumentData();
                 copertaSpate.setId((ObjectId) backCover.getId());
                 copertaSpate.setFileName(backCover.getFilename());
                 carte.setCopertaSpate(copertaSpate);
@@ -415,11 +393,6 @@ public class CarteView extends AbstractCSaveView {
     @Override
     protected boolean validate() {
         try {
-            if (compositeAutori.getValoriIntroduse().isEmpty()) {
-                SWTeXtension.displayMessageW("Nu ati introdus autorul!");
-                compositeAutori.getTextSearch().setFocus();
-                return false;
-            }
             if (StringUtils.isEmpty(this.textTitlu.getText())) {
                 SWTeXtension.displayMessageW("Titlul cartii nu este introdus!");
                 textTitlu.setFocus();

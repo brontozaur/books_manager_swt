@@ -1,40 +1,21 @@
 package com.papao.books.model;
 
-import org.springframework.data.annotation.Transient;
+import java.io.Serializable;
 
-import java.util.Date;
+public class Citat implements Serializable{
 
-public class CarteCitita {
-
-    @Transient
-    private Date now = new Date();
-
-    private Date dataStart = now;
-    private Date dataStop = now;
+    private String content;
     private String createdBy;
     private String createdAt;
-    private int notaCarte;
     private String lastModifiedAt;
     private String lastModifiedBy;
 
-    public Date getDataStart() {
-        return dataStart;
+    public String getContent() {
+        return content;
     }
 
-    public void setDataStart(Date dataStart) {
-        this.dataStart = dataStart;
-    }
-
-    public Date getDataStop() {
-        return dataStop;
-    }
-
-    public void setDataStop(Date dataStop) {
-        this.dataStop = dataStop;
-    }
-
-    public boolean isCitita() {
-        return dataStart != null && dataStop != null && dataStart != dataStop;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getCreatedBy() {
@@ -67,13 +48,5 @@ public class CarteCitita {
 
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
-    }
-
-    public int getNotaCarte() {
-        return notaCarte;
-    }
-
-    public void setNotaCarte(int notaCarte) {
-        this.notaCarte = notaCarte;
     }
 }

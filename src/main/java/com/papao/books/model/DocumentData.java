@@ -4,7 +4,7 @@ import org.bson.types.ObjectId;
 
 import java.io.Serializable;
 
-public class GridFsImageData implements Serializable{
+public class DocumentData implements Serializable{
 
     private ObjectId id = new ObjectId();
     private String fileName = "";

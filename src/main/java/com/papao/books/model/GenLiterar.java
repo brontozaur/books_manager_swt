@@ -1,6 +1,6 @@
 package com.papao.books.model;
 
-public enum GenCarte {
+public enum GenLiterar {
 
     NESPECIFICAT, ACTIUNE, SF, FANTASY, DRAMA, DRAGOSTE, THRILLER, COMMANDO, ISTORIE, MEDICAL, ORTODOXA, TEHNIC
 }
