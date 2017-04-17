@@ -19,26 +19,24 @@ public class AnLunaZiComposite extends Composite {
         super(parent, SWT.NONE);
         this.data = data;
 
-        GridLayoutFactory.fillDefaults().numColumns(data.isShowLabels() ? 6 : 3).margins(0,0).spacing(2, SWT.DEFAULT).equalWidth(false).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(data.isShowLabels() ? 6 : 3).margins(0, 0).spacing(2, SWT.DEFAULT).equalWidth(false).applyTo(this);
         GridDataFactory.fillDefaults().grab(false, false).applyTo(this);
 
         if (data.isShowLabels()) {
-            new Label(this, SWT.NONE).setText("an");
+            new Label(this, SWT.NONE).setText("zi");
         }
-        comboAn = new Combo(this, SWT.BORDER);
-        GridDataFactory.fillDefaults().hint(75, SWT.DEFAULT).applyTo(comboAn);
-        comboAn.addListener(SWT.KeyUp, new Listener() {
+        comboZi = new Combo(this, SWT.BORDER);
+        GridDataFactory.fillDefaults().hint(75, SWT.DEFAULT).applyTo(comboZi);
+        comboZi.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (StringUtils.isNumeric(comboAn.getText())) {
-                    AnLunaZiComposite.this.data.setAn(Integer.valueOf(comboAn.getText()));
-                }
+                AnLunaZiComposite.this.data.setZi(comboZi.getSelectionIndex() + 1);
             }
         });
+
         if (data.isShowLabels()) {
             new Label(this, SWT.NONE).setText("luna");
         }
-
         comboLuna = new Combo(this, SWT.READ_ONLY);
         comboLuna.addListener(SWT.Selection, new Listener() {
             @Override
@@ -59,15 +57,20 @@ public class AnLunaZiComposite extends Composite {
             }
         });
         comboLuna.setItems(BorgDateUtil.LUNILE);
+
         if (data.isShowLabels()) {
-            new Label(this, SWT.NONE).setText("zi");
+            Label tmp = new Label(this, SWT.NONE);
+            tmp.setText("an");
+            GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).applyTo(tmp);
         }
-        comboZi = new Combo(this, SWT.READ_ONLY);
-        GridDataFactory.fillDefaults().hint(75, SWT.DEFAULT).applyTo(comboZi);
-        comboZi.addListener(SWT.Selection, new Listener() {
+        comboAn = new Combo(this, SWT.BORDER);
+        GridDataFactory.fillDefaults().hint(75, SWT.DEFAULT).applyTo(comboAn);
+        comboAn.addListener(SWT.KeyUp, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                AnLunaZiComposite.this.data.setZi(comboZi.getSelectionIndex() + 1);
+                if (StringUtils.isNumeric(comboAn.getText())) {
+                    AnLunaZiComposite.this.data.setAn(Integer.valueOf(comboAn.getText()));
+                }
             }
         });
 

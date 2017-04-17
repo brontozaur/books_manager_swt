@@ -65,11 +65,11 @@ public class AutorView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textNume);
 
         new Label(compLeft, SWT.NONE).setText("Data nasterii");
-        this.dataNasteriiComposite = new AnLunaZiComposite(compLeft, autor.getDataNasterii(false));
+        this.dataNasteriiComposite = new AnLunaZiComposite(compLeft, autor.getDataNasterii(true));
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.dataNasteriiComposite);
 
         new Label(compLeft, SWT.NONE).setText("Data mortii");
-        this.dataMortiiComposite = new AnLunaZiComposite(compLeft, autor.getDataMortii(false));
+        this.dataMortiiComposite = new AnLunaZiComposite(compLeft, autor.getDataMortii(true));
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.dataMortiiComposite);
 
         Label labelGen = new Label(compLeft, SWT.NONE);
@@ -113,13 +113,14 @@ public class AutorView extends AbstractCSaveView {
 
         Composite compDescriere = new Composite(getContainer(), SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).applyTo(compDescriere);
-        GridDataFactory.fillDefaults().grab(true, true).span(2, 1).hint(475, 100).applyTo(compDescriere);
+        GridDataFactory.fillDefaults().hint(500, 100).grab(true, true).span(2, 1).applyTo(compDescriere);
 
         Label labelDescriere = new Label(compDescriere, SWT.NONE);
         labelDescriere.setText("Descriere");
         GridDataFactory.fillDefaults().hint(75, SWT.DEFAULT).applyTo(labelDescriere);
         this.textDescriere = new Text(compDescriere, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(false, true).hint(475, 100).applyTo(textDescriere);
+        this.textDescriere.setSize(500, 100);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(textDescriere);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
