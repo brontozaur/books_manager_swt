@@ -146,7 +146,6 @@ public class BookController extends AbstractController {
         notifyObservers();
     }
 
-
     public Page<Carte> getSearchResult() {
         return carti;
     }

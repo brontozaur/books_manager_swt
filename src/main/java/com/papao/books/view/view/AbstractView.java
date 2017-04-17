@@ -20,7 +20,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public abstract class AbstractView {
+import java.util.Observable;
+
+public abstract class AbstractView extends Observable{
 
     private static Logger logger = Logger.getLogger(AbstractView.class);
 
@@ -1559,4 +1561,7 @@ public abstract class AbstractView {
         return this.compSearchWithHighlight;
     }
 
+    public String getObservableProperty() {
+        return "";
+    }
 }

@@ -1,36 +1,47 @@
 package com.papao.books.view.custom;
 
+import com.papao.books.model.ImagePath;
 import com.papao.books.view.AppImages;
+import com.papao.books.view.menu.HelpBrowser;
 import com.papao.books.view.util.ColorUtil;
+import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
+import java.util.Observable;
+import java.util.Observer;
 
-public class ImageSelectorComposite extends Composite {
+public class ImageSelectorComposite extends Composite implements Observer {
 
     private Label labelImage;
     private ImageViewer previewShell;
     private boolean imageChanged;
-    private String imageName;
+    private String imagesFolder;
+    private String fileName;
     private final int WIDTH = 180;
     private final int HEIGHT = 200;
+    private String startUrl = "https://www.google.ro/search?q=&tbm=isch";
 
     private static String SWT_FULL_IMAGE = "SWT_FULL_IMAGE";
     private static String OS_FILE = "OS_FILE";
+    private static String WEB_FILE = "WEB_FILE";
     private static final Logger logger = LoggerFactory.getLogger(ImageSelectorComposite.class);
 
-    public ImageSelectorComposite(Composite parent, Image fullImage, String imageName) {
+    public ImageSelectorComposite(Composite parent, Image fullImage, String fileName, final String imagesFolder) {
         super(parent, SWT.NONE);
-        this.imageName = imageName;
+        this.imagesFolder = imagesFolder;
+        this.fileName = fileName;
 
         GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(5, 5, 5, 5).applyTo(this);
         GridDataFactory.fillDefaults().grab(false, false).hint(190, 240).applyTo(this);
@@ -44,10 +55,48 @@ public class ImageSelectorComposite extends Composite {
             }
         });
 
-        ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
+        final Menu menu = new Menu(getShell(), SWT.POP_UP);
+        MenuItem item = new MenuItem(menu, SWT.PUSH);
+        item.setText("Fisier local");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                removeImage();
+                selectImage();
+            }
+        });
+
+        item = new MenuItem(menu, SWT.PUSH);
+        item.setText("Internet");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                final HelpBrowser hb = new HelpBrowser(getShell(), startUrl, true);
+                hb.getShell().addListener(SWT.Close, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        removeImage();
+                        ImagePath result = hb.getResult();
+                        if (result != null) {
+                            try {
+                                String localFilePath = serializeWebImage(result);
+                                loadLocalImage(localFilePath);
+                                labelImage.setData(WEB_FILE, result.getFilePath());
+                            } catch (IOException e) {
+                                logger.error(e.getMessage(), e);
+                                SWTeXtension.displayMessageW("Imaginea selectata este invalida sau nu a putut fi incarcata!");
+                            }
+                        }
+                    }
+                });
+                hb.open();
+            }
+        });
+
+        final ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
         GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).grab(true, false).applyTo(bar);
 
-        ToolItem itemSelectie = new ToolItem(bar, SWT.PUSH);
+        final ToolItem itemSelectie = new ToolItem(bar, SWT.DROP_DOWN);
         itemSelectie.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
         itemSelectie.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
         itemSelectie.setText("Selectie");
@@ -55,7 +104,11 @@ public class ImageSelectorComposite extends Composite {
         itemSelectie.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                selectImage();
+                Rectangle rect = itemSelectie.getBounds();
+                Point pt = new Point(rect.x, rect.y + rect.height);
+                pt = bar.toDisplay(pt);
+                menu.setLocation(pt.x, pt.y);
+                menu.setVisible(true);
             }
         });
 
@@ -94,7 +147,8 @@ public class ImageSelectorComposite extends Composite {
     private void populateFields(Image fullImage) {
         labelImage.setData(SWT_FULL_IMAGE, fullImage);
         labelImage.setData(OS_FILE, null);
-        labelImage.setData(imageName);
+        labelImage.setData(WEB_FILE, null);
+        labelImage.setData(fileName);
         Image resizedImage = AppImages.getImage(fullImage, WIDTH, HEIGHT);
         labelImage.setImage(resizedImage);
     }
@@ -122,6 +176,7 @@ public class ImageSelectorComposite extends Composite {
             }
             labelImage.setData(SWT_FULL_IMAGE, null);
             labelImage.setData(OS_FILE, null);
+            labelImage.setData(WEB_FILE, null);
             labelImage.setData(null);
             if (labelImage.getImage() != null && !labelImage.getImage().isDisposed()) {
                 labelImage.getImage().dispose();
@@ -138,25 +193,30 @@ public class ImageSelectorComposite extends Composite {
             dlg.setFilterExtensions(new String[]{"*.jpg;*.png;*.jpeg;*.bmp;*.gif"});
             dlg.setFilterNames(new String[]{"Imagini (*.*)"});
             String selectedFile = dlg.open();
-            if (StringUtils.isEmpty(selectedFile)) {
-                return;
-            }
-            File file = new File(selectedFile);
-            if (!file.exists() || !file.isFile()) {
-                throw new IOException("Cannot find the file " + selectedFile);
-            }
-            Image fullImage = new Image(Display.getDefault(), selectedFile);
-            labelImage.setData(SWT_FULL_IMAGE, fullImage);
-            labelImage.setData(OS_FILE, file);
-            labelImage.setData(file.getName());
-            Image resizedImage = AppImages.getImage(fullImage, WIDTH, HEIGHT);
-            labelImage.setImage(resizedImage);
-            imageChanged = true;
-            this.setSize(this.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+            loadLocalImage(selectedFile);
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             SWTeXtension.displayMessageW("Imaginea selectata este invalida sau nu a putut fi incarcata!");
         }
+    }
+
+    private void loadLocalImage(String localPath) throws IOException {
+        if (StringUtils.isEmpty(localPath)) {
+            return;
+        }
+        File file = new File(localPath);
+        if (!file.exists() || !file.isFile()) {
+            throw new IOException("Cannot find the file " + localPath);
+        }
+        Image fullImage = new Image(Display.getDefault(), localPath);
+        labelImage.setData(SWT_FULL_IMAGE, fullImage);
+        labelImage.setData(OS_FILE, file);
+        labelImage.setData(WEB_FILE, null);
+        labelImage.setData(file.getName());
+        Image resizedImage = AppImages.getImage(fullImage, WIDTH, HEIGHT);
+        labelImage.setImage(resizedImage);
+        imageChanged = true;
+        this.setSize(this.computeSize(SWT.DEFAULT, SWT.DEFAULT));
     }
 
     public boolean imageChanged() {
@@ -168,5 +228,36 @@ public class ImageSelectorComposite extends Composite {
             return (File) labelImage.getData(OS_FILE);
         }
         return null;
+    }
+
+    public String getWebPath() {
+        if (imageChanged && labelImage.getData(WEB_FILE) instanceof String) {
+            return (String) labelImage.getData(WEB_FILE);
+        }
+        return null;
+    }
+
+    private String serializeWebImage(ImagePath imagePath) throws IOException {
+        URL url = new URL(imagePath.getFilePath());
+        InputStream in = new BufferedInputStream(url.openStream());
+        final String localPath = imagesFolder + "/" + imagePath.getFileName();
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(localPath));
+        for (int i; (i = in.read()) != -1; ) {
+            out.write(i);
+        }
+        in.close();
+        out.close();
+        return localPath;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof AbstractView) {
+            String valueChanged = ((AbstractView) o).getObservableProperty();
+            if (valueChanged != null) {
+                String query = valueChanged.replace(" ", "+");
+                startUrl = "https://www.google.ro/search?q=" + query + "&tbm=isch";
+            }
+        }
     }
 }

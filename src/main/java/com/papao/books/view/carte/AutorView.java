@@ -40,6 +40,7 @@ public class AutorView extends AbstractCSaveView {
     private Text textFacebook;
     private Text textWiki;
     private Text textDescriere;
+    private String observableProperty;
 
     private AutorController controller;
 
@@ -63,6 +64,14 @@ public class AutorView extends AbstractCSaveView {
         new Label(compLeft, SWT.NONE).setText("Nume");
         this.textNume = new Text(compLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textNume);
+        textNume.addListener(SWT.KeyUp, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                observableProperty = textNume.getText();
+                setChanged();
+                notifyObservers();
+            }
+        });
 
         new Label(compLeft, SWT.NONE).setText("Data nasterii");
         this.dataNasteriiComposite = new AnLunaZiComposite(compLeft, autor.getDataNasterii(true));
@@ -96,20 +105,21 @@ public class AutorView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().grab(true, false).applyTo(textWiki);
 
         Image mainImage = null;
-        String imageName = "";
+        String imageName = null;
         if (autor.getMainImage() != null) {
             GridFSDBFile image = controller.getImageData(autor.getMainImage().getId());
             if (image != null) {
-                mainImage = new Image(Display.getDefault(), image.getInputStream());
                 imageName = image.getFilename();
+                mainImage = new Image(Display.getDefault(), image.getInputStream());
             }
         }
 
         Composite compRight = new Composite(getContainer(), SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(1).spacing(0, 0).margins(0, 0).applyTo(compRight);
         GridDataFactory.fillDefaults().grab(false, false).applyTo(compRight);
-        this.mainImageComposite = new ImageSelectorComposite(compRight, mainImage, imageName);
+        this.mainImageComposite = new ImageSelectorComposite(compRight, mainImage, imageName, controller.getAppImagesFolder());
         ((GridData) this.mainImageComposite.getLayoutData()).verticalSpan = 7;
+        this.addObserver(mainImageComposite);
 
         Composite compDescriere = new Composite(getContainer(), SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).applyTo(compDescriere);
@@ -125,6 +135,11 @@ public class AutorView extends AbstractCSaveView {
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
 
+    @Override
+    public String getObservableProperty() {
+        return observableProperty;
+    }
+
     private void populateFields() {
         this.textNume.setText(this.autor.getNumeComplet());
         this.textWebsite.setText(this.autor.getWebsite());
@@ -138,6 +153,10 @@ public class AutorView extends AbstractCSaveView {
             WidgetCompositeUtil.enableGUI(getCompHIRE(), false);
             getContainer().setEnabled(true);
         }
+
+        observableProperty = textNume.getText().replace(" ", "+");
+        setChanged();
+        notifyObservers();
     }
 
     @Override
@@ -169,7 +188,7 @@ public class AutorView extends AbstractCSaveView {
         }
         this.autor.setGenLiterar(genuriLiterare);
         if (mainImageComposite.getSelectedFile() != null) {
-            this.autor.setMainImage(controller.saveDocument(mainImageComposite.getSelectedFile()));
+            this.autor.setMainImage(controller.saveDocument(mainImageComposite.getSelectedFile(), mainImageComposite.getWebPath()));
         }
 
         controller.save(autor);

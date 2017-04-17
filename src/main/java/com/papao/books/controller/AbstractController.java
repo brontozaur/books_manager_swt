@@ -30,6 +30,9 @@ public class AbstractController extends Observable {
     @Value("${app.mongo.autori.collection}")
     private String autoriCollectionName;
 
+    @Value("${app.images.folder}")
+    private String appImagesFolder;
+
     public AbstractController(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
         this.gridFS = new GridFS(mongoTemplate.getDb());
@@ -41,6 +44,14 @@ public class AbstractController extends Observable {
 
     public String getBooksCollectionName() {
         return booksCollectionName;
+    }
+
+    public String getAppImagesFolder() {
+        File imageFolder = new File(appImagesFolder);
+        if (!imageFolder.exists() || !imageFolder.isDirectory()) {
+            imageFolder.mkdirs();
+        }
+        return appImagesFolder;
     }
 
     public List<String> getDistinctFieldAsContentProposal(String collectionName, String databaseField) {
@@ -55,12 +66,13 @@ public class AbstractController extends Observable {
         gridFS.remove(imageId);
     }
 
-    public DocumentData saveDocument(File file) throws IOException {
-        GridFSInputFile gfsFile = gridFS.createFile(file);
-        gfsFile.setFilename(file.getName());
-        gfsFile.setContentType(new MimetypesFileTypeMap().getContentType(file));
+    public DocumentData saveDocument(File localFile, String urlPath) throws IOException {
+        GridFSInputFile gfsFile = gridFS.createFile(localFile);
+        gfsFile.setFilename(localFile.getName());
+        gfsFile.setContentType(new MimetypesFileTypeMap().getContentType(localFile));
         DBObject meta = new BasicDBObject();
-        meta.put("fileOriginalFilePath", file.getAbsolutePath());
+        meta.put("localFilePath", localFile.getAbsolutePath());
+        meta.put("urlFilePath", urlPath);
         gfsFile.setMetaData(meta);
         gfsFile.save();
         GridFSDBFile gridFSDBFile = getImageData((ObjectId) gfsFile.getId());

@@ -1,5 +1,6 @@
 package com.papao.books.view.carte;
 
+import com.lowagie.text.html.HtmlEncoder;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.controller.BookController;
 import com.papao.books.model.AbstractDB;
@@ -40,6 +41,7 @@ public class CarteView extends AbstractCSaveView {
 
     private Carte carte;
     private final BookController controller;
+    private String observableProperty;
 
     private Composite compLeft;
     private Composite compRight;
@@ -79,6 +81,10 @@ public class CarteView extends AbstractCSaveView {
 
         addComponents();
         populateFields();
+
+        this.observableProperty = HtmlEncoder.encode(carte.getTitlu());
+        this.addObserver(frontCoverComposite);
+        this.addObserver(backCoverComposite);
 
         textTitlu.setFocus();
     }
@@ -130,7 +136,15 @@ public class CarteView extends AbstractCSaveView {
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).extendedMargins(0, 0, 0, 5).applyTo(topCompLeft);
         GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(topCompLeft);
 
-        frontCoverComposite = new ImageSelectorComposite(parent, getSWTImage(carte.getCopertaFata().getId()), carte.getCopertaFata().getFileName());
+        GridFSDBFile frontCover = getGridFsFile(carte.getCopertaFata().getId());
+        Image image = null;
+        String fileName = null;
+        if (frontCover != null) {
+            image = new Image(Display.getDefault(), frontCover.getInputStream());
+            fileName = frontCover.getFilename();
+        }
+
+        frontCoverComposite = new ImageSelectorComposite(parent, image, fileName, controller.getAppImagesFolder());
         GridData data = (GridData) frontCoverComposite.getLayoutData();
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = false;
@@ -140,6 +154,14 @@ public class CarteView extends AbstractCSaveView {
         new Label(topCompLeft, SWT.NONE).setText("Titlu");
         this.textTitlu = new Text(topCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.textTitlu);
+        this.textTitlu.addListener(SWT.Modify, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                observableProperty = HtmlEncoder.encode(textTitlu.getText());
+                setChanged();
+                notifyObservers();
+            }
+        });
 
         new Label(topCompLeft, SWT.NONE).setText("Titlu original");
         this.textTitluOriginal = new Text(topCompLeft, SWT.BORDER);
@@ -214,12 +236,8 @@ public class CarteView extends AbstractCSaveView {
 
     }
 
-    private Image getSWTImage(ObjectId imageId) {
-        GridFSDBFile imageForOutput = controller.getImageData(imageId);
-        if (imageForOutput != null) {
-            return new Image(Display.getDefault(), imageForOutput.getInputStream());
-        }
-        return null;
+    private GridFSDBFile getGridFsFile(ObjectId imageId) {
+        return controller.getImageData(imageId);
     }
 
     private void createCompRightComponents(Composite parent) {
@@ -241,7 +259,15 @@ public class CarteView extends AbstractCSaveView {
             }
         });
 
-        backCoverComposite = new ImageSelectorComposite(parent, getSWTImage(carte.getCopertaSpate().getId()), carte.getCopertaSpate().getFileName());
+        GridFSDBFile backCover = getGridFsFile(carte.getCopertaSpate().getId());
+        Image image = null;
+        String fileName = null;
+        if (backCover != null) {
+            image = new Image(Display.getDefault(), backCover.getInputStream());
+            fileName = backCover.getFilename();
+        }
+
+        backCoverComposite = new ImageSelectorComposite(parent, image, fileName, controller.getAppImagesFolder());
         ((GridData) backCoverComposite.getLayoutData()).verticalSpan = 6;
 
         Label labelTehnoredactori = new Label(parent, SWT.NONE);
@@ -344,7 +370,7 @@ public class CarteView extends AbstractCSaveView {
             carte.setCopertaFata(null);
 
             if (frontCoverComposite.getSelectedFile() != null) {
-                carte.setCopertaFata(controller.saveDocument(frontCoverComposite.getSelectedFile()));
+                carte.setCopertaFata(controller.saveDocument(frontCoverComposite.getSelectedFile(), frontCoverComposite.getWebPath()));
             }
         }
 
@@ -353,7 +379,7 @@ public class CarteView extends AbstractCSaveView {
             carte.setCopertaSpate(null);
 
             if (backCoverComposite.getSelectedFile() != null) {
-                carte.setCopertaSpate(controller.saveDocument(backCoverComposite.getSelectedFile()));
+                carte.setCopertaSpate(controller.saveDocument(backCoverComposite.getSelectedFile(), backCoverComposite.getWebPath()));
             }
         }
 
@@ -394,5 +420,10 @@ public class CarteView extends AbstractCSaveView {
     @Override
     protected Class<? extends AbstractDB> getClazz() {
         return Carte.class;
+    }
+
+    @Override
+    public String getObservableProperty() {
+        return this.observableProperty;
     }
 }
