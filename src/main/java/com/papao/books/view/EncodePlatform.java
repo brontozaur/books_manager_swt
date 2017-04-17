@@ -1,10 +1,12 @@
 package com.papao.books.view;
 
 import com.papao.books.FiltruAplicatie;
+import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
 import com.papao.books.model.AbstractDB;
 import com.papao.books.model.Carte;
 import com.papao.books.repository.UserRepository;
+import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.custom.PaginationComposite;
 import com.papao.books.view.menu.PlatformMenu;
@@ -60,6 +62,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ToolTip appToolTip;
     private Tray appTray;
     private UserRepository userRepository;
+    private AutorController autorController;
     private static ToolBar barDocking;
     private static EncodePlatform instance;
     private CTabFolder mainTabFolder;
@@ -97,9 +100,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     @Autowired
     public EncodePlatform(UserRepository userRepository,
+                          AutorController autorController,
                           BookController bookController) {
         super(null, AbstractView.MODE_NONE);
         this.userRepository = userRepository;
+        this.autorController = autorController;
         this.bookController = bookController;
         this.bookController.addObserver(this);
         /**
@@ -484,7 +489,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         comboModAfisare = new Combo(compLeftTree, SWT.READ_ONLY | SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(comboModAfisare);
         for (BookSearchType searchType : BookSearchType.values()) {
-            comboModAfisare.add(searchType.name());
+            if (searchType != BookSearchType.CITITORI) {
+                comboModAfisare.add(searchType.name());
+            }
         }
         comboModAfisare.select(comboModAfisare.indexOf(searchType.name()));
         comboModAfisare.addListener(SWT.Selection, new Listener() {
@@ -771,6 +778,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         ToolBar bar = new ToolBar(parent, SWT.FLAT | SWT.RIGHT | SWT.WRAP);
 
         ToolItem item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_CONFIG));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CONFIG));
+        item.setToolTipText("Configurare autori");
+        item.setText("Autori");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                configAutori();
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
         item.setImage(AppImages.getImage24(AppImages.IMG_USER));
         item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_USER));
         item.setToolTipText("Configurare cititori");
@@ -1149,6 +1168,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
         }
+    }
+
+    public final void configAutori() {
+        new AutoriView(new Shell(), autorController).open();
     }
 
     public final void configUsers() {

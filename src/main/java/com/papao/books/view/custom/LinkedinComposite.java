@@ -2,6 +2,7 @@ package com.papao.books.view.custom;
 
 import com.papao.books.view.providers.ContentProposalProvider;
 import com.papao.books.view.util.ColorUtil;
+import com.papao.books.view.util.EnumHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -16,14 +17,35 @@ public class LinkedinComposite extends Composite {
 
     private Text textSearch;
     private List<String> valoriIntroduse = new ArrayList<>();
-    private List<String> valoriInitiale;
+    private List<String> valoriInitiale = new ArrayList<>();
     private Composite compSelections;
+    private List<String> proposals = new ArrayList<>();
+    private Class<? extends Enum> enumClass;
+
+    public LinkedinComposite(Composite parent, Class<? extends Enum> enumClass, List valoriInitiale) {
+        super(parent, SWT.BORDER);
+        this.enumClass = enumClass;
+        this.proposals = EnumHelper.getValuesArray(enumClass);
+        for (Object enumValue : valoriInitiale) {
+            this.valoriInitiale.add(((Enum) enumValue).name());
+        }
+
+        addComponents();
+        populateFields();
+    }
 
     public LinkedinComposite(Composite parent, final List<String> proposals, List<String> valoriInitiale) {
         super(parent, SWT.BORDER);
+        this.proposals = proposals;
+        this.valoriInitiale = valoriInitiale;
+
+        addComponents();
+        populateFields();
+    }
+
+    private void addComponents() {
         this.setBackground(ColorUtil.COLOR_WHITE);
 
-        this.valoriInitiale = valoriInitiale;
         GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 1, 0).spacing(2, 0).numColumns(2).equalWidth(false).applyTo(this);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this);
 
@@ -38,7 +60,7 @@ public class LinkedinComposite extends Composite {
             @Override
             public void handleEvent(Event event) {
                 final String text = textSearch.getText().trim();
-                if (StringUtils.isNotEmpty(text)) {
+                if (validateText(text)) {
                     createClosableCanvas(text, true);
                 }
             }
@@ -54,13 +76,18 @@ public class LinkedinComposite extends Composite {
             @Override
             public void handleEvent(Event event) {
                 final String widgetText = textSearch.getText().trim();
-                if (StringUtils.isNotEmpty(widgetText) && event.keyCode == SWT.CR) {
+                if (event.keyCode == SWT.CR && validateText(widgetText)) {
                     createClosableCanvas(widgetText, true);
                 }
             }
         });
+    }
 
-        populateFields();
+    private boolean validateText(String text) {
+        if (enumClass == null) {
+            return StringUtils.isNotEmpty(text);
+        }
+        return proposals.contains(text);
     }
 
     private void populateFields() {
@@ -108,5 +135,17 @@ public class LinkedinComposite extends Composite {
 
     public List<String> getValoriIntroduse() {
         return valoriIntroduse;
+    }
+
+    public List<Enum> getEnumValues() {
+        List<Enum> selectedEnumValues = new ArrayList<>();
+        for (String value : valoriIntroduse) {
+            Enum enumValue = EnumHelper.getEnum(enumClass, value);
+            if (enumValue == null) {
+                throw new EnumConstantNotPresentException(enumClass, "Enumeration " + enumClass + " does not contain enum value " + value);
+            }
+            selectedEnumValues.add(enumValue);
+        }
+        return selectedEnumValues;
     }
 }

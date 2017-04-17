@@ -10,13 +10,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.java2d.HeadlessGraphicsEnvironment;
-
-import java.awt.*;
 
 public class ImageViewer {
 
@@ -53,14 +48,7 @@ public class ImageViewer {
             final int imageWith = image.getBounds().width;
             final int imageHeight = image.getBounds().height;
 
-            GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            Rectangle monitorBounds;
-            if (environment.isHeadlessInstance()) {
-                monitorBounds = ((HeadlessGraphicsEnvironment) environment).getSunGraphicsEnvironment().getScreenDevices()[0].getConfigurations()[0].getBounds();
-            } else {
-                GraphicsDevice[] devices = environment.getScreenDevices();
-                monitorBounds = devices[0].getDefaultConfiguration().getBounds();
-            }
+            org.eclipse.swt.graphics.Rectangle monitorBounds = Display.getDefault().getPrimaryMonitor().getBounds();
 
             final int monitorWidth = monitorBounds.width;
             final int monitorHeight = monitorBounds.height;

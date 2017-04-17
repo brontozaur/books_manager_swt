@@ -1,6 +1,7 @@
 package com.papao.books.view.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EnumHelper {
@@ -24,6 +25,17 @@ public class EnumHelper {
         return enumValues;
     }
 
+    public static List<String> getValuesArray(List<? extends Enum> enumValues) {
+        if (enumValues == null) {
+            return Collections.emptyList();
+        }
+        List<String> stringValues = new ArrayList<>();
+        for (Enum enumVal : enumValues) {
+            stringValues.add(enumVal.name());
+        }
+        return stringValues;
+    }
+
     public static <E extends Enum<E>> boolean matchesEnum(Class<E> enumClass, String valueToBeMatched) {
         if (valueToBeMatched == null) {
             return false;
@@ -35,5 +47,15 @@ public class EnumHelper {
             }
         }
         return false;
+    }
+
+    public static <E extends Enum<E>> Enum<E> getEnum(Class<E> enumClass, String value) {
+        value = value.toUpperCase();
+        for (Enum<E> enumVal : enumClass.getEnumConstants()) {
+            if (value.equals(enumVal.name().toUpperCase())) {
+                return enumVal;
+            }
+        }
+        return null;
     }
 }

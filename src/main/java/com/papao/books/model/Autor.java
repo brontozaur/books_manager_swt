@@ -4,7 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Collections;
+import java.util.List;
 
 @Document(collection = "autor")
 public class Autor extends AbstractDB implements Serializable {
@@ -13,14 +14,19 @@ public class Autor extends AbstractDB implements Serializable {
     private String id;
 
     private String numeComplet = "";
-    private Date dataNastere;
-    private Date dataMortii;
+    private int anNastere;
+    private int lunaNastere;
+    private int ziNastere;
+    private int anDeces;
+    private int lunaDeces;
+    private int ziDeces;
     private DocumentData mainImage;
     private DocumentData[] documents;
-    private GenLiterar genLiterar;
+    private List<GenLiterar> genLiterar;
     private String website;
     private String twitter;
     private String facebook;
+    private String wiki;
     private String descriere;
 
     @Override
@@ -33,6 +39,9 @@ public class Autor extends AbstractDB implements Serializable {
     }
 
     public String getNumeComplet() {
+        if (this.numeComplet == null) {
+            return "";
+        }
         return numeComplet;
     }
 
@@ -40,20 +49,52 @@ public class Autor extends AbstractDB implements Serializable {
         this.numeComplet = numeComplet;
     }
 
-    public Date getDataNastere() {
-        return dataNastere;
+    public int getAnNastere() {
+        return anNastere;
     }
 
-    public void setDataNastere(Date dataNastere) {
-        this.dataNastere = dataNastere;
+    public void setAnNastere(int anNastere) {
+        this.anNastere = anNastere;
     }
 
-    public Date getDataMortii() {
-        return dataMortii;
+    public int getLunaNastere() {
+        return lunaNastere;
     }
 
-    public void setDataMortii(Date dataMortii) {
-        this.dataMortii = dataMortii;
+    public void setLunaNastere(int lunaNastere) {
+        this.lunaNastere = lunaNastere;
+    }
+
+    public int getZiNastere() {
+        return ziNastere;
+    }
+
+    public void setZiNastere(int ziNastere) {
+        this.ziNastere = ziNastere;
+    }
+
+    public int getAnDeces() {
+        return anDeces;
+    }
+
+    public void setAnDeces(int anDeces) {
+        this.anDeces = anDeces;
+    }
+
+    public int getLunaDeces() {
+        return lunaDeces;
+    }
+
+    public void setLunaDeces(int lunaDeces) {
+        this.lunaDeces = lunaDeces;
+    }
+
+    public int getZiDeces() {
+        return ziDeces;
+    }
+
+    public void setZiDeces(int ziDeces) {
+        this.ziDeces = ziDeces;
     }
 
     public DocumentData getMainImage() {
@@ -72,18 +113,32 @@ public class Autor extends AbstractDB implements Serializable {
         this.documents = documents;
     }
 
-    public GenLiterar getGenLiterar() {
+    public String getWiki() {
+        if (wiki == null) {
+            return "";
+        }
+        return wiki;
+    }
+
+    public void setWiki(String wiki) {
+        this.wiki = wiki;
+    }
+
+    public List<GenLiterar> getGenLiterar() {
         if (genLiterar == null) {
-            return GenLiterar.NESPECIFICAT;
+            return Collections.emptyList();
         }
         return genLiterar;
     }
 
-    public void setGenLiterar(GenLiterar genLiterar) {
+    public void setGenLiterar(List<GenLiterar> genLiterar) {
         this.genLiterar = genLiterar;
     }
 
     public String getWebsite() {
+        if (this.website == null) {
+            return "";
+        }
         return website;
     }
 
@@ -92,6 +147,9 @@ public class Autor extends AbstractDB implements Serializable {
     }
 
     public String getTwitter() {
+        if (this.twitter == null) {
+            return "";
+        }
         return twitter;
     }
 
@@ -100,6 +158,9 @@ public class Autor extends AbstractDB implements Serializable {
     }
 
     public String getFacebook() {
+        if (this.facebook == null) {
+            return "";
+        }
         return facebook;
     }
 
@@ -108,10 +169,21 @@ public class Autor extends AbstractDB implements Serializable {
     }
 
     public String getDescriere() {
+        if (this.descriere == null) {
+            return "";
+        }
         return descriere;
     }
 
     public void setDescriere(String descriere) {
         this.descriere = descriere;
+    }
+
+    public AnLunaZiData getDataNasterii(boolean showLabels) {
+        return new AnLunaZiData(this.anNastere, this.lunaNastere, this.ziNastere, showLabels);
+    }
+
+    public AnLunaZiData getDataMortii(boolean showLabels) {
+        return new AnLunaZiData(this.anDeces, this.lunaDeces, this.ziDeces, showLabels);
     }
 }

@@ -9,7 +9,7 @@ import java.util.Date;
 
 public final class BorgDateUtil {
 
-	private static Logger logger = Logger.getLogger(BorgDateUtil.class);
+    private static Logger logger = Logger.getLogger(BorgDateUtil.class);
 
     public static final String AM = "AM";
     public static final String PM = "PM";
@@ -22,9 +22,9 @@ public final class BorgDateUtil {
     public static final String VINERI = "Vineri";
     public static final String SAMBATA = "Sambata";
 
-    public static final String[] ZILELE_SAPTAMANII = new String[] {
+    public static final String[] ZILELE_SAPTAMANII = new String[]{
             BorgDateUtil.DUMINICA, BorgDateUtil.LUNI, BorgDateUtil.MARTI, BorgDateUtil.MIERCURI, BorgDateUtil.JOI, BorgDateUtil.VINERI,
-            BorgDateUtil.SAMBATA, BorgDateUtil.DUMINICA };
+            BorgDateUtil.SAMBATA, BorgDateUtil.DUMINICA};
 
     public static final String IANUARIE = "Ianuarie";
     public static final String FEBRUARIE = "Februarie";
@@ -39,9 +39,9 @@ public final class BorgDateUtil {
     public static final String NOIEMBRIE = "Noiembrie";
     public static final String DECEMBRIE = "Decembrie";
 
-    public static final String[] LUNILE = new String[] {
+    public static final String[] LUNILE = new String[]{
             BorgDateUtil.IANUARIE, BorgDateUtil.FEBRUARIE, BorgDateUtil.MARTIE, BorgDateUtil.APRILIE, BorgDateUtil.MAI, BorgDateUtil.IUNIE,
-            BorgDateUtil.IULIE, BorgDateUtil.AUGUST, BorgDateUtil.SEPTEMBRIE, BorgDateUtil.OCTOMBRIE, BorgDateUtil.NOIEMBRIE, BorgDateUtil.DECEMBRIE };
+            BorgDateUtil.IULIE, BorgDateUtil.AUGUST, BorgDateUtil.SEPTEMBRIE, BorgDateUtil.OCTOMBRIE, BorgDateUtil.NOIEMBRIE, BorgDateUtil.DECEMBRIE};
 
     public static final String IAN = "Ian";
     public static final String FEB = "Feb";
@@ -56,9 +56,9 @@ public final class BorgDateUtil {
     public static final String NOI = "Noi";
     public static final String DEC = "Dec";
 
-    public static final String[] LUNILE_SCURT = new String[] {
+    public static final String[] LUNILE_SCURT = new String[]{
             BorgDateUtil.IAN, BorgDateUtil.FEB, BorgDateUtil.MAR, BorgDateUtil.APR, BorgDateUtil.MAI_, BorgDateUtil.IUN, BorgDateUtil.IUL,
-            BorgDateUtil.AUG, BorgDateUtil.SEP, BorgDateUtil.OCT, BorgDateUtil.NOI, BorgDateUtil.DEC };
+            BorgDateUtil.AUG, BorgDateUtil.SEP, BorgDateUtil.OCT, BorgDateUtil.NOI, BorgDateUtil.DEC};
 
     private static final String ERR_NULL_DATE_VALUE = "Cannot get a valid date from a null value..";
 
@@ -70,22 +70,24 @@ public final class BorgDateUtil {
 
     private static long ONE_DAY = 24 * BorgDateUtil.ONE_HOUR;
 
-    private BorgDateUtil() {}
+    private BorgDateUtil() {
+    }
 
     public static int getMaxZileInLuna(final int luna, final int an) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, luna);
-        cal.set(Calendar.YEAR, an);
+        if (an > 0) {
+            cal.set(Calendar.YEAR, an);
+        }
         return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
     /**
-     * @param date
-     *            a non-null date
+     * @param date a non-null date
      * @return a Romanian formatted DAY_OF_WEEK
-     *         <p>
-     *         This method works. However, when the Date doesnt change, try to initialize the Calendar first and call the String getDayInRO(final
-     *         Calendar calendar) instead. This will give us some performance boost, since the calendar is not instantiated with every iteration.
+     * <p>
+     * This method works. However, when the Date doesnt change, try to initialize the Calendar first and call the String getDayInRO(final
+     * Calendar calendar) instead. This will give us some performance boost, since the calendar is not instantiated with every iteration.
      */
     public static String getDayInRO(final Date date) {
         String result;
@@ -98,7 +100,7 @@ public final class BorgDateUtil {
             result = BorgDateUtil.ZILELE_SAPTAMANII[calendar.get(Calendar.DAY_OF_WEEK) - 1];
         } catch (Exception exc) {
             result = "";
-			logger.error(exc.getMessage(), exc);
+            logger.error(exc.getMessage(), exc);
         }
         return result;
     }
@@ -118,12 +120,11 @@ public final class BorgDateUtil {
     }
 
     /**
-     * @param date
-     *            a non-null date
+     * @param date a non-null date
      * @return a Romanian formatted DAY_OF_WEEK
-     *         <p>
-     *         This method works. However, when the Date doesnt change, try to initialize the Calendar first and call the String getDayInRO(final
-     *         Calendar calendar) instead. This will give us some performance boost, since the calendar is not instantiated with every iteration.
+     * <p>
+     * This method works. However, when the Date doesnt change, try to initialize the Calendar first and call the String getDayInRO(final
+     * Calendar calendar) instead. This will give us some performance boost, since the calendar is not instantiated with every iteration.
      */
     public static String getMonthInRO(final Date date, final boolean shortName) {
         String result;

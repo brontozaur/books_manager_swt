@@ -1,8 +1,8 @@
-package com.papao.books.view.user;
+package com.papao.books.view.carte;
 
+import com.papao.books.controller.AutorController;
 import com.papao.books.model.AbstractDB;
-import com.papao.books.model.User;
-import com.papao.books.repository.UserRepository;
+import com.papao.books.model.Autor;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCView;
 import com.papao.books.view.interfaces.*;
@@ -27,41 +27,40 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete, IEncodeSearch {
+public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete, IEncodeSearch {
 
-    private static Logger logger = LoggerFactory.getLogger(UsersView.class);
+    private static Logger logger = LoggerFactory.getLogger(AutoriView.class);
 
-    private static final String[] COLS = new String[]{"Nume", "Prenume"};
+    private static final String[] COLS = new String[]{"Nume"};
 
     private final static int IDX_NUME = 0;
-    private final static int IDX_PRENUME = 1;
 
     protected TableViewer tableViewer;
     private SashForm sash;
     private Composite compRight;
     protected BorgSearchSystem searchSystem;
-    private UserRepository userRepository;
+    private AutorController autorController;
 
-    public UsersView(final Shell parent, UserRepository userRepository) {
+    public AutoriView(final Shell parent, AutorController autorController) {
         super(parent, AbstractView.MODE_NONE);
-        this.userRepository = userRepository;
+        this.autorController = autorController;
 
-        getShell().setText("Utilizatori aplicatie");
+        getShell().setText("Autori");
         getShell().setImage(AppImages.getImage16(AppImages.IMG_CONFIG));
 
         addComponents();
 
-        this.tableViewer.setInput(userRepository.findAll());
+        this.tableViewer.setInput(this.autorController.findAll());
         this.tableViewer.getTable().setFocus();
     }
 
     @Override
     public final boolean add() {
-        UserView view;
+        AutorView view;
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new UserView(this.tableViewer.getTable().getShell(), new User(), userRepository, AbstractView.MODE_ADD);
+        view = new AutorView(this.tableViewer.getTable().getShell(), new Autor(), autorController, AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -72,20 +71,20 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
 
     @Override
     public final boolean modify() {
-        UserView view;
+        AutorView view;
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
             return false;
         }
-        User usr = (User) this.tableViewer.getTable().getSelection()[0].getData();
-        if (usr == null) {
-            SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
+        Autor autor = (Autor) this.tableViewer.getTable().getSelection()[0].getData();
+        if (autor == null) {
+            SWTeXtension.displayMessageI("Autorul selectat este invalid!");
             return false;
         }
-        if (userRepository.findOne(usr.getId()) == null) {
-            SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
+        if (autorController.findOne(autor.getId()) == null) {
+            SWTeXtension.displayMessageI("Autorul selectat este invalid!");
             return false;
         }
-        view = new UserView(this.tableViewer.getTable().getShell(), usr, userRepository, AbstractView.MODE_MODIFY);
+        view = new AutorView(this.tableViewer.getTable().getShell(), autor, autorController, AbstractView.MODE_MODIFY);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -100,23 +99,22 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
                 return false;
             }
-            User usr = (User) this.tableViewer.getTable().getSelection()[0].getData();
-            if (usr == null) {
-                SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
+            Autor autor = (Autor) this.tableViewer.getTable().getSelection()[0].getData();
+            if (autor == null) {
+                SWTeXtension.displayMessageI("Autorul selectat este invalid!");
                 return false;
             }
-            if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti utilizatorul selectat?", "Confirmare stergere utilizator") == SWT.NO) {
+            if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti autorul selectat?", "Confirmare stergere autor") == SWT.NO) {
                 return true;
             }
-            usr = userRepository.findOne(usr.getId());
-            if (usr == null) {
-                SWTeXtension.displayMessageW("Utilizatorul nu mai exista!");
+            autor = autorController.findOne(autor.getId());
+            if (autor == null) {
+                SWTeXtension.displayMessageW("Autorul nu mai exista!");
                 return false;
             }
-            userRepository.delete(usr);
-            java.util.List<User> input = (java.util.List)tableViewer.getInput();
-            input.remove(input.indexOf(usr));
-//            this.tableViewer.setInput(input);
+            //TODO foreign key checks!!
+            autorController.delete(autor);
+            tableViewer.setInput(autorController.findAll());
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -129,27 +127,28 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
             return;
         }
-        User usr = (User) this.tableViewer.getTable().getSelection()[0].getData();
-        if (usr == null) {
-            SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
+        Autor autor = (Autor) this.tableViewer.getTable().getSelection()[0].getData();
+        if (autor == null) {
+            SWTeXtension.displayMessageI("Autor selectat este invalid!");
             return;
         }
-        if (userRepository.findOne(usr.getId()) == null) {
-            SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
+        if (autorController.findOne(autor.getId()) == null) {
+            SWTeXtension.displayMessageI("Autor selectat este invalid!");
             return;
         }
-        new UserView(this.tableViewer.getTable().getShell(), usr, userRepository, AbstractView.MODE_VIEW).open();
+        new AutorView(this.tableViewer.getTable().getShell(), autor, autorController, AbstractView.MODE_VIEW).open();
     }
+
     @Override
     public void refresh() {
-        this.tableViewer.setInput(userRepository.findAll());
+        this.tableViewer.setInput(autorController.findAll());
     }
 
     @Override
     protected void customizeView() {
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.SHOW_OPS_LABELS);
-        setBigViewMessage("Configurare utilizatori aplicatie");
+        setBigViewMessage("Configurare autori");
         setBigViewImage(AppImages.getImage24(AppImages.IMG_USER));
     }
 
@@ -259,7 +258,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
     public final void search() {
         this.tableViewer.resetFilters();
         java.util.List<ViewerFilter> listFilters = new ArrayList<ViewerFilter>();
-        for (Iterator<AbstractSearchType> it = this.searchSystem.getVisibleFilters().values().iterator(); it.hasNext();) {
+        for (Iterator<AbstractSearchType> it = this.searchSystem.getVisibleFilters().values().iterator(); it.hasNext(); ) {
             ViewerFilter filter = null;
             final AbstractSearchType searchType = it.next();
             if (!searchType.isModified()) {
@@ -270,18 +269,8 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
                     filter = new ViewerFilter() {
                         @Override
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-                            User usr = (User) element;
-                            return searchType.compareValues(usr.getNume());
-                        }
-                    };
-                    break;
-                }
-                case IDX_PRENUME: {
-                    filter = new ViewerFilter() {
-                        @Override
-                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-                            User usr = (User) element;
-                            return searchType.compareValues(usr.getPrenume());
+                            Autor autor = (Autor) element;
+                            return searchType.compareValues(autor.getNumeComplet());
                         }
                     };
                     break;
@@ -376,7 +365,6 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
 
     public final void createViewerFilters() {
         this.searchSystem.createTextSearch(IDX_NUME);
-        this.searchSystem.createTextSearch(IDX_PRENUME);
     }
 
     public final void initViewerCols() {
@@ -388,9 +376,9 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         int[] dims = new int[]{250, 250};
         int[] aligns = new int[]{SWT.LEFT, SWT.LEFT};
         boolean[] visible = new boolean[]{true, true};
-        for (int i = 0; i < UsersView.COLS.length; i++) {
+        for (int i = 0; i < COLS.length; i++) {
             final TableViewerColumn col = new TableViewerColumn(this.tableViewer, SWT.NONE);
-            col.getColumn().setText(UsersView.COLS[i]);
+            col.getColumn().setText(COLS[i]);
             col.getColumn().setWidth(visible[i] ? dims[i] : 0);
             col.getColumn().setAlignment(aligns[i]);
             col.getColumn().setResizable(visible[i]);
@@ -400,36 +388,16 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
                     col.setLabelProvider(new ColumnLabelProvider() {
                         @Override
                         public String getText(final Object element) {
-                            User usr = (User) element;
-                            return usr.getNume();
+                            Autor autor = (Autor) element;
+                            return autor.getNumeComplet();
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
                         @Override
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
-                            User a = (User) e1;
-                            User b = (User) e2;
-                            return a.getNume().compareTo(b.getNume());
-                        }
-
-                    };
-                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
-                    break;
-                }
-                case IDX_PRENUME: {
-                    col.setLabelProvider(new ColumnLabelProvider() {
-                        @Override
-                        public String getText(final Object element) {
-                            User usr = (User) element;
-                            return usr.getPrenume();
-                        }
-                    });
-                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
-                        @Override
-                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
-                            User a = (User) e1;
-                            User b = (User) e2;
-                            return a.getPrenume().compareTo(b.getPrenume());
+                            Autor a = (Autor) e1;
+                            Autor b = (Autor) e2;
+                            return a.getNumeComplet().compareTo(b.getNumeComplet());
                         }
 
                     };

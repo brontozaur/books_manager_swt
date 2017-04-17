@@ -22,7 +22,7 @@ public class ImageSelectorComposite extends Composite {
     private boolean imageChanged;
     private String imageName;
     private final int WIDTH = 180;
-    private final int HEIGHT = 180;
+    private final int HEIGHT = 200;
 
     private static String SWT_FULL_IMAGE = "SWT_FULL_IMAGE";
     private static String OS_FILE = "OS_FILE";
@@ -33,10 +33,10 @@ public class ImageSelectorComposite extends Composite {
         this.imageName = imageName;
 
         GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(5, 5, 5, 5).applyTo(this);
-        GridDataFactory.fillDefaults().grab(false, false).hint(190, 250).applyTo(this);
+        GridDataFactory.fillDefaults().grab(false, false).hint(190, 240).applyTo(this);
 
         labelImage = new Label(this, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(labelImage);
+        GridDataFactory.fillDefaults().hint(180, 200).applyTo(labelImage);
         labelImage.addListener(SWT.MouseEnter, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -45,7 +45,7 @@ public class ImageSelectorComposite extends Composite {
         });
 
         ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
-        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(bar);
+        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).grab(true, false).applyTo(bar);
 
         ToolItem itemSelectie = new ToolItem(bar, SWT.PUSH);
         itemSelectie.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
@@ -74,6 +74,7 @@ public class ImageSelectorComposite extends Composite {
         if (fullImage != null && !fullImage.isDisposed()) {
             populateFields(fullImage);
         }
+        this.setSize(this.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
         this.addListener(SWT.Paint, new Listener() {
             @Override
@@ -107,13 +108,13 @@ public class ImageSelectorComposite extends Composite {
                     previewShell = null;
                 }
                 previewShell = new ImageViewer(image);
-                previewShell.setImageName(labelImage.getData()+"");
+                previewShell.setImageName(labelImage.getData() + "");
                 previewShell.open();
             }
         }
     }
 
-    private void removeImage(){
+    private void removeImage() {
         Object fullImage = labelImage.getData(SWT_FULL_IMAGE);
         if (fullImage instanceof Image) {
             if (!((Image) fullImage).isDisposed()) {
@@ -151,6 +152,7 @@ public class ImageSelectorComposite extends Composite {
             Image resizedImage = AppImages.getImage(fullImage, WIDTH, HEIGHT);
             labelImage.setImage(resizedImage);
             imageChanged = true;
+            this.setSize(this.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             SWTeXtension.displayMessageW("Imaginea selectata este invalida sau nu a putut fi incarcata!");

@@ -1,11 +1,11 @@
 package com.papao.books.view.carte;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSDBFile;
-import com.mongodb.gridfs.GridFSInputFile;
 import com.papao.books.controller.BookController;
-import com.papao.books.model.*;
+import com.papao.books.model.AbstractDB;
+import com.papao.books.model.Carte;
+import com.papao.books.model.Limba;
+import com.papao.books.model.TipCoperta;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.custom.ImageSelectorComposite;
@@ -33,10 +33,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.activation.MimetypesFileTypeMap;
-import java.io.File;
-import java.io.IOException;
 
 public class CarteView extends AbstractCSaveView {
 
@@ -131,7 +127,7 @@ public class CarteView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().grab(true, true).applyTo(mainCompLeft);
 
         Composite topCompLeft = new Composite(mainCompLeft, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).extendedMargins(0, 0, 0, 5 ).applyTo(topCompLeft);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).extendedMargins(0, 0, 0, 5).applyTo(topCompLeft);
         GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(topCompLeft);
 
         frontCoverComposite = new ImageSelectorComposite(parent, getSWTImage(carte.getCopertaFata().getId()), carte.getCopertaFata().getFileName());
@@ -348,11 +344,7 @@ public class CarteView extends AbstractCSaveView {
             carte.setCopertaFata(null);
 
             if (frontCoverComposite.getSelectedFile() != null) {
-                GridFSDBFile frontCover = saveImage(frontCoverComposite.getSelectedFile());
-                DocumentData copertaFata = new DocumentData();
-                copertaFata.setId((ObjectId) frontCover.getId());
-                copertaFata.setFileName(frontCover.getFilename());
-                carte.setCopertaFata(copertaFata);
+                carte.setCopertaFata(controller.saveDocument(frontCoverComposite.getSelectedFile()));
             }
         }
 
@@ -361,26 +353,11 @@ public class CarteView extends AbstractCSaveView {
             carte.setCopertaSpate(null);
 
             if (backCoverComposite.getSelectedFile() != null) {
-                GridFSDBFile backCover = saveImage(backCoverComposite.getSelectedFile());
-                DocumentData copertaSpate = new DocumentData();
-                copertaSpate.setId((ObjectId) backCover.getId());
-                copertaSpate.setFileName(backCover.getFilename());
-                carte.setCopertaSpate(copertaSpate);
+                carte.setCopertaSpate(controller.saveDocument(backCoverComposite.getSelectedFile()));
             }
         }
 
         controller.save(carte);
-    }
-
-    private GridFSDBFile saveImage(File imageFile) throws IOException {
-        GridFSInputFile gfsFile = controller.createFile(imageFile);
-        gfsFile.setFilename(imageFile.getName());
-        gfsFile.setContentType(new MimetypesFileTypeMap().getContentType(imageFile));
-        DBObject meta = new BasicDBObject();
-        meta.put("fileOriginalFilePath", imageFile.getAbsolutePath());
-        gfsFile.setMetaData(meta);
-        gfsFile.save();
-        return controller.getImageData((ObjectId) gfsFile.getId());
     }
 
     @Override
