@@ -100,7 +100,7 @@ public class LinkedinCompositeAutori extends Composite {
             createClosableCanvas(autor, false);
         }
         if (autori.size() > 0) {
-            layoutEverything();
+            layoutEverything(false);
         }
     }
 
@@ -113,7 +113,7 @@ public class LinkedinCompositeAutori extends Composite {
                 if (dataObject.getId().equals(autor.getId())) {
                     canvas.setText(autor.getNumeComplet());
                     canvas.setDataObject(autor);
-                    layoutEverything();
+                    layoutEverything(true);
                     return;
                 }
             }
@@ -121,11 +121,13 @@ public class LinkedinCompositeAutori extends Composite {
         createClosableCanvas(autor, true);
     }
 
-    private void layoutEverything() {
+    private void layoutEverything(boolean computeShell) {
         compSelections.setSize(compSelections.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         LinkedinCompositeAutori.this.setSize(compSelections.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         LinkedinCompositeAutori.this.getParent().layout();
-        getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        if (computeShell) {
+            getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        }
     }
 
     private void createClosableCanvas(Autor autor, boolean layoutParent) {
@@ -144,11 +146,11 @@ public class LinkedinCompositeAutori extends Composite {
                         autori.remove((Autor) canvas.getDataObject());
                         comboAutor.setInput(autorController.findAll());
                     }
-                    layoutEverything();
+                    layoutEverything(true);
                 }
             });
             if (layoutParent) {
-                layoutEverything();
+                layoutEverything(true);
             }
         } else {
             comboAutor.getCombo().clearSelection();

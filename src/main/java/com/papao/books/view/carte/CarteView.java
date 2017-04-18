@@ -389,6 +389,8 @@ public class CarteView extends AbstractCSaveView {
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
         setObjectName("carte");
+        setShellHeight(650);
+        setShellWidth(800);
     }
 
     @Override
