@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Document(collection = "autor")
-public class Autor extends AbstractMongoDB implements Serializable {
+public class Autor extends AuditObject implements Serializable {
 
     @Id
     private ObjectId id;

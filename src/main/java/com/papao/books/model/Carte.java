@@ -1,18 +1,15 @@
 package com.papao.books.model;
 
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Document(collection = "carte")
-public class Carte extends AbstractMongoDB implements Serializable {
+public class Carte extends AuditObject implements Serializable {
 
     public static String REPLACEMENT_FOR_NOT_SET = "";
 
@@ -65,17 +62,6 @@ public class Carte extends AbstractMongoDB implements Serializable {
     private List<CarteCitita> carteCitita;
     private List<BookRating> notaCarte;
     private List<TranslationRating> translationRatings;
-
-    @CreatedDate
-    private Date createdAt;
-
-    @LastModifiedDate
-    private Date lastModifiedAt;
-
-    private String lastModifiedBy;
-
-    private String createdBy;
-    private String updatedBy;
 
     @Override
     public ObjectId getId() {
@@ -395,38 +381,6 @@ public class Carte extends AbstractMongoDB implements Serializable {
         this.genLiterar = genLiterar;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getLastModifiedAt() {
-        return lastModifiedAt;
-    }
-
-    public void setLastModifiedAt(Date lastModifiedAt) {
-        this.lastModifiedAt = lastModifiedAt;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
     public String getSubtitlu() {
         return subtitlu;
     }
@@ -547,11 +501,5 @@ public class Carte extends AbstractMongoDB implements Serializable {
         this.translationRatings = translationRatings;
     }
 
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
-    }
 
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
 }

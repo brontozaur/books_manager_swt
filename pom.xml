@@ -87,6 +87,11 @@
             <artifactId>jxl</artifactId>
             <version>2.6</version>
         </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.3</version>
+        </dependency>
 
         <!-- jface 3.6 -->
         <dependency>

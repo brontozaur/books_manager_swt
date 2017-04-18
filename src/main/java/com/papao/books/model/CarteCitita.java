@@ -1,5 +1,8 @@
 package com.papao.books.model;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
@@ -11,11 +14,18 @@ public class CarteCitita {
 
     private Date dataStart = now;
     private Date dataStop = now;
-    private String createdBy;
-    private String createdAt;
     private int notaCarte;
-    private String lastModifiedAt;
-    private String lastModifiedBy;
+    private ObjectId idUser;
+
+    private String createdBy;
+
+    @CreatedDate
+    private Date createdAt;
+
+    private String updatedBy;
+
+    @LastModifiedDate
+    private Date updatedAt;
 
     public Date getDataStart() {
         return dataStart;
@@ -37,6 +47,22 @@ public class CarteCitita {
         return dataStart != null && dataStop != null && dataStart != dataStop;
     }
 
+    public int getNotaCarte() {
+        return notaCarte;
+    }
+
+    public void setNotaCarte(int notaCarte) {
+        this.notaCarte = notaCarte;
+    }
+
+    public ObjectId getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(ObjectId idUser) {
+        this.idUser = idUser;
+    }
+
     public String getCreatedBy() {
         return createdBy;
     }
@@ -45,35 +71,27 @@ public class CarteCitita {
         this.createdBy = createdBy;
     }
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getLastModifiedAt() {
-        return lastModifiedAt;
+    public String getUpdatedBy() {
+        return updatedBy;
     }
 
-    public void setLastModifiedAt(String lastModifiedAt) {
-        this.lastModifiedAt = lastModifiedAt;
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
-
-    public int getNotaCarte() {
-        return notaCarte;
-    }
-
-    public void setNotaCarte(int notaCarte) {
-        this.notaCarte = notaCarte;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

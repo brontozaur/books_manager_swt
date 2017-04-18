@@ -3,6 +3,7 @@ package com.papao.books.view.menu;
 import com.papao.books.model.ImagePath;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.util.ColorUtil;
+import com.papao.books.view.util.UrlImageValidator;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
@@ -19,11 +20,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import sun.awt.image.URLImageSource;
 
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,12 +29,10 @@ public final class HelpBrowser implements Listener {
 
     private static Logger logger = Logger.getLogger(HelpBrowser.class);
     private Composite compBrowser;
-    private ToolBar barNavigare, barGo;
     private ToolItem itemBack, itemNext, itemStop, itemRefresh, itemGo;
-    private Label labelAdress;
     private Combo comboAdress;
     private ProgressBar pBar;
-    private CLabel cLabelNavigare, cLabelStatus;
+    private CLabel cLabelStatus;
     private static final String BACK = "back";
     private static final String FWD = "fwd";
     private static final String REFRESH = "refresh";
@@ -119,58 +115,58 @@ public final class HelpBrowser implements Listener {
             SWTeXtension.addToolTipListener(this.compBrowser, "Web browser");
             this.compBrowser.addListener(SWT.Paint, this);
 
-            this.cLabelNavigare = new CLabel(this.compBrowser, SWT.SHADOW_ETCHED_OUT);
-            this.cLabelNavigare.setLayout(new GridLayout(4, false));
-            ((GridLayout) this.cLabelNavigare.getLayout()).verticalSpacing = 0;
-            this.cLabelNavigare.setLayoutData(new GridData(
+            CLabel cLabelNavigare = new CLabel(this.compBrowser, SWT.SHADOW_ETCHED_OUT);
+            cLabelNavigare.setLayout(new GridLayout(4, false));
+            ((GridLayout) cLabelNavigare.getLayout()).verticalSpacing = 0;
+            cLabelNavigare.setLayoutData(new GridData(
                     SWT.FILL,
                     SWT.FILL,
                     true,
                     false,
                     ((GridLayout) this.compBrowser.getLayout()).numColumns,
                     1));
-            ((GridData) this.cLabelNavigare.getLayoutData()).heightHint = 25;
-            ((GridLayout) this.cLabelNavigare.getLayout()).marginHeight = ((GridLayout) this.cLabelNavigare.getLayout()).marginWidth = 1;
-            ((GridLayout) this.cLabelNavigare.getLayout()).verticalSpacing = 0;
+            ((GridData) cLabelNavigare.getLayoutData()).heightHint = 25;
+            ((GridLayout) cLabelNavigare.getLayout()).marginHeight = ((GridLayout) cLabelNavigare.getLayout()).marginWidth = 1;
+            ((GridLayout) cLabelNavigare.getLayout()).verticalSpacing = 0;
 
-            this.barNavigare = new ToolBar(this.cLabelNavigare, SWT.FLAT | SWT.WRAP);
+            ToolBar barNavigare = new ToolBar(cLabelNavigare, SWT.FLAT | SWT.WRAP);
             gd = new GridData(GridData.FILL_HORIZONTAL);
 
-            this.itemBack = new ToolItem(this.barNavigare, SWT.PUSH);
+            this.itemBack = new ToolItem(barNavigare, SWT.PUSH);
             this.itemBack.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT));
             this.itemBack.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_LEFT));
             this.itemBack.setData(HelpBrowser.BACK);
 
-            this.itemNext = new ToolItem(this.barNavigare, SWT.PUSH);
+            this.itemNext = new ToolItem(barNavigare, SWT.PUSH);
             this.itemNext.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
             this.itemNext.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT));
             this.itemNext.setData(HelpBrowser.FWD);
 
-            this.itemRefresh = new ToolItem(this.barNavigare, SWT.PUSH);
+            this.itemRefresh = new ToolItem(barNavigare, SWT.PUSH);
             this.itemRefresh.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
             this.itemRefresh.setHotImage(AppImages.getImage16Focus(AppImages.IMG_REFRESH));
             this.itemRefresh.setData(HelpBrowser.REFRESH);
 
-            this.itemStop = new ToolItem(this.barNavigare, SWT.PUSH);
+            this.itemStop = new ToolItem(barNavigare, SWT.PUSH);
             this.itemStop.setImage(AppImages.getImage16(AppImages.IMG_STOP));
             this.itemStop.setHotImage(AppImages.getImage16Focus(AppImages.IMG_STOP));
             this.itemStop.setData(HelpBrowser.STOP);
 
-            new ToolItem(this.barNavigare, SWT.SEPARATOR);
+            new ToolItem(barNavigare, SWT.SEPARATOR);
 
-            this.labelAdress = new Label(this.cLabelNavigare, SWT.NONE);
-            this.labelAdress.setText("Adresa");
+            Label labelAdress = new Label(cLabelNavigare, SWT.NONE);
+            labelAdress.setText("Adresa");
 
-            this.comboAdress = new Combo(this.cLabelNavigare, SWT.BORDER | SWT.DROP_DOWN);
+            this.comboAdress = new Combo(cLabelNavigare, SWT.BORDER | SWT.DROP_DOWN);
             gd = new GridData(GridData.FILL_HORIZONTAL);
             this.comboAdress.setLayoutData(gd);
             this.comboAdress.setText(startUrl);
             SWTeXtension.addColoredFocusListener(this.comboAdress, ColorUtil.COLOR_FOCUS_YELLOW);
             this.comboAdress.addListener(SWT.Selection, this);
 
-            this.barGo = new ToolBar(this.cLabelNavigare, SWT.FLAT | SWT.WRAP);
+            ToolBar barGo = new ToolBar(cLabelNavigare, SWT.FLAT | SWT.WRAP);
 
-            this.itemGo = new ToolItem(this.barGo, SWT.PUSH);
+            this.itemGo = new ToolItem(barGo, SWT.PUSH);
             this.itemGo.setImage(AppImages.getImage16(AppImages.IMG_OK));
             this.itemGo.setHotImage(AppImages.getImage16Focus(AppImages.IMG_OK));
             this.itemGo.setData(HelpBrowser.GO);
@@ -293,12 +289,11 @@ public final class HelpBrowser implements Listener {
 
     private void enableItemSave() {
         try {
-            URL url = new URL(comboAdress.getText());
-            if (!(url.getContent() instanceof URLImageSource)) {
+            if (!UrlImageValidator.validate(comboAdress.getText())) {
+                itemSave.setEnabled(false);
                 return;
             }
-            URLConnection conn = url.openConnection();
-            InputStream in = conn.getInputStream();
+            URL url = new URL(comboAdress.getText());
             ImagePath path = new ImagePath();
             path.setFilePath(url.toString());
             path.setFileName(url.getFile().substring(url.getFile().lastIndexOf("/") + 1));
@@ -360,17 +355,23 @@ public final class HelpBrowser implements Listener {
         try {
             ToolItem item = (ToolItem) event.widget;
             String string = item.getData().toString();
-            if (string.equals(HelpBrowser.BACK)) {
-                browser.back();
-            } else if (string.equals(HelpBrowser.FWD)) {
-                browser.forward();
-            } else if (string.equals(HelpBrowser.STOP)) {
-                browser.stop();
-            } else if (string.equals(HelpBrowser.REFRESH)) {
-                browser.refresh();
-            } else if (string.equals(HelpBrowser.GO)) {
-                setComboItems(this.comboAdress.getText());
-                browser.setUrl(this.comboAdress.getText());
+            switch (string) {
+                case HelpBrowser.BACK:
+                    browser.back();
+                    break;
+                case HelpBrowser.FWD:
+                    browser.forward();
+                    break;
+                case HelpBrowser.STOP:
+                    browser.stop();
+                    break;
+                case HelpBrowser.REFRESH:
+                    browser.refresh();
+                    break;
+                case HelpBrowser.GO:
+                    setComboItems(this.comboAdress.getText());
+                    browser.setUrl(this.comboAdress.getText());
+                    break;
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
