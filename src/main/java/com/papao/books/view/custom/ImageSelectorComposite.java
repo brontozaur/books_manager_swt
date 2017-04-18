@@ -11,8 +11,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,44 +69,34 @@ public class ImageSelectorComposite extends Composite implements Observer {
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                final HelpBrowser hb = new HelpBrowser(getShell(), startUrl, true);
-                hb.getShell().addListener(SWT.Close, new Listener() {
-                    @Override
-                    public void handleEvent(Event event) {
-                        removeImage();
-                        ImagePath result = hb.getResult();
-                        if (result != null) {
-                            try {
-                                String localFilePath = serializeWebImage(result);
-                                loadLocalImage(localFilePath);
-                                labelImage.setData(WEB_FILE, result.getFilePath());
-                            } catch (IOException e) {
-                                logger.error(e.getMessage(), e);
-                                SWTeXtension.displayMessageW("Imaginea selectata este invalida sau nu a putut fi incarcata!");
-                            }
-                        }
-                    }
-                });
-                hb.open();
+                webImageSearch();
             }
         });
 
         final ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
         GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).grab(true, false).applyTo(bar);
 
-        final ToolItem itemSelectie = new ToolItem(bar, SWT.DROP_DOWN);
-        itemSelectie.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
-        itemSelectie.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
-        itemSelectie.setText("Selectie");
-        itemSelectie.setToolTipText("Selectie imagine");
-        itemSelectie.addListener(SWT.Selection, new Listener() {
+        final ToolItem itemLocalSelection = new ToolItem(bar, SWT.PUSH);
+        itemLocalSelection.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
+        itemLocalSelection.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
+        itemLocalSelection.setText("Local");
+        itemLocalSelection.setToolTipText("Selectie imagine de pe calculator");
+        itemLocalSelection.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                Rectangle rect = itemSelectie.getBounds();
-                Point pt = new Point(rect.x, rect.y + rect.height);
-                pt = bar.toDisplay(pt);
-                menu.setLocation(pt.x, pt.y);
-                menu.setVisible(true);
+                selectImage();
+            }
+        });
+
+        ToolItem itemWebSelection = new ToolItem(bar, SWT.PUSH);
+        itemWebSelection.setImage(AppImages.getImage16(AppImages.IMG_BROWSER));
+        itemWebSelection.setHotImage(AppImages.getImage16Focus(AppImages.IMG_BROWSER));
+        itemWebSelection.setText("Web");
+        itemWebSelection.setToolTipText("Cautare imagine pe internet");
+        itemWebSelection.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                webImageSearch();
             }
         });
 
@@ -142,6 +130,28 @@ public class ImageSelectorComposite extends Composite implements Observer {
 
             }
         });
+    }
+
+    private void webImageSearch() {
+        final HelpBrowser hb = new HelpBrowser(getShell(), startUrl, true);
+        hb.getShell().addListener(SWT.Close, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                removeImage();
+                ImagePath result = hb.getResult();
+                if (result != null) {
+                    try {
+                        String localFilePath = serializeWebImage(result);
+                        loadLocalImage(localFilePath);
+                        labelImage.setData(WEB_FILE, result.getFilePath());
+                    } catch (IOException e) {
+                        logger.error(e.getMessage(), e);
+                        SWTeXtension.displayMessageW("Imaginea selectata este invalida sau nu a putut fi incarcata!");
+                    }
+                }
+            }
+        });
+        hb.open();
     }
 
     private void populateFields(Image fullImage) {
