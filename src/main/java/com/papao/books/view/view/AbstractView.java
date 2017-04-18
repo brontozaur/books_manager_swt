@@ -833,14 +833,10 @@ public abstract class AbstractView extends Observable{
     }
 
     public final void open() {
-        open(true, this.parentPos == null ? true : false);
+        open(this.parentPos == null ? true : false);
     }
 
     public final void open(final boolean centerInDisplay) {
-        open(true, centerInDisplay);
-    }
-
-    public final void open(final boolean pack, final boolean centerInDisplay) {
         Display display = null;
         try {
             if ((getShell() == null) || getShell().isDisposed()) {
@@ -850,9 +846,6 @@ public abstract class AbstractView extends Observable{
                 return;
             }
             display = getShell().getDisplay();
-            if (pack) {
-                getShell().pack();
-            }
             if (centerInDisplay) {
                 WidgetCompositeUtil.centerInDisplay(getShell());
             }

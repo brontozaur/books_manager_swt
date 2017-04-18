@@ -33,7 +33,7 @@ public class BooksApplication {
     @PostConstruct
     public void open() {
         try {
-            encodePlatform.open(false, true);
+            encodePlatform.open(true);
 
             /*
              * the guardian code lines that prevent the app from dying, in normal running mode
