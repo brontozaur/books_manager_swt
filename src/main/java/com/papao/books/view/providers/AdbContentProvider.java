@@ -1,6 +1,6 @@
 package com.papao.books.view.providers;
 
-import com.papao.books.model.AbstractDB;
+import com.papao.books.model.AbstractMongoDB;
 import org.eclipse.jface.viewers.*;
 
 import java.util.Collection;
@@ -10,27 +10,27 @@ public class AdbContentProvider implements IStructuredContentProvider {
     /**
      * Array-ul de elemente de tip Class<? extends AbstractDB> care va fi folosit de {@link ColumnViewer} pentru afisare in tabela asociata.
      */
-    private AbstractDB[] elements;
+    private AbstractMongoDB[] elements;
 
     @Override
     @SuppressWarnings("unchecked")
-    public AbstractDB[] getElements(final Object inputElement) {
+    public AbstractMongoDB[] getElements(final Object inputElement) {
         if (inputElement instanceof Collection) {
-            this.elements = ((Collection<AbstractDB>) inputElement).toArray(new AbstractDB[((Collection<AbstractDB>) inputElement).size()]);
+            this.elements = ((Collection<AbstractMongoDB>) inputElement).toArray(new AbstractMongoDB[((Collection<AbstractMongoDB>) inputElement).size()]);
             return this.elements;
-        } else if (inputElement instanceof AbstractDB[]) {
-            this.elements = (AbstractDB[]) inputElement;
+        } else if (inputElement instanceof AbstractMongoDB[]) {
+            this.elements = (AbstractMongoDB[]) inputElement;
             return this.elements;
         } else if (inputElement instanceof Map<?, ?>) {
             return getElements(((Map<?, ?>) inputElement).values());
         } else {
-            this.elements = new AbstractDB[] {
-                (AbstractDB) inputElement };
+            this.elements = new AbstractMongoDB[] {
+                (AbstractMongoDB) inputElement };
             return this.elements;
         }
     }
 
-    public AbstractDB[] getElements() {
+    public AbstractMongoDB[] getElements() {
         return this.elements;
     }
 
@@ -58,16 +58,16 @@ public class AdbContentProvider implements IStructuredContentProvider {
      * @param viewer
      *            viewerul asociat tabelei de pe care se face exportul.
      */
-    public static AbstractDB[] getFilteredInput(final AbstractDB[] oldInput, final ColumnViewer viewer) {
+    public static AbstractMongoDB[] getFilteredInput(final AbstractMongoDB[] oldInput, final ColumnViewer viewer) {
         if ((oldInput == null) || (viewer == null) || viewer.getControl().isDisposed() || (viewer.getFilters() == null)
                 || (viewer.getFilters().length == 0)) {
             return oldInput;
         }
-        Object[] filteredInput = oldInput;
+        AbstractMongoDB[] filteredInput = oldInput;
         for (ViewerFilter f : viewer.getFilters()) {
-            filteredInput = f.filter(viewer, viewer.getInput(), filteredInput);
+            filteredInput = (AbstractMongoDB[])f.filter(viewer, viewer.getInput(), filteredInput);
         }
-        AbstractDB[] result = new AbstractDB[filteredInput.length];
+        AbstractMongoDB[] result = new AbstractMongoDB[filteredInput.length];
         System.arraycopy(filteredInput, 0, result, 0, filteredInput.length);
         return result;
     }

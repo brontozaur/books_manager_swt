@@ -1,23 +1,24 @@
 package com.papao.books.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "user")
-public class User extends AbstractDB {
+public class User extends AbstractMongoDB {
 
     @Id
-    private String id;
+    private ObjectId id;
 
     private String nume;
     private String prenume;
 
     @Override
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

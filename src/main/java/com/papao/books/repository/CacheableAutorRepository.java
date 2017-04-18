@@ -1,10 +1,12 @@
 package com.papao.books.repository;
 
 import com.papao.books.model.Autor;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -27,7 +29,13 @@ public class CacheableAutorRepository {
     }
 
     @Cacheable("autoriList")
-    public Iterable<Autor> getByIds(List<String> ids) {
-        return autorRepository.findAll(ids);
+    public Iterable<Autor> getByIds(List<ObjectId> ids) {
+        List<String> idsStr = new ArrayList<>();
+        for (ObjectId id: ids) {
+            if (id != null) {
+                idsStr.add(id.toString());
+            }
+        }
+        return autorRepository.findAll(idsStr);
     }
 }

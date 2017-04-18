@@ -2,7 +2,6 @@ package com.papao.books.view.carte;
 
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.controller.AutorController;
-import com.papao.books.model.AbstractDB;
 import com.papao.books.model.AnLunaZiData;
 import com.papao.books.model.Autor;
 import com.papao.books.model.GenLiterar;
@@ -214,10 +213,5 @@ public class AutorView extends AbstractCSaveView {
 
     public void setAutor(Autor autor) {
         this.autor = autor;
-    }
-
-    @Override
-    protected Class<? extends AbstractDB> getClazz() {
-        return Autor.class;
     }
 }

@@ -1,6 +1,5 @@
 package com.papao.books.view.providers;
 
-import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.ComboImage;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -67,7 +66,7 @@ public final class ContentProposalProvider implements IContentProposalProvider {
 		if (StringUtils.isEmpty(candidate) || StringUtils.isEmpty(content)) {
 			return false;
 		}
-		return candidate.toLowerCase(EncodeLive.ROMANIAN_LOCALE).contains(content.toLowerCase(EncodeLive.ROMANIAN_LOCALE));
+		return candidate.toLowerCase().contains(content.toLowerCase());
 	}
 
 	public static char[] getAlphaNumericChars() {

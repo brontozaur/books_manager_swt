@@ -58,8 +58,11 @@ public class BookController extends AbstractController {
         this.requestSearch(this.searchType, this.value, pageable, this.all);
     }
 
-    public Carte findOne(String id) {
-        return repository.findOne(id);
+    public Carte findOne(ObjectId id) {
+        if (id == null) {
+            return null;
+        }
+        return repository.findOne(id.toString());
     }
 
     public void delete(Carte carte) {

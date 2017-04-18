@@ -1,8 +1,7 @@
 package com.papao.books.view.user;
 
-import com.papao.books.model.AbstractDB;
+import com.papao.books.controller.UserController;
 import com.papao.books.model.User;
-import com.papao.books.repository.UserRepository;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.AbstractView;
@@ -18,15 +17,15 @@ import org.eclipse.swt.widgets.Text;
 public class UserView extends AbstractCSaveView {
 
     private User user;
-    private UserRepository userRepository;
+    private UserController controller;
 
     private Text textNume;
     private Text textPrenume;
 
-    public UserView(final Shell parent, final User user, final UserRepository userRepository, final int viewMode) {
+    public UserView(final Shell parent, final User user, final UserController controller, final int viewMode) {
         super(parent, viewMode, user.getId());
         this.user = user;
-        this.userRepository = userRepository;
+        this.controller = controller;
 
         addComponents();
         populateFields();
@@ -69,7 +68,7 @@ public class UserView extends AbstractCSaveView {
     protected void saveData() {
         this.user.setNume(this.textNume.getText());
         this.user.setPrenume(this.textPrenume.getText());
-        userRepository.save(user);
+        controller.save(user);
     }
 
     @Override
@@ -94,8 +93,4 @@ public class UserView extends AbstractCSaveView {
         this.user = user;
     }
 
-    @Override
-    protected Class<? extends AbstractDB> getClazz() {
-        return User.class;
-    }
 }

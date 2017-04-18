@@ -3,9 +3,9 @@ package com.papao.books.view;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
-import com.papao.books.model.AbstractDB;
+import com.papao.books.controller.UserController;
+import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
-import com.papao.books.repository.UserRepository;
 import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.custom.PaginationComposite;
@@ -61,7 +61,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static Logger logger = Logger.getLogger(EncodePlatform.class);
     private ToolTip appToolTip;
     private Tray appTray;
-    private UserRepository userRepository;
+    private UserController userController;
     private AutorController autorController;
     private static ToolBar barDocking;
     private static EncodePlatform instance;
@@ -99,11 +99,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private Combo comboModAfisare;
 
     @Autowired
-    public EncodePlatform(UserRepository userRepository,
+    public EncodePlatform(UserController userController,
                           AutorController autorController,
                           BookController bookController) {
         super(null, AbstractView.MODE_NONE);
-        this.userRepository = userRepository;
+        this.userController = userController;
         this.autorController = autorController;
         this.bookController = bookController;
         this.bookController.addObserver(this);
@@ -392,7 +392,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (this.tableViewer.getTable().getSelectionCount() == 0) {
             enable = false;
         } else {
-            enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractDB;
+            enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractMongoDB;
         }
         toolItemAdd.setEnabled(true); // add
         toolItemMod.setEnabled(enable); // mod
@@ -1175,7 +1175,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     public final void configUsers() {
-        new UsersView(new Shell(), userRepository).open();
+        new UsersView(new Shell(), userController).open();
     }
 
     @Override
@@ -1223,7 +1223,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), bookController, AbstractView.MODE_ADD);
+        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), bookController, autorController, AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -1282,7 +1282,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             carte.setId(null);
             viewMode = MODE_CLONE;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, viewMode);
+        view = new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, autorController, viewMode);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -1375,7 +1375,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return;
         }
-        new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, AbstractView.MODE_VIEW).open();
+        new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, autorController, AbstractView.MODE_VIEW).open();
     }
 
     public void fullRefresh(boolean resetPage) {
@@ -1475,8 +1475,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return menu;
     }
 
-    public UserRepository getUserRepository() {
-        return this.userRepository;
+    public UserController getUserController() {
+        return this.userController;
     }
 
     public static EncodePlatform getInstance() {

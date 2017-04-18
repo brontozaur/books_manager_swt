@@ -1,5 +1,6 @@
 package com.papao.books.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,14 +12,14 @@ import java.util.Date;
 import java.util.List;
 
 @Document(collection = "carte")
-public class Carte extends AbstractDB implements Serializable {
+public class Carte extends AbstractMongoDB implements Serializable {
 
     public static String REPLACEMENT_FOR_NOT_SET = "";
 
     @Id
-    private String id;
+    private ObjectId id;
 
-    private List<String> idAutori;
+    private List<ObjectId> idAutori;
     private String titlu;
     private String subtitlu;
     private String editura;
@@ -77,11 +78,11 @@ public class Carte extends AbstractDB implements Serializable {
     private String updatedBy;
 
     @Override
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 
@@ -379,14 +380,14 @@ public class Carte extends AbstractDB implements Serializable {
         return genLiterar;
     }
 
-    public List<String> getIdAutori() {
+    public List<ObjectId> getIdAutori() {
         if (idAutori == null) {
             return Collections.emptyList();
         }
         return idAutori;
     }
 
-    public void setIdAutori(List<String> idAutori) {
+    public void setIdAutori(List<ObjectId> idAutori) {
         this.idAutori = idAutori;
     }
 

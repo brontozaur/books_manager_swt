@@ -1,5 +1,6 @@
 package com.papao.books.view.custom;
 
+import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.util.ColorUtil;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -10,6 +11,7 @@ public class ClosableCanvas extends Canvas {
 
     private String text;
     private ToolItem itemClose;
+    private AbstractMongoDB dataObject;
 
     public ClosableCanvas(final Composite parent, String text) {
         super(parent, SWT.NONE);
@@ -53,5 +55,13 @@ public class ClosableCanvas extends Canvas {
 
     public ToolItem getItemClose() {
         return this.itemClose;
+    }
+
+    public AbstractMongoDB getDataObject() {
+        return dataObject;
+    }
+
+    public void setDataObject(AbstractMongoDB dataObject) {
+        this.dataObject = dataObject;
     }
 }

@@ -1,7 +1,8 @@
 package com.papao.books.view.bones.impl.view;
 
-import com.papao.books.model.AbstractDB;
+import com.papao.books.model.AbstractMongoDB;
 import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 
@@ -9,16 +10,14 @@ public abstract class AbstractCSaveView extends AbstractCView {
 
     private static final Logger logger = Logger.getLogger(AbstractCSaveView.class);
 
-    private String objectId;
-    private AbstractDB editedObject;
+    private ObjectId objectId;
+    private AbstractMongoDB editedObject;
 
-    protected abstract Class<? extends AbstractDB> getClazz();
-
-    public AbstractCSaveView(Shell parent, int viewMode, String objectId) {
+    public AbstractCSaveView(Shell parent, int viewMode, ObjectId objectId) {
         this(parent, null, viewMode, objectId);
     }
 
-    public AbstractCSaveView(Shell parent, Rectangle parentPos, int viewMode, String objectId) {
+    public AbstractCSaveView(Shell parent, Rectangle parentPos, int viewMode, ObjectId objectId) {
         super(parent, parentPos, viewMode);
         this.objectId = objectId;
 
@@ -37,16 +36,16 @@ public abstract class AbstractCSaveView extends AbstractCView {
 //        }
     }
 
-    protected String getIdObject() {
+    protected ObjectId getIdObject() {
         return this.objectId;
     }
 
-    protected void setIdObject(String idObject) {
+    protected void setIdObject(ObjectId idObject) {
         this.objectId = idObject;
         extractEditedObject();
     }
 
-    protected AbstractDB getEditedObject() {
+    protected AbstractMongoDB getEditedObject() {
         return editedObject;
     }
 

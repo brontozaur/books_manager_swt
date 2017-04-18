@@ -1,7 +1,7 @@
 package com.papao.books.view.carte;
 
 import com.papao.books.controller.AutorController;
-import com.papao.books.model.AbstractDB;
+import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCView;
@@ -170,7 +170,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
         if (this.tableViewer.getTable().getSelectionCount() == 0) {
             enable = false;
         } else {
-            enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractDB;
+            enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractMongoDB;
         }
         getToolItemAdd().setEnabled(true); // add
         getToolItemMod().setEnabled(enable); // mod

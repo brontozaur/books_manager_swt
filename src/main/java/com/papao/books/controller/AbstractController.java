@@ -1,6 +1,9 @@
 package com.papao.books.controller;
 
-import com.mongodb.*;
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
@@ -11,6 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.LookupOperation;
+import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -106,52 +113,30 @@ public class AbstractController extends Observable {
                                                                         String referenceCollectionName,
                                                                         String refPropertyName,
                                                                         String refUIProperty) {
-        DBCollection collection = mongoTemplate.getCollection(mainCollectionName);
-        //unwind
-        DBObject unwind = new BasicDBObject("$unwind", "$" + mainPropertyName);
-        //lookup
-        DBObject lookupArguments = new BasicDBObject();
-        lookupArguments.put("from", referenceCollectionName);
-        lookupArguments.put("localField", mainPropertyName);
-        lookupArguments.put("foreignField", refPropertyName);
-        lookupArguments.put("as", "ref");
-        DBObject lookup = new BasicDBObject("$lookup", lookupArguments);
-        //group - extract complete reference object, as we need both it's id and refUIProperty
-        DBObject groupFields = new BasicDBObject("_id", "$ref");
-        groupFields.put("count", new BasicDBObject("$sum", 1));
-        DBObject group = new BasicDBObject("$group", groupFields);
-
-        List<DBObject> pipeline = Arrays.asList(unwind, lookup, group);
-        AggregationOutput output = collection.aggregate(pipeline);
+        LookupOperation lookupAuthor = Aggregation.lookup(referenceCollectionName, mainPropertyName, refPropertyName, "ref");
+        UnwindOperation unwindRefs = Aggregation.unwind("ref", true);
+        GroupOperation groupByAuthor = Aggregation.group("ref").count().as("count");
+        Aggregation aggregation = Aggregation.newAggregation(lookupAuthor, unwindRefs, groupByAuthor);
+        List<BasicDBObject> results = mongoTemplate.aggregate(aggregation, mainCollectionName, BasicDBObject.class).getMappedResults();
 
         List<IntValuePair> occurrences = new ArrayList<>();
 
         int emptyOrNullCount = 0;
-        for (DBObject distinctValue : output.results()) {
-            BasicDBList refObjectProperties = (BasicDBList) distinctValue.get("_id");
-            if (refObjectProperties.isEmpty()) {
-                //this is the case where the main collection refers to a non-existent ref object
+        for (DBObject distinctValue : results) {
+            Object objectId = distinctValue.get("_id");
+            int count = (int)distinctValue.get("count");
+            if (objectId == null) {
+                emptyOrNullCount += count;
                 continue;
             }
-            BasicDBObject referenceObject = (BasicDBObject) (refObjectProperties).get(0);
-            String objectId = referenceObject.get("_id").toString();
-            String itemName = (String) referenceObject.get(refUIProperty);
-            int count = Integer.valueOf(distinctValue.get("count").toString());
+            String itemName = (String) distinctValue.get(refUIProperty);
             if (StringUtils.isNotEmpty(itemName)) {
-                occurrences.add(new IntValuePair(itemName, objectId, count));
+                occurrences.add(new IntValuePair(itemName, objectId.toString(), count));
             } else {
+                //authors with name not set
                 emptyOrNullCount += count;
             }
         }
-
-        //additional query in the mainCollection to get objects with null or empty main property name
-        Query query = new Query();
-        //array field is null or empty - as a suplement to "valid" fields
-        Criteria criteria = new Criteria().orOperator(Criteria.where(mainPropertyName).is(null),
-                Criteria.where(mainPropertyName).is(new String[]{}));
-        query.addCriteria(criteria);
-        long documentsWithNullOrEmptyMainPropertyName = mongoTemplate.count(query, mainCollectionName);
-        emptyOrNullCount += documentsWithNullOrEmptyMainPropertyName;
 
         if (emptyOrNullCount > 0) {
             occurrences.add(new IntValuePair(null, null, emptyOrNullCount));

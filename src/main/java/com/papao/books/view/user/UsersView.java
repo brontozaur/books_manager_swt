@@ -1,8 +1,8 @@
 package com.papao.books.view.user;
 
-import com.papao.books.model.AbstractDB;
+import com.papao.books.controller.UserController;
+import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.User;
-import com.papao.books.repository.UserRepository;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCView;
 import com.papao.books.view.interfaces.*;
@@ -40,18 +40,18 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
     private SashForm sash;
     private Composite compRight;
     protected BorgSearchSystem searchSystem;
-    private UserRepository userRepository;
+    private UserController controller;
 
-    public UsersView(final Shell parent, UserRepository userRepository) {
+    public UsersView(final Shell parent, UserController controller) {
         super(parent, AbstractView.MODE_NONE);
-        this.userRepository = userRepository;
+        this.controller = controller;
 
         getShell().setText("Utilizatori aplicatie");
         getShell().setImage(AppImages.getImage16(AppImages.IMG_CONFIG));
 
         addComponents();
 
-        this.tableViewer.setInput(userRepository.findAll());
+        this.tableViewer.setInput(controller.findAll());
         this.tableViewer.getTable().setFocus();
     }
 
@@ -61,7 +61,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new UserView(this.tableViewer.getTable().getShell(), new User(), userRepository, AbstractView.MODE_ADD);
+        view = new UserView(this.tableViewer.getTable().getShell(), new User(), controller, AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -81,11 +81,11 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return false;
         }
-        if (userRepository.findOne(usr.getId()) == null) {
+        if (controller.findOne(usr.getId()) == null) {
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return false;
         }
-        view = new UserView(this.tableViewer.getTable().getShell(), usr, userRepository, AbstractView.MODE_MODIFY);
+        view = new UserView(this.tableViewer.getTable().getShell(), usr, controller, AbstractView.MODE_MODIFY);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -108,12 +108,12 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti utilizatorul selectat?", "Confirmare stergere utilizator") == SWT.NO) {
                 return true;
             }
-            usr = userRepository.findOne(usr.getId());
+            usr = controller.findOne(usr.getId());
             if (usr == null) {
                 SWTeXtension.displayMessageW("Utilizatorul nu mai exista!");
                 return false;
             }
-            userRepository.delete(usr);
+            controller.delete(usr);
             java.util.List<User> input = (java.util.List)tableViewer.getInput();
             input.remove(input.indexOf(usr));
 //            this.tableViewer.setInput(input);
@@ -134,15 +134,15 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return;
         }
-        if (userRepository.findOne(usr.getId()) == null) {
+        if (controller.findOne(usr.getId()) == null) {
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return;
         }
-        new UserView(this.tableViewer.getTable().getShell(), usr, userRepository, AbstractView.MODE_VIEW).open();
+        new UserView(this.tableViewer.getTable().getShell(), usr, controller, AbstractView.MODE_VIEW).open();
     }
     @Override
     public void refresh() {
-        this.tableViewer.setInput(userRepository.findAll());
+        this.tableViewer.setInput(controller.findAll());
     }
 
     @Override
@@ -171,7 +171,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         if (this.tableViewer.getTable().getSelectionCount() == 0) {
             enable = false;
         } else {
-            enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractDB;
+            enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractMongoDB;
         }
         getToolItemAdd().setEnabled(true); // add
         getToolItemMod().setEnabled(enable); // mod

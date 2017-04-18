@@ -1,5 +1,6 @@
 package com.papao.books.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,10 +9,10 @@ import java.util.Collections;
 import java.util.List;
 
 @Document(collection = "autor")
-public class Autor extends AbstractDB implements Serializable {
+public class Autor extends AbstractMongoDB implements Serializable {
 
     @Id
-    private String id;
+    private ObjectId id;
 
     private String numeComplet = "";
     private int anNastere;
@@ -30,11 +31,11 @@ public class Autor extends AbstractDB implements Serializable {
     private String descriere;
 
     @Override
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

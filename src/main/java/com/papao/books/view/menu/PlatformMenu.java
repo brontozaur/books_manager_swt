@@ -48,7 +48,7 @@ public final class PlatformMenu {
         subItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                new UsersView(item.getParent().getShell(), EncodePlatform.getInstance().getUserRepository()).open();
+                new UsersView(item.getParent().getShell(), EncodePlatform.getInstance().getUserController()).open();
             }
         });
 
