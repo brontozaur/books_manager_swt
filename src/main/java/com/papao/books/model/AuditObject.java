@@ -5,6 +5,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 
+/**
+ * See http://www.javabydefault.com/2014/03/how-to-set-createdby-createddate.html
+ */
 public abstract class AuditObject extends AbstractMongoDB {
 
     private String createdBy;

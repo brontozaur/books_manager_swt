@@ -1,6 +1,5 @@
 package com.papao.books.view.custom;
 
-import com.lowagie.text.html.HtmlEncoder;
 import com.papao.books.controller.AutorController;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
@@ -175,7 +174,7 @@ public class LinkedinCompositeAutori extends Composite {
             if (searchTerm.length() > 0) {
                 searchTerm.append("+");
             }
-            searchTerm.append(HtmlEncoder.encode(autor.getNumeComplet()));
+            searchTerm.append(autor.getNumeComplet());
         }
         return searchTerm.toString();
     }

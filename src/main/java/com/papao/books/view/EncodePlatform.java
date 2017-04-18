@@ -53,7 +53,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 @org.springframework.stereotype.Component
 public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer {
@@ -1251,9 +1250,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 return false;
             }
             bookController.delete(carteDb);
-            List<Carte> input = (List) tableViewer.getInput();
-            input.remove(input.indexOf(carte));
-            tableViewer.setInput(input);
+            fullRefresh(true);
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -1287,7 +1284,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        fullRefresh(false);
+        fullRefresh(true);
         return true;
     }
 

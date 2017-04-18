@@ -114,9 +114,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
                 return false;
             }
             controller.delete(usr);
-            java.util.List<User> input = (java.util.List)tableViewer.getInput();
-            input.remove(input.indexOf(usr));
-//            this.tableViewer.setInput(input);
+            refresh();
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);

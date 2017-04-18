@@ -1,6 +1,5 @@
 package com.papao.books.view.carte;
 
-import com.lowagie.text.html.HtmlEncoder;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
@@ -162,7 +161,7 @@ public class CarteView extends AbstractCSaveView {
         this.textTitlu.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-
+                markAsChanged();
             }
         });
 
@@ -433,7 +432,7 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private void markAsChanged() {
-        observableProperty = HtmlEncoder.encode(carte.getTitlu()) + "+" + compositeAutori.getGoogleSearchTerm();
+        observableProperty = this.textTitlu.getText() + " " + compositeAutori.getGoogleSearchTerm();
         setChanged();
         notifyObservers();
     }
