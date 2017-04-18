@@ -12,6 +12,7 @@ public class ClosableCanvas extends Canvas {
     private String text;
     private ToolItem itemClose;
     private AbstractMongoDB dataObject;
+    private Label textLabel;
 
     public ClosableCanvas(final Composite parent, String text) {
         super(parent, SWT.NONE);
@@ -20,7 +21,8 @@ public class ClosableCanvas extends Canvas {
         GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(5, 1, 1, 1).equalWidth(false).applyTo(this);
         this.setData(text);
 
-        new Label(this, SWT.NONE).setText(text);
+        this.textLabel = new Label(this, SWT.NONE);
+        this.textLabel.setText(text);
 
         itemClose = new ToolItem(new ToolBar(this, SWT.FLAT), SWT.NONE);
         itemClose.setImage(AppImages.getGrayImageMiscByName(AppImages.IMG_MISC_SIMPLE_X));
@@ -47,6 +49,11 @@ public class ClosableCanvas extends Canvas {
 
             }
         });
+    }
+
+    public void setText(String text) {
+        this.text = text;
+        this.textLabel.setText(text);
     }
 
     public String getText() {

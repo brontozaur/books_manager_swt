@@ -87,9 +87,9 @@ public class CarteView extends AbstractCSaveView {
         addComponents();
         populateFields();
 
-        this.observableProperty = HtmlEncoder.encode(carte.getTitlu());
         this.addObserver(frontCoverComposite);
         this.addObserver(backCoverComposite);
+        markAsChanged();
 
         textTitlu.setFocus();
     }
@@ -162,9 +162,7 @@ public class CarteView extends AbstractCSaveView {
         this.textTitlu.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                observableProperty = HtmlEncoder.encode(textTitlu.getText());
-                setChanged();
-                notifyObservers();
+
             }
         });
 
@@ -184,6 +182,12 @@ public class CarteView extends AbstractCSaveView {
         labelAutori.setText("Autori");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelAutori);
         compositeAutori = new LinkedinCompositeAutori(topCompLeft, carte.getIdAutori(), autorController);
+        this.compositeAutori.getCompSelections().addListener(SWT.Resize, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                markAsChanged();
+            }
+        });
 
         Composite bottomCompLeft = new Composite(mainCompLeft, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).margins(0, 0).applyTo(bottomCompLeft);
@@ -426,6 +430,12 @@ public class CarteView extends AbstractCSaveView {
 
     private void setCarte(final Carte carte) {
         this.carte = carte;
+    }
+
+    private void markAsChanged() {
+        observableProperty = HtmlEncoder.encode(carte.getTitlu()) + "+" + compositeAutori.getGoogleSearchTerm();
+        setChanged();
+        notifyObservers();
     }
 
     @Override

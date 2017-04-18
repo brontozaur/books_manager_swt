@@ -1,6 +1,8 @@
 package com.papao.books.view.custom;
 
+import com.lowagie.text.html.HtmlEncoder;
 import com.papao.books.controller.AutorController;
+import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
 import com.papao.books.view.carte.AutorView;
 import com.papao.books.view.util.ColorUtil;
@@ -11,6 +13,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -57,7 +60,7 @@ public class LinkedinCompositeAutori extends Composite {
                 }
                 Autor newAutor = view.getAutor();
                 comboAutor.setInput(autorController.findAll());
-                comboAutor.select(newAutor.getNumeComplet());
+                createClosableCanvas(newAutor, true);
             }
         });
         comboAutor.getItemMod().addListener(SWT.Selection, new Listener() {
@@ -73,7 +76,7 @@ public class LinkedinCompositeAutori extends Composite {
                     return;
                 }
                 comboAutor.setInput(autorController.findAll());
-                comboAutor.select(autor.getNumeComplet());
+                createOrModifyClosableCanvas(autor);
             }
         });
         comboAutor.getCombo().addListener(SWT.KeyUp, new Listener() {
@@ -102,6 +105,23 @@ public class LinkedinCompositeAutori extends Composite {
         }
     }
 
+    private void createOrModifyClosableCanvas(Autor autor) {
+        Control[] controls = compSelections.getChildren();
+        for (Control control : controls) {
+            if (control instanceof ClosableCanvas) {
+                ClosableCanvas canvas = (ClosableCanvas) control;
+                AbstractMongoDB dataObject = canvas.getDataObject();
+                if (dataObject.getId().equals(autor.getId())) {
+                    canvas.setText(autor.getNumeComplet());
+                    canvas.setDataObject(autor);
+                    layoutEverything();
+                    return;
+                }
+            }
+        }
+        createClosableCanvas(autor, true);
+    }
+
     private void layoutEverything() {
         compSelections.setSize(compSelections.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         LinkedinCompositeAutori.this.setSize(compSelections.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -116,6 +136,7 @@ public class LinkedinCompositeAutori extends Composite {
             if (layoutParent) {
                 autori.add(autor);
             }
+            comboAutor.getCombo().clearSelection();
             comboAutor.getCombo().setText("");
             canvas.getItemClose().addListener(SWT.Selection, new Listener() {
                 @Override
@@ -131,8 +152,13 @@ public class LinkedinCompositeAutori extends Composite {
                 layoutEverything();
             }
         } else {
+            comboAutor.getCombo().clearSelection();
             comboAutor.getCombo().setText("");
         }
+    }
+
+    public Composite getCompSelections() {
+        return this.compSelections;
     }
 
     public List<ObjectId> getSelectedIds() {
@@ -141,5 +167,16 @@ public class LinkedinCompositeAutori extends Composite {
             selectedIds.add(autor.getId());
         }
         return selectedIds;
+    }
+
+    public String getGoogleSearchTerm() {
+        StringBuilder searchTerm = new StringBuilder();
+        for (Autor autor : autori) {
+            if (searchTerm.length() > 0) {
+                searchTerm.append("+");
+            }
+            searchTerm.append(HtmlEncoder.encode(autor.getNumeComplet()));
+        }
+        return searchTerm.toString();
     }
 }

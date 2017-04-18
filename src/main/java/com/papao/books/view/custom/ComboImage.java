@@ -165,13 +165,27 @@ public class ComboImage extends Composite implements Listener {
             this.itemMod.setImage(AppImages.getImage16(AppImages.IMG_MODIFICARE));
             this.itemMod.setHotImage(AppImages.getImage16Focus(AppImages.IMG_MODIFICARE));
             this.itemMod.setToolTipText("Modificare");
+            this.itemMod.setEnabled(false);
         }
         if ((this.descriptor.getToolItemStyle() & ComboImage.ADD_DEL) == ComboImage.ADD_DEL) {
             this.itemDel = new ToolItem(bar, SWT.NONE);
             this.itemDel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
             this.itemDel.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
             this.itemDel.setToolTipText("Stergere");
+            this.itemDel.setEnabled(false);
         }
+
+        getCombo().addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (itemMod != null) {
+                    itemMod.setEnabled(getSelectedElement() != null);
+                }
+                if (itemDel != null) {
+                    itemDel.setEnabled(getSelectedElement() != null);
+                }
+            }
+        });
     }
 
     public void setImage(final Object element) {
