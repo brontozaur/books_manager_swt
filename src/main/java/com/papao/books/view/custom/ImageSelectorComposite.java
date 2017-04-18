@@ -48,7 +48,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
 
         labelImage = new Label(this, SWT.NONE);
         GridDataFactory.fillDefaults().hint(180, 200).applyTo(labelImage);
-        labelImage.addListener(SWT.MouseEnter, new Listener() {
+        labelImage.addListener(SWT.MouseDown, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 displayImage(event);

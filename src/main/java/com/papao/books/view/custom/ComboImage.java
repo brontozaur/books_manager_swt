@@ -238,7 +238,7 @@ public class ComboImage extends Composite implements Listener {
             return;
         }
         this.combo.select(this.combo.indexOf(str));
-        if (getSelectedObjectId() != this.lastId) {
+        if (getSelectedObjectId().equals(this.lastId)) {
             this.lastId = getSelectedObjectId();
             getCombo().notifyListeners(SWT.Selection, new Event());
         }
