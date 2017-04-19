@@ -139,8 +139,8 @@ public final class PlatformMenu {
 
     public static void launchHelp() {
         try {
-            HelpBrowser hb = new HelpBrowser(null, "https://www.goodreads.com", false);
-            hb.open();
+            WebBrowser hb = new WebBrowser(null, "https://www.goodreads.com", false);
+            hb.open(true, false);
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
         }

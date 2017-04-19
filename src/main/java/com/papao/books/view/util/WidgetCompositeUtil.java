@@ -29,6 +29,19 @@ public final class WidgetCompositeUtil {
 		}
 	}
 
+    public static void centerInDisplayForFixedWidthsShells(final Composite parent) {
+        try {
+            if ((parent == null) || parent.isDisposed()) {
+                return;
+            }
+            parent.setLocation((Display.getDefault().getPrimaryMonitor().getBounds().width - parent.getBounds().width) / 2,
+                    (Display.getDefault().getPrimaryMonitor().getBounds().height - parent.getBounds().height) / 2);
+        }
+        catch (Exception exc) {
+            logger.error(exc.getMessage(), exc);
+        }
+    }
+
 	/**
 	 * @param parent
 	 *            suportul pe care se vor cauta in mod recursiv componentele Daca acesta nu are setata o imagine, ca sa obtinem ImageData din aceasta, se va crea o noua imagine, in gradient, folosind

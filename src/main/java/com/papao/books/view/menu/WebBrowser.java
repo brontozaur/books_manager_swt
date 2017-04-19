@@ -4,7 +4,7 @@ import com.papao.books.model.ImagePath;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.UrlImageValidator;
-import com.papao.books.view.util.WidgetCompositeUtil;
+import com.papao.books.view.view.AbstractCViewAdapter;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -15,20 +15,15 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-public final class HelpBrowser implements Listener {
+public final class WebBrowser extends AbstractCViewAdapter implements Listener {
 
-    private static Logger logger = Logger.getLogger(HelpBrowser.class);
-    private Composite compBrowser;
+    private static Logger logger = Logger.getLogger(WebBrowser.class);
     private ToolItem itemBack, itemNext, itemStop, itemRefresh, itemGo;
     private Combo comboAdress;
     private ProgressBar pBar;
@@ -39,83 +34,28 @@ public final class HelpBrowser implements Listener {
     private static final String STOP = "stop";
     private static final String GO = "go";
     private Browser browser;
-    private Shell shell;
-    private Map<String, TreeItem> locations = new LinkedHashMap<String, TreeItem>();
     private ToolItem itemSave;
     private ImagePath imagePath;
 
     /**
      * @param parent
      */
-    public HelpBrowser(final Shell parent, String startUrl, final boolean allowImageSelection) {
-        int width;
-        int height;
-        Composite bigUpperComp;
-        GridData data;
-        Label bigLabelText;
-        Label bigLabelImage;
-        Label separator;
+    public WebBrowser(final Shell parent, String startUrl, final boolean allowImageSelection) {
+        super(parent, MODE_NONE);
         try {
-            if (parent != null) {
-                this.shell = new Shell(parent, SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
-            } else {
-                this.shell = new Shell(Display.getDefault(), SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
-            }
-            this.shell.setLayout(new GridLayout(1, false));
-            ((GridLayout) this.shell.getLayout()).marginHeight = 0;
-            ((GridLayout) this.shell.getLayout()).marginWidth = 0;
-            ((GridLayout) this.shell.getLayout()).verticalSpacing = 0;
-            if (Display.getDefault().getPrimaryMonitor().getBounds().width > 1024) {
-                width = 800;
-            } else {
-                width = 640;
-            }
-            if (Display.getDefault().getPrimaryMonitor().getBounds().height > 768) {
-                height = 600;
-            } else {
-                height = 480;
-            }
-            this.shell.setSize(width, height);
-            this.shell.setImage(AppImages.getImage16(AppImages.IMG_HELP));
-            this.shell.setText("Help");
-            this.shell.addListener(SWT.Traverse, this);
 
-            bigUpperComp = new Composite(this.shell, SWT.NONE);
-            GridLayout lay = new GridLayout(2, false);
-            lay.marginWidth = 0;
-            lay.marginLeft = 10;
-            lay.marginRight = 5;
-            bigUpperComp.setLayout(lay);
-            data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-            bigUpperComp.setLayoutData(data);
-            bigUpperComp.setBackground(ColorUtil.COLOR_ALBASTRU_DESCHIS);
-            bigUpperComp.setBackgroundMode(SWT.INHERIT_FORCE);
+            getShell().addListener(SWT.Traverse, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    if (event.detail == SWT.TRAVERSE_ESCAPE) {
+                        getShell().close();
+                        event.detail = SWT.TRAVERSE_NONE;
+                        event.doit = true;
+                    }
+                }
+            });
 
-            bigLabelText = new Label(bigUpperComp, SWT.NONE);
-            data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-            bigLabelText.setLayoutData(data);
-            bigLabelText.setText("Web browser integrat");
-
-            bigLabelImage = new Label(bigUpperComp, SWT.NONE);
-            data = new GridData(SWT.END, SWT.FILL, false, true);
-            bigLabelImage.setLayoutData(data);
-            bigLabelImage.setImage(AppImages.getImage24(AppImages.IMG_HELP));
-
-            separator = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-            data = new GridData(SWT.FILL, SWT.END, true, false);
-            data.horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
-            separator.setLayoutData(data);
-
-            WidgetCompositeUtil.centerInDisplay(this.shell);
-            this.compBrowser = new Composite(this.shell, SWT.NONE);
-            GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-            this.compBrowser.setLayoutData(gd);
-            this.compBrowser.setLayout(new GridLayout(2, false));
-            ((GridLayout) this.compBrowser.getLayout()).verticalSpacing = 0;
-            SWTeXtension.addToolTipListener(this.compBrowser, "Web browser");
-            this.compBrowser.addListener(SWT.Paint, this);
-
-            CLabel cLabelNavigare = new CLabel(this.compBrowser, SWT.SHADOW_ETCHED_OUT);
+            CLabel cLabelNavigare = new CLabel(getContainer(), SWT.SHADOW_ETCHED_OUT);
             cLabelNavigare.setLayout(new GridLayout(4, false));
             ((GridLayout) cLabelNavigare.getLayout()).verticalSpacing = 0;
             cLabelNavigare.setLayoutData(new GridData(
@@ -123,34 +63,33 @@ public final class HelpBrowser implements Listener {
                     SWT.FILL,
                     true,
                     false,
-                    ((GridLayout) this.compBrowser.getLayout()).numColumns,
+                    ((GridLayout) getContainer().getLayout()).numColumns,
                     1));
             ((GridData) cLabelNavigare.getLayoutData()).heightHint = 25;
             ((GridLayout) cLabelNavigare.getLayout()).marginHeight = ((GridLayout) cLabelNavigare.getLayout()).marginWidth = 1;
             ((GridLayout) cLabelNavigare.getLayout()).verticalSpacing = 0;
 
             ToolBar barNavigare = new ToolBar(cLabelNavigare, SWT.FLAT | SWT.WRAP);
-            gd = new GridData(GridData.FILL_HORIZONTAL);
 
             this.itemBack = new ToolItem(barNavigare, SWT.PUSH);
             this.itemBack.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT));
             this.itemBack.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_LEFT));
-            this.itemBack.setData(HelpBrowser.BACK);
+            this.itemBack.setData(WebBrowser.BACK);
 
             this.itemNext = new ToolItem(barNavigare, SWT.PUSH);
             this.itemNext.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
             this.itemNext.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT));
-            this.itemNext.setData(HelpBrowser.FWD);
+            this.itemNext.setData(WebBrowser.FWD);
 
             this.itemRefresh = new ToolItem(barNavigare, SWT.PUSH);
             this.itemRefresh.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
             this.itemRefresh.setHotImage(AppImages.getImage16Focus(AppImages.IMG_REFRESH));
-            this.itemRefresh.setData(HelpBrowser.REFRESH);
+            this.itemRefresh.setData(WebBrowser.REFRESH);
 
             this.itemStop = new ToolItem(barNavigare, SWT.PUSH);
             this.itemStop.setImage(AppImages.getImage16(AppImages.IMG_STOP));
             this.itemStop.setHotImage(AppImages.getImage16Focus(AppImages.IMG_STOP));
-            this.itemStop.setData(HelpBrowser.STOP);
+            this.itemStop.setData(WebBrowser.STOP);
 
             new ToolItem(barNavigare, SWT.SEPARATOR);
 
@@ -158,8 +97,7 @@ public final class HelpBrowser implements Listener {
             labelAdress.setText("Adresa");
 
             this.comboAdress = new Combo(cLabelNavigare, SWT.BORDER | SWT.DROP_DOWN);
-            gd = new GridData(GridData.FILL_HORIZONTAL);
-            this.comboAdress.setLayoutData(gd);
+            GridDataFactory.fillDefaults().grab(true, false).applyTo(comboAdress);
             this.comboAdress.setText(startUrl);
             SWTeXtension.addColoredFocusListener(this.comboAdress, ColorUtil.COLOR_FOCUS_YELLOW);
             this.comboAdress.addListener(SWT.Selection, this);
@@ -169,16 +107,16 @@ public final class HelpBrowser implements Listener {
             this.itemGo = new ToolItem(barGo, SWT.PUSH);
             this.itemGo.setImage(AppImages.getImage16(AppImages.IMG_OK));
             this.itemGo.setHotImage(AppImages.getImage16Focus(AppImages.IMG_OK));
-            this.itemGo.setData(HelpBrowser.GO);
+            this.itemGo.setData(WebBrowser.GO);
 
             int browser_style = SWT.BORDER;
-            this.browser = new Browser(this.compBrowser, browser_style);
+            this.browser = new Browser(getContainer(), browser_style);
             this.browser.setLayoutData(new GridData(
                     SWT.FILL,
                     SWT.FILL,
                     true,
                     true,
-                    ((GridLayout) this.compBrowser.getLayout()).numColumns,
+                    ((GridLayout) getContainer().getLayout()).numColumns,
                     1));
             setComboItems(startUrl);
             this.browser.setUrl(startUrl);
@@ -189,7 +127,7 @@ public final class HelpBrowser implements Listener {
                 }
             });
 
-            Composite bottomComposite = new Composite(compBrowser, SWT.NONE);
+            Composite bottomComposite = new Composite(getContainer(), SWT.NONE);
             GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(bottomComposite);
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(bottomComposite);
 
@@ -210,9 +148,7 @@ public final class HelpBrowser implements Listener {
             });
 
             this.pBar = new ProgressBar(bottomComposite, SWT.NONE);
-            gd = new GridData();
-            gd.horizontalAlignment = GridData.END;
-            this.pBar.setLayoutData(gd);
+            GridDataFactory.fillDefaults().align(SWT.END, SWT.END).applyTo(this.pBar);
             this.pBar.setForeground(ColorUtil.COLOR_FOCUS_YELLOW);
 
             this.browser.addProgressListener(new ProgressListener() {
@@ -229,6 +165,7 @@ public final class HelpBrowser implements Listener {
 
                 @Override
                 public void completed(final ProgressEvent event) {
+                    getShell().setText(comboAdress.getText());
                     pBar.setSelection(0);
                     if (allowImageSelection) {
                         enableItemSave();
@@ -323,52 +260,24 @@ public final class HelpBrowser implements Listener {
         }
     }
 
-    public void open() {
-        Display d = null;
-        try {
-            d = this.shell.getDisplay();
-            this.shell.open();
-            while ((this.shell != null) && !this.shell.isDisposed()) {
-                if ((d != null) && !d.readAndDispatch()) {
-                    d.sleep();
-                }
-            }
-        } catch (Exception exc) {
-            logger.error(exc.getMessage(), exc);
-        } finally {
-            if (d != null) {
-                d = null;
-            }
-        }
-    }
-
-
-    public Shell getShell() {
-        return this.shell;
-    }
-
-    public void setShell(final Shell shell) {
-        this.shell = shell;
-    }
-
     private void navigate(final Event event) {
         try {
             ToolItem item = (ToolItem) event.widget;
             String string = item.getData().toString();
             switch (string) {
-                case HelpBrowser.BACK:
+                case WebBrowser.BACK:
                     browser.back();
                     break;
-                case HelpBrowser.FWD:
+                case WebBrowser.FWD:
                     browser.forward();
                     break;
-                case HelpBrowser.STOP:
+                case WebBrowser.STOP:
                     browser.stop();
                     break;
-                case HelpBrowser.REFRESH:
+                case WebBrowser.REFRESH:
                     browser.refresh();
                     break;
-                case HelpBrowser.GO:
+                case WebBrowser.GO:
                     setComboItems(this.comboAdress.getText());
                     browser.setUrl(this.comboAdress.getText());
                     break;
@@ -382,26 +291,6 @@ public final class HelpBrowser implements Listener {
     public void handleEvent(final Event e) {
         try {
             switch (e.type) {
-                case SWT.Traverse: {
-                    if (e.widget == this.shell) {
-                        if (e.detail == SWT.TRAVERSE_ESCAPE) {
-                            this.shell.close();
-                            e.detail = SWT.TRAVERSE_NONE;
-                            e.doit = true;
-                        }
-                    }
-                    break;
-                }
-                case SWT.Paint: {
-                    if (e.widget == this.compBrowser) {
-                        GC gc = e.gc;
-                        gc.setForeground(ColorUtil.COLOR_ALBASTRU_INCHIS);
-                        Rectangle rect = this.compBrowser.getClientArea();
-                        gc.drawRectangle(rect.x, rect.y + 1, rect.width - 1, rect.height - 3);
-                        gc.dispose();
-                    }
-                    break;
-                }
                 case SWT.Selection: {
                     if (e.widget == this.comboAdress) {
                         browser.setUrl(this.comboAdress.getText());
@@ -430,5 +319,20 @@ public final class HelpBrowser implements Listener {
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
         }
+    }
+
+    @Override
+    protected void customizeView() {
+        setShellText("Web browser");
+        setShellStyle(SWT.MIN | SWT.CLOSE | SWT.RESIZE | SWT.MAX);
+        setShellImage(AppImages.getImage16(AppImages.IMG_BROWSER));
+        setBigViewImage(AppImages.getImage24(AppImages.IMG_BROWSER));
+        setBigViewMessage("Web browser");
+
+        org.eclipse.swt.graphics.Rectangle monitorBounds = Display.getDefault().getPrimaryMonitor().getBounds();
+        final int monitorWidth = monitorBounds.width;
+        final int monitorHeight = monitorBounds.height;
+        setShellWidth(monitorWidth * 60 / 100);
+        setShellHeight(monitorHeight * 60 / 100);
     }
 }

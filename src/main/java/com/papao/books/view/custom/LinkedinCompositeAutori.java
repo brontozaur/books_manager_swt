@@ -174,7 +174,7 @@ public class LinkedinCompositeAutori extends Composite {
         StringBuilder searchTerm = new StringBuilder();
         for (Autor autor : autori) {
             if (searchTerm.length() > 0) {
-                searchTerm.append("+");
+                searchTerm.append(",");
             }
             searchTerm.append(autor.getNumeComplet());
         }

@@ -2,7 +2,7 @@ package com.papao.books.view.custom;
 
 import com.papao.books.model.ImagePath;
 import com.papao.books.view.AppImages;
-import com.papao.books.view.menu.HelpBrowser;
+import com.papao.books.view.menu.WebBrowser;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
@@ -133,14 +133,14 @@ public class ImageSelectorComposite extends Composite implements Observer {
     }
 
     private void webImageSearch() {
-        final HelpBrowser hb = new HelpBrowser(getShell(), startUrl, true);
+        final WebBrowser hb = new WebBrowser(getShell(), startUrl, true);
         hb.getShell().addListener(SWT.Close, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                removeImage();
                 ImagePath result = hb.getResult();
                 if (result != null) {
                     try {
+                        removeImage();
                         String localFilePath = serializeWebImage(result);
                         loadLocalImage(localFilePath);
                         labelImage.setData(WEB_FILE, result.getFilePath());
@@ -151,7 +151,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
                 }
             }
         });
-        hb.open();
+        hb.open(true, false);
     }
 
     private void populateFields(Image fullImage) {

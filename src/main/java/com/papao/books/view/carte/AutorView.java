@@ -61,9 +61,7 @@ public class AutorView extends AbstractCSaveView {
         textNume.addListener(SWT.KeyUp, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                observableProperty = textNume.getText();
-                setChanged();
-                notifyObservers();
+                markAsChanged();
             }
         });
 
@@ -140,9 +138,7 @@ public class AutorView extends AbstractCSaveView {
             getContainer().setEnabled(true);
         }
 
-        observableProperty = textNume.getText().replace(" ", "+");
-        setChanged();
-        notifyObservers();
+        markAsChanged();
     }
 
     @Override
@@ -178,6 +174,13 @@ public class AutorView extends AbstractCSaveView {
         }
 
         controller.save(autor);
+    }
+
+    private void markAsChanged() {
+        observableProperty = textNume.getText();
+        getBigLabelText().setText(observableProperty);
+        setChanged();
+        notifyObservers();
     }
 
     @Override

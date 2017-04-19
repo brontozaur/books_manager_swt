@@ -278,10 +278,10 @@ public abstract class AbstractView extends Observable {
             if (getParent() != null) {
                 setShell(new Shell(getParent(), getShellStyle()));
             }
-            if (getShell() == null) {
+            if (this.shell == null) {
                 setShell(new Shell(Display.getDefault(), getShellStyle()));
             }
-            getShell().addListener(SWT.Dispose, new Listener() {
+            this.shell.addListener(SWT.Dispose, new Listener() {
                 @Override
                 public void handleEvent(Event event) {
                     if (getDockingItem() != null && !getDockingItem().isDisposed()) {
@@ -289,25 +289,25 @@ public abstract class AbstractView extends Observable {
                     }
                 }
             });
-            getShell().setLayout(new GridLayout(1, true));
-            ((GridLayout) getShell().getLayout()).verticalSpacing = 0;
-            getShell().setSize(getShellWidth(), getShellHeight());
+            this.shell.setLayout(new GridLayout(1, true));
+            ((GridLayout) this.shell.getLayout()).verticalSpacing = 0;
+            this.shell.setSize(getShellWidth(), getShellHeight());
             if (getShellLocation() == null) {
-                WidgetCompositeUtil.centerInDisplay(getShell());
-                setShellLocation(getShell().getLocation());
+                WidgetCompositeUtil.centerInDisplay(this.shell);
+                setShellLocation(this.shell.getLocation());
             } else {
-                getShell().setLocation(getShellLocation());
+                this.shell.setLocation(getShellLocation());
             }
 
-            getShell().addListener(SWT.Close, this.viewListener);
-            getShell().addListener(SWT.Iconify, this.viewListener);
+            this.shell.addListener(SWT.Close, this.viewListener);
+            this.shell.addListener(SWT.Iconify, this.viewListener);
 
             if (StringUtils.isNotEmpty(this.getShellText())) {
-                getShell().setText(getShellText());
+                this.shell.setText(getShellText());
             }
 
             if ((getShellImage() != null) && !getShellImage().isDisposed()) {
-                getShell().setImage(getShellImage());
+                this.shell.setImage(getShellImage());
             }
 
             this.showOpsLabels = (getViewOptions() & AbstractView.SHOW_OPS_LABELS) == AbstractView.SHOW_OPS_LABELS;
@@ -315,15 +315,15 @@ public abstract class AbstractView extends Observable {
             if (appIsUsingRichWindows) {
                 GridData data;
 
-                ((GridLayout) getShell().getLayout()).marginWidth = 0;
-                ((GridLayout) getShell().getLayout()).marginHeight = 0;
+                ((GridLayout) this.shell.getLayout()).marginWidth = 0;
+                ((GridLayout) this.shell.getLayout()).marginHeight = 0;
 
-                separator = new Label(getShell(), SWT.SEPARATOR | SWT.HORIZONTAL);
+                separator = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
                 data = new GridData(SWT.FILL, SWT.END, true, false);
-                data.horizontalSpan = ((GridLayout) getShell().getLayout()).numColumns;
+                data.horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
                 separator.setLayoutData(data);
 
-                bigUpperComp = new Composite(getShell(), SWT.DOUBLE_BUFFERED);
+                bigUpperComp = new Composite(this.shell, SWT.DOUBLE_BUFFERED);
                 GridLayout lay = new GridLayout(2, false);
                 lay.marginWidth = 0;
                 lay.marginLeft = 10;
@@ -358,9 +358,9 @@ public abstract class AbstractView extends Observable {
                     this.textDetail.setText(getDetailMessage());
                 }
 
-                separator = new Label(getShell(), SWT.SEPARATOR | SWT.HORIZONTAL);
+                separator = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
                 data = new GridData(SWT.FILL, SWT.END, true, false);
-                data.horizontalSpan = ((GridLayout) getShell().getLayout()).numColumns;
+                data.horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
                 separator.setLayoutData(data);
 
             }
@@ -400,7 +400,7 @@ public abstract class AbstractView extends Observable {
             }
 
             if (numColsUpperComp > 0) {
-                setUpperComp(new Composite(getShell(), SWT.NONE));
+                setUpperComp(new Composite(this.shell, SWT.NONE));
                 GridLayout lay = new GridLayout(numColsUpperComp, false);
                 lay.verticalSpacing = 0;
                 lay.horizontalSpacing = 2;
@@ -520,30 +520,30 @@ public abstract class AbstractView extends Observable {
 
             }
 
-            getWidgetGridData().horizontalSpan = ((GridLayout) getShell().getLayout()).numColumns;
+            getWidgetGridData().horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
 
             if (getWidgetClass().getName().intern() == Composite.class.getName().intern()) {
-                setWidget(new Composite(getShell(), SWT.DOUBLE_BUFFERED));
+                setWidget(new Composite(this.shell, SWT.DOUBLE_BUFFERED));
                 ((Composite) getWidget()).setLayout(getWidgetLayout());
                 ((Composite) getWidget()).setLayoutData(getWidgetGridData());
                 if (!appIsUsingRichWindows) {
-                    separator = new Label(getShell(), SWT.SEPARATOR | SWT.HORIZONTAL);
+                    separator = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
                     GridData data = new GridData(SWT.FILL, SWT.END, true, false);
-                    data.horizontalSpan = ((GridLayout) getShell().getLayout()).numColumns;
+                    data.horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
                     separator.setLayoutData(data);
                 }
             } else if (getWidgetClass().getName().intern() == Group.class.getName().intern()) {
-                Composite compTemp = new Composite(getShell(), SWT.DOUBLE_BUFFERED);
+                Composite compTemp = new Composite(this.shell, SWT.DOUBLE_BUFFERED);
                 compTemp.setLayout(new GridLayout(1, true));
-                ((GridLayout) getShell().getLayout()).marginTop = 0;
+                ((GridLayout) this.shell.getLayout()).marginTop = 0;
                 compTemp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
                 setWidget(new Group(compTemp, SWT.NONE));
                 ((Group) getWidget()).setLayout(getWidgetLayout());
                 ((Group) getWidget()).setLayoutData(getWidgetGridData());
             } else if (getWidgetClass().getName().intern() == Canvas.class.getName().intern()) {
-                Composite compTemp = new Composite(getShell(), SWT.DOUBLE_BUFFERED);
+                Composite compTemp = new Composite(this.shell, SWT.DOUBLE_BUFFERED);
                 compTemp.setLayout(new GridLayout(1, true));
-                ((GridLayout) getShell().getLayout()).marginTop = 0;
+                ((GridLayout) this.shell.getLayout()).marginTop = 0;
                 compTemp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
                 setWidget(new Canvas(compTemp, SWT.NONE));
                 ((Canvas) getWidget()).setLayout(getWidgetLayout());
@@ -558,18 +558,18 @@ public abstract class AbstractView extends Observable {
                     }
                 });
             } else if (getWidgetClass().getName().intern() == SashForm.class.getName().intern()) {
-                Composite compTemp = new Composite(getShell(), SWT.DOUBLE_BUFFERED);
+                Composite compTemp = new Composite(this.shell, SWT.DOUBLE_BUFFERED);
                 compTemp.setLayout(new GridLayout(1, true));
-                ((GridLayout) getShell().getLayout()).marginTop = 0;
+                ((GridLayout) this.shell.getLayout()).marginTop = 0;
                 compTemp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
                 setWidget(new SashForm(compTemp, SWT.HORIZONTAL | SWT.SMOOTH));
                 ((SashForm) getWidget()).setLayoutData(getWidgetGridData());
             }
 
             if (appIsUsingRichWindows && !(this instanceof AbstractGView)) {
-                separator = new Label(getShell(), SWT.SEPARATOR | SWT.HORIZONTAL);
+                separator = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
                 GridData data = new GridData(SWT.FILL, SWT.END, true, false);
-                data.horizontalSpan = ((GridLayout) getShell().getLayout()).numColumns;
+                data.horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
                 separator.setLayoutData(data);
             }
 
@@ -605,7 +605,7 @@ public abstract class AbstractView extends Observable {
             }
 
             if (numColsLowerComp > 0) {
-                setLowerComp(new Composite(getShell(), SWT.NONE));
+                setLowerComp(new Composite(this.shell, SWT.NONE));
                 GridLayout lay = new GridLayout(numColsLowerComp, false);
                 if (appIsUsingRichWindows) {
                     lay.marginHeight = 5;
@@ -616,7 +616,7 @@ public abstract class AbstractView extends Observable {
                 }
                 getLowerComp().setLayout(lay);
                 GridData data = new GridData(SWT.FILL, SWT.END, true, false);
-                data.horizontalSpan = ((GridLayout) getShell().getLayout()).numColumns;
+                data.horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
                 getLowerComp().setLayoutData(data);
 
                 if (numColsCompHIRE > 0) {
@@ -729,7 +729,7 @@ public abstract class AbstractView extends Observable {
             getWidgetGridData().minimumWidth = 300;
             getWidgetGridData().minimumHeight = 100;
 
-            getShell().setSize(getShellWidth(), getShellHeight());
+            this.shell.setSize(getShellWidth(), getShellHeight());
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
         }
@@ -842,26 +842,34 @@ public abstract class AbstractView extends Observable {
             if (automaticallyComputeSize && (this.shellHeight > 0 || this.shellWidth > 0)) {
                 throw new IllegalArgumentException("You cannot specify both manual and automatic shell sizes!");
             }
-            if ((getShell() == null) || getShell().isDisposed()) {
+            if ((this.shell == null) || this.shell.isDisposed()) {
                 return;
             }
             if (isOpened()) {
                 return;
             }
-            display = getShell().getDisplay();
+            display = this.shell.getDisplay();
             if (centerInDisplay) {
-                WidgetCompositeUtil.centerInDisplay(getShell());
+                if (automaticallyComputeSize) {
+                    WidgetCompositeUtil.centerInDisplay(this.shell);
+                } else {
+                    WidgetCompositeUtil.centerInDisplayForFixedWidthsShells(this.shell);
+                }
             }
             if (this.parentPos != null) {
-                getShell().pack();
-                getShell().setLocation(SWTeXtension.computeChildLocation(this.parentPos, getShell().getBounds()));
+                this.shell.pack();
+                this.shell.setLocation(SWTeXtension.computeChildLocation(this.parentPos, this.shell.getBounds()));
             }
-            getShell().setVisible(false);
-            getShell().open();
-            getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
-            getShell().setVisible(true);
+            if (automaticallyComputeSize) {
+                this.shell.setVisible(false);
+                this.shell.open();
+                this.shell.setSize(this.shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+                this.shell.setVisible(true);
+            } else {
+                this.shell.open();
+            }
 
-            while ((getShell() != null) && !getShell().isDisposed()) {
+            while ((this.shell != null) && !this.shell.isDisposed()) {
                 if ((display != null) && !display.readAndDispatch()) {
                     display.sleep();
                 }
@@ -1048,8 +1056,8 @@ public abstract class AbstractView extends Observable {
 
     public final void close(final int choice) {
         setExitChoice(choice);
-        if (!getShell().isDisposed()) {
-            getShell().close();
+        if (!this.shell.isDisposed()) {
+            this.shell.close();
         }
     }
 
@@ -1060,7 +1068,7 @@ public abstract class AbstractView extends Observable {
                 public final void handleEvent(final Event e) {
                     switch (e.type) {
                         case SWT.Close: {
-                            if (e.widget == getShell()) {
+                            if (e.widget == shell) {
                                 shellCloseEvent(e);
                             }
                             break;
@@ -1073,26 +1081,26 @@ public abstract class AbstractView extends Observable {
                             if (!AbstractView.this.useDocking || (getDockingBar() == null) || getDockingBar().isDisposed()) {
                                 return;
                             }
-                            getShell().setVisible(false);
+                            shell.setVisible(false);
                             if ((getDockingItem() == null) || getDockingItem().isDisposed()) {
                                 setDockingItem(new ToolItem(getDockingBar(), SWT.NONE));
-                                String name = getShell().getText();
+                                String name = shell.getText();
                                 if (name.length() > 15) {
                                     name = name.substring(0, 13).concat("..");
                                 }
                                 getDockingItem().setData(AbstractView.this);
                                 getDockingItem().setText(name);
-                                getDockingItem().setToolTipText(getShell().getText());
-                                if (getShell().getImage() != null) {
-                                    getDockingItem().setImage(getShell().getImage());
+                                getDockingItem().setToolTipText(shell.getText());
+                                if (shell.getImage() != null) {
+                                    getDockingItem().setImage(shell.getImage());
                                 } else {
                                     getDockingItem().setImage(AppImages.getImage16(AppImages.IMG_HOME));
                                 }
                                 getDockingItem().addListener(SWT.Selection, new Listener() {
                                     @Override
                                     public void handleEvent(final Event event) {
-                                        getShell().setVisible(true);
-                                        getShell().setMinimized(false);
+                                        shell.setVisible(true);
+                                        shell.setMinimized(false);
                                     }
                                 });
                                 getDockingBar().getParent().layout();
@@ -1164,7 +1172,7 @@ public abstract class AbstractView extends Observable {
             return;
         }
         this.textDetail.setText(message);
-        getShell().layout();
+        this.shell.layout();
     }
 
     public final int getUserAction() {

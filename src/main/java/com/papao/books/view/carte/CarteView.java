@@ -89,7 +89,7 @@ public class CarteView extends AbstractCSaveView {
 
     private void addComponents() {
 
-        ((GridLayout)getContainer().getLayout()).numColumns = 2;
+        ((GridLayout) getContainer().getLayout()).numColumns = 2;
 
         Composite mainCompLeft = new Composite(getContainer(), SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(8).equalWidth(false).applyTo(mainCompLeft);
@@ -378,7 +378,8 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private void markAsChanged() {
-        observableProperty = this.textTitlu.getText() + " " + compositeAutori.getGoogleSearchTerm();
+        observableProperty = compositeAutori.getGoogleSearchTerm() + " - " + this.textTitlu.getText();
+        getBigLabelText().setText(observableProperty);
         setChanged();
         notifyObservers();
     }
