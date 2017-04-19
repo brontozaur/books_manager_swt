@@ -42,7 +42,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
         this.fileName = fileName;
 
         GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(5, 5, 5, 5).applyTo(this);
-        GridDataFactory.fillDefaults().grab(false, false).hint(190, 240).applyTo(this);
+        GridDataFactory.fillDefaults().grab(false, false).hint(195, 240).applyTo(this);
 
         labelImage = new Label(this, SWT.NONE);
         GridDataFactory.fillDefaults().hint(180, 200).applyTo(labelImage);
@@ -74,7 +74,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
         });
 
         final ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
-        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).grab(true, false).applyTo(bar);
+        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.END).grab(true, false).applyTo(bar);
 
         final ToolItem itemLocalSelection = new ToolItem(bar, SWT.PUSH);
         itemLocalSelection.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));

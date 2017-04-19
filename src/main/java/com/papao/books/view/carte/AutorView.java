@@ -14,7 +14,6 @@ import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -53,15 +52,11 @@ public class AutorView extends AbstractCSaveView {
     }
 
     private void addComponents() {
-        setWidgetLayout(new GridLayout(2, false));
+        setWidgetLayout(new GridLayout(3, false));
         getContainer().setLayout(getWidgetLayout());
 
-        Composite compLeft = new Composite(getContainer(), SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).spacing(5, 5).extendedMargins(0, 0, 5, 0).applyTo(compLeft);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(compLeft);
-
-        new Label(compLeft, SWT.NONE).setText("Nume");
-        this.textNume = new Text(compLeft, SWT.BORDER);
+        new Label(getContainer(), SWT.NONE).setText("Nume");
+        this.textNume = new Text(getContainer(), SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textNume);
         textNume.addListener(SWT.KeyUp, new Listener() {
             @Override
@@ -71,37 +66,6 @@ public class AutorView extends AbstractCSaveView {
                 notifyObservers();
             }
         });
-
-        new Label(compLeft, SWT.NONE).setText("Data nasterii");
-        this.dataNasteriiComposite = new AnLunaZiComposite(compLeft, autor.getDataNasterii(true));
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.dataNasteriiComposite);
-
-        new Label(compLeft, SWT.NONE).setText("Data mortii");
-        this.dataMortiiComposite = new AnLunaZiComposite(compLeft, autor.getDataMortii(true));
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.dataMortiiComposite);
-
-        Label labelGen = new Label(compLeft, SWT.NONE);
-        labelGen.setText("Gen literar");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelGen);
-        this.genLiterarComposite = new LinkedinComposite(compLeft,
-                GenLiterar.class, autor.getGenLiterar());
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.genLiterarComposite);
-
-        new Label(compLeft, SWT.NONE).setText("Website");
-        this.textWebsite = new Text(compLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textWebsite);
-
-        new Label(compLeft, SWT.NONE).setText("Facebook");
-        this.textFacebook = new Text(compLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textFacebook);
-
-        new Label(compLeft, SWT.NONE).setText("Twitter");
-        this.textTwitter = new Text(compLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textTwitter);
-
-        new Label(compLeft, SWT.NONE).setText("Wiki");
-        this.textWiki = new Text(compLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textWiki);
 
         Image mainImage = null;
         String imageName = null;
@@ -113,23 +77,44 @@ public class AutorView extends AbstractCSaveView {
             }
         }
 
-        Composite compRight = new Composite(getContainer(), SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(1).spacing(0, 0).margins(0, 0).applyTo(compRight);
-        GridDataFactory.fillDefaults().grab(false, false).applyTo(compRight);
-        this.mainImageComposite = new ImageSelectorComposite(compRight, mainImage, imageName, controller.getAppImagesFolder());
-        ((GridData) this.mainImageComposite.getLayoutData()).verticalSpan = 7;
+        this.mainImageComposite = new ImageSelectorComposite(getContainer(), mainImage, imageName, controller.getAppImagesFolder());
+        ((GridData) this.mainImageComposite.getLayoutData()).verticalSpan = 8;
         this.addObserver(mainImageComposite);
 
-        Composite compDescriere = new Composite(getContainer(), SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).applyTo(compDescriere);
-        GridDataFactory.fillDefaults().hint(500, 100).grab(true, true).span(2, 1).applyTo(compDescriere);
+        new Label(getContainer(), SWT.NONE).setText("Data nasterii");
+        this.dataNasteriiComposite = new AnLunaZiComposite(getContainer(), autor.getDataNasterii(true));
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.dataNasteriiComposite);
 
-        Label labelDescriere = new Label(compDescriere, SWT.NONE);
-        labelDescriere.setText("Descriere");
-        GridDataFactory.fillDefaults().hint(75, SWT.DEFAULT).applyTo(labelDescriere);
-        this.textDescriere = new Text(compDescriere, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        this.textDescriere.setSize(500, 100);
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(textDescriere);
+        new Label(getContainer(), SWT.NONE).setText("Data mortii");
+        this.dataMortiiComposite = new AnLunaZiComposite(getContainer(), autor.getDataMortii(true));
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.dataMortiiComposite);
+
+        Label labelGen = new Label(getContainer(), SWT.NONE);
+        labelGen.setText("Gen literar");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelGen);
+        this.genLiterarComposite = new LinkedinComposite(getContainer(),
+                GenLiterar.class, autor.getGenLiterar());
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.genLiterarComposite);
+
+        new Label(getContainer(), SWT.NONE).setText("Website");
+        this.textWebsite = new Text(getContainer(), SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(textWebsite);
+
+        new Label(getContainer(), SWT.NONE).setText("Facebook");
+        this.textFacebook = new Text(getContainer(), SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(textFacebook);
+
+        new Label(getContainer(), SWT.NONE).setText("Twitter");
+        this.textTwitter = new Text(getContainer(), SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(textTwitter);
+
+        new Label(getContainer(), SWT.NONE).setText("Wiki");
+        this.textWiki = new Text(getContainer(), SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(textWiki);
+
+        new Label(getContainer(), SWT.NONE).setText("Descriere");
+        this.textDescriere = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).span(2, 1).applyTo(textDescriere);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
@@ -163,6 +148,8 @@ public class AutorView extends AbstractCSaveView {
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
         setObjectName("autor");
+        setShellWidth(650);
+        setShellHeight(500);
     }
 
     @Override
