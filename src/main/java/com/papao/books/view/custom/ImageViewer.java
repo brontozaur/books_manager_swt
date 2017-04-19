@@ -74,6 +74,12 @@ public class ImageViewer {
             Label imgLabel = new Label(sc, SWT.NONE);
             imgLabel.setImage(image);
             imgLabel.setSize(imgLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+            imgLabel.addListener(SWT.MouseDown, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    shell.close();
+                }
+            });
             sc.setContent(imgLabel);
 
             if (needsBorders) {
