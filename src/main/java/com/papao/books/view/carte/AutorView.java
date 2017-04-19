@@ -112,7 +112,9 @@ public class AutorView extends AbstractCSaveView {
         this.textWiki = new Text(getContainer(), SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(textWiki);
 
-        new Label(getContainer(), SWT.NONE).setText("Descriere");
+        Label labelDescriere = new Label(getContainer(), SWT.NONE);
+        labelDescriere.setText("Descriere");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelDescriere);
         this.textDescriere = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
         GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).span(2, 1).applyTo(textDescriere);
 
@@ -148,8 +150,6 @@ public class AutorView extends AbstractCSaveView {
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
         setObjectName("autor");
-        setShellWidth(650);
-        setShellHeight(500);
     }
 
     @Override

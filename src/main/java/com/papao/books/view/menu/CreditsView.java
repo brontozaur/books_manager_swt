@@ -885,7 +885,7 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 			@Override
 			public final void run() {
 				addComponents();
-				open();
+				open(false, false);
 			}
 		});
 	}

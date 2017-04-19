@@ -69,7 +69,7 @@ public class AdbSelectorComposite extends Composite implements Listener {
 			getShell().getLocation().y,
 			getShell().getBounds().width,
 			getShell().getBounds().height));
-		view.open(false);
+		view.open();
 		if (view.getUserAction() == SWT.CANCEL) {
 			return;
 		}

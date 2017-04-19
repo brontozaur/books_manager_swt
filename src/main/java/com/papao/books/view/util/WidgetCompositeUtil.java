@@ -20,8 +20,9 @@ public final class WidgetCompositeUtil {
 			if ((parent == null) || parent.isDisposed()) {
 				return;
 			}
-			parent.setLocation((Display.getDefault().getPrimaryMonitor().getBounds().width - parent.getBounds().width) / 2,
-					(Display.getDefault().getPrimaryMonitor().getBounds().height - parent.getBounds().height) / 2);
+			Point parentBounds = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			parent.setLocation((Display.getDefault().getPrimaryMonitor().getBounds().width - parentBounds.x) / 2,
+					(Display.getDefault().getPrimaryMonitor().getBounds().height - parentBounds.y) / 2);
 		}
 		catch (Exception exc) {
 			logger.error(exc.getMessage(), exc);

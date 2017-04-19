@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.*;
 
 import java.util.Observable;
 
-public abstract class AbstractView extends Observable{
+public abstract class AbstractView extends Observable {
 
     private static Logger logger = Logger.getLogger(AbstractView.class);
 
@@ -212,18 +212,18 @@ public abstract class AbstractView extends Observable{
         setShellStyle(SWT.MIN | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(SWT.NONE);
 
-        if (Display.getDefault().getPrimaryMonitor().getBounds().width > 1024) {
-            width = 800;
-        } else {
-            width = 640;
-        }
-        if (Display.getDefault().getPrimaryMonitor().getBounds().height > 768) {
-            height = 600;
-        } else {
-            height = 480;
-        }
-        setShellWidth(width);
-        setShellHeight(height);
+//        if (Display.getDefault().getPrimaryMonitor().getBounds().width > 1024) {
+//            width = 800;
+//        } else {
+//            width = 640;
+//        }
+//        if (Display.getDefault().getPrimaryMonitor().getBounds().height > 768) {
+//            height = 600;
+//        } else {
+//            height = 480;
+//        }
+//        setShellWidth(width);
+//        setShellHeight(height);
     }
 
     /**
@@ -833,12 +833,15 @@ public abstract class AbstractView extends Observable{
     }
 
     public final void open() {
-        open(this.parentPos == null ? true : false);
+        open(parentPos == null, true);
     }
 
-    public final void open(final boolean centerInDisplay) {
+    public final void open(final boolean centerInDisplay, boolean automaticallyComputeSize) {
         Display display = null;
         try {
+            if (automaticallyComputeSize && (this.shellHeight > 0 || this.shellWidth > 0)) {
+                throw new IllegalArgumentException("You cannot specify both manual and automatic shell sizes!");
+            }
             if ((getShell() == null) || getShell().isDisposed()) {
                 return;
             }
@@ -853,7 +856,10 @@ public abstract class AbstractView extends Observable{
                 getShell().pack();
                 getShell().setLocation(SWTeXtension.computeChildLocation(this.parentPos, getShell().getBounds()));
             }
+            getShell().setVisible(false);
             getShell().open();
+            getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+            getShell().setVisible(true);
 
             while ((getShell() != null) && !getShell().isDisposed()) {
                 if ((display != null) && !display.readAndDispatch()) {
@@ -1230,9 +1236,9 @@ public abstract class AbstractView extends Observable{
     }
 
     protected final int getShellHeight() {
-        if (this.shellHeight < 100) {
-            this.shellHeight = 100;
-        }
+//        if (this.shellHeight < 100) {
+//            this.shellHeight = 100;
+//        }
         return this.shellHeight;
     }
 
@@ -1241,9 +1247,9 @@ public abstract class AbstractView extends Observable{
     }
 
     protected final int getShellWidth() {
-        if (this.shellWidth < 300) {
-            this.shellWidth = 300;
-        }
+//        if (this.shellWidth < 300) {
+//            this.shellWidth = 300;
+//        }
         return this.shellWidth;
     }
 
