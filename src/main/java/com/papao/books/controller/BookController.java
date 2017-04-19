@@ -119,9 +119,9 @@ public class BookController extends AbstractController {
                 }
                 case LIMBA_ORIGINALA: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByLimbaOriginalaContainsIgnoreCase(value, pageable);
+                        carti = repository.getByEditiaOriginala_LimbaContainsIgnoreCase(value, pageable);
                     } else {
-                        carti = repository.getByLimbaOrLimbaIsNullOrLimbaOriginalaIs("", pageable);
+                        carti = repository.getByEditiaOriginala_LimbaIsNullOrEditiaOriginala_LimbaIs("", pageable);
                     }
                     break;
                 }

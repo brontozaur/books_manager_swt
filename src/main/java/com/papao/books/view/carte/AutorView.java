@@ -178,7 +178,9 @@ public class AutorView extends AbstractCSaveView {
 
     private void markAsChanged() {
         observableProperty = textNume.getText();
-        getBigLabelText().setText(observableProperty);
+        if (StringUtils.isNotEmpty(observableProperty)) {
+            getBigLabelText().setText(observableProperty);
+        }
         setChanged();
         notifyObservers();
     }

@@ -19,9 +19,9 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByLimbaContainsIgnoreCase(String limba, Pageable pageable);
 
-    Page<Carte> getByLimbaOrLimbaIsNullOrLimbaOriginalaIs(String emptyString, Pageable pageable);
+    Page<Carte> getByEditiaOriginala_LimbaIsNullOrEditiaOriginala_LimbaIs(String emptyString, Pageable pageable);
 
-    Page<Carte> getByLimbaOriginalaContainsIgnoreCase(String limbaOriginala, Pageable pageable);
+    Page<Carte> getByEditiaOriginala_LimbaContainsIgnoreCase(String limbaOriginala, Pageable pageable);
 
     Page<Carte> getByTipCopertaIsNullOrTipCopertaIs(String emptyString, Pageable pageable);
 

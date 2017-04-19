@@ -88,7 +88,7 @@ public class ImageViewer {
                 sc.setSize(imageWith, imageHeight);
                 shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
             }
-            WidgetCompositeUtil.centerInDisplay(shell);
+            WidgetCompositeUtil.centerInDisplayForFixedWidthsShells(shell);
             shell.open();
             sc.notifyListeners(SWT.Activate, new Event());
         } catch (Exception exc) {

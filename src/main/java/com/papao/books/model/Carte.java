@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,7 +22,6 @@ public class Carte extends AuditObject implements Serializable {
     private String subtitlu;
     private String editura;
     private String anAparitie;
-    private String titluOriginal;
     private String editia;
     private int latime;
     private int inaltime;
@@ -40,7 +40,6 @@ public class Carte extends AuditObject implements Serializable {
     private TipCoperta tipCoperta;
     private Limba limba;
     private Limba traducereDin;
-    private Limba limbaOriginala;
     private List<PremiuLiterar> premii;
     private boolean cuAutograf;
     private String goodreadsUrl;
@@ -50,18 +49,17 @@ public class Carte extends AuditObject implements Serializable {
     private DocumentData copertaFata;
     private DocumentData copertaSpate;
     private DocumentData autograf;
-    private DocumentData fotoCoperta;
-    private List<DocumentData> documents;
+    private List<DocumentData> documents = new ArrayList<>();
     private List<String> tags;
     private String descriere;
-    private String anPrimaEditie;
     private TipCarte tipCarte;
     private String motto;
+    private EditiaOriginala editiaOriginala;
 // ------ user specific data ------
-    private List<Citat> citate;
-    private List<CarteCitita> carteCitita;
-    private List<BookRating> notaCarte;
-    private List<TranslationRating> translationRatings;
+    private List<Citat> citate = new ArrayList<>();
+    private List<CarteCitita> carteCitita = new ArrayList<>();
+    private List<BookRating> notaCarte = new ArrayList<>();
+    private List<TranslationRating> translationRatings = new ArrayList<>();
 
     @Override
     public ObjectId getId() {
@@ -103,17 +101,6 @@ public class Carte extends AuditObject implements Serializable {
 
     public void setAnAparitie(String anAparitie) {
         this.anAparitie = anAparitie;
-    }
-
-    public String getTitluOriginal() {
-        if (titluOriginal == null) {
-            return "";
-        }
-        return titluOriginal;
-    }
-
-    public void setTitluOriginal(String titluOriginal) {
-        this.titluOriginal = titluOriginal;
     }
 
     public String getEditia() {
@@ -277,17 +264,6 @@ public class Carte extends AuditObject implements Serializable {
         this.traducereDin = traducereDin;
     }
 
-    public Limba getLimbaOriginala() {
-        if (limbaOriginala == null) {
-            return Limba.Nespecificat;
-        }
-        return limbaOriginala;
-    }
-
-    public void setLimbaOriginala(Limba limbaOriginala) {
-        this.limbaOriginala = limbaOriginala;
-    }
-
     public List<PremiuLiterar> getPremii() {
         if (premii == null) {
             return Collections.emptyList();
@@ -382,6 +358,9 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public String getSubtitlu() {
+        if (subtitlu == null) {
+            return "";
+        }
         return subtitlu;
     }
 
@@ -390,6 +369,9 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public String getIsbn13() {
+        if (isbn13 == null) {
+            return "";
+        }
         return isbn13;
     }
 
@@ -398,6 +380,9 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public String getAsin() {
+        if (asin == null) {
+            return "";
+        }
         return asin;
     }
 
@@ -406,19 +391,14 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public String getWebsite() {
+        if (website == null) {
+            return "";
+        }
         return website;
     }
 
     public void setWebsite(String website) {
         this.website = website;
-    }
-
-    public DocumentData getFotoCoperta() {
-        return fotoCoperta;
-    }
-
-    public void setFotoCoperta(DocumentData fotoCoperta) {
-        this.fotoCoperta = fotoCoperta;
     }
 
     public List<DocumentData> getDocuments() {
@@ -443,14 +423,6 @@ public class Carte extends AuditObject implements Serializable {
 
     public void setDescriere(String descriere) {
         this.descriere = descriere;
-    }
-
-    public String getAnPrimaEditie() {
-        return anPrimaEditie;
-    }
-
-    public void setAnPrimaEditie(String anPrimaEditie) {
-        this.anPrimaEditie = anPrimaEditie;
     }
 
     public TipCarte getTipCarte() {
@@ -501,5 +473,14 @@ public class Carte extends AuditObject implements Serializable {
         this.translationRatings = translationRatings;
     }
 
+    public EditiaOriginala getEditiaOriginala() {
+        if (this.editiaOriginala == null) {
+            this.editiaOriginala = new EditiaOriginala();
+        }
+        return editiaOriginala;
+    }
 
+    public void setEditiaOriginala(EditiaOriginala editiaOriginala) {
+        this.editiaOriginala = editiaOriginala;
+    }
 }
