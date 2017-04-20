@@ -11,6 +11,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -48,7 +49,13 @@ public class LinkedinCompositeAutori extends Composite {
         descriptor.setInput(autorController.findAll());
 
         comboAutor = new ComboImage(this, descriptor);
-        GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).align(SWT.FILL, SWT.CENTER).applyTo(comboAutor);
+        comboAutor.setBackground(ColorUtil.COLOR_WHITE);
+        comboAutor.getItemAdd().getParent().setBackground(ColorUtil.COLOR_WHITE);
+        GridDataFactory.fillDefaults().grab(false, false).hint(150, SWT.DEFAULT).applyTo(comboAutor);
+        GridDataFactory.fillDefaults().grab(false, false).hint(120, SWT.DEFAULT).applyTo(comboAutor.getCombo());
+        ((GridLayout)comboAutor.getLayout()).marginBottom = 0;
+        ((GridLayout)comboAutor.getLayout()).marginTop = 2;
+        ((GridLayout)comboAutor.getLayout()).marginLeft = 5;
         comboAutor.getItemAdd().addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -90,7 +97,7 @@ public class LinkedinCompositeAutori extends Composite {
         compSelections = new Composite(this, SWT.NONE);
         compSelections.setBackground(ColorUtil.COLOR_WHITE);
         GridDataFactory.fillDefaults().grab(true, true).hint(230, SWT.DEFAULT).applyTo(compSelections);
-        RowLayoutFactory.fillDefaults().extendedMargins(5, 5, 5, 5).spacing(1).pack(true).wrap(true).applyTo(compSelections);
+        RowLayoutFactory.fillDefaults().extendedMargins(5, 5, 2, 3).spacing(1).pack(true).wrap(true).applyTo(compSelections);
 
         populateFields();
     }

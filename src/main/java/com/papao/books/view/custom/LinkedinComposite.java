@@ -54,12 +54,12 @@ public class LinkedinComposite extends Composite {
 
         textSearch = new Text(this, SWT.SEARCH);
         textSearch.setMessage("Cautare...");
-        GridDataFactory.fillDefaults().grab(false, false).indent(5, 0).hint(150, SWT.DEFAULT).applyTo(textSearch);
+        GridDataFactory.fillDefaults().grab(false, false).indent(5, 2).hint(140, SWT.DEFAULT).applyTo(textSearch);
 
         compSelections = new Composite(this, SWT.NONE);
         compSelections.setBackground(ColorUtil.COLOR_WHITE);
         GridDataFactory.fillDefaults().grab(true, true).hint(230, SWT.DEFAULT).span(2, 1).applyTo(compSelections);
-        RowLayoutFactory.fillDefaults().extendedMargins(5, 5, 0, 5).spacing(1).pack(true).wrap(true).applyTo(compSelections);
+        RowLayoutFactory.fillDefaults().extendedMargins(5, 5, 2, 3).spacing(1).pack(true).wrap(true).applyTo(compSelections);
 
         ContentProposalProvider.addContentProposal(textSearch, proposals);
         textSearch.addListener(SWT.KeyDown, new Listener() {
