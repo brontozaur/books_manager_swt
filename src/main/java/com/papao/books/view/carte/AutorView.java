@@ -218,7 +218,7 @@ public class AutorView extends AbstractCSaveView {
         this.autor.setLoculNasterii(textLocNastere.getText());
         this.autor.setTara(textTara.getText());
         if (mainImageComposite.getSelectedFile() != null) {
-            this.autor.setMainImage(controller.saveDocument(mainImageComposite.getSelectedFile(), mainImageComposite.getWebPath()));
+            this.autor.setMainImage(controller.saveDocument(mainImageComposite));
         }
 
         controller.save(autor);

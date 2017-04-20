@@ -8,6 +8,7 @@ import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.papao.books.model.DocumentData;
+import com.papao.books.view.custom.ImageSelectorComposite;
 import com.papao.books.view.providers.tree.IntValuePair;
 import com.papao.books.view.providers.tree.IntValuePairsWrapper;
 import org.apache.commons.lang3.StringUtils;
@@ -71,6 +72,10 @@ public class AbstractController extends Observable {
 
     public void removeImageData(ObjectId imageId) {
         gridFS.remove(imageId);
+    }
+
+    public DocumentData saveDocument(ImageSelectorComposite selectorComposite) throws IOException {
+        return saveDocument(selectorComposite.getSelectedFile(), selectorComposite.getWebPath());
     }
 
     public DocumentData saveDocument(File localFile, String urlPath) throws IOException {

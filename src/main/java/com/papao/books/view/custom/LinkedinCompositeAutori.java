@@ -39,7 +39,7 @@ public class LinkedinCompositeAutori extends Composite {
         this.setBackground(ColorUtil.COLOR_WHITE);
 
         GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 1, 0).spacing(2, 0).numColumns(1).equalWidth(false).applyTo(this);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this);
+        GridDataFactory.fillDefaults().grab(false, false).applyTo(this);
 
         ComboImage.CIDescriptor descriptor = new ComboImage.CIDescriptor();
         descriptor.setAddContentProposal(true);

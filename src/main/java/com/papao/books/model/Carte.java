@@ -38,7 +38,6 @@ public class Carte extends AuditObject implements Serializable {
     private Limba limba;
     private Limba traducereDin;
     private List<PremiuLiterar> premii;
-    private boolean cuAutograf;
     private String goodreadsUrl;
     private String wikiUrl;
     private String website;
@@ -253,14 +252,6 @@ public class Carte extends AuditObject implements Serializable {
         this.premii = premii;
     }
 
-    public boolean isCuAutograf() {
-        return cuAutograf;
-    }
-
-    public void setCuAutograf(boolean cuAutograf) {
-        this.cuAutograf = cuAutograf;
-    }
-
     public String getGoodreadsUrl() {
         if (goodreadsUrl == null) {
             goodreadsUrl = "";
@@ -306,6 +297,9 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public DocumentData getAutograf() {
+        if (autograf == null) {
+            autograf = new DocumentData();
+        }
         return autograf;
     }
 
@@ -374,6 +368,9 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public String getDescriere() {
+        if (descriere == null) {
+            return "";
+        }
         return descriere;
     }
 
@@ -382,6 +379,9 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public TipCarte getTipCarte() {
+        if (tipCarte == null) {
+            tipCarte = TipCarte.Nespecificat;
+        }
         return tipCarte;
     }
 
@@ -390,6 +390,9 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public String getMotto() {
+        if (motto == null) {
+            return "";
+        }
         return motto;
     }
 
