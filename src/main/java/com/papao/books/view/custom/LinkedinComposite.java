@@ -5,13 +5,10 @@ import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.EnumHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.layout.RowDataFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +18,6 @@ public class LinkedinComposite extends Composite {
     private Text textSearch;
     private List<String> valoriIntroduse = new ArrayList<>();
     private List<String> valoriInitiale = new ArrayList<>();
-    private Composite compSelections;
     private List<String> proposals = new ArrayList<>();
     private Class<? extends Enum> enumClass;
 
@@ -49,17 +45,12 @@ public class LinkedinComposite extends Composite {
     private void addComponents() {
         this.setBackground(ColorUtil.COLOR_WHITE);
 
-        GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 1, 0).spacing(2, 1).numColumns(2).equalWidth(false).applyTo(this);
-        GridDataFactory.fillDefaults().grab(false, false).applyTo(this);
+        GridDataFactory.fillDefaults().grab(true, false).hint(230, SWT.DEFAULT).applyTo(this);
+        RowLayoutFactory.fillDefaults().extendedMargins(5, 5, 2, 2).spacing(1).pack(true).wrap(true).applyTo(this);
 
         textSearch = new Text(this, SWT.SEARCH);
         textSearch.setMessage("Cautare...");
-        GridDataFactory.fillDefaults().grab(false, false).indent(5, 2).hint(140, SWT.DEFAULT).applyTo(textSearch);
-
-        compSelections = new Composite(this, SWT.NONE);
-        compSelections.setBackground(ColorUtil.COLOR_WHITE);
-        GridDataFactory.fillDefaults().grab(true, true).hint(230, SWT.DEFAULT).span(2, 1).applyTo(compSelections);
-        RowLayoutFactory.fillDefaults().extendedMargins(5, 5, 2, 3).spacing(1).pack(true).wrap(true).applyTo(compSelections);
+        RowDataFactory.swtDefaults().hint(140, SWT.DEFAULT).applyTo(textSearch);
 
         ContentProposalProvider.addContentProposal(textSearch, proposals);
         textSearch.addListener(SWT.KeyDown, new Listener() {
@@ -90,8 +81,11 @@ public class LinkedinComposite extends Composite {
     }
 
     private void layoutEverything(boolean computeShell) {
-        compSelections.setSize(compSelections.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        LinkedinComposite.this.setSize(compSelections.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        Control firstChild = this.getChildren()[0];
+        if (firstChild != textSearch) {
+            textSearch.moveAbove(firstChild);
+        }
+        LinkedinComposite.this.setSize(computeSize(SWT.DEFAULT, SWT.DEFAULT));
         LinkedinComposite.this.getParent().layout();
         if (computeShell) {
             getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -100,7 +94,7 @@ public class LinkedinComposite extends Composite {
 
     private void createClosableCanvas(String text, boolean layoutParent) {
         if (!valoriIntroduse.contains(text)) {
-            final ClosableCanvas canvas = new ClosableCanvas(compSelections, text);
+            final ClosableCanvas canvas = new ClosableCanvas(this, text);
             valoriIntroduse.add(text);
             textSearch.setText("");
             canvas.getItemClose().addListener(SWT.Selection, new Listener() {
