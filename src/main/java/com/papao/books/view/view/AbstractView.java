@@ -677,7 +677,7 @@ public abstract class AbstractView extends Observable {
                     this.compSaveButtons = new Composite(getLowerComp(), SWT.NONE);
                     lay = new GridLayout(numColsCompSaveBtn, true);
                     lay.verticalSpacing = 0;
-                    lay.horizontalSpacing = 0;
+                    lay.horizontalSpacing = 5;
                     lay.marginHeight = 0;
                     lay.marginWidth = 0;
                     lay.marginRight = 2;
