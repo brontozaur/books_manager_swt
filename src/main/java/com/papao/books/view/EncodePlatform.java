@@ -676,7 +676,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             });
         }
         return menu;
-    };
+    }
+
+    ;
 
 
     public void swap() {
@@ -777,6 +779,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         ToolBar bar = new ToolBar(parent, SWT.FLAT | SWT.RIGHT | SWT.WRAP);
 
         ToolItem item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_OK));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_OK));
+        item.setToolTipText("Validator diferite coduri");
+        item.setText("Validator");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                new ValidareCoduriView(getShell()).open();
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
         item.setImage(AppImages.getImage24(AppImages.IMG_CONFIG));
         item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CONFIG));
         item.setToolTipText("Configurare autori");
