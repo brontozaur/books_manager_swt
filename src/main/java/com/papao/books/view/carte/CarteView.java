@@ -79,6 +79,7 @@ public class CarteView extends AbstractCSaveView {
     //tags and description tag
     private LinkedinComposite compositeTags;
     private Text textDescriere;
+    private Text textMotto;
     private ToolItem itemInformatiiEsentiale;
     private ToolItem itemEditiaOriginala;
     private ToolItem itemTaguri;
@@ -267,11 +268,17 @@ public class CarteView extends AbstractCSaveView {
 
         new Label(comp, SWT.NONE);
 
+        Label labelMotto = new Label(comp, SWT.NONE);
+        labelMotto.setText("Motto");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelMotto);
+        this.textMotto = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        GridDataFactory.fillDefaults().grab(false, false).hint(450, 110).span(3, 1).applyTo(textMotto);
+
         Label labelDescriere = new Label(comp, SWT.NONE);
         labelDescriere.setText("Descriere");
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelDescriere);
         this.textDescriere = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(false, false).hint(450, 220).span(3, 1).applyTo(textDescriere);
+        GridDataFactory.fillDefaults().grab(false, false).hint(450, 190).span(3, 1).applyTo(textDescriere);
 
         return comp;
     }
@@ -305,7 +312,7 @@ public class CarteView extends AbstractCSaveView {
 
         new Label(mainCompLeft, SWT.NONE).setText("Titlu");
         this.textTitlu = new Text(mainCompLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(false, false).hint(350, SWT.DEFAULT).span(5, 1).applyTo(this.textTitlu);
+        GridDataFactory.fillDefaults().grab(false, false).hint(310, SWT.DEFAULT).span(5, 1).applyTo(this.textTitlu);
         this.textTitlu.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -329,25 +336,19 @@ public class CarteView extends AbstractCSaveView {
             }
         });
 
-        Label labelTraducatori = new Label(mainCompLeft, SWT.NONE);
-        labelTraducatori.setText("Traducatori");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
-        this.compositeTraducatori = new LinkedinComposite(mainCompLeft, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "traducatori"), carte.getTraducatori());
-        ((GridData) compositeTraducatori.getLayoutData()).horizontalSpan = 5;
-
-        new Label(mainCompLeft, SWT.NONE).setText("Editura");
-        this.textEditura = new Text(mainCompLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(false, false).span(3, 1).applyTo(this.textEditura);
-        ContentProposalProvider.addContentProposal(textEditura, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "editura"));
-
-        new Label(mainCompLeft, SWT.NONE);
-        new Label(mainCompLeft, SWT.NONE);
-
         new Label(mainCompLeft, SWT.NONE).setText("Serie");
         this.textSerie = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).span(3, 1).applyTo(this.textSerie);
         ContentProposalProvider.addContentProposal(textSerie, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "serie"));
 
+        new Label(mainCompLeft, SWT.NONE);
+        new Label(mainCompLeft, SWT.NONE);
+
+        new Label(mainCompLeft, SWT.NONE).setText("Isbn");
+        this.textIsbn = new Text(mainCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(false, false).span(2, 1).applyTo(this.textIsbn);
+
+        new Label(mainCompLeft, SWT.NONE);
         new Label(mainCompLeft, SWT.NONE);
         new Label(mainCompLeft, SWT.NONE);
 
@@ -360,13 +361,19 @@ public class CarteView extends AbstractCSaveView {
         new Label(mainCompLeft, SWT.NONE);
         new Label(mainCompLeft, SWT.NONE);
 
-        new Label(mainCompLeft, SWT.NONE).setText("Isbn");
-        this.textIsbn = new Text(mainCompLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(false, false).span(2, 1).applyTo(this.textIsbn);
+        new Label(mainCompLeft, SWT.NONE).setText("Editura");
+        this.textEditura = new Text(mainCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(false, false).span(3, 1).applyTo(this.textEditura);
+        ContentProposalProvider.addContentProposal(textEditura, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "editura"));
 
         new Label(mainCompLeft, SWT.NONE);
         new Label(mainCompLeft, SWT.NONE);
-        new Label(mainCompLeft, SWT.NONE);
+
+        Label labelTraducatori = new Label(mainCompLeft, SWT.NONE);
+        labelTraducatori.setText("Traducatori");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelTraducatori);
+        this.compositeTraducatori = new LinkedinComposite(mainCompLeft, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "traducatori"), carte.getTraducatori());
+        ((GridData) compositeTraducatori.getLayoutData()).horizontalSpan = 5;
 
         new Label(mainCompLeft, SWT.NONE).setText("Editia");
         this.textEditia = new Text(mainCompLeft, SWT.BORDER);
@@ -591,6 +598,7 @@ public class CarteView extends AbstractCSaveView {
         this.textEditiaPrincepsTara.setText(this.carte.getEditiaOriginala().getTara());
         this.textEditiaPrincepsAn.setText(this.carte.getEditiaOriginala().getAn());
 
+        this.textMotto.setText(this.carte.getMotto());
         this.textDescriere.setText(this.carte.getDescriere());
 
         if (!isViewEnabled()) {
@@ -624,15 +632,13 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setWikiUrl(textWikiUrl.getText());
         this.carte.setWebsite(textWebsite.getText());
         this.carte.setIdAutori(compositeAutori.getSelectedIds());
+        this.carte.setMotto(textMotto.getText());
         this.carte.setDescriere(textDescriere.getText());
 
         if (frontCoverComposite.imageChanged()) {
             carteController.removeImageData(carte.getCopertaFata().getId());
             carte.setCopertaFata(null);
-
-            if (frontCoverComposite.getSelectedFile() != null) {
-                carte.setCopertaFata(carteController.saveDocument(frontCoverComposite));
-            }
+            carte.setCopertaFata(carteController.saveDocument(frontCoverComposite));
         }
 
         EditiaOriginala editiaOriginala = carte.getEditiaOriginala();
@@ -647,19 +653,13 @@ public class CarteView extends AbstractCSaveView {
         if (backCoverComposite.imageChanged()) {
             carteController.removeImageData(carte.getCopertaSpate().getId());
             carte.setCopertaSpate(null);
-
-            if (backCoverComposite.getSelectedFile() != null) {
-                carte.setCopertaSpate(carteController.saveDocument(backCoverComposite));
-            }
+            carte.setCopertaSpate(carteController.saveDocument(backCoverComposite));
         }
 
         if (autografComposite.imageChanged()) {
             carteController.removeImageData(carte.getAutograf().getId());
             carte.setAutograf(null);
-
-            if (autografComposite.getSelectedFile() != null) {
-                carte.setAutograf(carteController.saveDocument(autografComposite));
-            }
+            carte.setAutograf(carteController.saveDocument(autografComposite));
         }
 
         carteController.save(carte);
@@ -667,7 +667,7 @@ public class CarteView extends AbstractCSaveView {
 
     @Override
     public final void customizeView() {
-        setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
+        setShellStyle(SWT.MIN | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
         setObjectName("carte");
     }

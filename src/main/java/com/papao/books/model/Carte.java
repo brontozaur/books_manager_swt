@@ -48,7 +48,6 @@ public class Carte extends AuditObject implements Serializable {
     private List<DocumentData> documents = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
     private String descriere;
-    private TipCarte tipCarte;
     private String motto;
     private EditiaOriginala editiaOriginala;
 // ------ user specific data ------
@@ -376,17 +375,6 @@ public class Carte extends AuditObject implements Serializable {
 
     public void setDescriere(String descriere) {
         this.descriere = descriere;
-    }
-
-    public TipCarte getTipCarte() {
-        if (tipCarte == null) {
-            tipCarte = TipCarte.Nespecificat;
-        }
-        return tipCarte;
-    }
-
-    public void setTipCarte(TipCarte tipCarte) {
-        this.tipCarte = tipCarte;
     }
 
     public String getMotto() {

@@ -75,6 +75,9 @@ public class AbstractController extends Observable {
     }
 
     public DocumentData saveDocument(ImageSelectorComposite selectorComposite) throws IOException {
+        if (selectorComposite.getSelectedFile() == null) {
+            return null;
+        }
         return saveDocument(selectorComposite.getSelectedFile(), selectorComposite.getWebPath());
     }
 
