@@ -55,7 +55,7 @@ public class LinkedinCompositeAutori extends Composite {
         GridDataFactory.fillDefaults().grab(false, false).hint(120, SWT.DEFAULT).applyTo(comboAutor.getCombo());
         ((GridLayout)comboAutor.getLayout()).marginBottom = 0;
         ((GridLayout)comboAutor.getLayout()).marginTop = 2;
-        ((GridLayout)comboAutor.getLayout()).marginLeft = 5;
+        ((GridLayout)comboAutor.getLayout()).marginLeft = 3;
         comboAutor.getItemAdd().addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -97,7 +97,7 @@ public class LinkedinCompositeAutori extends Composite {
         compSelections = new Composite(this, SWT.NONE);
         compSelections.setBackground(ColorUtil.COLOR_WHITE);
         GridDataFactory.fillDefaults().grab(true, true).hint(230, SWT.DEFAULT).applyTo(compSelections);
-        RowLayoutFactory.fillDefaults().extendedMargins(5, 5, 2, 3).spacing(1).pack(true).wrap(true).applyTo(compSelections);
+        RowLayoutFactory.fillDefaults().extendedMargins(3, 5, 2, 3).spacing(1).pack(true).wrap(true).applyTo(compSelections);
 
         populateFields();
     }
@@ -137,6 +137,7 @@ public class LinkedinCompositeAutori extends Composite {
         }
     }
 
+    //todo check why some records can be duplicated
     private void createClosableCanvas(Autor autor, boolean layoutParent) {
         if (autor != null && (!autori.contains(autor) || !layoutParent)) {
             final ClosableCanvas canvas = new ClosableCanvas(compSelections, autor.getNumeComplet());

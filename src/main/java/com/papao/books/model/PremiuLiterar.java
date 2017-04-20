@@ -8,6 +8,9 @@ public class PremiuLiterar implements Serializable {
     private String premiu;
 
     public String getAn() {
+        if (this.an == null) {
+            return "";
+        }
         return an;
     }
 
@@ -16,6 +19,9 @@ public class PremiuLiterar implements Serializable {
     }
 
     public String getPremiu() {
+        if (premiu == null) {
+            return "";
+        }
         return premiu;
     }
 

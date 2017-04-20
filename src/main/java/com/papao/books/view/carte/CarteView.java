@@ -9,6 +9,7 @@ import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.custom.ImageSelectorComposite;
 import com.papao.books.view.custom.LinkedinComposite;
 import com.papao.books.view.custom.LinkedinCompositeAutori;
+import com.papao.books.view.custom.PremiiLiterareComposite;
 import com.papao.books.view.providers.ContentProposalProvider;
 import com.papao.books.view.util.NumberUtil;
 import com.papao.books.view.util.StringUtil;
@@ -86,6 +87,7 @@ public class CarteView extends AbstractCSaveView {
     private ToolItem itemTaguri;
     private ToolItem itemBookDetails;
     private ToolItem itemBackCover;
+    private PremiiLiterareComposite premiiLiterareComposite;
 
     public CarteView(final Shell parent, final Carte carte,
                      final BookController carteController,
@@ -369,6 +371,10 @@ public class CarteView extends AbstractCSaveView {
         ((GridData) compositeEditiaPrincepsAutoriIlustratii.getLayoutData()).horizontalSpan = 5;
         ((GridData) compositeEditiaPrincepsAutoriIlustratii.getLayoutData()).grabExcessHorizontalSpace = true;
 
+        label(comp, "Premii literare");
+        premiiLiterareComposite = new PremiiLiterareComposite(comp, this.carte.getPremii());
+        ((GridData) premiiLiterareComposite.getLayoutData()).horizontalSpan = 5;
+
         return comp;
     }
 
@@ -383,11 +389,11 @@ public class CarteView extends AbstractCSaveView {
 
         label(comp, "Motto");
         this.textMotto = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(450, 110).applyTo(textMotto);
+        GridDataFactory.fillDefaults().grab(true, true).hint(450, 75).applyTo(textMotto);
 
         label(comp, "Descriere");
         this.textDescriere = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(450, 190).applyTo(textDescriere);
+        GridDataFactory.fillDefaults().grab(true, true).hint(450, 150).applyTo(textDescriere);
 
         return comp;
     }
@@ -582,6 +588,7 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setIdAutori(compositeAutori.getSelectedIds());
         this.carte.setMotto(textMotto.getText());
         this.carte.setDescriere(textDescriere.getText());
+        this.carte.setPremii(premiiLiterareComposite.getResult());
 
         if (frontCoverComposite.imageChanged()) {
             carteController.removeImageData(carte.getCopertaFata().getId());
