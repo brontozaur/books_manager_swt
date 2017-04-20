@@ -263,7 +263,7 @@ public class MsgBox implements Listener {
 			if (numColsCompButtons > 0) {
 				this.compButtons = new Composite(this.shell, SWT.NONE);
 				GridLayoutFactory.fillDefaults().numColumns(numColsCompButtons).equalWidth(true).extendedMargins(0, 0, 0, 0).applyTo(this.compButtons);
-				GridDataFactory.fillDefaults().grab(true, false).align(SWT.END, SWT.CENTER).span(((GridLayout) this.shell.getLayout()).numColumns, 1).hint(numColsCompButtons * 90 + numColsCompButtons
+				GridDataFactory.fillDefaults().grab(true, false).align(SWT.END, SWT.CENTER).span(((GridLayout) this.shell.getLayout()).numColumns, 1).hint(numColsCompButtons * 95 + numColsCompButtons
 						* 2,
 						SWT.DEFAULT).applyTo(this.compButtons);
 				if ((drawButtonsCfg & SWT.OK) == SWT.OK) {

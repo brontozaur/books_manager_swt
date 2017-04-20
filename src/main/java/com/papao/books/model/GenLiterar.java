@@ -11,6 +11,7 @@ public enum GenLiterar {
     DRAMA,
     DRAGOSTE,
     THRILLER,
+    ROMAN,
     THRILLER_MEDICAL,
     HORROR,
     MANUALE,

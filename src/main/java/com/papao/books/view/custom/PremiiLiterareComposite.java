@@ -145,4 +145,9 @@ public class PremiiLiterareComposite extends Composite {
     public List<PremiuLiterar> getResult() {
         return result;
     }
+
+    public Table getTable() {
+        return this.table;
+    }
+
 }

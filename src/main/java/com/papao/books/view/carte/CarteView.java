@@ -293,12 +293,12 @@ public class CarteView extends AbstractCSaveView {
         label(mainCompLeft, "An aparitie");
         textAnAparitie = new Text(mainCompLeft, SWT.BORDER);
         ContentProposalProvider.addContentProposal(textAnAparitie, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "anAparitie"));
-        GridDataFactory.fillDefaults().grab(false, false).hint(30, SWT.DEFAULT).applyTo(this.textAnAparitie);
+        GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textAnAparitie);
 
         label(mainCompLeft, "Numar pagini");
         this.textNrPagini = new FormattedText(mainCompLeft, SWT.BORDER);
         this.textNrPagini.setFormatter(new IntegerFormatter());
-        GridDataFactory.fillDefaults().grab(false, false).hint(30, SWT.DEFAULT).applyTo(this.textNrPagini.getControl());
+        GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textNrPagini.getControl());
         ((NumberFormatter) this.textNrPagini.getFormatter()).setFixedLengths(false, true);
 
         label(mainCompLeft, "Editia");
@@ -315,8 +315,8 @@ public class CarteView extends AbstractCSaveView {
             public void handleEvent(Event event) {
                 if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
                     itemInformatiiEsentiale.setSelection(false);
-                    itemEditiaOriginala.setSelection(true);
-                    itemEditiaOriginala.notifyListeners(SWT.Selection, new Event());
+                    itemBookDetails.setSelection(true);
+                    itemBookDetails.notifyListeners(SWT.Selection, new Event());
                 }
             }
         });
@@ -332,6 +332,16 @@ public class CarteView extends AbstractCSaveView {
         label(comp, "Titlu original");
         this.textEditiaPrincepsTitlu = new Text(comp, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(5, 1).applyTo(this.textEditiaPrincepsTitlu);
+        textEditiaPrincepsTitlu.addListener(SWT.Traverse, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+                    itemEditiaOriginala.setSelection(false);
+                    itemBookDetails.setSelection(true);
+                    itemBookDetails.notifyListeners(SWT.Selection, new Event());
+                }
+            }
+        });
 
         label(comp, "Tara");
         textEditiaPrincepsTara = new Text(comp, SWT.BORDER);
@@ -359,7 +369,7 @@ public class CarteView extends AbstractCSaveView {
         label(comp, "An aparitie");
         textEditiaPrincepsAn = new Text(comp, SWT.BORDER);
         ContentProposalProvider.addContentProposal(textEditiaPrincepsAn, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "editiaOriginala.an"));
-        GridDataFactory.fillDefaults().hint(30, SWT.DEFAULT).applyTo(this.textEditiaPrincepsAn);
+        GridDataFactory.fillDefaults().hint(40, SWT.DEFAULT).applyTo(this.textEditiaPrincepsAn);
 
         new Label(comp, SWT.NONE);
         new Label(comp, SWT.NONE);
@@ -375,6 +385,17 @@ public class CarteView extends AbstractCSaveView {
         premiiLiterareComposite = new PremiiLiterareComposite(comp, this.carte.getPremii());
         ((GridData) premiiLiterareComposite.getLayoutData()).horizontalSpan = 5;
 
+        premiiLiterareComposite.getTable().addListener(SWT.Traverse, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+                    itemEditiaOriginala.setSelection(false);
+                    itemTaguri.setSelection(true);
+                    itemTaguri.notifyListeners(SWT.Selection, new Event());
+                }
+            }
+        });
+
         return comp;
     }
 
@@ -386,14 +407,46 @@ public class CarteView extends AbstractCSaveView {
         label(comp, "Taguri");
         this.compositeTags = new LinkedinComposite(comp, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "tags"), carte.getTags());
         ((GridData) compositeTags.getLayoutData()).widthHint = 350;
+        compositeTags.getTextSearch().addListener(SWT.Traverse, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+                    itemTaguri.setSelection(false);
+                    itemEditiaOriginala.setSelection(true);
+                    itemEditiaOriginala.notifyListeners(SWT.Selection, new Event());
+                }
+            }
+        });
 
         label(comp, "Motto");
         this.textMotto = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
         GridDataFactory.fillDefaults().grab(true, true).hint(450, 75).applyTo(textMotto);
+        textMotto.addListener(SWT.Traverse, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+                    event.doit = true;
+                    textDescriere.setFocus();
+                }
+            }
+        });
 
         label(comp, "Descriere");
         this.textDescriere = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
         GridDataFactory.fillDefaults().grab(true, true).hint(450, 150).applyTo(textDescriere);
+
+        textDescriere.addListener(SWT.Traverse, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+                    itemTaguri.setSelection(false);
+                    itemBackCover.setSelection(true);
+                    itemBackCover.notifyListeners(SWT.Selection, new Event());
+                    getButtonOk().setFocus();
+                    event.doit = true;
+                }
+            }
+        });
 
         return comp;
     }
@@ -409,6 +462,16 @@ public class CarteView extends AbstractCSaveView {
             @Override
             public void handleEvent(Event event) {
                 textGoodreadsUrl.setText(StringUtil.decodeUrl(textGoodreadsUrl.getText()));
+            }
+        });
+        textGoodreadsUrl.addListener(SWT.Traverse, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+                    itemBookDetails.setSelection(false);
+                    itemInformatiiEsentiale.setSelection(true);
+                    itemInformatiiEsentiale.notifyListeners(SWT.Selection, new Event());
+                }
             }
         });
 
@@ -444,24 +507,27 @@ public class CarteView extends AbstractCSaveView {
         label(comp, "Greutate (kg)");
         this.textGreutate = new FormattedText(comp, SWT.BORDER);
         this.textGreutate.setFormatter(NumberUtil.getFormatter(2, true));
-        GridDataFactory.fillDefaults().grab(false, false).hint(30, SWT.DEFAULT).applyTo(this.textGreutate.getControl());
+        GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textGreutate.getControl());
         ((NumberFormatter) this.textGreutate.getFormatter()).setFixedLengths(false, true);
 
         label(comp, "Lungime (cm)");
         this.textLungime = new FormattedText(comp, SWT.BORDER);
         this.textLungime.setFormatter(NumberUtil.getFormatter(0, true));
-        GridDataFactory.fillDefaults().grab(false, false).hint(30, SWT.DEFAULT).applyTo(this.textLungime.getControl());
+        GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textLungime.getControl());
         ((NumberFormatter) this.textLungime.getFormatter()).setFixedLengths(false, true);
 
         label(comp, "Latime (cm)");
         this.textLatime = new FormattedText(comp, SWT.BORDER);
         this.textLatime.setFormatter(NumberUtil.getFormatter(0, true));
-        GridDataFactory.fillDefaults().grab(false, false).hint(30, SWT.DEFAULT).applyTo(this.textLatime.getControl());
+        GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textLatime.getControl());
         ((NumberFormatter) this.textLatime.getFormatter()).setFixedLengths(false, true);
 
         label(comp, "");
         label(comp, "");
 
+        //read only combos receive focus on OSX, only after enabling
+        // System Preferences -> Keyboard -> Keyboard Shortcuts -> All Controls
+        //see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376039
         label(comp, "Limba");
         comboLimba = new Combo(comp, SWT.READ_ONLY);
         comboLimba.setItems(Limba.getComboItems());
@@ -476,6 +542,17 @@ public class CarteView extends AbstractCSaveView {
         label(comp, "Traducere din");
         comboTraducereDin = new Combo(comp, SWT.READ_ONLY);
         comboTraducereDin.setItems(Limba.getComboItems());
+
+        comboTraducereDin.addListener(SWT.Traverse, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+                    itemBookDetails.setSelection(false);
+                    itemEditiaOriginala.setSelection(true);
+                    itemEditiaOriginala.notifyListeners(SWT.Selection, new Event());
+                }
+            }
+        });
 
         return comp;
     }
@@ -622,6 +699,7 @@ public class CarteView extends AbstractCSaveView {
             genuriLiterare.add((GenLiterar) value);
         }
         carte.setGenLiterar(genuriLiterare);
+        carte.setTags(compositeTags.getValoriIntroduse());
 
         carteController.save(carte);
     }
