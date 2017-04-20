@@ -9,14 +9,16 @@ import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.custom.AnLunaZiComposite;
 import com.papao.books.view.custom.ImageSelectorComposite;
 import com.papao.books.view.custom.LinkedinComposite;
+import com.papao.books.view.providers.ContentProposalProvider;
+import com.papao.books.view.util.StringUtil;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
@@ -31,6 +33,8 @@ public class AutorView extends AbstractCSaveView {
     private Text textNume;
     private AnLunaZiComposite dataNasteriiComposite;
     private AnLunaZiComposite dataMortiiComposite;
+    private Text textLocNastere;
+    private Text textTara;
     private ImageSelectorComposite mainImageComposite;
     private LinkedinComposite genLiterarComposite;
     private Text textWebsite;
@@ -52,18 +56,96 @@ public class AutorView extends AbstractCSaveView {
     }
 
     private void addComponents() {
-        setWidgetLayout(new GridLayout(3, false));
+        setWidgetLayout(new GridLayout(2, false));
         getContainer().setLayout(getWidgetLayout());
 
-        new Label(getContainer(), SWT.NONE).setText("Nume");
-        this.textNume = new Text(getContainer(), SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textNume);
+        Composite compLeft = new Composite(getContainer(), SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(4).applyTo(compLeft);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(compLeft);
+
+        new Label(compLeft, SWT.NONE).setText("Nume");
+        this.textNume = new Text(compLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).span(3,1).minSize(350, SWT.DEFAULT).applyTo(this.textNume);
         textNume.addListener(SWT.KeyUp, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 markAsChanged();
             }
         });
+
+        new Label(compLeft, SWT.NONE).setText("Data nasterii");
+        this.dataNasteriiComposite = new AnLunaZiComposite(compLeft, autor.getDataNasterii(true));
+        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(this.dataNasteriiComposite);
+
+        new Label(compLeft, SWT.NONE).setText("Data mortii");
+        this.dataMortiiComposite = new AnLunaZiComposite(compLeft, autor.getDataMortii(true));
+        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(this.dataMortiiComposite);
+
+        Label labelGen = new Label(compLeft, SWT.NONE);
+        labelGen.setText("Gen literar");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelGen);
+        this.genLiterarComposite = new LinkedinComposite(compLeft,
+                GenLiterar.class, autor.getGenLiterar());
+        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(this.genLiterarComposite);
+
+        new Label(compLeft, SWT.NONE).setText("Website");
+        this.textWebsite = new Text(compLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textWebsite);
+        this.textWebsite.addListener(SWT.KeyUp, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                textWebsite.setText(StringUtil.decodeUrl(textWebsite.getText()));
+            }
+        });
+
+        new Label(compLeft, SWT.NONE).setText("Facebook");
+        this.textFacebook = new Text(compLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textFacebook);
+        this.textFacebook.addListener(SWT.KeyUp, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                textFacebook.setText(StringUtil.decodeUrl(textFacebook.getText()));
+            }
+        });
+
+        new Label(compLeft, SWT.NONE).setText("Twitter");
+        this.textTwitter = new Text(compLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textTwitter);
+        this.textTwitter.addListener(SWT.KeyUp, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                textTwitter.setText(StringUtil.decodeUrl(textTwitter.getText()));
+            }
+        });
+
+        new Label(compLeft, SWT.NONE).setText("Wiki");
+        this.textWiki = new Text(compLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textWiki);
+        this.textWiki.addListener(SWT.KeyUp, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                textWiki.setText(StringUtil.decodeUrl(textWiki.getText()));
+            }
+        });
+
+        new Label(compLeft, SWT.NONE).setText("Loc nastere");
+        this.textLocNastere = new Text(compLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textLocNastere);
+
+        new Label(compLeft, SWT.NONE).setText("Tara");
+        this.textTara = new Text(compLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textTara);
+        ContentProposalProvider.addContentProposal(textTara, controller.getDistinctFieldAsContentProposal(controller.getAutoriCollectionName(), "tara"));
+
+        Label labelDescriere = new Label(compLeft, SWT.NONE);
+        labelDescriere.setText("Descriere");
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelDescriere);
+        this.textDescriere = new Text(compLeft, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        GridDataFactory.fillDefaults().grab(true, true).hint(300, 100).span(3,1).applyTo(textDescriere);
+
+        Composite compImage = new Composite(getContainer(), SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(1).applyTo(compImage);
+        GridDataFactory.fillDefaults().grab(false, false).align(SWT.END, SWT.BEGINNING).applyTo(compImage);
 
         Image mainImage = null;
         String imageName = null;
@@ -75,46 +157,8 @@ public class AutorView extends AbstractCSaveView {
             }
         }
 
-        this.mainImageComposite = new ImageSelectorComposite(getContainer(), mainImage, imageName, controller.getAppImagesFolder());
-        ((GridData) this.mainImageComposite.getLayoutData()).verticalSpan = 8;
+        this.mainImageComposite = new ImageSelectorComposite(compImage, mainImage, imageName, controller.getAppImagesFolder());
         this.addObserver(mainImageComposite);
-
-        new Label(getContainer(), SWT.NONE).setText("Data nasterii");
-        this.dataNasteriiComposite = new AnLunaZiComposite(getContainer(), autor.getDataNasterii(true));
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.dataNasteriiComposite);
-
-        new Label(getContainer(), SWT.NONE).setText("Data mortii");
-        this.dataMortiiComposite = new AnLunaZiComposite(getContainer(), autor.getDataMortii(true));
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.dataMortiiComposite);
-
-        Label labelGen = new Label(getContainer(), SWT.NONE);
-        labelGen.setText("Gen literar");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelGen);
-        this.genLiterarComposite = new LinkedinComposite(getContainer(),
-                GenLiterar.class, autor.getGenLiterar());
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.genLiterarComposite);
-
-        new Label(getContainer(), SWT.NONE).setText("Website");
-        this.textWebsite = new Text(getContainer(), SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textWebsite);
-
-        new Label(getContainer(), SWT.NONE).setText("Facebook");
-        this.textFacebook = new Text(getContainer(), SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textFacebook);
-
-        new Label(getContainer(), SWT.NONE).setText("Twitter");
-        this.textTwitter = new Text(getContainer(), SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textTwitter);
-
-        new Label(getContainer(), SWT.NONE).setText("Wiki");
-        this.textWiki = new Text(getContainer(), SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textWiki);
-
-        Label labelDescriere = new Label(getContainer(), SWT.NONE);
-        labelDescriere.setText("Descriere");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelDescriere);
-        this.textDescriere = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 100).span(2, 1).applyTo(textDescriere);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
@@ -131,6 +175,8 @@ public class AutorView extends AbstractCSaveView {
         this.textTwitter.setText(this.autor.getTwitter());
         this.textDescriere.setText(this.autor.getDescriere());
         this.textWiki.setText(this.autor.getWiki());
+        this.textLocNastere.setText(this.autor.getLoculNasterii());
+        this.textTara.setText(this.autor.getTara());
 
         if (!isViewEnabled()) {
             WidgetCompositeUtil.enableGUI(getContainer(), false);
@@ -169,6 +215,8 @@ public class AutorView extends AbstractCSaveView {
             genuriLiterare.add((GenLiterar) value);
         }
         this.autor.setGenLiterar(genuriLiterare);
+        this.autor.setLoculNasterii(textLocNastere.getText());
+        this.autor.setTara(textTara.getText());
         if (mainImageComposite.getSelectedFile() != null) {
             this.autor.setMainImage(controller.saveDocument(mainImageComposite.getSelectedFile(), mainImageComposite.getWebPath()));
         }

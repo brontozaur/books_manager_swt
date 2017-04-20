@@ -153,7 +153,7 @@ public class ComboImage extends Composite implements Listener {
         if (this.descriptor.getToolItemStyle() == SWT.NONE) {
             return;
         }
-        ToolBar bar = new ToolBar(this, SWT.FLAT);
+        ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.NO_FOCUS);
         if ((this.descriptor.getToolItemStyle() & ComboImage.ADD_ADD) == ComboImage.ADD_ADD) {
             this.itemAdd = new ToolItem(bar, SWT.NONE);
             this.itemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));

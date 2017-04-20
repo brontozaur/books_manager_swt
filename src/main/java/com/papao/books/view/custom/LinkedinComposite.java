@@ -8,7 +8,10 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,25 +49,12 @@ public class LinkedinComposite extends Composite {
     private void addComponents() {
         this.setBackground(ColorUtil.COLOR_WHITE);
 
-        GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 1, 0).spacing(2, 0).numColumns(2).equalWidth(false).applyTo(this);
+        GridLayoutFactory.fillDefaults().extendedMargins(0, 0, 1, 0).spacing(2, 1).numColumns(2).equalWidth(false).applyTo(this);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this);
 
         textSearch = new Text(this, SWT.SEARCH);
         textSearch.setMessage("Cautare...");
-        GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).align(SWT.FILL, SWT.CENTER).applyTo(textSearch);
-
-        Button buttonAdd = new Button(this, SWT.PUSH);
-        buttonAdd.setText("Adauga");
-        GridDataFactory.fillDefaults().align(SWT.END, SWT.END).applyTo(buttonAdd);
-        buttonAdd.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                final String text = textSearch.getText().trim();
-                if (validateText(text)) {
-                    createClosableCanvas(text, true);
-                }
-            }
-        });
+        GridDataFactory.fillDefaults().grab(false, false).indent(5, 0).hint(150, SWT.DEFAULT).applyTo(textSearch);
 
         compSelections = new Composite(this, SWT.NONE);
         compSelections.setBackground(ColorUtil.COLOR_WHITE);

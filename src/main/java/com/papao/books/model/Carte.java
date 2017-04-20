@@ -29,10 +29,7 @@ public class Carte extends AuditObject implements Serializable {
     private int nrPagini;
     private String serie;
     private List<String> traducatori;
-    private String isbn10;
-    private String isbn13;
-    private String asin;
-    private boolean cuIlustratii;
+    private String isbn;
     private List<String> autoriIlustratii;
     private List<String> tehnoredactori;
     private String imprimerie;
@@ -50,7 +47,7 @@ public class Carte extends AuditObject implements Serializable {
     private DocumentData copertaSpate;
     private DocumentData autograf;
     private List<DocumentData> documents = new ArrayList<>();
-    private List<String> tags;
+    private List<String> tags = new ArrayList<>();
     private String descriere;
     private TipCarte tipCarte;
     private String motto;
@@ -166,25 +163,6 @@ public class Carte extends AuditObject implements Serializable {
 
     public void setTraducatori(List<String> traducatori) {
         this.traducatori = traducatori;
-    }
-
-    public String getIsbn10() {
-        if (isbn10 == null) {
-            return "";
-        }
-        return isbn10;
-    }
-
-    public void setIsbn10(String isbn10) {
-        this.isbn10 = isbn10;
-    }
-
-    public boolean isCuIlustratii() {
-        return cuIlustratii;
-    }
-
-    public void setCuIlustratii(boolean cuIlustratii) {
-        this.cuIlustratii = cuIlustratii;
     }
 
     public List<String> getAutoriIlustratii() {
@@ -368,28 +346,6 @@ public class Carte extends AuditObject implements Serializable {
         this.subtitlu = subtitlu;
     }
 
-    public String getIsbn13() {
-        if (isbn13 == null) {
-            return "";
-        }
-        return isbn13;
-    }
-
-    public void setIsbn13(String isbn13) {
-        this.isbn13 = isbn13;
-    }
-
-    public String getAsin() {
-        if (asin == null) {
-            return "";
-        }
-        return asin;
-    }
-
-    public void setAsin(String asin) {
-        this.asin = asin;
-    }
-
     public String getWebsite() {
         if (website == null) {
             return "";
@@ -482,5 +438,16 @@ public class Carte extends AuditObject implements Serializable {
 
     public void setEditiaOriginala(EditiaOriginala editiaOriginala) {
         this.editiaOriginala = editiaOriginala;
+    }
+
+    public String getIsbn() {
+        if (isbn == null) {
+            return "";
+        }
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 }

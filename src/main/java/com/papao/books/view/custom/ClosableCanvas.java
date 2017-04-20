@@ -24,7 +24,7 @@ public class ClosableCanvas extends Canvas {
         this.textLabel = new Label(this, SWT.NONE);
         this.textLabel.setText(text);
 
-        itemClose = new ToolItem(new ToolBar(this, SWT.FLAT), SWT.NONE);
+        itemClose = new ToolItem(new ToolBar(this, SWT.FLAT | SWT.NO_FOCUS), SWT.NONE);
         itemClose.setImage(AppImages.getGrayImageMiscByName(AppImages.IMG_MISC_SIMPLE_X));
         itemClose.setHotImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_X_RED));
         itemClose.addListener(SWT.Selection, new Listener() {

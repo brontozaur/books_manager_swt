@@ -29,6 +29,8 @@ public class Autor extends AuditObject implements Serializable {
     private String facebook;
     private String wiki;
     private String descriere;
+    private String loculNasterii;
+    private String tara;
 
     @Override
     public ObjectId getId() {
@@ -186,5 +188,27 @@ public class Autor extends AuditObject implements Serializable {
 
     public AnLunaZiData getDataMortii(boolean showLabels) {
         return new AnLunaZiData(this.anDeces, this.lunaDeces, this.ziDeces, showLabels);
+    }
+
+    public String getLoculNasterii() {
+        if (loculNasterii == null) {
+            return "";
+        }
+        return loculNasterii;
+    }
+
+    public void setLoculNasterii(String loculNasterii) {
+        this.loculNasterii = loculNasterii;
+    }
+
+    public String getTara() {
+        if (tara == null) {
+            return "";
+        }
+        return tara;
+    }
+
+    public void setTara(String tara) {
+        this.tara = tara;
     }
 }

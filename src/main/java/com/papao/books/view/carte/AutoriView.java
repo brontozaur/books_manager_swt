@@ -303,7 +303,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
         this.tableViewer.setUseHashlookup(true);
         this.tableViewer.getTable().setHeaderVisible(true);
         this.tableViewer.getTable().setLinesVisible(true);
-        GridDataFactory.fillDefaults().grab(true, true).hint(480, 320).applyTo(this.tableViewer.getControl());
+        GridDataFactory.fillDefaults().grab(true, true).hint(600, 400).applyTo(this.tableViewer.getControl());
         this.tableViewer.getTable().addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {

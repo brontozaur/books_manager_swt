@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.*;
 
 public class AnLunaZiComposite extends Composite {
 
-    private Combo comboAn;
+    private Text textAn;
     private Combo comboLuna;
     private Combo comboZi;
     private AnLunaZiData data;
@@ -27,13 +27,14 @@ public class AnLunaZiComposite extends Composite {
             tmp.setText("an");
             GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).applyTo(tmp);
         }
-        comboAn = new Combo(this, SWT.BORDER);
-        GridDataFactory.fillDefaults().hint(75, SWT.DEFAULT).applyTo(comboAn);
-        comboAn.addListener(SWT.KeyUp, new Listener() {
+        textAn = new Text(this, SWT.BORDER);
+        GridDataFactory.fillDefaults().hint(30, SWT.DEFAULT).applyTo(textAn);
+        textAn.addListener(SWT.KeyUp, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (StringUtils.isNumeric(comboAn.getText())) {
-                    AnLunaZiComposite.this.data.setAn(Integer.valueOf(comboAn.getText()));
+                if (StringUtils.isNumeric(textAn.getText())) {
+                    AnLunaZiComposite.this.data.setAn(Integer.valueOf(textAn.getText()));
+                    handleDayChange();
                 }
             }
         });
@@ -42,22 +43,12 @@ public class AnLunaZiComposite extends Composite {
             new Label(this, SWT.NONE).setText("luna");
         }
         comboLuna = new Combo(this, SWT.READ_ONLY);
+        GridDataFactory.fillDefaults().hint(50, SWT.DEFAULT).applyTo(textAn);
         comboLuna.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 AnLunaZiComposite.this.data.setLuna(comboLuna.getSelectionIndex() + 1);
-
-                int dayIndex = comboZi.indexOf(String.valueOf(AnLunaZiComposite.this.data.getZi()));
-                comboZi.removeAll();
-                final int maxDays = BorgDateUtil.getMaxZileInLuna(comboLuna.getSelectionIndex(), AnLunaZiComposite.this.data.getAn());
-                for (int i = 0; i < maxDays; i++) {
-                    comboZi.add(String.valueOf(i + 1));
-                }
-                if (dayIndex != -1) {
-                    comboZi.select(dayIndex);
-                } else {
-                    AnLunaZiComposite.this.data.setZi(0);
-                }
+                handleDayChange();
             }
         });
         comboLuna.setItems(BorgDateUtil.LUNILE);
@@ -66,20 +57,43 @@ public class AnLunaZiComposite extends Composite {
             new Label(this, SWT.NONE).setText("zi");
         }
         comboZi = new Combo(this, SWT.BORDER);
-        GridDataFactory.fillDefaults().hint(75, SWT.DEFAULT).applyTo(comboZi);
-        comboZi.addListener(SWT.Selection, new Listener() {
+        GridDataFactory.fillDefaults().hint(30, SWT.DEFAULT).applyTo(comboZi);
+        comboZi.addListener(SWT.KeyUp, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                AnLunaZiComposite.this.data.setZi(comboZi.getSelectionIndex() + 1);
+                if (StringUtils.isNumeric(comboZi.getText())) {
+                    int zi = Integer.valueOf(comboZi.getText());
+                    if (zi > 0 && zi <= BorgDateUtil.getMaxZileInLuna(AnLunaZiComposite.this.data.getLuna(), AnLunaZiComposite.this.data.getAn())) {
+                        AnLunaZiComposite.this.data.setZi(zi);
+                    } else {
+                        comboZi.setText("");
+                    }
+                } else {
+                    comboZi.setText("");
+                }
             }
         });
 
         populateFields();
     }
 
+    private void handleDayChange() {
+        int dayIndex = comboZi.indexOf(String.valueOf(AnLunaZiComposite.this.data.getZi()));
+        comboZi.removeAll();
+        final int maxDays = BorgDateUtil.getMaxZileInLuna(comboLuna.getSelectionIndex(), AnLunaZiComposite.this.data.getAn());
+        for (int i = 0; i < maxDays; i++) {
+            comboZi.add(String.valueOf(i + 1));
+        }
+        if (dayIndex != -1) {
+            comboZi.select(dayIndex);
+        } else {
+            AnLunaZiComposite.this.data.setZi(0);
+        }
+    }
+
     private void populateFields() {
         if (data.getAn() > 0) {
-            this.comboAn.setText(String.valueOf(data.getAn()));
+            this.textAn.setText(String.valueOf(data.getAn()));
         }
         if (data.getLuna() > 0) {
             this.comboLuna.select(data.getLuna() - 1);
