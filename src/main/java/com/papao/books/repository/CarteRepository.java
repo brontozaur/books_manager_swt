@@ -37,9 +37,9 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
     Page<Carte> getByTitluStartingWithIgnoreCase(String titluStartsWith, Pageable pageable);
 
     //string arrays
-    Page<Carte> getByTraducatoriIsNullOrTraducatoriIsLessThanEqual(String[] emptyString, Pageable pageable);
+    Page<Carte> getByTraducere_TraducatoriIsNullOrTraducere_TraducatoriIsLessThanEqual(String[] emptyString, Pageable pageable);
 
-    Page<Carte> getByTraducatoriContainsIgnoreCase(String traducator, Pageable pageable);
+    Page<Carte> getByTraducere_TraducatoriContainsIgnoreCase(String traducator, Pageable pageable);
 
     //reference collections - using ref ObjectId!
 

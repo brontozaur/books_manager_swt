@@ -289,7 +289,7 @@ public class CarteView extends AbstractCSaveView {
         comboTipCoperta.setItems(TipCoperta.getComboItems());
 
         label(mainCompLeft, "Traducatori");
-        this.compositeTraducatori = new LinkedinComposite(mainCompLeft, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "traducatori"), carte.getTraducatori());
+        this.compositeTraducatori = new LinkedinComposite(mainCompLeft, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "traducere.traducatori"), carte.getTraducere().getTraducatori());
         ((GridData) compositeTraducatori.getLayoutData()).horizontalSpan = 5;
 
         label(mainCompLeft, "Imprimerie");
@@ -584,7 +584,7 @@ public class CarteView extends AbstractCSaveView {
         this.textImprimerie.setText(this.carte.getImprimerie());
         this.comboTipCoperta.select(comboTipCoperta.indexOf(this.carte.getTipCoperta().name()));
         this.comboLimba.select(comboLimba.indexOf(this.carte.getLimba().name()));
-        this.comboTraducereDin.select(comboTraducereDin.indexOf(this.carte.getTraducereDin().name()));
+        this.comboTraducereDin.select(comboTraducereDin.indexOf(this.carte.getTraducere().getTraducereDin().name()));
         this.textGoodreadsUrl.setText(this.carte.getGoodreadsUrl());
         this.textWikiUrl.setText(this.carte.getWikiUrl());
         this.textWebsite.setText(this.carte.getWebsite());
@@ -617,14 +617,12 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setGreutate(Double.valueOf(textGreutate.getValue().toString()));
         this.carte.setSerie(textSerie.getText());
         this.carte.setEditia(textEditia.getText());
-        this.carte.setTraducatori(compositeTraducatori.getValoriIntroduse());
         this.carte.setIsbn(textIsbn.getText());
         this.carte.setAutoriIlustratii(compositeAutoriIlustratii.getValoriIntroduse());
         this.carte.setTehnoredactori(compositeTehnoredactori.getValoriIntroduse());
         this.carte.setImprimerie(textImprimerie.getText());
         this.carte.setTipCoperta(TipCoperta.valueOf(comboTipCoperta.getText()));
         this.carte.setLimba(Limba.valueOf(comboLimba.getText()));
-        this.carte.setTraducereDin(Limba.valueOf(comboTraducereDin.getText()));
         this.carte.setGoodreadsUrl(textGoodreadsUrl.getText());
         this.carte.setWikiUrl(textWikiUrl.getText());
         this.carte.setWebsite(textWebsite.getText());
@@ -632,6 +630,9 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setMotto(textMotto.getText());
         this.carte.setDescriere(textDescriere.getText());
         this.carte.setPremii(premiiLiterareComposite.getResult());
+
+        this.carte.getTraducere().setTraducatori(compositeTraducatori.getValoriIntroduse());
+        this.carte.getTraducere().setTraducereDin(Limba.valueOf(comboTraducereDin.getText()));
 
         if (frontCoverComposite.imageChanged()) {
             carteController.removeImageData(carte.getCopertaFata().getId());

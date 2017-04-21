@@ -28,7 +28,6 @@ public class Carte extends AuditObject implements Serializable {
     private double greutate;
     private int nrPagini;
     private String serie;
-    private List<String> traducatori;
     private String isbn;
     private List<String> autoriIlustratii;
     private List<String> tehnoredactori;
@@ -36,7 +35,6 @@ public class Carte extends AuditObject implements Serializable {
     private List<Personaj> personaje;
     private TipCoperta tipCoperta;
     private Limba limba;
-    private Limba traducereDin;
     private List<PremiuLiterar> premii;
     private String goodreadsUrl;
     private String wikiUrl;
@@ -50,11 +48,11 @@ public class Carte extends AuditObject implements Serializable {
     private String descriere;
     private String motto;
     private EditiaOriginala editiaOriginala;
-// ------ user specific data ------
+    private CarteTraducere traducere;
+    // ------ user specific data ------
     private List<Citat> citate = new ArrayList<>();
     private List<CarteCitita> carteCitita = new ArrayList<>();
     private List<BookRating> notaCarte = new ArrayList<>();
-    private List<TranslationRating> translationRatings = new ArrayList<>();
 
     @Override
     public ObjectId getId() {
@@ -152,17 +150,6 @@ public class Carte extends AuditObject implements Serializable {
         this.serie = serie;
     }
 
-    public List<String> getTraducatori() {
-        if (traducatori == null) {
-            return Collections.emptyList();
-        }
-        return traducatori;
-    }
-
-    public void setTraducatori(List<String> traducatori) {
-        this.traducatori = traducatori;
-    }
-
     public List<String> getAutoriIlustratii() {
         if (autoriIlustratii == null) {
             return Collections.emptyList();
@@ -227,17 +214,6 @@ public class Carte extends AuditObject implements Serializable {
 
     public void setLimba(Limba limba) {
         this.limba = limba;
-    }
-
-    public Limba getTraducereDin() {
-        if (traducereDin == null) {
-            return Limba.Nespecificat;
-        }
-        return traducereDin;
-    }
-
-    public void setTraducereDin(Limba traducereDin) {
-        this.traducereDin = traducereDin;
     }
 
     public List<PremiuLiterar> getPremii() {
@@ -412,14 +388,6 @@ public class Carte extends AuditObject implements Serializable {
         this.notaCarte = notaCarte;
     }
 
-    public List<TranslationRating> getTranslationRatings() {
-        return translationRatings;
-    }
-
-    public void setTranslationRatings(List<TranslationRating> translationRatings) {
-        this.translationRatings = translationRatings;
-    }
-
     public EditiaOriginala getEditiaOriginala() {
         if (this.editiaOriginala == null) {
             this.editiaOriginala = new EditiaOriginala();
@@ -429,6 +397,17 @@ public class Carte extends AuditObject implements Serializable {
 
     public void setEditiaOriginala(EditiaOriginala editiaOriginala) {
         this.editiaOriginala = editiaOriginala;
+    }
+
+    public CarteTraducere getTraducere() {
+        if (traducere == null) {
+            traducere = new CarteTraducere();
+        }
+        return traducere;
+    }
+
+    public void setTraducere(CarteTraducere traducere) {
+        this.traducere = traducere;
     }
 
     public String getIsbn() {

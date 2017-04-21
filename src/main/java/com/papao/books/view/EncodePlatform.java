@@ -530,7 +530,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 break;
             }
             case TRADUCATOR: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctArrayPropertyValues(bookController.getBooksCollectionName(), "traducatori");
+                IntValuePairsWrapper wrapper = bookController.getDistinctArrayPropertyValues(bookController.getBooksCollectionName(), "traducere.traducatori");
                 createTreeNodes(wrapper, "Traducatori");
                 break;
             }

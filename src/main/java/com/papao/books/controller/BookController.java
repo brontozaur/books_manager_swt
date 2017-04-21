@@ -95,9 +95,9 @@ public class BookController extends AbstractController {
                 }
                 case TRADUCATOR: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByTraducatoriContainsIgnoreCase(value, pageable);
+                        carti = repository.getByTraducere_TraducatoriContainsIgnoreCase(value, pageable);
                     } else {
-                        carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqual(new String[]{""}, pageable);
+                        carti = repository.getByTraducere_TraducatoriIsNullOrTraducere_TraducatoriIsLessThanEqual(new String[]{""}, pageable);
                     }
                     break;
                 }
