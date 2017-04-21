@@ -201,6 +201,13 @@ public class CarteView extends AbstractCSaveView {
         ((StackLayout) mainComp.getLayout()).topControl = mainPropertiesComposite;
         itemInformatiiEsentiale.setSelection(true);
 
+        handleTraverseEvent(compositeTehnoredactori.getTextSearch(), itemInformatiiEsentiale, itemBookDetails, false);
+        handleTraverseEvent(textGoodreadsUrl, itemBookDetails, itemInformatiiEsentiale, true);
+        handleTraverseEvent(comboTraducereDin, itemBookDetails, itemEditiaOriginala, false);
+        handleTraverseEvent(textEditiaPrincepsTitlu, itemEditiaOriginala, itemBookDetails, true);
+        handleTraverseEvent(premiiLiterareComposite.getTable(), itemEditiaOriginala, itemTaguri, false);
+        handleTraverseEvent(compositeTags.getTextSearch(), itemTaguri, itemBackCover, false);
+
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
 
@@ -309,17 +316,6 @@ public class CarteView extends AbstractCSaveView {
         ((GridData) compositeTehnoredactori.getLayoutData()).horizontalSpan = 5;
         ((GridData) compositeTehnoredactori.getLayoutData()).grabExcessHorizontalSpace = true;
 
-        compositeTehnoredactori.getTextSearch().addListener(SWT.Traverse, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
-                    itemInformatiiEsentiale.setSelection(false);
-                    itemBookDetails.setSelection(true);
-                    itemBookDetails.notifyListeners(SWT.Selection, new Event());
-                }
-            }
-        });
-
         return comp;
     }
 
@@ -331,16 +327,6 @@ public class CarteView extends AbstractCSaveView {
         label(comp, "Titlu original");
         this.textEditiaPrincepsTitlu = new Text(comp, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(5, 1).applyTo(this.textEditiaPrincepsTitlu);
-        textEditiaPrincepsTitlu.addListener(SWT.Traverse, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-                    itemEditiaOriginala.setSelection(false);
-                    itemBookDetails.setSelection(true);
-                    itemBookDetails.notifyListeners(SWT.Selection, new Event());
-                }
-            }
-        });
 
         label(comp, "Tara");
         textEditiaPrincepsTara = new Text(comp, SWT.BORDER);
@@ -384,17 +370,6 @@ public class CarteView extends AbstractCSaveView {
         premiiLiterareComposite = new PremiiLiterareComposite(comp, this.carte.getPremii());
         ((GridData) premiiLiterareComposite.getLayoutData()).horizontalSpan = 5;
 
-        premiiLiterareComposite.getTable().addListener(SWT.Traverse, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
-                    itemEditiaOriginala.setSelection(false);
-                    itemTaguri.setSelection(true);
-                    itemTaguri.notifyListeners(SWT.Selection, new Event());
-                }
-            }
-        });
-
         return comp;
     }
 
@@ -402,20 +377,6 @@ public class CarteView extends AbstractCSaveView {
         Composite comp = new Composite(parent, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(5, 5, 5, 5).applyTo(comp);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
-
-        label(comp, "Taguri");
-        this.compositeTags = new LinkedinComposite(comp, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "tags"), carte.getTags());
-        ((GridData) compositeTags.getLayoutData()).widthHint = 350;
-        compositeTags.getTextSearch().addListener(SWT.Traverse, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-                    itemTaguri.setSelection(false);
-                    itemEditiaOriginala.setSelection(true);
-                    itemEditiaOriginala.notifyListeners(SWT.Selection, new Event());
-                }
-            }
-        });
 
         label(comp, "Motto");
         this.textMotto = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
@@ -429,25 +390,52 @@ public class CarteView extends AbstractCSaveView {
                 }
             }
         });
-
-        label(comp, "Descriere");
-        this.textDescriere = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(400, 150).applyTo(textDescriere);
-
-        textDescriere.addListener(SWT.Traverse, new Listener() {
+        textMotto.addListener(SWT.Traverse, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+                if (event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
                     itemTaguri.setSelection(false);
-                    itemBackCover.setSelection(true);
-                    itemBackCover.notifyListeners(SWT.Selection, new Event());
-                    getButtonOk().setFocus();
-                    event.doit = true;
+                    itemEditiaOriginala.setSelection(true);
+                    itemEditiaOriginala.notifyListeners(SWT.Selection, new Event());
                 }
             }
         });
 
+        label(comp, "Descriere");
+        this.textDescriere = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        GridDataFactory.fillDefaults().grab(true, true).hint(400, 150).applyTo(textDescriere);
+        this.textDescriere.addListener(SWT.Traverse, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+                    event.doit = true;
+                    compositeTags.getTextSearch().setFocus();
+                }
+            }
+        });
+
+        label(comp, "Taguri");
+        this.compositeTags = new LinkedinComposite(comp, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "tags"), carte.getTags());
+        ((GridData) compositeTags.getLayoutData()).widthHint = 350;
+
         return comp;
+    }
+
+    private void handleTraverseEvent(final Widget source,
+                                     final ToolItem current,
+                                     final ToolItem nextOrPrevious,
+                                     final boolean previous) {
+        source.addListener(SWT.Traverse, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                boolean condition = previous ? event.detail == SWT.TRAVERSE_TAB_PREVIOUS : event.detail == SWT.TRAVERSE_TAB_NEXT;
+                if (condition) {
+                    current.setSelection(false);
+                    nextOrPrevious.setSelection(true);
+                    nextOrPrevious.notifyListeners(SWT.Selection, new Event());
+                }
+            }
+        });
     }
 
     private Composite createBookDetailsTab(Composite parent) {
@@ -460,17 +448,7 @@ public class CarteView extends AbstractCSaveView {
         this.textGoodreadsUrl.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                encodeUrl((Text)event.widget);
-            }
-        });
-        textGoodreadsUrl.addListener(SWT.Traverse, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-                    itemBookDetails.setSelection(false);
-                    itemInformatiiEsentiale.setSelection(true);
-                    itemInformatiiEsentiale.notifyListeners(SWT.Selection, new Event());
-                }
+                encodeUrl((Text) event.widget);
             }
         });
 
@@ -480,7 +458,7 @@ public class CarteView extends AbstractCSaveView {
         this.textWikiUrl.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                encodeUrl((Text)event.widget);
+                encodeUrl((Text) event.widget);
             }
         });
 
@@ -490,7 +468,7 @@ public class CarteView extends AbstractCSaveView {
         this.textWebsite.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                encodeUrl((Text)event.widget);
+                encodeUrl((Text) event.widget);
             }
         });
 
@@ -541,17 +519,6 @@ public class CarteView extends AbstractCSaveView {
         label(comp, "Traducere din");
         comboTraducereDin = new Combo(comp, SWT.READ_ONLY);
         comboTraducereDin.setItems(Limba.getComboItems());
-
-        comboTraducereDin.addListener(SWT.Traverse, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
-                    itemBookDetails.setSelection(false);
-                    itemEditiaOriginala.setSelection(true);
-                    itemEditiaOriginala.notifyListeners(SWT.Selection, new Event());
-                }
-            }
-        });
 
         return comp;
     }
