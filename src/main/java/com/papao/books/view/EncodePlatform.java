@@ -10,7 +10,7 @@ import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.custom.PaginationComposite;
 import com.papao.books.view.menu.PlatformMenu;
-import com.papao.books.view.providers.AdbContentProvider;
+import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
 import com.papao.books.view.providers.tree.IntValuePair;
 import com.papao.books.view.providers.tree.IntValuePairsWrapper;
@@ -867,7 +867,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             return;
         }
 
-        this.tableViewer.setContentProvider(new AdbContentProvider());
+        this.tableViewer.setContentProvider(new AdbMongoContentProvider());
         int[] dims = new int[COLS.length];
         Arrays.fill(dims, 250);
         int[] aligns = new int[COLS.length];

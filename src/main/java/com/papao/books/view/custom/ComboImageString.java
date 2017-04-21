@@ -1,16 +1,15 @@
 package com.papao.books.view.custom;
 
-import com.papao.books.model.AbstractMongoDB;
+import com.papao.books.model.AbstractDB;
 import com.papao.books.model.BlankDbObject;
-import com.papao.books.model.BlankMongoDbObject;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.providers.AdbMongoContentProvider;
+import com.papao.books.view.providers.AdbStringContentProvider;
 import com.papao.books.view.providers.ContentProposalProvider;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.ObjectUtil;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -30,15 +29,15 @@ import java.util.Map;
  * <p>
  * Description : Custom implementation for issues regarding a combo. It provides the following :
  * <ol>
- * <li>A hook with the {@link AbstractMongoDB} object used to represent in combo, by invoking some of the object methods.</li>
- * <li>Able to return {@link AbstractMongoDB}'s id or entire {@link AbstractMongoDB} object, based on selection</li>
- * <li>A way of invoking a method on the {@link AbstractMongoDB} to get an image attribute of the object, and display the image in a resize format</li>
+ * <li>A hook with the {@link AbstractDB} object used to represent in combo, by invoking some of the object methods.</li>
+ * <li>Able to return {@link AbstractDB}'s id or entire {@link AbstractDB} object, based on selection</li>
+ * <li>A way of invoking a method on the {@link AbstractDB} to get an image attribute of the object, and display the image in a resize format</li>
  * <li>Hooked up with {@link ComboViewer} and {@link AdbMongoContentProvider} to provide a mechanism of automatically added combo items</li>
- * <li>Accepts all kind of inputs (collections of {@link AbstractMongoDB} elements, via {@link AdbMongoContentProvider} : {@link Collection},
- * {@link AbstractMongoDB}[], {@link Map} )</li>
+ * <li>Accepts all kind of inputs (collections of {@link AbstractDB} elements, via {@link AdbMongoContentProvider} : {@link Collection},
+ * {@link AbstractDB}[], {@link Map} )</li>
  * <li>Supports automatic content proposals via {@link ContentProposalProvider} based on the actual combo items provided by the viewer.
  * Proposal behaviour may be passed via object's constructor,or, at a later time by calling the {@link #()} method</li>
- * <li>Selection in combo is enhanced to support a {@link String} or a {@link Long} ( {@link AbstractMongoDB}'s currently selected object id)</li>
+ * <li>Selection in combo is enhanced to support a {@link String} or a {@link Long} ( {@link AbstractDB}'s currently selected object id)</li>
  * <li>Cleans up after himself regarding images displayed in the image label, if the case</li>
  * <li>Extends {@link Composite}, which makes it easy to call in parents with {@link GridLayout} layout</li>
  * <li>Implements {@link Listener} interface, to perform tasks, so no external events are usually required to be triggered for a proper
@@ -46,17 +45,17 @@ import java.util.Map;
  * <li>Provides acces to the {@link Combo} widget, so external callers may fire widget's listeners to perform extra tasks, if required</li>
  * <li>Lightweight, get the job done with an absolut minimum of system resources</li>
  * <li>Being a selection widget, the main user action is selection. Following this principle, the {@link SWT#READ_ONLY} flag is passed
- * automatically to the {@link Combo} widget, if {@linkplain ComboImage#} flag is not set</li>
- * <li>When hooked up with a {@link ContentProposalProvider}, the {@link ComboImage#lastId} takes care of the repeated and useless fire of the
+ * automatically to the {@link Combo} widget, if {@linkplain ComboImageString#} flag is not set</li>
+ * <li>When hooked up with a {@link ContentProposalProvider}, the {@link ComboImageString#lastId} takes care of the repeated and useless fire of the
  * {@link SWT#Selection} listeners, added to the {@link Combo} widget by callers.</li>
  * <li>Allows creation of additional 3 toolItems for add, modify or delete operations, by specifying in constructor one or more bitwise params
  * {@link #ADD_ADD}, {@link #ADD_MOD} and/or {@link #ADD_DEL} in the <code>toolItemStyle</code> parameter. Warning : the action performed by
  * these toolitems on selection must be specified by the caller.</li>
  * </ol>
  */
-public class ComboImage extends Composite implements Listener {
+public class ComboImageString extends Composite implements Listener {
 
-    private static Logger logger = Logger.getLogger(ComboImage.class);
+    private static Logger logger = Logger.getLogger(ComboImageString.class);
 
     private Combo combo;
     private Label imageLabel;
@@ -73,7 +72,7 @@ public class ComboImage extends Composite implements Listener {
      * autocomplete, cum e cazul lui {@link ContentProposalProvider}. Cum am spus in zeci de
      * randuri, editarea in combo ESTE O MARE TAMPENIE!! dar whatever, e comod pt user.
      */
-    private ObjectId lastId = null;
+    private String lastId = null;
 
     private static final int SIZE = 19;
     /**
@@ -89,12 +88,12 @@ public class ComboImage extends Composite implements Listener {
      */
     public final static int ADD_DEL = 1 << 3;
 
-    public ComboImage(final Composite parent, final CIDescriptor descriptor) {
+    public ComboImageString(final Composite parent, final CIDescriptor descriptor) {
         super(parent, SWT.NONE);
         this.descriptor = descriptor;
         if (this.descriptor.getInput() instanceof String[]) {
-            this.descriptor.setInput(ComboImage.getBlankObjectsInput((String[]) this.descriptor.getInput()));
-            this.descriptor.setClazz(BlankMongoDbObject.class);
+            this.descriptor.setInput(ComboImageString.getBlankObjectsInput((String[]) this.descriptor.getInput()));
+            this.descriptor.setClazz(BlankDbObject.class);
         }
         this.descriptor.setInput(getElements());
 
@@ -116,8 +115,8 @@ public class ComboImage extends Composite implements Listener {
 
         if (hasImageLabel) {
             setImageLabel(new Label(this, SWT.BORDER));
-            GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).hint(ComboImage.SIZE, ComboImage.SIZE).grab(false, true).minSize(ComboImage.SIZE,
-                    ComboImage.SIZE).applyTo(getImageLabel());
+            GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).hint(ComboImageString.SIZE, ComboImageString.SIZE).grab(false, true).minSize(ComboImageString.SIZE,
+                    ComboImageString.SIZE).applyTo(getImageLabel());
             getImageLabel().addListener(SWT.Dispose, this);
         }
 
@@ -129,13 +128,13 @@ public class ComboImage extends Composite implements Listener {
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, true).hint(100, SWT.DEFAULT).applyTo(getCombo());
 
         setViewer(new ComboViewer(getCombo()));
-        getViewer().setContentProvider(new AdbMongoContentProvider());
+        getViewer().setContentProvider(new AdbStringContentProvider());
         getViewer().setLabelProvider(new ColumnLabelProvider() {
             @Override
             public String getText(final Object element) {
                 Method meth;
                 try {
-                    meth = ObjectUtil.getMethod(ComboImage.this.descriptor.getClazz(), ComboImage.this.descriptor.getTextMethodName());
+                    meth = ObjectUtil.getMethod(ComboImageString.this.descriptor.getClazz(), ComboImageString.this.descriptor.getTextMethodName());
                     return (String) meth.invoke(element, (Object[]) null);
                 } catch (Exception exc) {
                     logger.error(exc.getMessage(), exc);
@@ -154,20 +153,20 @@ public class ComboImage extends Composite implements Listener {
             return;
         }
         ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.NO_FOCUS);
-        if ((this.descriptor.getToolItemStyle() & ComboImage.ADD_ADD) == ComboImage.ADD_ADD) {
+        if ((this.descriptor.getToolItemStyle() & ComboImageString.ADD_ADD) == ComboImageString.ADD_ADD) {
             this.itemAdd = new ToolItem(bar, SWT.NONE);
             this.itemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
             this.itemAdd.setHotImage(AppImages.getImage16Focus(AppImages.IMG_PLUS));
             this.itemAdd.setToolTipText("Adaugare");
         }
-        if ((this.descriptor.getToolItemStyle() & ComboImage.ADD_MOD) == ComboImage.ADD_MOD) {
+        if ((this.descriptor.getToolItemStyle() & ComboImageString.ADD_MOD) == ComboImageString.ADD_MOD) {
             this.itemMod = new ToolItem(bar, SWT.NONE);
             this.itemMod.setImage(AppImages.getImage16(AppImages.IMG_MODIFICARE));
             this.itemMod.setHotImage(AppImages.getImage16Focus(AppImages.IMG_MODIFICARE));
             this.itemMod.setToolTipText("Modificare");
             this.itemMod.setEnabled(false);
         }
-        if ((this.descriptor.getToolItemStyle() & ComboImage.ADD_DEL) == ComboImage.ADD_DEL) {
+        if ((this.descriptor.getToolItemStyle() & ComboImageString.ADD_DEL) == ComboImageString.ADD_DEL) {
             this.itemDel = new ToolItem(bar, SWT.NONE);
             this.itemDel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
             this.itemDel.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
@@ -189,7 +188,7 @@ public class ComboImage extends Composite implements Listener {
     }
 
     public void setImage(final Object element) {
-        Image result = AppImages.getImage(AppImages.IMAGE_NOT_FOUND_16X16, ComboImage.SIZE, ComboImage.SIZE);
+        Image result = AppImages.getImage(AppImages.IMAGE_NOT_FOUND_16X16, ComboImageString.SIZE, ComboImageString.SIZE);
         try {
             if ((getImageLabel() == null) || getImageLabel().isDisposed()) {
                 return;
@@ -202,17 +201,17 @@ public class ComboImage extends Composite implements Listener {
                 getImageLabel().setImage(result);
                 return;
             }
-            Method meth = ObjectUtil.getMethod(ComboImage.this.descriptor.getClazz(), ComboImage.this.descriptor.getImageMethodName());
+            Method meth = ObjectUtil.getMethod(ComboImageString.this.descriptor.getClazz(), ComboImageString.this.descriptor.getImageMethodName());
             result = (Image) meth.invoke(element, (Object[]) null);
             if ((result == null) || result.isDisposed()) {
-                result = AppImages.getImage(AppImages.IMAGE_NOT_FOUND_16X16, ComboImage.SIZE, ComboImage.SIZE);
+                result = AppImages.getImage(AppImages.IMAGE_NOT_FOUND_16X16, ComboImageString.SIZE, ComboImageString.SIZE);
                 if ((getImageLabel() != null) && !getImageLabel().isDisposed()) {
                     getImageLabel().setImage(result);
                     return;
                 }
             }
 
-            result = AppImages.getImage(result, ComboImage.SIZE, ComboImage.SIZE);
+            result = AppImages.getImage(result, ComboImageString.SIZE, ComboImageString.SIZE);
             if ((getImageLabel() != null) && !getImageLabel().isDisposed()) {
                 getImageLabel().setImage(result);
             }
@@ -238,14 +237,14 @@ public class ComboImage extends Composite implements Listener {
         }
     }
 
-    public final AbstractMongoDB getSelectedElement() {
+    public final AbstractDB getSelectedElement() {
         if (getCombo().getSelectionIndex() == -1) {
             return null;
         }
-        return (AbstractMongoDB) getViewer().getElementAt(getCombo().getSelectionIndex());
+        return (AbstractDB) getViewer().getElementAt(getCombo().getSelectionIndex());
     }
 
-    public final ObjectId getSelectedObjectId() {
+    public final String getSelectedObjectId() {
         return getSelectedElement() != null ? getSelectedElement().getId() : null;
     }
 
@@ -284,7 +283,7 @@ public class ComboImage extends Composite implements Listener {
 //            return;
 //        }
 //        for (int i = 0; i < getCombo().getItemCount(); i++) {
-//            AbstractMongoDB element = (AbstractMongoDB) getViewer().getElementAt(i);
+//            AbstractDB element = (AbstractDB) getViewer().getElementAt(i);
 //            if (element.getId() == id) {
 //                getCombo().select(i);
 //                if (element.getId() != this.lastId) {
@@ -295,29 +294,29 @@ public class ComboImage extends Composite implements Listener {
 //        }
 //    }
 
-    private AbstractMongoDB[] getElements() {
+    private AbstractDB[] getElements() {
         try {
             if ((this.descriptor == null) || (this.descriptor.getInput() == null)) {
-                return new AbstractMongoDB[0];
+                return new AbstractDB[0];
             }
             Object inputElement = this.descriptor.getInput();
-            AbstractMongoDB[] elements;
+            AbstractDB[] elements;
             if (inputElement instanceof Collection) {
-                elements = ((Collection<AbstractMongoDB>) inputElement).toArray(new AbstractMongoDB[((Collection<AbstractMongoDB>) inputElement).size()]);
-            } else if (inputElement instanceof AbstractMongoDB[]) {
-                elements = (AbstractMongoDB[]) inputElement;
+                elements = ((Collection<AbstractDB>) inputElement).toArray(new AbstractDB[((Collection<AbstractDB>) inputElement).size()]);
+            } else if (inputElement instanceof AbstractDB[]) {
+                elements = (AbstractDB[]) inputElement;
             } else if (inputElement instanceof Map<?, ?>) {
                 this.descriptor.setInput(((Map<?, ?>) inputElement).values());
                 return getElements();
             } else {
-                elements = new AbstractMongoDB[]{
-                        (AbstractMongoDB) inputElement};
+                elements = new AbstractDB[]{
+                        (AbstractDB) inputElement};
             }
             if (elements == null) {
-                elements = new AbstractMongoDB[0];
+                elements = new AbstractDB[0];
             }
             if (this.descriptor.isAddEmptyElement()) {
-                AbstractMongoDB[] temp = new AbstractMongoDB[elements.length + 1];
+                AbstractDB[] temp = new AbstractDB[elements.length + 1];
                 temp[0] = this.descriptor.getClazz().newInstance();
                 System.arraycopy(elements, 0, temp, 1, elements.length);
                 return temp;
@@ -325,15 +324,15 @@ public class ComboImage extends Composite implements Listener {
             return elements;
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
-            return new AbstractMongoDB[0];
+            return new AbstractDB[0];
         }
     }
 
     public final void setInput(final Object input) {
         this.descriptor.setInput(input);
         if (this.descriptor.getInput() instanceof String[]) {
-            this.descriptor.setInput(ComboImage.getBlankObjectsInput((String[]) this.descriptor.getInput()));
-            this.descriptor.setClazz(BlankMongoDbObject.class);
+            this.descriptor.setInput(ComboImageString.getBlankObjectsInput((String[]) this.descriptor.getInput()));
+            this.descriptor.setClazz(BlankDbObject.class);
         }
         if (input == null) {
             return;
@@ -413,12 +412,12 @@ public class ComboImage extends Composite implements Listener {
         return bdo;
     }
 
-    public final AbstractMongoDB[] getInput() {
-        return (AbstractMongoDB[]) this.descriptor.getInput();
+    public final AbstractDB[] getInput() {
+        return (AbstractDB[]) this.descriptor.getInput();
     }
 
     public static class CIDescriptor {
-        private Class<? extends AbstractMongoDB> clazz;
+        private Class<? extends AbstractDB> clazz;
         private String textMethodName;
         private String imageMethodName;
         private Object input;
@@ -426,11 +425,11 @@ public class ComboImage extends Composite implements Listener {
         private int toolItemStyle = SWT.NONE;
         private boolean addEmptyElement;
 
-        public final Class<? extends AbstractMongoDB> getClazz() {
+        public final Class<? extends AbstractDB> getClazz() {
             return this.clazz;
         }
 
-        public final void setClazz(final Class<? extends AbstractMongoDB> clazz) {
+        public final void setClazz(final Class<? extends AbstractDB> clazz) {
             this.clazz = clazz;
         }
 

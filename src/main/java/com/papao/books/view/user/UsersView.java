@@ -6,7 +6,7 @@ import com.papao.books.model.User;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCView;
 import com.papao.books.view.interfaces.*;
-import com.papao.books.view.providers.AdbContentProvider;
+import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.searcheable.AbstractSearchType;
 import com.papao.books.view.searcheable.BorgSearchSystem;
 import com.papao.books.view.util.WidgetCursorUtil;
@@ -382,7 +382,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             return;
         }
 
-        this.tableViewer.setContentProvider(new AdbContentProvider());
+        this.tableViewer.setContentProvider(new AdbMongoContentProvider());
         int[] dims = new int[]{250, 250};
         int[] aligns = new int[]{SWT.LEFT, SWT.LEFT};
         boolean[] visible = new boolean[]{true, true};

@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.*;
 import java.util.Collection;
 import java.util.Map;
 
-public class AdbContentProvider implements IStructuredContentProvider {
+public class AdbMongoContentProvider implements IStructuredContentProvider {
     /**
      * Array-ul de elemente de tip Class<? extends AbstractDB> care va fi folosit de {@link ColumnViewer} pentru afisare in tabela asociata.
      */
@@ -54,7 +54,7 @@ public class AdbContentProvider implements IStructuredContentProvider {
      * </p>
      * 
      * @param oldInput
-     *            indiferent de implementare, valoarea referita trebuie sa fie {@link AdbContentProvider#elements}
+     *            indiferent de implementare, valoarea referita trebuie sa fie {@link AdbMongoContentProvider#elements}
      * @param viewer
      *            viewerul asociat tabelei de pe care se face exportul.
      */
