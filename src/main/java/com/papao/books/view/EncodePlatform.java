@@ -85,6 +85,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ToolItem toolItemDel;
     private ToolItem toolItemRefresh;
     private ToolItem toolItemSearch;
+    private ToolItem toolItemGrupare;
     private Composite compRight;
     private UnifiedStyledLabelProvider leftTreeColumnProvider;
     private TreeViewer leftTreeViewer;
@@ -746,6 +747,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
+        this.toolItemGrupare = new ToolItem(barOps, SWT.CHECK);
+        this.toolItemGrupare.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
+        this.toolItemGrupare.setHotImage(AppImages.getImage16Focus(AppImages.IMG_HIDE));
+        this.toolItemGrupare.setToolTipText("Afisare sau ascundere grupare documente");
+        this.toolItemGrupare.setText("Grupare");
+        this.toolItemGrupare.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                handleLeftTreeDisplay();
+            }
+        });
+
         new ToolItem(barOps, SWT.SEPARATOR);
 
         this.toolItemRefresh = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
@@ -773,6 +786,19 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 modify(true);
             }
         });
+    }
+
+    public void handleLeftTreeDisplay() {
+        if (this.toolItemGrupare.getSelection()) {
+            verticalSash.setMaximizedControl(compRight);
+        } else {
+            verticalSash.setMaximizedControl(null);
+        }
+        if (this.toolItemGrupare.getSelection()) {
+            this.toolItemGrupare.setImage(AppImages.getImage16(AppImages.IMG_HIDE));
+        } else {
+            this.toolItemGrupare.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
+        }
     }
 
     private void createTopRightComponents(Composite parent) {
