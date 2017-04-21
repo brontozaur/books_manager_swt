@@ -1571,4 +1571,12 @@ public abstract class AbstractView extends Observable {
     public String getObservableProperty() {
         return "";
     }
+
+    protected void encodeUrl(Text widget) {
+        String initial = widget.getText();
+        String decoded = StringUtil.decodeUrl(initial);
+        if (!initial.equals(decoded)) {
+            widget.setText(decoded);
+        }
+    }
 }

@@ -10,7 +10,6 @@ import com.papao.books.view.custom.AnLunaZiComposite;
 import com.papao.books.view.custom.ImageSelectorComposite;
 import com.papao.books.view.custom.LinkedinComposite;
 import com.papao.books.view.providers.ContentProposalProvider;
-import com.papao.books.view.util.StringUtil;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
@@ -91,40 +90,40 @@ public class AutorView extends AbstractCSaveView {
         new Label(compLeft, SWT.NONE).setText("Website");
         this.textWebsite = new Text(compLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textWebsite);
-        this.textWebsite.addListener(SWT.KeyUp, new Listener() {
+        this.textWebsite.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                textWebsite.setText(StringUtil.decodeUrl(textWebsite.getText()));
+                encodeUrl((Text)event.widget);
             }
         });
 
         new Label(compLeft, SWT.NONE).setText("Facebook");
         this.textFacebook = new Text(compLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textFacebook);
-        this.textFacebook.addListener(SWT.KeyUp, new Listener() {
+        this.textFacebook.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                textFacebook.setText(StringUtil.decodeUrl(textFacebook.getText()));
+                encodeUrl((Text)event.widget);
             }
         });
 
         new Label(compLeft, SWT.NONE).setText("Twitter");
         this.textTwitter = new Text(compLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textTwitter);
-        this.textTwitter.addListener(SWT.KeyUp, new Listener() {
+        this.textTwitter.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                textTwitter.setText(StringUtil.decodeUrl(textTwitter.getText()));
+                encodeUrl((Text)event.widget);
             }
         });
 
         new Label(compLeft, SWT.NONE).setText("Wiki");
         this.textWiki = new Text(compLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textWiki);
-        this.textWiki.addListener(SWT.KeyUp, new Listener() {
+        this.textWiki.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                textWiki.setText(StringUtil.decodeUrl(textWiki.getText()));
+                encodeUrl((Text)event.widget);
             }
         });
 

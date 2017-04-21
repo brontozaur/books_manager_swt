@@ -29,7 +29,8 @@ public class ImageSelectorComposite extends Composite implements Observer {
     private String fileName;
     private final int WIDTH = 180;
     private final int HEIGHT = 200;
-    private String startUrl = "https://www.google.ro/search?q=&tbm=isch";
+    private String startUrl = "https://www.google.ro/search?tbm=isch&biw=" + Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
+            Display.getCurrent().getPrimaryMonitor().getBounds().height + "&q=&oq=";
 
     private static String SWT_FULL_IMAGE = "SWT_FULL_IMAGE";
     private static String OS_FILE = "OS_FILE";
@@ -266,7 +267,10 @@ public class ImageSelectorComposite extends Composite implements Observer {
             String valueChanged = ((AbstractView) o).getObservableProperty();
             if (valueChanged != null) {
                 String query = valueChanged.replace(" ", "+");
-                startUrl = "https://www.google.ro/search?q=" + query + "&tbm=isch";
+                startUrl = "https://www.google.ro/search?tbm=isch&biw=" +
+                        Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
+                        Display.getCurrent().getPrimaryMonitor().getBounds().height +
+                        "&q=" + query + "&oq=" + query;
             }
         }
     }

@@ -12,7 +12,6 @@ import com.papao.books.view.custom.LinkedinCompositeAutori;
 import com.papao.books.view.custom.PremiiLiterareComposite;
 import com.papao.books.view.providers.ContentProposalProvider;
 import com.papao.books.view.util.NumberUtil;
-import com.papao.books.view.util.StringUtil;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
@@ -420,7 +419,7 @@ public class CarteView extends AbstractCSaveView {
 
         label(comp, "Motto");
         this.textMotto = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(450, 75).applyTo(textMotto);
+        GridDataFactory.fillDefaults().grab(true, true).hint(400, 75).applyTo(textMotto);
         textMotto.addListener(SWT.Traverse, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -433,7 +432,7 @@ public class CarteView extends AbstractCSaveView {
 
         label(comp, "Descriere");
         this.textDescriere = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(450, 150).applyTo(textDescriere);
+        GridDataFactory.fillDefaults().grab(true, true).hint(400, 150).applyTo(textDescriere);
 
         textDescriere.addListener(SWT.Traverse, new Listener() {
             @Override
@@ -457,11 +456,11 @@ public class CarteView extends AbstractCSaveView {
 
         label(comp, "Goodreads");
         this.textGoodreadsUrl = new Text(comp, SWT.BORDER);
-        GridDataFactory.fillDefaults().span(7, 1).grab(true, false).applyTo(this.textGoodreadsUrl);
-        this.textGoodreadsUrl.addListener(SWT.KeyUp, new Listener() {
+        GridDataFactory.fillDefaults().span(7, 1).grab(true, false).hint(400, SWT.DEFAULT).applyTo(this.textGoodreadsUrl);
+        this.textGoodreadsUrl.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                textGoodreadsUrl.setText(StringUtil.decodeUrl(textGoodreadsUrl.getText()));
+                encodeUrl((Text)event.widget);
             }
         });
         textGoodreadsUrl.addListener(SWT.Traverse, new Listener() {
@@ -477,21 +476,21 @@ public class CarteView extends AbstractCSaveView {
 
         label(comp, "Wikipedia");
         this.textWikiUrl = new Text(comp, SWT.BORDER);
-        GridDataFactory.fillDefaults().span(7, 1).grab(true, false).applyTo(this.textWikiUrl);
-        this.textWikiUrl.addListener(SWT.KeyUp, new Listener() {
+        GridDataFactory.fillDefaults().span(7, 1).grab(true, false).hint(400, SWT.DEFAULT).applyTo(this.textWikiUrl);
+        this.textWikiUrl.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                textWikiUrl.setText(StringUtil.decodeUrl(textWikiUrl.getText()));
+                encodeUrl((Text)event.widget);
             }
         });
 
         label(comp, "Pagina web");
         this.textWebsite = new Text(comp, SWT.BORDER);
-        GridDataFactory.fillDefaults().span(7, 1).grab(true, false).applyTo(this.textWebsite);
-        this.textWebsite.addListener(SWT.KeyUp, new Listener() {
+        GridDataFactory.fillDefaults().span(7, 1).grab(true, false).hint(400, SWT.DEFAULT).applyTo(this.textWebsite);
+        this.textWebsite.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                textWebsite.setText(StringUtil.decodeUrl(textWebsite.getText()));
+                encodeUrl((Text)event.widget);
             }
         });
 
