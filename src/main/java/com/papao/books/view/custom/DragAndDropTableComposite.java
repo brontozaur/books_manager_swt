@@ -213,7 +213,7 @@ public class DragAndDropTableComposite extends Composite {
         result.add(dd);
         createTableItem(dd);
         if (permanentChanges) {
-            this.carte.getDocuments().add(controller.saveDocument(file, null, null, dd.getContentType()));
+            this.carte.getDocuments().add(controller.saveDocument(file, null, dd.getContentType()));
             controller.save(this.carte);
         } else {
             changed = true;

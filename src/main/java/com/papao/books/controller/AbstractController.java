@@ -97,18 +97,18 @@ public class AbstractController extends Observable {
     }
 
     public DocumentData saveDocument(File localFile, String urlPath) throws IOException {
-        return saveDocument(localFile, urlPath, null, null);
+        return saveDocument(localFile, urlPath, null);
     }
 
-    public DocumentData saveDocument(String localFile, String description, String contentType) throws IOException {
+    public DocumentData saveDocument(String localFile, String contentType) throws IOException {
         File file = new File(localFile);
         if (!file.exists() || !file.isFile()) {
             throw new IOException("File " + localFile + " is invalid!");
         }
-        return saveDocument(file, null, description, contentType);
+        return saveDocument(file, null, contentType);
     }
 
-    public DocumentData saveDocument(File localFile, String urlPath, String description, String contentType) throws IOException {
+    public DocumentData saveDocument(File localFile, String urlPath, String contentType) throws IOException {
         GridFSInputFile gfsFile = gridFS.createFile(localFile);
         gfsFile.setFilename(localFile.getName());
         if (contentType != null) {

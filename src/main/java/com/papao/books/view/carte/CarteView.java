@@ -718,7 +718,7 @@ public class CarteView extends AbstractCSaveView {
             List<DocumentData> docs = new ArrayList<>();
             for (DocumentData doc : documents) {
                 if (doc.getId() == null) {
-                    docs.add(carteController.saveDocument(doc.getFilePath(), doc.getDescription(), doc.getContentType()));
+                    docs.add(carteController.saveDocument(doc.getFilePath(), doc.getContentType()));
                 } else {
                     docs.add(doc);
                 }
