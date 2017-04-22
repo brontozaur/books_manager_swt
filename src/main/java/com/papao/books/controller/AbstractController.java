@@ -118,8 +118,8 @@ public class AbstractController extends Observable {
          */
     public IntValuePairsWrapper getDistinctValuesForReferenceCollection(String localCollection,
                                                                         String localField,
-                                                                        String refPropertyName,
                                                                         String referenceCollection,
+                                                                        String refPropertyName,
                                                                         String referenceField) {
         LookupOperation lookupAuthor = Aggregation.lookup(referenceCollection, localField, refPropertyName, "ref");
         UnwindOperation unwindRefs = Aggregation.unwind("ref", true);
