@@ -279,6 +279,22 @@ public class ImageSelectorComposite extends Composite implements Observer {
         return localPath;
     }
 
+    public void setImage(Image image, String imageName) {
+        this.fileName = imageName;
+        if (image == null) {
+            if (labelImage.getImage() != null && !labelImage.getImage().isDisposed()) {
+                labelImage.getImage().dispose();
+            }
+            labelImage.setImage(null);
+            labelImage.setData(SWT_FULL_IMAGE, null);
+            labelImage.setData(OS_FILE, null);
+            labelImage.setData(WEB_FILE, null);
+            labelImage.setData(null);
+            return;
+        }
+        populateFields(image);
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof AbstractView) {

@@ -188,4 +188,12 @@ public class LinkedinCompositeAutori extends Composite {
         }
         return searchTerm.toString();
     }
+
+    public void setAutori(List<ObjectId> ids) {
+        this.autori.clear();
+        if (ids != null && !ids.isEmpty()) {
+            this.autori = autorController.findByIds(ids);
+        }
+        populateFields();
+    }
 }

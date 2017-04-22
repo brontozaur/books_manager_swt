@@ -170,6 +170,7 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
                     if (allowImageSelection) {
                         enableItemSave();
                     }
+                    browser.setFocus();
                 }
             });
             this.browser.addStatusTextListener(new StatusTextListener() {

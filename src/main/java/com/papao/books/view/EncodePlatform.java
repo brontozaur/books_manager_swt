@@ -1,5 +1,6 @@
 package com.papao.books.view;
 
+import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
@@ -8,8 +9,7 @@ import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
 import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
-import com.papao.books.view.custom.DragAndDropTableComposite;
-import com.papao.books.view.custom.PaginationComposite;
+import com.papao.books.view.custom.*;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
@@ -34,13 +34,13 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -91,14 +91,17 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private UnifiedStyledLabelProvider leftTreeColumnProvider;
     private TreeViewer leftTreeViewer;
 
-    private Canvas labelBackCover;
-    private Canvas labelFrontCover;
-    private Shell viewerShell;
     private PaginationComposite paginationComposite;
     private BookSearchType searchType = BookSearchType.AUTOR;
     private BookController bookController;
     private Combo comboModAfisare;
     private DragAndDropTableComposite dragAndDropTableComposite;
+    private SashForm rightVerticalSash;
+    private Composite compRightDetails;
+    private CLabel rightLabelTitle;
+    private ImageSelectorComposite rightFrontCoverImageComposite;
+    private LinkedInUrlsComposite rightWebResourcesComposite;
+    private LinkedinCompositeAutoriLinks rightAutoriComposite;
 
     @Autowired
     public EncodePlatform(UserController userController,
@@ -205,7 +208,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         createBarOps(compRight);
 
-        rightSash = new SashForm(compRight, SWT.SMOOTH | SWT.HORIZONTAL);
+        rightVerticalSash = new SashForm(compRight, SWT.HORIZONTAL | SWT.SMOOTH);
+        rightVerticalSash.SASH_WIDTH = 4;
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(rightVerticalSash);
+
+        rightSash = new SashForm(rightVerticalSash, SWT.SMOOTH | SWT.HORIZONTAL);
         rightSash.SASH_WIDTH = 4;
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightSash);
 
@@ -214,14 +221,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         searchSystem = new BorgSearchSystem(rightSash);
 
-
         rightInnerSash = new SashForm(rightSash, SWT.VERTICAL | SWT.SMOOTH);
         rightInnerSash.SASH_WIDTH = 4;
         rightInnerSash.setLayout(new GridLayout(2, false));
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightInnerSash);
-
-        rightSash.setWeights(new int[]{2, 8});
-        rightSash.setMaximizedControl(rightInnerSash);
 
         Composite secondaryComRight = new Composite(rightInnerSash, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(secondaryComRight);
@@ -300,6 +303,17 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
 
+        compRightDetails = new Composite(rightVerticalSash, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(5, 5, 0, 0).applyTo(compRightDetails);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(compRightDetails);
+        createCompRightDetailsComponents(compRightDetails);
+
+        rightVerticalSash.setWeights(new int[]{8, 3});
+        rightVerticalSash.setMaximizedControl(rightSash);
+
+        rightSash.setWeights(new int[]{3, 9});
+        rightSash.setMaximizedControl(rightInnerSash);
+
         WidgetCursorUtil.addHandCursorListener(this.tableViewer.getTable());
         SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
 
@@ -307,6 +321,25 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         fullRefresh(true);
         getContainer().layout();
+    }
+
+    private void createCompRightDetailsComponents(Composite parent) {
+        rightLabelTitle = new CLabel(parent, SWT.BORDER);
+        rightLabelTitle.setFont(FontUtil.TAHOMA10_NORMAL);
+        GridLayoutFactory.fillDefaults().numColumns(1).margins(1, 1).applyTo(rightLabelTitle);
+        GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 25).span(2, 1).applyTo(rightLabelTitle);
+        rightLabelTitle.setBackground(ColorUtil.COLOR_ALBASTRU_INCHIS);
+        rightLabelTitle.setForeground(ColorUtil.COLOR_WHITE);
+
+        rightFrontCoverImageComposite = new ImageSelectorComposite(parent, null, null, bookController.getAppImagesFolder());
+        ((GridData) rightFrontCoverImageComposite.getLayoutData()).horizontalAlignment = SWT.CENTER;
+        ((GridData) rightFrontCoverImageComposite.getLayoutData()).horizontalSpan = 2;
+
+        new Label(parent, SWT.NONE).setText("Web:");
+        rightWebResourcesComposite = new LinkedInUrlsComposite(parent, null);
+
+        new Label(parent, SWT.NONE).setText("Autori");
+        rightAutoriComposite = new LinkedinCompositeAutoriLinks(parent, null, autorController);
     }
 
     private Composite createTabDocuments(CTabFolder bottomInnerTabFolderRight) {
@@ -320,30 +353,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return comp;
     }
 
-    private void displayImage(Event event) {
-        if (event.widget.getData() instanceof Image) {
-            Image image = (Image) event.widget.getData();
-            if (!image.isDisposed()) {
-                if (viewerShell != null && !viewerShell.isDisposed()) {
-                    viewerShell.close();
-                    viewerShell = null;
-                }
-                viewerShell = new Shell(getShell(), SWT.NO_TRIM);
-                viewerShell.setLayout(new FillLayout());
-                viewerShell.setSize(image.getBounds().width, image.getBounds().height);
-                viewerShell.setBackgroundImage(image);
-                WidgetCompositeUtil.centerInDisplay(viewerShell);
-                viewerShell.addListener(SWT.MouseExit, new Listener() {
-                    @Override
-                    public void handleEvent(Event event) {
-                        viewerShell.close();
-                    }
-                });
-                viewerShell.open();
-            }
-        }
-    }
-
     private void displayBookData() {
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return;
@@ -353,44 +362,28 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             if (carte == null) {
                 return;
             }
+            rightVerticalSash.setMaximizedControl(null);
             dragAndDropTableComposite.setCarte(carte);
 
-//            linkGoodreadsUrl.setText("<a>" + carte.getGoodreadsUrl() + "</a>");
-//            linkGoodreadsUrl.setData(carte.getGoodreadsUrl());
-
-//            if (labelFrontCover.getBackgroundImage() != null && !labelFrontCover.getBackgroundImage().isDisposed()) {
-//                labelFrontCover.getBackgroundImage().dispose();
-//                ((Image) labelFrontCover.getData()).dispose();
-//            }
-//            labelFrontCover.setBackgroundImage(null);
-//
-//            if (labelBackCover.getBackgroundImage() != null && !labelBackCover.getBackgroundImage().isDisposed()) {
-//                labelBackCover.getBackgroundImage().dispose();
-//                ((Image) labelBackCover.getData()).dispose();
-//            }
-//            labelBackCover.setBackgroundImage(null);
-//
-//            if (carte.getCopertaFata() != null) {
-//                GridFSDBFile frontCover = gridFS.find(carte.getCopertaFata().getId());
-//                if (frontCover != null) {
-//                    Image fullImage = new Image(labelFrontCover.getDisplay(), frontCover.getInputStream());
-//                    labelFrontCover.setData(fullImage);
-//                    Image resized = AppImages.getImage(fullImage, 128, 128);
-//                    labelFrontCover.setBackgroundImage(resized);
-//                }
-//            }
-//
-//            if (carte.getCopertaSpate() != null) {
-//                GridFSDBFile backCover = gridFS.find(carte.getCopertaSpate().getId());
-//                if (backCover != null) {
-//                    Image fullImage = new Image(labelBackCover.getDisplay(), backCover.getInputStream());
-//                    labelBackCover.setData(fullImage);
-//                    Image resized = AppImages.getImage(fullImage, 128, 128);
-//                    labelBackCover.setBackgroundImage(resized);
-//                }
-//            }
-//
+            populateRightImageDetails(carte);
         }
+    }
+
+    private void populateRightImageDetails(Carte carte) {
+        rightLabelTitle.setText(carte.getTitlu());
+
+        Image frontCover = null;
+        String frontCoverImageName = null;
+        if (carte.getCopertaFata() != null && carte.getCopertaFata().getId() != null) {
+            GridFSDBFile dbFile = bookController.getDocumentData(carte.getCopertaFata().getId());
+            if (dbFile != null) {
+                frontCover = new Image(Display.getDefault(), dbFile.getInputStream());
+                frontCoverImageName = dbFile.getFilename();
+            }
+        }
+        rightFrontCoverImageComposite.setImage(frontCover, frontCoverImageName);
+        rightWebResourcesComposite.setCarte(carte);
+        rightAutoriComposite.setAutori(carte.getIdAutori());
     }
 
     protected final void enableOps() {
