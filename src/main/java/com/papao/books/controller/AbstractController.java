@@ -116,16 +116,16 @@ public class AbstractController extends Observable {
        ])
 
          */
-    public IntValuePairsWrapper getDistinctValuesForReferenceCollection(String mainCollectionName,
-                                                                        String mainPropertyName,
-                                                                        String referenceCollectionName,
+    public IntValuePairsWrapper getDistinctValuesForReferenceCollection(String localCollection,
+                                                                        String localField,
                                                                         String refPropertyName,
-                                                                        String refUIProperty) {
-        LookupOperation lookupAuthor = Aggregation.lookup(referenceCollectionName, mainPropertyName, refPropertyName, "ref");
+                                                                        String referenceCollection,
+                                                                        String referenceField) {
+        LookupOperation lookupAuthor = Aggregation.lookup(referenceCollection, localField, refPropertyName, "ref");
         UnwindOperation unwindRefs = Aggregation.unwind("ref", true);
         GroupOperation groupByAuthor = Aggregation.group("ref").count().as("count");
         Aggregation aggregation = Aggregation.newAggregation(lookupAuthor, unwindRefs, groupByAuthor);
-        List<BasicDBObject> results = mongoTemplate.aggregate(aggregation, mainCollectionName, BasicDBObject.class).getMappedResults();
+        List<BasicDBObject> results = mongoTemplate.aggregate(aggregation, localCollection, BasicDBObject.class).getMappedResults();
 
         List<IntValuePair> occurrences = new ArrayList<>();
 
@@ -137,7 +137,7 @@ public class AbstractController extends Observable {
                 emptyOrNullCount += count;
                 continue;
             }
-            String itemName = (String) distinctValue.get(refUIProperty);
+            String itemName = (String) distinctValue.get(referenceField);
             if (StringUtils.isNotEmpty(itemName)) {
                 occurrences.add(new IntValuePair(itemName, objectId.toString(), count));
             } else {

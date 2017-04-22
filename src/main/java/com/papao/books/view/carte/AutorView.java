@@ -18,6 +18,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
@@ -85,7 +86,8 @@ public class AutorView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelGen);
         this.genLiterarComposite = new LinkedinComposite(compLeft,
                 GenLiterar.class, autor.getGenLiterar());
-        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(this.genLiterarComposite);
+        ((GridData)this.genLiterarComposite.getLayoutData()).horizontalSpan = 3;
+        ((GridData)this.genLiterarComposite.getLayoutData()).widthHint = 350;
 
         new Label(compLeft, SWT.NONE).setText("Website");
         this.textWebsite = new Text(compLeft, SWT.BORDER);
