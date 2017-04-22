@@ -83,7 +83,7 @@ public class PremiiLiterareComposite extends Composite {
             }
         });
 
-        table = new Table(this, SWT.BORDER);
+        table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(table);

@@ -147,7 +147,7 @@ public class AutorView extends AbstractCSaveView {
         Image mainImage = null;
         String imageName = null;
         if (autor.getMainImage() != null) {
-            GridFSDBFile image = controller.getImageData(autor.getMainImage().getId());
+            GridFSDBFile image = controller.getDocumentData(autor.getMainImage().getId());
             if (image != null) {
                 imageName = image.getFilename();
                 mainImage = new Image(Display.getDefault(), image.getInputStream());

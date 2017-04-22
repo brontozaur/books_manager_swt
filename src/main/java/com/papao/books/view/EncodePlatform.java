@@ -8,6 +8,7 @@ import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
 import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
+import com.papao.books.view.custom.DragAndDropTableComposite;
 import com.papao.books.view.custom.PaginationComposite;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbMongoContentProvider;
@@ -97,6 +98,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private BookSearchType searchType = BookSearchType.AUTOR;
     private BookController bookController;
     private Combo comboModAfisare;
+    private DragAndDropTableComposite dragAndDropTableComposite;
 
     @Autowired
     public EncodePlatform(UserController userController,
@@ -310,8 +312,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private Composite createTabDocuments(CTabFolder bottomInnerTabFolderRight) {
         final Composite comp = new Composite(bottomInnerTabFolderRight, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comp);
-        GridDataFactory.fillDefaults().grab(false, false).applyTo(comp);
-        new Label(comp, SWT.NONE).setText("Documents");
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
+
+        dragAndDropTableComposite = new DragAndDropTableComposite(comp, bookController, new Carte(), true);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(dragAndDropTableComposite);
+
         return comp;
     }
 
@@ -345,6 +350,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         if (this.tableViewer.getTable().getSelectionCount() != 0) {
             Carte carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
+            dragAndDropTableComposite.setCarte(carte);
 
 //            linkGoodreadsUrl.setText("<a>" + carte.getGoodreadsUrl() + "</a>");
 //            linkGoodreadsUrl.setData(carte.getGoodreadsUrl());
@@ -1528,6 +1534,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             tableViewer.setInput(page.getContent());
             if (tableViewer.getTable().getItemCount() > 0) {
                 tableViewer.getTable().setSelection(tableViewer.getTable().getItemCount() - 1);
+                displayBookData();
             }
         }
     }

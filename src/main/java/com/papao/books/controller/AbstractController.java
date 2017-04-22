@@ -22,9 +22,10 @@ import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +45,9 @@ public class AbstractController extends Observable {
     @Value("${app.images.folder}")
     private String appImagesFolder;
 
+    @Value("${app.out.folder}")
+    private String appOutFolder;
+
     public AbstractController(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
         this.gridFS = new GridFS(mongoTemplate.getDb());
@@ -58,23 +62,31 @@ public class AbstractController extends Observable {
     }
 
     public String getAppImagesFolder() {
-        File imageFolder = new File(appImagesFolder);
+        File imageFolder = new File(System.getProperties().getProperty("user.dir") + appImagesFolder);
         if (!imageFolder.exists() || !imageFolder.isDirectory()) {
             imageFolder.mkdirs();
         }
-        return appImagesFolder;
+        return imageFolder.getAbsolutePath();
+    }
+
+    public String getAppOutFolder() {
+        File outFolder = new File(System.getProperties().getProperty("user.dir") + appOutFolder);
+        if (!outFolder.exists() || !outFolder.isDirectory()) {
+            outFolder.mkdirs();
+        }
+        return outFolder.getAbsolutePath();
     }
 
     public List<String> getDistinctFieldAsContentProposal(String collectionName, String databaseField) {
         return mongoTemplate.getCollection(collectionName).distinct(databaseField);
     }
 
-    public GridFSDBFile getImageData(ObjectId imageId) {
-        return gridFS.findOne(imageId);
+    public GridFSDBFile getDocumentData(ObjectId documentId) {
+        return gridFS.findOne(documentId);
     }
 
-    public void removeImageData(ObjectId imageId) {
-        gridFS.remove(imageId);
+    public void removeDocument(ObjectId documentId) {
+        gridFS.remove(documentId);
     }
 
     public DocumentData saveDocument(ImageSelectorComposite selectorComposite) throws IOException {
@@ -85,18 +97,37 @@ public class AbstractController extends Observable {
     }
 
     public DocumentData saveDocument(File localFile, String urlPath) throws IOException {
+        return saveDocument(localFile, urlPath, null, null);
+    }
+
+    public DocumentData saveDocument(String localFile, String description, String contentType) throws IOException {
+        File file = new File(localFile);
+        if (!file.exists() || !file.isFile()) {
+            throw new IOException("File " + localFile + " is invalid!");
+        }
+        return saveDocument(file, null, description, contentType);
+    }
+
+    public DocumentData saveDocument(File localFile, String urlPath, String description, String contentType) throws IOException {
         GridFSInputFile gfsFile = gridFS.createFile(localFile);
         gfsFile.setFilename(localFile.getName());
-        gfsFile.setContentType(new MimetypesFileTypeMap().getContentType(localFile));
+        if (contentType != null) {
+            gfsFile.setContentType(contentType);
+        }
+        gfsFile.setContentType(Files.probeContentType(Paths.get(localFile.getAbsolutePath())));
         DBObject meta = new BasicDBObject();
         meta.put("localFilePath", localFile.getAbsolutePath());
         meta.put("urlFilePath", urlPath);
         gfsFile.setMetaData(meta);
         gfsFile.save();
-        GridFSDBFile gridFSDBFile = getImageData((ObjectId) gfsFile.getId());
+        GridFSDBFile gridFSDBFile = getDocumentData((ObjectId) gfsFile.getId());
         DocumentData documentData = new DocumentData();
         documentData.setId((ObjectId) gridFSDBFile.getId());
         documentData.setFileName(gridFSDBFile.getFilename());
+        documentData.setFilePath(localFile.getAbsolutePath());
+        documentData.setContentType(gridFSDBFile.getContentType());
+        documentData.setUploadDate(gridFSDBFile.getUploadDate());
+        documentData.setLength(gridFSDBFile.getLength());
         return documentData;
     }
 

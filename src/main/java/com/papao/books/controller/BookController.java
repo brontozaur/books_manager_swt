@@ -69,6 +69,10 @@ public class BookController extends AbstractController {
         this.repository.delete(carte);
     }
 
+    public CarteRepository getRepository() {
+        return this.repository;
+    }
+
     public void requestSearch(BookSearchType searchType, String value, Pageable pageable, boolean all) {
         this.searchType = searchType;
         this.value = value;
