@@ -63,9 +63,9 @@ public class AutorView extends AbstractCSaveView {
         GridLayoutFactory.fillDefaults().numColumns(4).applyTo(compLeft);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(compLeft);
 
-        new Label(compLeft, SWT.NONE).setText("Nume");
+        label(compLeft, "Nume");
         this.textNume = new Text(compLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).span(3,1).minSize(350, SWT.DEFAULT).applyTo(this.textNume);
+        GridDataFactory.fillDefaults().grab(true, false).span(3, 1).minSize(350, SWT.DEFAULT).applyTo(this.textNume);
         textNume.addListener(SWT.KeyUp, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -73,76 +73,72 @@ public class AutorView extends AbstractCSaveView {
             }
         });
 
-        new Label(compLeft, SWT.NONE).setText("Data nasterii");
+        label(compLeft, "Data nasterii", true);
         this.dataNasteriiComposite = new AnLunaZiComposite(compLeft, autor.getDataNasterii(true));
-        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(this.dataNasteriiComposite);
+        GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(this.dataNasteriiComposite);
 
-        new Label(compLeft, SWT.NONE).setText("Data mortii");
+        label(compLeft, "Data mortii", true);
         this.dataMortiiComposite = new AnLunaZiComposite(compLeft, autor.getDataMortii(true));
-        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(this.dataMortiiComposite);
+        GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(this.dataMortiiComposite);
 
-        Label labelGen = new Label(compLeft, SWT.NONE);
-        labelGen.setText("Gen literar");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelGen);
+        label(compLeft, "Gen literar");
         this.genLiterarComposite = new LinkedinComposite(compLeft,
                 GenLiterar.class, autor.getGenLiterar());
-        ((GridData)this.genLiterarComposite.getLayoutData()).horizontalSpan = 3;
-        ((GridData)this.genLiterarComposite.getLayoutData()).widthHint = 350;
+        ((GridData) this.genLiterarComposite.getLayoutData()).horizontalSpan = 3;
+        ((GridData) this.genLiterarComposite.getLayoutData()).widthHint = 350;
 
-        new Label(compLeft, SWT.NONE).setText("Website");
+        label(compLeft, "Website");
         this.textWebsite = new Text(compLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textWebsite);
+        GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(textWebsite);
         this.textWebsite.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                encodeUrl((Text)event.widget);
+                encodeUrl((Text) event.widget);
             }
         });
 
-        new Label(compLeft, SWT.NONE).setText("Facebook");
+        label(compLeft, "Facebook");
         this.textFacebook = new Text(compLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textFacebook);
+        GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(textFacebook);
         this.textFacebook.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                encodeUrl((Text)event.widget);
+                encodeUrl((Text) event.widget);
             }
         });
 
-        new Label(compLeft, SWT.NONE).setText("Twitter");
+        label(compLeft, "Twitter");
         this.textTwitter = new Text(compLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textTwitter);
+        GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(textTwitter);
         this.textTwitter.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                encodeUrl((Text)event.widget);
+                encodeUrl((Text) event.widget);
             }
         });
 
-        new Label(compLeft, SWT.NONE).setText("Wiki");
+        label(compLeft, "Wiki");
         this.textWiki = new Text(compLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).span(3,1).applyTo(textWiki);
+        GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(textWiki);
         this.textWiki.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                encodeUrl((Text)event.widget);
+                encodeUrl((Text) event.widget);
             }
         });
 
-        new Label(compLeft, SWT.NONE).setText("Loc nastere");
+        label(compLeft, "Loc nastere");
         this.textLocNastere = new Text(compLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textLocNastere);
 
-        new Label(compLeft, SWT.NONE).setText("Tara");
+        label(compLeft, "Tara");
         this.textTara = new Text(compLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textTara);
         ContentProposalProvider.addContentProposal(textTara, controller.getDistinctFieldAsContentProposal(controller.getAutoriCollectionName(), "tara"));
 
-        Label labelDescriere = new Label(compLeft, SWT.NONE);
-        labelDescriere.setText("Descriere");
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(labelDescriere);
+        label(compLeft, "Descriere");
         this.textDescriere = new Text(compLeft, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(300, 100).span(3,1).applyTo(textDescriere);
+        GridDataFactory.fillDefaults().grab(true, true).hint(300, 100).span(3, 1).applyTo(textDescriere);
 
         Composite compImage = new Composite(getContainer(), SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(compImage);
@@ -162,6 +158,16 @@ public class AutorView extends AbstractCSaveView {
         this.addObserver(mainImageComposite);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
+    }
+
+    private void label(Composite parent, String labelName) {
+        label(parent, labelName, false);
+    }
+
+    private void label(Composite parent, String labelName, boolean verticallyAlignCenter) {
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(labelName);
+        GridDataFactory.fillDefaults().align(SWT.END, verticallyAlignCenter ? SWT.CENTER : SWT.BEGINNING).applyTo(label);
     }
 
     @Override
