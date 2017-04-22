@@ -7,6 +7,7 @@ import com.papao.books.model.DocumentData;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.util.BorgDateUtil;
 import com.papao.books.view.util.ColorUtil;
+import com.papao.books.view.util.FileTypeDetector;
 import com.papao.books.view.util.ObjectUtil;
 import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -23,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StreamUtils;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +50,7 @@ public class DragAndDropTableComposite extends Composite {
         this.permanentChanges = permanentChanges;
 
         GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(this);
-        GridDataFactory.fillDefaults().grab(false, false).hint(300, 150).applyTo(this);
+        GridDataFactory.fillDefaults().grab(true, true).hint(300, 150).applyTo(this);
 
         addComponents();
         populateFields();
@@ -206,7 +206,7 @@ public class DragAndDropTableComposite extends Composite {
         DocumentData dd = new DocumentData();
         dd.setFilePath(file.getPath());
         dd.setFileName(file.getName());
-        dd.setContentType(Files.probeContentType(Paths.get(file.getPath())));
+        dd.setContentType(new FileTypeDetector().probeContentType(Paths.get(file.getPath())));
         dd.setId(null);
         dd.setLength(file.length());
         dd.setUploadDate(new Date());

@@ -350,6 +350,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         if (this.tableViewer.getTable().getSelectionCount() != 0) {
             Carte carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
+            if (carte == null) {
+                return;
+            }
             dragAndDropTableComposite.setCarte(carte);
 
 //            linkGoodreadsUrl.setText("<a>" + carte.getGoodreadsUrl() + "</a>");
@@ -1534,7 +1537,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             tableViewer.setInput(page.getContent());
             if (tableViewer.getTable().getItemCount() > 0) {
                 tableViewer.getTable().setSelection(tableViewer.getTable().getItemCount() - 1);
-                displayBookData();
+                tableViewer.getTable().notifyListeners(SWT.Selection, new Event());
             }
         }
     }

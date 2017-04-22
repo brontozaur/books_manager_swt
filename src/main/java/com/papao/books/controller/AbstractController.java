@@ -11,6 +11,7 @@ import com.papao.books.model.DocumentData;
 import com.papao.books.view.custom.ImageSelectorComposite;
 import com.papao.books.view.providers.tree.IntValuePair;
 import com.papao.books.view.providers.tree.IntValuePairsWrapper;
+import com.papao.books.view.util.FileTypeDetector;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,6 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,7 +114,8 @@ public class AbstractController extends Observable {
         if (contentType != null) {
             gfsFile.setContentType(contentType);
         }
-        gfsFile.setContentType(Files.probeContentType(Paths.get(localFile.getAbsolutePath())));
+//        gfsFile.setContentType(Files.probeContentType(Paths.get(localFile.getAbsolutePath())));
+        gfsFile.setContentType(new FileTypeDetector().probeContentType(Paths.get(localFile.getAbsolutePath())));
         DBObject meta = new BasicDBObject();
         meta.put("localFilePath", localFile.getAbsolutePath());
         meta.put("urlFilePath", urlPath);
