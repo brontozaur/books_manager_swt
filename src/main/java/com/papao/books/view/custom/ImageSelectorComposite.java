@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
@@ -51,6 +53,22 @@ public class ImageSelectorComposite extends Composite implements Observer {
             @Override
             public void handleEvent(Event event) {
                 displayImage(event);
+            }
+        });
+        DropTarget dt = new DropTarget(labelImage, DND.DROP_DEFAULT | DND.DROP_MOVE);
+        dt.setTransfer(new Transfer[]{ImageTransfer.getInstance(), FileTransfer.getInstance()});
+        dt.addDropListener(new DropTargetAdapter() {
+            @Override
+            public final void drop(final DropTargetEvent event) {
+                if (event.data instanceof String[] && ((String[]) event.data).length > 0) {
+                    try {
+                        removeImage();
+                        loadLocalImage(((String[]) event.data)[0]);
+                    } catch (IOException | SWTException e) {
+                        logger.error(e.getMessage(), e);
+                        SWTeXtension.displayMessageE("Imaginea nu a putut fi incarcata!", e);
+                    }
+                }
             }
         });
 
@@ -211,7 +229,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
         }
     }
 
-    private void loadLocalImage(String localPath) throws IOException {
+    private void loadLocalImage(String localPath) throws IOException, SWTException {
         if (StringUtils.isEmpty(localPath)) {
             return;
         }
