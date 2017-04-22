@@ -87,7 +87,8 @@ public class DocumentData implements Serializable {
 
         DocumentData that = (DocumentData) o;
 
-        return id.equals(that.id);
+        return id != null && id.equals(that.id);
+
     }
 
     @Override

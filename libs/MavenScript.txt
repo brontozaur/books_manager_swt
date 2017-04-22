@@ -16,6 +16,8 @@ mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.wi
 mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.pgroup_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=pgroup -Dversion=1.0 -Dpackaging=jar
 mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.tablecombo_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=tablecombo -Dversion=1.0 -Dpackaging=jar
 
+mvn install:install-file -Dfile=tika-core-1.14.jar -DgroupId=org.apache.tika -DartifactId=tika-core -Dversion=1.14 -Dpackaging=jar
+
 pom.xml
 ------------
 
