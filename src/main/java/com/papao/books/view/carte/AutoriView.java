@@ -9,6 +9,7 @@ import com.papao.books.view.interfaces.*;
 import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.searcheable.AbstractSearchType;
 import com.papao.books.view.searcheable.BorgSearchSystem;
+import com.papao.books.view.util.StringUtil;
 import com.papao.books.view.util.WidgetCursorUtil;
 import com.papao.books.view.util.WidgetTableUtil;
 import com.papao.books.view.util.sorter.AbstractColumnViewerSorter;
@@ -397,7 +398,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Autor a = (Autor) e1;
                             Autor b = (Autor) e2;
-                            return a.getNumeComplet().compareTo(b.getNumeComplet());
+                            return StringUtil.romanianCompare(a.getNumeComplet(), b.getNumeComplet());
                         }
 
                     };

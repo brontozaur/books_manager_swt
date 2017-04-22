@@ -25,7 +25,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Observable;
 
 public class AbstractController extends Observable {
 
@@ -132,7 +135,7 @@ public class AbstractController extends Observable {
         int emptyOrNullCount = 0;
         for (DBObject distinctValue : results) {
             Object objectId = distinctValue.get("_id");
-            int count = (int)distinctValue.get("count");
+            int count = (int) distinctValue.get("count");
             if (objectId == null) {
                 emptyOrNullCount += count;
                 continue;
@@ -149,12 +152,6 @@ public class AbstractController extends Observable {
         if (emptyOrNullCount > 0) {
             occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
-        Collections.sort(occurrences, new Comparator<IntValuePair>() {
-            @Override
-            public int compare(IntValuePair a, IntValuePair b) {
-                return a.getValue().compareTo(b.getValue());
-            }
-        });
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
     }
 
@@ -170,7 +167,7 @@ public class AbstractController extends Observable {
 
     //if only the first letter is needed we need this
     db.collectionname.aggregate({
-        $group: { _id: { $substr: ['$propName', 0, 1] }, count: { $sum: 1 } }
+        $group: { _id: { $substrCP: ['$propName', 0, 1] }, count: { $sum: 1 } }
     })
 
      */
@@ -179,11 +176,13 @@ public class AbstractController extends Observable {
 
         /*
             http://stackoverflow.com/questions/21452674/mongos-distinct-value-count-for-two-fields-in-java
+            $substr causes romanian characters error, use $substrCP instead. See
+             http://stackoverflow.com/questions/43556024/mongodb-error-substrbytes-invalid-range-ending-index-is-in-the-middle-of-a-ut/43556249#43556249
         */
 
         DBObject project = null;
         if (useFirstLetter) {
-            project = new BasicDBObject("$project", new BasicDBObject(propName, new BasicDBObject("$toUpper", new BasicDBObject("$substr", Arrays.asList("$" + propName, 0, 1)))));
+            project = new BasicDBObject("$project", new BasicDBObject(propName, new BasicDBObject("$toUpper", new BasicDBObject("$substrCP", Arrays.asList("$" + propName, 0, 1)))));
         }
         DBObject groupFields = new BasicDBObject("_id", "$" + propName);
         groupFields.put("count", new BasicDBObject("$sum", 1));
@@ -212,12 +211,6 @@ public class AbstractController extends Observable {
         if (emptyOrNullCount > 0) {
             occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
-        Collections.sort(occurrences, new Comparator<IntValuePair>() {
-            @Override
-            public int compare(IntValuePair a, IntValuePair b) {
-                return a.getValue().compareTo(b.getValue());
-            }
-        });
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
     }
 
@@ -277,12 +270,6 @@ public class AbstractController extends Observable {
         if (emptyOrNullCount > 0) {
             occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
-        Collections.sort(occurrences, new Comparator<IntValuePair>() {
-            @Override
-            public int compare(IntValuePair a, IntValuePair b) {
-                return a.getValue().compareTo(b.getValue());
-            }
-        });
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
     }
 }

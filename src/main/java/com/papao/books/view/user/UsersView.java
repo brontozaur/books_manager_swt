@@ -9,6 +9,7 @@ import com.papao.books.view.interfaces.*;
 import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.searcheable.AbstractSearchType;
 import com.papao.books.view.searcheable.BorgSearchSystem;
+import com.papao.books.view.util.StringUtil;
 import com.papao.books.view.util.WidgetCursorUtil;
 import com.papao.books.view.util.WidgetTableUtil;
 import com.papao.books.view.util.sorter.AbstractColumnViewerSorter;
@@ -407,7 +408,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             User a = (User) e1;
                             User b = (User) e2;
-                            return a.getNume().compareTo(b.getNume());
+                            return StringUtil.romanianCompare(a.getNume(), b.getNume());
                         }
 
                     };
@@ -427,7 +428,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             User a = (User) e1;
                             User b = (User) e2;
-                            return a.getPrenume().compareTo(b.getPrenume());
+                            return StringUtil.romanianCompare(a.getPrenume(), b.getPrenume());
                         }
 
                     };

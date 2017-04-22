@@ -465,7 +465,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 } else if (b == null) {
                     return 1;
                 } else {
-                    return a.getName().compareTo(b.getName());
+                    return StringUtil.romanianCompare(a.getName(), b.getName());
                 }
             }
 
@@ -895,7 +895,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return bookController.getBookAuthorNames(a).compareTo(bookController.getBookAuthorNames(b));
+                            return StringUtil.romanianCompare(bookController.getBookAuthorNames(a), bookController.getBookAuthorNames(b));
                         }
 
                     };
@@ -915,7 +915,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return a.getTitlu().compareTo(b.getTitlu());
+                            return StringUtil.romanianCompare(a.getTitlu(), b.getTitlu());
                         }
 
                     };
@@ -935,7 +935,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return a.getEditura().compareTo(b.getEditura());
+                            return StringUtil.romanianCompare(a.getEditura(), b.getEditura());
                         }
 
                     };

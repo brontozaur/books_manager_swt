@@ -1,11 +1,13 @@
 package com.papao.books.view.util;
 
+import com.papao.books.view.auth.EncodeLive;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.text.Collator;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -15,7 +17,13 @@ public final class StringUtil {
 
     private static Logger logger = Logger.getLogger(StringUtil.class);
 
+    private static final Collator ROMANIAN_COLLATOR = Collator.getInstance(EncodeLive.ROMANIAN_LOCALE);
+
     private StringUtil() {
+    }
+
+    public static int romanianCompare(String a, String b) {
+        return ROMANIAN_COLLATOR.compare(a, b);
     }
 
     public static String capitalizeCharAtIdx(final String str, final int idx) {
