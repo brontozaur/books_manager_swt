@@ -714,6 +714,9 @@ public class CarteView extends AbstractCSaveView {
         carte.setTags(compositeTags.getValoriIntroduse());
 
         if (dragAndDropTableComposite.isChanged()) {
+            for (DocumentData doc: dragAndDropTableComposite.getDeleted()) {
+                carteController.removeDocument(doc.getId());
+            }
             List<DocumentData> documents = dragAndDropTableComposite.getResult();
             List<DocumentData> docs = new ArrayList<>();
             for (DocumentData doc : documents) {

@@ -17,6 +17,7 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
@@ -32,9 +33,11 @@ import java.util.List;
 public class DragAndDropTableComposite extends Composite {
 
     private static final Logger logger = LoggerFactory.getLogger(DragAndDropTableComposite.class);
+    private static final String SWT_FULL_IMAGE = "swt_full_image";
 
     private Table table;
     private List<DocumentData> result = new ArrayList<>();
+    private List<DocumentData> deleted = new ArrayList<>();
     private ToolItem itemDel;
     private boolean changed;
     private BookController controller;
@@ -42,6 +45,7 @@ public class DragAndDropTableComposite extends Composite {
     private Carte carte = null;
     private ToolItem itemAdd;
     private boolean permanentChanges;
+    private ImageViewer previewShell;
 
     public DragAndDropTableComposite(Composite parent, BookController controller, Carte carte, boolean permanentChanges) {
         super(parent, SWT.NONE);
@@ -122,6 +126,14 @@ public class DragAndDropTableComposite extends Composite {
                 viewDocument();
             }
         });
+        table.addListener(SWT.KeyDown, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.keyCode == SWT.DEL) {
+                    removeSelected();
+                }
+            }
+        });
 
         TableColumn column = new TableColumn(table, SWT.LEFT);
         column.setText("Nume");
@@ -181,6 +193,9 @@ public class DragAndDropTableComposite extends Composite {
             if (permanentChanges) {
                 carte.getDocuments().remove(doc);
                 logger.info("Am sters un document atasat cartii " + carte.getTitlu());
+                controller.removeDocument(doc.getId());
+            } else {
+                deleted.add(doc);
             }
             result.remove(doc);
             item.dispose();
@@ -199,7 +214,7 @@ public class DragAndDropTableComposite extends Composite {
         for (DocumentData doc : result) {
             if (file.length() == doc.getLength()) {
                 logger.error("File " + filePath + " already exists!");
-                SWTeXtension.displayMessageW("File " + filePath + " already exists!");
+                SWTeXtension.displayMessageW("Fisierul " + filePath + " exista deja!");
                 return;
             }
         }
@@ -210,35 +225,70 @@ public class DragAndDropTableComposite extends Composite {
         dd.setId(null);
         dd.setLength(file.length());
         dd.setUploadDate(new Date());
-        result.add(dd);
-        createTableItem(dd);
         if (permanentChanges) {
-            this.carte.getDocuments().add(controller.saveDocument(file, null, dd.getContentType()));
+            dd = controller.saveDocument(file, null, dd.getContentType());
+            this.carte.getDocuments().add(dd);
             controller.save(this.carte);
         } else {
             changed = true;
         }
+        result.add(dd);
+        createTableItem(dd);
+    }
+
+    private boolean displayImage(TableItem item) {
+        if (item.getData(SWT_FULL_IMAGE) instanceof Image) {
+            Image image = (Image) item.getData(SWT_FULL_IMAGE);
+            if (!image.isDisposed()) {
+                if (previewShell != null && !previewShell.getShell().isDisposed()) {
+                    previewShell.getShell().close();
+                    previewShell = null;
+                }
+                previewShell = new ImageViewer(image);
+                previewShell.setImageName(((DocumentData) item.getData()).getFileName());
+                previewShell.open();
+            }
+            return true;
+        }
+        return false;
     }
 
     private void viewDocument() {
-        if (table.getSelectionCount() != 1) {
-            return;
-        }
-        TableItem item = table.getSelection()[0];
-        if (item.getData("file") instanceof String) {
-            File file = new File(item.getData("file").toString());
-            if (file.isFile() && file.exists()) {
-                Program.launch(file.getAbsolutePath());
+        try {
+            if (table.getSelectionCount() != 1) {
                 return;
             }
-        }
-        GridFSDBFile fsdbFile = (GridFSDBFile) item.getData("fs");
-        if (fsdbFile != null) {
-            if (tryToExportAndOpenFromGridFs(fsdbFile, item)) {
+            TableItem item = table.getSelection()[0];
+            if (displayImage(item)) {
                 return;
             }
+            if (item.getData("file") instanceof String) {
+                File file = new File(item.getData("file").toString());
+                if (file.isFile() && file.exists()) {
+                    final boolean isImage = new FileTypeDetector().probeContentType(Paths.get(file.getAbsolutePath())).contains("image");
+                    item.setData("isImage", isImage);
+                    if (isImage) {
+                        Image fullImage = new Image(Display.getDefault(), file.getAbsolutePath());
+                        item.setData(SWT_FULL_IMAGE, fullImage);
+                        if (displayImage(item)) {
+                            return;
+                        }
+                    }
+                    Program.launch(file.getAbsolutePath());
+                    return;
+                }
+            }
+            GridFSDBFile fsdbFile = (GridFSDBFile) item.getData("fs");
+            if (fsdbFile != null) {
+                if (tryToExportAndOpenFromGridFs(fsdbFile, item)) {
+                    return;
+                }
+            }
+            tryToExportAndOpenFromLocalFilesystem(item);
+        }catch (Exception exc) {
+            logger.error(exc.getMessage(), exc);
+            SWTeXtension.displayMessageE("A intervenit o eroare la afisarea documentului!", exc);
         }
-        tryToExportAndOpenFromLocalFilesystem(item);
     }
 
     private boolean tryToExportAndOpenFromLocalFilesystem(TableItem item) {
@@ -252,6 +302,15 @@ public class DragAndDropTableComposite extends Composite {
             out = new FileOutputStream(new File(filePath));
             StreamUtils.copy(in, out);
             item.setData("file", filePath);
+            final boolean isImage = new FileTypeDetector().probeContentType(Paths.get(filePath)).contains("image");
+            item.setData("isImage", isImage);
+            if (isImage) {
+                Image fullImage = new Image(Display.getDefault(), filePath);
+                item.setData(SWT_FULL_IMAGE, fullImage);
+                if (displayImage(item)) {
+                    return true;
+                }
+            }
             Program.launch(filePath);
             return true;
         } catch (IOException ioex) {
@@ -286,7 +345,15 @@ public class DragAndDropTableComposite extends Composite {
             out = new FileOutputStream(new File(filePath));
             StreamUtils.copy(in, out);
             item.setData("file", filePath);
-            Program.launch(filePath);
+            final boolean isImage = new FileTypeDetector().probeContentType(Paths.get(filePath)).contains("image");
+            item.setData("isImage", isImage);
+            if (isImage) {
+                Image fullImage = new Image(Display.getDefault(), filePath);
+                item.setData(SWT_FULL_IMAGE, fullImage);
+                displayImage(item);
+            } else {
+                Program.launch(filePath);
+            }
             return true;
         } catch (IOException ioex) {
             logger.error(ioex.getMessage(), ioex);
@@ -330,7 +397,7 @@ public class DragAndDropTableComposite extends Composite {
                 document.setLength(gridFsFile.getLength());
             }
         }
-        TableItem item = new TableItem(table, SWT.NONE);
+        final TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, document.getFileName() != null ? document.getFileName() : "");
         item.setText(1, document.getContentType() != null ? document.getContentType() : "");
         item.setText(2, document.getSizeInKb());
@@ -339,10 +406,27 @@ public class DragAndDropTableComposite extends Composite {
         item.setText(4, document.getFilePath() != null ? document.getFilePath() : "");
         item.setData(document);
         item.setData("fs", gridFsFile);
+        item.addListener(SWT.Dispose, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                Object image = item.getData(SWT_FULL_IMAGE);
+                if (image instanceof Image) {
+                    Image tmp = (Image)image;
+                    if (!tmp.isDisposed()) {
+                        tmp.dispose();;
+                    }
+                }
+                event.doit = true;
+            }
+        });
     }
 
     public List<DocumentData> getResult() throws IOException {
         return result;
+    }
+
+    public List<DocumentData> getDeleted() {
+        return deleted;
     }
 
     private void enableOps() {
