@@ -7,6 +7,7 @@ import com.papao.books.view.AppImages;
 import com.papao.books.view.custom.ComboImage;
 import com.papao.books.view.custom.XButton;
 import com.papao.books.view.custom.XButtonData;
+import com.papao.books.view.custom.panel.BlurredPanel;
 import com.papao.books.view.user.UserView;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.Constants;
@@ -37,11 +38,15 @@ public class LoginShell extends AbstractCView implements Listener {
     private XButton buttonLogin;
     private XButton buttonExit;
     private UserController userController;
+    private BlurredPanel bp;
 
     @Autowired
     public LoginShell(UserController userController) throws Exception {
         super(null, AbstractView.MODE_NONE);
         this.userController = userController;
+
+        bp = new BlurredPanel(getShell());
+
         addComponents();
         populateFields();
 
@@ -217,8 +222,10 @@ public class LoginShell extends AbstractCView implements Listener {
     }
 
     private void quit(Event e) {
+        bp.show();
         setExitChoice(SWT.CANCEL);
         e.doit = SWTeXtension.displayMessageQ("Sunteti sigur ca doriti sa inchideti aplicatia?", "Inchidere aplicatie") == SWT.YES;
+        bp.hide();
     }
 
     @Override
