@@ -297,9 +297,6 @@ public final class EncodeLive {
     }
 
     public static ObjectId getIdUser() {
-        if (idUser == null) {
-            return new ObjectId();
-        }
         return EncodeLive.idUser;
     }
 

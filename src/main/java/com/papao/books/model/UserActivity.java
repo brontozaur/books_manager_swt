@@ -14,10 +14,11 @@ public class UserActivity {
     private ObjectId id;
 
     private ObjectId userId;
+    private ObjectId bookId;
     private List<Citat> citate = new ArrayList<>();
     private List<CarteCitita> cartiCitite = new ArrayList<>();
-    private List<BookRating> bookRatings = new ArrayList<>();
-    private List<BookTranslationRating> translationRatings;
+    private BookRating bookRating = new BookRating();
+    private BookTranslationRating translationRating = new BookTranslationRating();
 
     public ObjectId getId() {
         return id;
@@ -33,6 +34,30 @@ public class UserActivity {
 
     public void setUserId(ObjectId userId) {
         this.userId = userId;
+    }
+
+    public ObjectId getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(ObjectId bookId) {
+        this.bookId = bookId;
+    }
+
+    public BookRating getBookRating() {
+        return bookRating;
+    }
+
+    public void setBookRating(BookRating bookRating) {
+        this.bookRating = bookRating;
+    }
+
+    public BookTranslationRating getTranslationRating() {
+        return translationRating;
+    }
+
+    public void setTranslationRating(BookTranslationRating translationRating) {
+        this.translationRating = translationRating;
     }
 
     public List<Citat> getCitate() {
@@ -51,29 +76,10 @@ public class UserActivity {
         this.cartiCitite = cartiCitite;
     }
 
-    public List<BookRating> getBookRatings() {
-        return bookRatings;
-    }
-
-    public void setBookRatings(List<BookRating> bookRatings) {
-        this.bookRatings = bookRatings;
-    }
-
-    public List<BookTranslationRating> getTranslationRatings() {
-        return translationRatings;
-    }
-
-    public void setTranslationRatings(List<BookTranslationRating> translationRatings) {
-        this.translationRatings = translationRatings;
-    }
-
     public int getRatingForBook(ObjectId bookId) {
-        int bookRating = 0;
-        for (BookRating rating : getBookRatings()) {
-            if (rating.getBookId().equals(bookId)) {
-                bookRating += rating.getRating();
-            }
+        if (bookRating != null) {
+            return bookRating.getRating();
         }
-        return bookRating;
+        return 0;
     }
 }

@@ -832,11 +832,11 @@ public abstract class AbstractView extends Observable {
         }
     }
 
-    public final void open() {
+    public void open() {
         open(parentPos == null, true);
     }
 
-    public final void open(final boolean centerInDisplay, boolean automaticallyComputeSize) {
+    public void open(final boolean centerInDisplay, boolean automaticallyComputeSize) {
         Display display = null;
         try {
             if (automaticallyComputeSize && (this.shellHeight > 0 || this.shellWidth > 0)) {

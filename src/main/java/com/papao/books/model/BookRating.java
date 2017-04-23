@@ -1,25 +1,14 @@
 package com.papao.books.model;
 
-import org.bson.types.ObjectId;
-
 import java.io.Serializable;
 
 public class BookRating implements Serializable{
 
-    private ObjectId bookId;
     private int rating;
     private String createdBy;
     private String createdAt;
     private String updatedBy;
     private String updatedAt;
-
-    public ObjectId getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(ObjectId bookId) {
-        this.bookId = bookId;
-    }
 
     public int getRating() {
         return rating;

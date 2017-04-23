@@ -115,8 +115,6 @@ public class LoginShell extends AbstractCView implements Listener {
         });
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
-
-        this.textPassword.setFocus();
     }
 
     private void createLoginComposite(Composite parent) {

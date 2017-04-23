@@ -2,6 +2,7 @@ package com.papao.books.view.custom;
 
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.controller.AutorController;
+import com.papao.books.controller.BookController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
@@ -9,6 +10,7 @@ import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.starrating.StarRating;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.FontUtil;
+import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -18,16 +20,18 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 
-public class BookReadOnlyDetailsComposite {
+import java.io.IOException;
+import java.util.Observable;
+
+public class BookReadOnlyDetailsComposite extends Observable{
 
     private Composite mainComp;
     private ScrolledComposite scrolledComposite;
     private AutorController autorController;
     private UserController userController;
+    private BookController bookController;
 
     private CLabel rightLabelTitle;
     private ImageSelectorComposite rightFrontCoverImageComposite;
@@ -35,14 +39,17 @@ public class BookReadOnlyDetailsComposite {
     private LinkedinCompositeAutoriLinks rightAutoriComposite;
     private LinkedInSimpleValuesComposite genLiterarComposite;
     private LinkedInSimpleValuesComposite taguriComposite;
-    private StarRating ratingGeneral;
-    private StarRating notaMea;
+    private StarRating bookRating;
+    private int ratingValue = 0;
+    private Carte carte;
 
     public BookReadOnlyDetailsComposite(Composite parent,
                                         AutorController autorController,
+                                        BookController bookController,
                                         UserController userController) {
         this.autorController = autorController;
         this.userController = userController;
+        this.bookController = bookController;
 
         scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
         mainComp = new Composite(scrolledComposite, SWT.NONE);
@@ -76,10 +83,41 @@ public class BookReadOnlyDetailsComposite {
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 5, 5).applyTo(temp);
         GridDataFactory.fillDefaults().span(2, 1).align(SWT.CENTER, SWT.BEGINNING).applyTo(temp);
 
-        ratingGeneral = new StarRating(temp, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
-        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(ratingGeneral);
+        bookRating = new StarRating(temp, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
+        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(bookRating);
+        bookRating.addListener(SWT.MouseUp, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (carte == null || ratingValue == bookRating.getCurrentNumberOfStars()) {
+                    return;
+                }
+                ratingValue = bookRating.getCurrentNumberOfStars();
+                userController.saveBookRatingForCurrentUser(carte.getId(), ratingValue);
+                setChanged();
+                notifyObservers();
+            }
+        });
 
         rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null, autorController.getAppImagesFolder());
+        rightFrontCoverImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (rightFrontCoverImageComposite.imageChanged() && carte != null) {
+                    autorController.removeDocument(carte.getCopertaFata().getId());
+                    carte.setCopertaFata(null);
+                    try {
+                        carte.setCopertaFata(autorController.saveDocument(rightFrontCoverImageComposite));
+                        carte = bookController.save(carte);
+                        setChanged();
+                        notifyObservers();
+
+                        rightFrontCoverImageComposite.setImageChanged(false);
+                    } catch (IOException e) {
+                        SWTeXtension.displayMessageE(e.getMessage(), e);
+                    }
+                }
+            }
+        });
 
         label("Web");
         rightWebResourcesComposite = new LinkedInUrlsComposite(mainComp, null);
@@ -92,12 +130,10 @@ public class BookReadOnlyDetailsComposite {
 
         label(" Taguri");
         taguriComposite = new LinkedInSimpleValuesComposite(mainComp);
-
-        label("Rating");
-        notaMea = new StarRating(mainComp, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
     }
 
     public void populateFields(Carte carte) {
+        this.carte = carte;
         if (carte.getTitlu().length() > 40) {
             rightLabelTitle.setText(carte.getTitlu().substring(0, 35) + "...");
         } else {
@@ -115,15 +151,15 @@ public class BookReadOnlyDetailsComposite {
         Rectangle r = scrolledComposite.getClientArea();
         scrolledComposite.setMinSize(mainComp.computeSize(r.width, SWT.DEFAULT));
 
-        ratingGeneral.setCurrentNumberOfStars(userController.getRatingMediu(carte.getId()));
-        notaMea.setCurrentNumberOfStars(userController.getUserRating(EncodeLive.getIdUser(), carte.getId()));
+        bookRating.setCurrentNumberOfStars(userController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
+        ratingValue = bookRating.getCurrentNumberOfStars();
     }
 
     private void displayImage(final DocumentData coverDescriptor, ImageSelectorComposite imageSelectorComposite) {
         Image image = null;
         String imageName = null;
         if (coverDescriptor != null && coverDescriptor.getId() != null) {
-            GridFSDBFile dbFile = autorController.getDocumentData(coverDescriptor.getId());
+            GridFSDBFile dbFile = bookController.getDocumentData(coverDescriptor.getId());
             if (dbFile != null) {
                 image = new Image(Display.getDefault(), dbFile.getInputStream());
                 imageName = dbFile.getFilename();
@@ -136,5 +172,9 @@ public class BookReadOnlyDetailsComposite {
         Label label = new Label(mainComp, SWT.NONE);
         label.setText(labelName);
         GridDataFactory.fillDefaults().align(SWT.END, SWT.BEGINNING).applyTo(label);
+    }
+
+    public Carte getCarte() {
+        return carte;
     }
 }

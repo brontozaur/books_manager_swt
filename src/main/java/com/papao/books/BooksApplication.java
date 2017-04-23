@@ -2,6 +2,7 @@
 package com.papao.books;
 
 import com.papao.books.view.EncodePlatform;
+import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.auth.LoginShell;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
@@ -39,6 +40,7 @@ public class BooksApplication {
         try {
             loginShell.open(true, false);
             if (loginShell.getUserAction() == SWT.OK) {
+                encodePlatform.getShell().setText(encodePlatform.getShell().getText().replace("$$$", EncodeLive.getCurrentUserName()));
                 encodePlatform.open();
             } else {
                 closeApp(false);

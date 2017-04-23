@@ -171,6 +171,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
     }
 
+    /*
+        This is needed because the current class is injected and therefore it's
+        constructor executed before the login (and therefore the current user detection)
+        is performed. Since there are no current user at population time, and therefore
+        the user specific data (e.g. user ratings) cannot be displayed.
+     */
+    @Override
+    public void open() {
+        fullRefresh(true);
+        super.open();
+    }
+
     private void createComponents(Composite parent) {
 
         this.mainTabFolder = new CTabFolder(parent, SWT.NONE);
@@ -228,7 +240,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(secondaryComRight);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(secondaryComRight);
 
-        int style = SWT.FULL_SELECTION | SWT.VIRTUAL | SWT.BORDER | SWT.SINGLE;
+        int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE;
         this.tableViewer = new TableViewer(secondaryComRight, style);
         this.tableViewer.setUseHashlookup(true);
         this.tableViewer.getTable().setHeaderVisible(true);
@@ -301,10 +313,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
 
-        readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash, autorController, userController);
+        readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash, autorController, bookController, userController);
+        //table viewer is notified when rating changes on the details composite
+        readOnlyDetailsComposite.addObserver(this);
 
         rightVerticalSash.setWeights(new int[]{9, 3});
-        rightVerticalSash.setMaximizedControl(rightSash);
+        rightVerticalSash.setMaximizedControl(null);
 
         rightSash.setWeights(new int[]{3, 9});
         rightSash.setMaximizedControl(rightInnerSash);
@@ -314,7 +328,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         booksTabItem.setControl(verticalSash);
 
-        fullRefresh(true);
         getContainer().layout();
     }
 
@@ -333,16 +346,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return;
         }
+        Carte carte = null;
         if (this.tableViewer.getTable().getSelectionCount() != 0) {
-            Carte carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
-            if (carte == null) {
-                return;
-            }
-            rightVerticalSash.setMaximizedControl(null);
-            dragAndDropTableComposite.setCarte(carte);
-
-            readOnlyDetailsComposite.populateFields(carte);
+            carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
         }
+        if (carte == null) {
+            //reset fields by passing and empty book
+            carte = new Carte();
+        }
+        rightVerticalSash.setMaximizedControl(null);
+        dragAndDropTableComposite.setCarte(carte);
+
+        readOnlyDetailsComposite.populateFields(carte);
     }
 
     protected final void enableOps() {
@@ -909,7 +924,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return userController.getRatingMediu(carte.getId()) + "";
+                            return userController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()) + "";
                         }
 
                         @Override
@@ -922,7 +937,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return userController.getRatingMediu(a.getId()) - userController.getRatingMediu(b.getId());
+                            return userController.getPersonalRating(EncodeLive.getIdUser(), a.getId())
+                                    - userController.getPersonalRating(EncodeLive.getIdUser(), b.getId());
                         }
 
                     };
@@ -1239,7 +1255,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     @Override
     public void customizeView() {
-        setShellText("Books Manager [utilizator: " + EncodeLive.getCurrentUserName()+"]");
+        setShellText("Books Manager [utilizator: $$$]");
         setViewOptions(AbstractView.SHOW_OPS_LABELS);
         setBigViewMessage("12:15. Press return.");
         setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
@@ -1255,7 +1271,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        fullRefresh(false);
+        tableViewer.add(view.getCarte());
+        tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+        displayBookData();
         return true;
     }
 
@@ -1278,8 +1296,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 return false;
             }
             bookController.delete(carteDb);
-            fullRefresh(true);
-            SWTeXtension.displayMessageI("Operatie executata cu succes!");
+            tableViewer.remove(carte);
+            displayBookData();
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             return false;
@@ -1312,7 +1330,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        fullRefresh(true);
+        tableViewer.refresh(view.getCarte(), true, true);
+        tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+        displayBookData();
         return true;
     }
 
@@ -1361,7 +1381,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                             Carte carte = (Carte) element;
-                            return searchType.compareValues(userController.getRatingMediu(carte.getId()));
+                            return searchType.compareValues(userController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
                         }
                     };
                     break;
@@ -1520,13 +1540,19 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     @Override
     public void update(Observable o, Object arg) {
+        if (o instanceof BookReadOnlyDetailsComposite) {
+            Carte carte = ((BookReadOnlyDetailsComposite) o).getCarte();
+            tableViewer.refresh(carte, true, true);
+            return;
+        }
         BookController controller = (BookController) o;
         Page<Carte> page = controller.getSearchResult();
         if (!tableViewer.getTable().isDisposed()) {
             tableViewer.setInput(page.getContent());
             if (tableViewer.getTable().getItemCount() > 0) {
-                tableViewer.getTable().setSelection(tableViewer.getTable().getItemCount() - 1);
-                tableViewer.getTable().notifyListeners(SWT.Selection, new Event());
+                Carte carte = (Carte) tableViewer.getTable().getItem(tableViewer.getTable().getItemCount() - 1).getData();
+                tableViewer.setSelection(new StructuredSelection(carte));
+                displayBookData();
             }
         }
     }

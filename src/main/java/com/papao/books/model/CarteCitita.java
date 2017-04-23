@@ -9,8 +9,6 @@ import java.util.Date;
 
 public class CarteCitita {
 
-    private ObjectId bookId;
-
     @Transient
     private Date now = new Date();
 
@@ -28,14 +26,6 @@ public class CarteCitita {
 
     @LastModifiedDate
     private Date updatedAt;
-
-    public ObjectId getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(ObjectId bookId) {
-        this.bookId = bookId;
-    }
 
     public Date getDataStart() {
         return dataStart;

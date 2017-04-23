@@ -170,6 +170,10 @@ public class ImageSelectorComposite extends Composite implements Observer {
         hb.open(true, false);
     }
 
+    public Label getLabelImage() {
+        return this.labelImage;
+    }
+
     private void populateFields(Image fullImage) {
         labelImage.setData(SWT_FULL_IMAGE, fullImage);
         labelImage.setData(OS_FILE, null);
@@ -247,6 +251,10 @@ public class ImageSelectorComposite extends Composite implements Observer {
 
     public boolean imageChanged() {
         return imageChanged;
+    }
+
+    public void setImageChanged(boolean imageChanged) {
+        this.imageChanged = imageChanged;
     }
 
     public File getSelectedFile() {

@@ -6,6 +6,7 @@ import com.papao.books.controller.BookController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.*;
 import com.papao.books.view.AppImages;
+import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.custom.*;
 import com.papao.books.view.custom.starrating.StarRating;
@@ -281,6 +282,9 @@ public class CarteView extends AbstractCSaveView {
         GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(10, 0, 0, 0).applyTo(compImages);
         GridDataFactory.fillDefaults().grab(false, true).applyTo(compImages);
 
+        starRating = new StarRating(compImages, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
+        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(starRating);
+
         GridFSDBFile frontCover = getGridFsFile(carte.getCopertaFata().getId());
         Image image = null;
         String fileName = null;
@@ -295,9 +299,6 @@ public class CarteView extends AbstractCSaveView {
         data.grabExcessVerticalSpace = false;
         data.verticalAlignment = SWT.BEGINNING;
         data.horizontalAlignment = SWT.CENTER;
-
-        starRating = new StarRating(compImages, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
-        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(starRating);
 
         label(mainCompLeft, "Titlu");
         this.textTitlu = new Text(mainCompLeft, SWT.BORDER);
@@ -623,7 +624,7 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private void populateFields() {
-        this.starRating.setCurrentNumberOfStars(userController.getRatingMediu(this.carte.getId()));
+        this.starRating.setCurrentNumberOfStars(userController.getPersonalRating(EncodeLive.getIdUser(), this.carte.getId()));
         this.textTitlu.setText(this.carte.getTitlu());
         this.textSubtitlu.setText(this.carte.getSubtitlu());
         this.textEditura.setText(this.carte.getEditura());
@@ -738,7 +739,9 @@ public class CarteView extends AbstractCSaveView {
             carte.setDocuments(docs);
         }
 
-        carteController.save(carte);
+        carte = carteController.save(carte);
+
+        userController.saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
     }
 
     @Override

@@ -1,23 +1,12 @@
 package com.papao.books.model;
 
-import org.bson.types.ObjectId;
-
 public class BookTranslationRating {
 
-    private ObjectId bookId;
     private String createdBy;
     private String createdAt;
     private int ratingTraducere;
     private String updatedBy;
     private String updatedAt;
-
-    public ObjectId getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(ObjectId bookId) {
-        this.bookId = bookId;
-    }
 
     public String getCreatedBy() {
         return createdBy;

@@ -5,7 +5,6 @@ import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
 import com.papao.books.repository.CacheableAutorRepository;
 import com.papao.books.repository.CarteRepository;
-import com.papao.books.repository.UserRepository;
 import com.papao.books.view.searcheable.BookSearchType;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -20,7 +19,6 @@ public class BookController extends AbstractController {
 
     private final CarteRepository repository;
     private final CacheableAutorRepository cacheableAutorRepository;
-    private final UserRepository userRepository;
 
     private Page<Carte> carti;
     private BookSearchType searchType;
@@ -30,12 +28,10 @@ public class BookController extends AbstractController {
     @Autowired
     public BookController(CarteRepository repository,
                           CacheableAutorRepository cacheableAutorRepository,
-                          UserRepository userRepository,
                           MongoTemplate mongoTemplate) {
         super(mongoTemplate);
         this.repository = repository;
         this.cacheableAutorRepository = cacheableAutorRepository;
-        this.userRepository = userRepository;
     }
 
     public Iterable<Autor> getBookAuthors(Carte carte) {

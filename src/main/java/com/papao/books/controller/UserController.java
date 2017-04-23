@@ -4,6 +4,7 @@ import com.papao.books.model.User;
 import com.papao.books.model.UserActivity;
 import com.papao.books.repository.UserActivityRepository;
 import com.papao.books.repository.UserRepository;
+import com.papao.books.view.auth.EncodeLive;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -45,23 +46,30 @@ public class UserController extends AbstractController {
         return repository.findAll();
     }
 
-    public int getRatingMediu(ObjectId bookId) {
-        List<UserActivity> usersWithRatings = userActivityRepository.getByBookRatings_BookId(bookId);
-        if (usersWithRatings.isEmpty()) {
-            return 0;
-        }
-        int rating = 0;
-        for (UserActivity activity : usersWithRatings) {
-            rating += activity.getRatingForBook(bookId);
-        }
-        return rating / usersWithRatings.size();
+    public UserActivity saveUserActivity(UserActivity userActivity) {
+        return userActivityRepository.save(userActivity);
     }
 
-    public int getUserRating(ObjectId userId, ObjectId bookId) {
-        UserActivity activity = userActivityRepository.getByUserId(userId);
+    public UserActivity getUserRatingObject(ObjectId userId, ObjectId bookId) {
+        return userActivityRepository.getByUserIdAndBookId(userId, bookId);
+    }
+
+    public int getPersonalRating(ObjectId userId, ObjectId bookId) {
+        UserActivity activity = getUserRatingObject(userId, bookId);
         if (activity != null) {
             return activity.getRatingForBook(bookId);
         }
         return 0;
+    }
+
+    public UserActivity saveBookRatingForCurrentUser(ObjectId bookId, int rating) {
+        UserActivity userActivity = getUserRatingObject(EncodeLive.getIdUser(), bookId);
+        if (userActivity == null) {
+            userActivity = new UserActivity();
+            userActivity.setBookId(bookId);
+            userActivity.setUserId(EncodeLive.getIdUser());
+        }
+        userActivity.getBookRating().setRating(rating);
+        return saveUserActivity(userActivity);
     }
 }
