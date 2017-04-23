@@ -1,5 +1,6 @@
 package com.papao.books.view.custom;
 
+import com.github.haixing_hu.swt.starrating.StarRating;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
@@ -7,7 +8,6 @@ import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
 import com.papao.books.view.auth.EncodeLive;
-import com.papao.books.view.custom.starrating.StarRating;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.FontUtil;
 import com.papao.books.view.view.SWTeXtension;

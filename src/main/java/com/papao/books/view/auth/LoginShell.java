@@ -1,5 +1,6 @@
 package com.papao.books.view.auth;
 
+import com.github.haixing_hu.swt.panel.BlurredPanel;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.AMongodbComparator;
 import com.papao.books.model.User;
@@ -7,7 +8,6 @@ import com.papao.books.view.AppImages;
 import com.papao.books.view.custom.ComboImage;
 import com.papao.books.view.custom.XButton;
 import com.papao.books.view.custom.XButtonData;
-import com.papao.books.view.custom.panel.BlurredPanel;
 import com.papao.books.view.user.UserView;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.Constants;

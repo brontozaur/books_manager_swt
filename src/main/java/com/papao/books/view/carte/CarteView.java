@@ -1,5 +1,6 @@
 package com.papao.books.view.carte;
 
+import com.github.haixing_hu.swt.starrating.StarRating;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
@@ -9,7 +10,6 @@ import com.papao.books.view.AppImages;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.custom.*;
-import com.papao.books.view.custom.starrating.StarRating;
 import com.papao.books.view.providers.ContentProposalProvider;
 import com.papao.books.view.util.NumberUtil;
 import com.papao.books.view.util.WidgetCompositeUtil;
