@@ -19,6 +19,8 @@ mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.wi
 mvn install:install-file -Dfile=tika-core-1.14.jar -DgroupId=org.apache.tika -DartifactId=tika-core -Dversion=1.14 -Dpackaging=jar
 mvn install:install-file -Dfile=opal-0.9.5.2.jar -DgroupId=org.mihalis.opal -DartifactId=opal -Dversion=0.9.5.2 -Dpackaging=jar -Dsources=opal-0.9.5-src.zip
 
+see also https://github.com/lcaron/opal/wiki/Notifier
+
 pom.xml
 ------------
 
