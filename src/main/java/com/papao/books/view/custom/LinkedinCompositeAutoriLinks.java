@@ -26,8 +26,8 @@ public class LinkedinCompositeAutoriLinks extends Composite {
             this.autori = autorController.findByIds(autori);
         }
 
-        GridDataFactory.fillDefaults().grab(false, false).applyTo(this);
-        RowLayoutFactory.fillDefaults().extendedMargins(3, 5, 2, 3).spacing(1).pack(true).wrap(true).applyTo(this);
+        GridDataFactory.fillDefaults().grab(false, false).hint(parent.getSize().x, SWT.DEFAULT).applyTo(this);
+        RowLayoutFactory.fillDefaults().extendedMargins(3, 5, 2, 3).spacing(1).margins(0,0).pack(true).wrap(true).applyTo(this);
 
         populateFields();
     }
@@ -43,8 +43,8 @@ public class LinkedinCompositeAutoriLinks extends Composite {
 
 
     private void layoutEverything() {
-        LinkedinCompositeAutoriLinks.this.setSize(this.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        LinkedinCompositeAutoriLinks.this.getParent().layout();
+        this.setSize(this.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        this.getParent().layout();
     }
 
     private void createLink(Autor autor) {

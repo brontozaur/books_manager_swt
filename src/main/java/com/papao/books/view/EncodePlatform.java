@@ -1,6 +1,5 @@
 package com.papao.books.view;
 
-import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
@@ -9,7 +8,9 @@ import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
 import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
-import com.papao.books.view.custom.*;
+import com.papao.books.view.custom.BookReadOnlyDetailsComposite;
+import com.papao.books.view.custom.DragAndDropTableComposite;
+import com.papao.books.view.custom.PaginationComposite;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
@@ -34,12 +35,10 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
@@ -97,11 +96,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private Combo comboModAfisare;
     private DragAndDropTableComposite dragAndDropTableComposite;
     private SashForm rightVerticalSash;
-    private Composite compRightDetails;
-    private CLabel rightLabelTitle;
-    private ImageSelectorComposite rightFrontCoverImageComposite;
-    private LinkedInUrlsComposite rightWebResourcesComposite;
-    private LinkedinCompositeAutoriLinks rightAutoriComposite;
+    private BookReadOnlyDetailsComposite readOnlyDetailsComposite;
 
     @Autowired
     public EncodePlatform(UserController userController,
@@ -303,10 +298,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
 
-        compRightDetails = new Composite(rightVerticalSash, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(5, 5, 0, 0).applyTo(compRightDetails);
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(compRightDetails);
-        createCompRightDetailsComponents(compRightDetails);
+        readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash, autorController);
 
         rightVerticalSash.setWeights(new int[]{8, 3});
         rightVerticalSash.setMaximizedControl(rightSash);
@@ -321,25 +313,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         fullRefresh(true);
         getContainer().layout();
-    }
-
-    private void createCompRightDetailsComponents(Composite parent) {
-        rightLabelTitle = new CLabel(parent, SWT.BORDER);
-        rightLabelTitle.setFont(FontUtil.TAHOMA10_NORMAL);
-        GridLayoutFactory.fillDefaults().numColumns(1).margins(1, 1).applyTo(rightLabelTitle);
-        GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 25).span(2, 1).applyTo(rightLabelTitle);
-        rightLabelTitle.setBackground(ColorUtil.COLOR_ALBASTRU_INCHIS);
-        rightLabelTitle.setForeground(ColorUtil.COLOR_WHITE);
-
-        rightFrontCoverImageComposite = new ImageSelectorComposite(parent, null, null, bookController.getAppImagesFolder());
-        ((GridData) rightFrontCoverImageComposite.getLayoutData()).horizontalAlignment = SWT.CENTER;
-        ((GridData) rightFrontCoverImageComposite.getLayoutData()).horizontalSpan = 2;
-
-        new Label(parent, SWT.NONE).setText("Web:");
-        rightWebResourcesComposite = new LinkedInUrlsComposite(parent, null);
-
-        new Label(parent, SWT.NONE).setText("Autori");
-        rightAutoriComposite = new LinkedinCompositeAutoriLinks(parent, null, autorController);
     }
 
     private Composite createTabDocuments(CTabFolder bottomInnerTabFolderRight) {
@@ -365,25 +338,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             rightVerticalSash.setMaximizedControl(null);
             dragAndDropTableComposite.setCarte(carte);
 
-            populateRightImageDetails(carte);
+            readOnlyDetailsComposite.populateFields(carte);
         }
-    }
-
-    private void populateRightImageDetails(Carte carte) {
-        rightLabelTitle.setText(carte.getTitlu());
-
-        Image frontCover = null;
-        String frontCoverImageName = null;
-        if (carte.getCopertaFata() != null && carte.getCopertaFata().getId() != null) {
-            GridFSDBFile dbFile = bookController.getDocumentData(carte.getCopertaFata().getId());
-            if (dbFile != null) {
-                frontCover = new Image(Display.getDefault(), dbFile.getInputStream());
-                frontCoverImageName = dbFile.getFilename();
-            }
-        }
-        rightFrontCoverImageComposite.setImage(frontCover, frontCoverImageName);
-        rightWebResourcesComposite.setCarte(carte);
-        rightAutoriComposite.setAutori(carte.getIdAutori());
     }
 
     protected final void enableOps() {

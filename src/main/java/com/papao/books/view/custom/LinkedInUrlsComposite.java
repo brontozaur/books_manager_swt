@@ -17,8 +17,8 @@ public class LinkedInUrlsComposite extends Composite {
 
         this.carte = carte;
 
-        GridDataFactory.fillDefaults().grab(false, false).applyTo(this);
-        RowLayoutFactory.fillDefaults().extendedMargins(3, 5, 2, 3).spacing(1).pack(true).wrap(true).applyTo(this);
+        GridDataFactory.fillDefaults().grab(false, false).hint(parent.getSize().x, SWT.DEFAULT).applyTo(this);
+        RowLayoutFactory.fillDefaults().extendedMargins(3, 5, 2, 3).spacing(1).margins(0,0).pack(true).wrap(true).applyTo(this);
 
         populateFields();
     }

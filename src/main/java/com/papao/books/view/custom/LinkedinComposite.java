@@ -21,7 +21,7 @@ public class LinkedinComposite extends Composite {
     private List<String> proposals = new ArrayList<>();
     private Class<? extends Enum> enumClass;
 
-    public LinkedinComposite(Composite parent, Class<? extends Enum> enumClass, List valoriInitiale) {
+    public LinkedinComposite(Composite parent, Class<? extends Enum> enumClass, List<? extends Enum> valoriInitiale) {
         super(parent, SWT.BORDER);
         this.enumClass = enumClass;
         this.proposals = EnumHelper.getValuesArray(enumClass);
