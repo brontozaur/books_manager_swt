@@ -2,6 +2,7 @@ package com.papao.books.view.auth;
 
 import com.papao.books.view.util.Constants;
 import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public final class EncodeLive {
     private static int luna = EncodeLive.calendar.get(Calendar.MONTH) + 1;
     private static int an = EncodeLive.calendar.get(Calendar.YEAR);
 
-    private static String idUser;
+    private static ObjectId idUser;
     private static String currentUserName;
     private static String currentDb;
     private static long idValutaDefault;
@@ -295,14 +296,14 @@ public final class EncodeLive {
         return cal.getTime();
     }
 
-    public static String getIdUser() {
+    public static ObjectId getIdUser() {
         if (idUser == null) {
-            return "";
+            return new ObjectId();
         }
         return EncodeLive.idUser;
     }
 
-    public static void setIdUser(String idUser) {
+    public static void setIdUser(ObjectId idUser) {
         EncodeLive.idUser = idUser;
     }
 

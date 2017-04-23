@@ -1,6 +1,8 @@
 package com.papao.books.controller;
 
 import com.papao.books.model.User;
+import com.papao.books.model.UserActivity;
+import com.papao.books.repository.UserActivityRepository;
 import com.papao.books.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +15,15 @@ import java.util.List;
 public class UserController extends AbstractController {
 
     private final UserRepository repository;
+    private final UserActivityRepository userActivityRepository;
 
     @Autowired
     public UserController(MongoTemplate mongoTemplate,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          UserActivityRepository userActivityRepository) {
         super(mongoTemplate);
         this.repository = userRepository;
+        this.userActivityRepository = userActivityRepository;
     }
 
     public User save(User user) {
@@ -41,21 +46,21 @@ public class UserController extends AbstractController {
     }
 
     public int getRatingMediu(ObjectId bookId) {
-        List<User> usersWithRatings = repository.getByBookRatings_BookId(bookId);
+        List<UserActivity> usersWithRatings = userActivityRepository.getByBookRatings_BookId(bookId);
         if (usersWithRatings.isEmpty()) {
             return 0;
         }
         int rating = 0;
-        for (User user : usersWithRatings) {
-            rating += user.getRatingForBook(bookId);
+        for (UserActivity activity : usersWithRatings) {
+            rating += activity.getRatingForBook(bookId);
         }
         return rating / usersWithRatings.size();
     }
 
-    public int getUserRating(String userId, ObjectId bookId) {
-        User user = repository.findOne(userId);
-        if (user != null) {
-            return user.getRatingForBook(bookId);
+    public int getUserRating(ObjectId userId, ObjectId bookId) {
+        UserActivity activity = userActivityRepository.getByUserId(userId);
+        if (activity != null) {
+            return activity.getRatingForBook(bookId);
         }
         return 0;
     }
