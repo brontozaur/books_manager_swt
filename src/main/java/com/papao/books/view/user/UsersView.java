@@ -16,21 +16,20 @@ import com.papao.books.view.util.sorter.AbstractColumnViewerSorter;
 import com.papao.books.view.util.sorter.AbstractTableColumnViewerSorter;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
+import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete, IEncodeSearch {
 
-    private static Logger logger = LoggerFactory.getLogger(UsersView.class);
+    private static Logger logger = Logger.getLogger(UsersView.class);
 
     private static final String[] COLS = new String[]{"Nume", "Prenume"};
 

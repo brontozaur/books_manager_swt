@@ -3,6 +3,7 @@ package com.papao.books.view.custom;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.SWTeXtension;
+import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -10,12 +11,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ImageViewer {
 
-    private final static Logger logger = LoggerFactory.getLogger(ImageViewer.class);
+    private final static Logger logger = Logger.getLogger(ImageViewer.class);
     private Shell shell;
 
     public ImageViewer(ImageData imageData) {

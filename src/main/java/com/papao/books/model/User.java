@@ -10,8 +10,8 @@ public class User extends AbstractMongoDB {
     @Id
     private ObjectId id;
 
-    private String nume;
-    private String prenume;
+    private String nume = "";
+    private String prenume = "";
 
     @Override
     public ObjectId getId() {
@@ -36,6 +36,10 @@ public class User extends AbstractMongoDB {
 
     public void setPrenume(String prenume) {
         this.prenume = prenume;
+    }
+
+    public String getNumeComplet() {
+        return this.nume + " " + this.prenume;
     }
 
 }

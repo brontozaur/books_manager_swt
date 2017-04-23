@@ -2,10 +2,11 @@
 package com.papao.books;
 
 import com.papao.books.view.EncodePlatform;
+import com.papao.books.view.auth.LoginShell;
 import com.papao.books.view.view.SWTeXtension;
+import org.apache.log4j.Logger;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,11 +22,14 @@ import javax.annotation.PostConstruct;
 @EnableMongoAuditing
 public class BooksApplication {
 
-    private static final Logger logger = LoggerFactory.getLogger(BooksApplication.class);
+    private static final Logger logger = Logger.getLogger(BooksApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(BooksApplication.class, args);
     }
+
+    @Autowired
+    private LoginShell loginShell;
 
     @Autowired
     private EncodePlatform encodePlatform;
@@ -33,7 +37,12 @@ public class BooksApplication {
     @PostConstruct
     public void open() {
         try {
-            encodePlatform.open();
+            loginShell.open(true, false);
+            if (loginShell.getUserAction() == SWT.OK) {
+                encodePlatform.open();
+            } else {
+                closeApp(false);
+            }
 
             /*
              * the guardian code lines that prevent the app from dying, in normal running mode

@@ -6,6 +6,8 @@ import com.papao.books.controller.BookController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
+import com.papao.books.view.auth.EncodeLive;
+import com.papao.books.view.auth.LoggerMyWay;
 import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.custom.BookReadOnlyDetailsComposite;
@@ -1078,6 +1080,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             } else {
                 logger.info("normal shutdown sequence initiated..");
             }
+            LoggerMyWay.shutDown();
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
         } finally {
@@ -1236,10 +1239,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     @Override
     public void customizeView() {
-        setShellText("Books Manager");
+        setShellText("Books Manager [utilizator: " + EncodeLive.getCurrentUserName()+"]");
         setViewOptions(AbstractView.SHOW_OPS_LABELS);
-//        setBigViewMessage("12:15. Press return.");
-//        setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
+        setBigViewMessage("12:15. Press return.");
+        setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
     }
 
     public boolean add() {

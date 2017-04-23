@@ -15,6 +15,7 @@ import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -26,15 +27,13 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CarteView extends AbstractCSaveView {
 
-    private static final Logger logger = LoggerFactory.getLogger(CarteView.class);
+    private static final Logger logger = Logger.getLogger(CarteView.class);
 
     private Carte carte;
     private final BookController carteController;

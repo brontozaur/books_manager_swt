@@ -7,6 +7,7 @@ import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -14,8 +15,6 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -38,7 +37,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
     private static String SWT_FULL_IMAGE = "SWT_FULL_IMAGE";
     private static String OS_FILE = "OS_FILE";
     private static String WEB_FILE = "WEB_FILE";
-    private static final Logger logger = LoggerFactory.getLogger(ImageSelectorComposite.class);
+    private static final Logger logger = Logger.getLogger(ImageSelectorComposite.class);
 
     public ImageSelectorComposite(Composite parent, Image fullImage, String fileName, final String imagesFolder) {
         super(parent, SWT.NONE);

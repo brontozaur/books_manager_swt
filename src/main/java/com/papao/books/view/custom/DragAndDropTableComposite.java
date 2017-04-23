@@ -10,6 +10,7 @@ import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.FileTypeDetector;
 import com.papao.books.view.util.ObjectUtil;
 import com.papao.books.view.view.SWTeXtension;
+import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -20,8 +21,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StreamUtils;
 
 import java.io.*;
@@ -32,7 +31,7 @@ import java.util.List;
 
 public class DragAndDropTableComposite extends Composite {
 
-    private static final Logger logger = LoggerFactory.getLogger(DragAndDropTableComposite.class);
+    private static final Logger logger = Logger.getLogger(DragAndDropTableComposite.class);
     private static final String SWT_FULL_IMAGE = "swt_full_image";
 
     private Table table;
