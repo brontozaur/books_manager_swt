@@ -31,7 +31,8 @@ public class ImageSelectorComposite extends Composite implements Observer {
     private String fileName;
     private final int WIDTH = 180;
     private final int HEIGHT = 200;
-    private String startUrl = "https://www.google.ro/search?tbm=isch&biw=" + Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
+    private String startUrl = "https://www.google.ro/search?tbm=isch&biw=" +
+            Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
             Display.getCurrent().getPrimaryMonitor().getBounds().height + "&q=&oq=";
 
     private static String SWT_FULL_IMAGE = "SWT_FULL_IMAGE";

@@ -73,10 +73,10 @@ public class BookReadOnlyDetailsComposite {
         label(" Autori");
         rightAutoriComposite = new LinkedinCompositeAutoriLinks(mainComp, null, autorController);
 
-        label("Gen", true);
+        label("Gen");
         genLiterarComposite = new LinkedInSimpleValuesComposite(mainComp);
 
-        label(" Taguri", true);
+        label(" Taguri");
         taguriComposite = new LinkedInSimpleValuesComposite(mainComp);
     }
 
@@ -109,12 +109,8 @@ public class BookReadOnlyDetailsComposite {
     }
 
     private void label(String labelName) {
-        label(labelName, false);
-    }
-
-    private void label(String labelName, boolean verticallyAlignBegining) {
         Label label = new Label(mainComp, SWT.NONE);
         label.setText(labelName);
-        GridDataFactory.fillDefaults().align(SWT.END, verticallyAlignBegining ? SWT.BEGINNING : SWT.CENTER).applyTo(label);
+        GridDataFactory.fillDefaults().align(SWT.END, SWT.BEGINNING).applyTo(label);
     }
 }
