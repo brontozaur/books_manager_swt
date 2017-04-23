@@ -1,14 +1,25 @@
 package com.papao.books.model;
 
+import org.bson.types.ObjectId;
+
 import java.io.Serializable;
 
 public class Citat implements Serializable{
 
+    private ObjectId bookId;
     private String content;
     private String createdBy;
     private String createdAt;
     private String lastModifiedAt;
     private String lastModifiedBy;
+
+    public ObjectId getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(ObjectId bookId) {
+        this.bookId = bookId;
+    }
 
     public String getContent() {
         return content;

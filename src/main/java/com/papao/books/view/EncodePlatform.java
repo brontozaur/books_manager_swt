@@ -72,12 +72,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private SashForm rightInnerSash;
     private CTabFolder bottomInnerTabFolderRight;
     private TableViewer tableViewer;
-    private static final String[] COLS = new String[]{"Autor", "Titlu", "Editura", "An aparitie", "Limba"};
+    private static final String[] COLS = new String[]{"Autor", "Titlu", "Rating", "Editura", "An aparitie", "Limba"};
     private final static int IDX_AUTOR = 0;
     private final static int IDX_TITLU = 1;
-    private final static int IDX_EDITURA = 2;
-    private final static int IDX_AN_APARITIE = 3;
-    private final static int IDX_LIMBA = 4;
+    private final static int IDX_RATING = 2;
+    private final static int IDX_EDITURA = 3;
+    private final static int IDX_AN_APARITIE = 4;
+    private final static int IDX_LIMBA = 5;
 
     private ToolItem toolItemAdd;
     private ToolItem toolItemMod;
@@ -298,9 +299,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
 
-        readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash, autorController);
+        readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash, autorController, userController);
 
-        rightVerticalSash.setWeights(new int[]{8, 3});
+        rightVerticalSash.setWeights(new int[]{9, 3});
         rightVerticalSash.setMaximizedControl(rightSash);
 
         rightSash.setWeights(new int[]{3, 9});
@@ -815,6 +816,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     public final void createViewerFilters() {
         this.searchSystem.createTextSearch(IDX_AUTOR);
         this.searchSystem.createTextSearch(IDX_TITLU);
+        this.searchSystem.createRatingSearch(IDX_RATING);
         this.searchSystem.createTextSearch(IDX_EDITURA);
         this.searchSystem.createTextSearch(IDX_AN_APARITIE);
         this.searchSystem.createTextSearch(IDX_LIMBA);
@@ -894,6 +896,31 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
                             return StringUtil.romanianCompare(a.getEditura(), b.getEditura());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                case IDX_RATING: {
+                    col.setLabelProvider(new ColumnLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Carte carte = (Carte) element;
+                            return userController.getRatingMediu(carte.getId()) + "";
+                        }
+
+                        @Override
+                        public Image getImage(Object element) {
+                            return AppImages.getImage16(AppImages.IMG_FULL_STAR);
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Carte a = (Carte) e1;
+                            Carte b = (Carte) e2;
+                            return userController.getRatingMediu(a.getId()) - userController.getRatingMediu(b.getId());
                         }
 
                     };
@@ -1220,7 +1247,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), bookController, autorController, AbstractView.MODE_ADD);
+        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), bookController, userController, autorController, AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -1277,7 +1304,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             carte.setId(null);
             viewMode = MODE_CLONE;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, autorController, viewMode);
+        view = new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, userController, autorController, viewMode);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -1326,6 +1353,16 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     };
                     break;
                 }
+                case IDX_RATING: {
+                    filter = new ViewerFilter() {
+                        @Override
+                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                            Carte carte = (Carte) element;
+                            return searchType.compareValues(userController.getRatingMediu(carte.getId()));
+                        }
+                    };
+                    break;
+                }
                 case IDX_AN_APARITIE: {
                     filter = new ViewerFilter() {
                         @Override
@@ -1370,7 +1407,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return;
         }
-        new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, autorController, AbstractView.MODE_VIEW).open();
+        new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, userController, autorController, AbstractView.MODE_VIEW).open();
     }
 
     public void fullRefresh(boolean resetPage) {

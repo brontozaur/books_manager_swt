@@ -3,10 +3,12 @@ package com.papao.books.view.carte;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
+import com.papao.books.controller.UserController;
 import com.papao.books.model.*;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.custom.*;
+import com.papao.books.view.custom.starrating.StarRating;
 import com.papao.books.view.providers.ContentProposalProvider;
 import com.papao.books.view.util.NumberUtil;
 import com.papao.books.view.util.WidgetCompositeUtil;
@@ -36,6 +38,7 @@ public class CarteView extends AbstractCSaveView {
 
     private Carte carte;
     private final BookController carteController;
+    private final UserController userController;
     private final AutorController autorController;
     private String observableProperty;
 
@@ -60,6 +63,7 @@ public class CarteView extends AbstractCSaveView {
     private Text textWikiUrl;
     private Text textWebsite;
     private ImageSelectorComposite frontCoverComposite;
+    private StarRating starRating;
     private ImageSelectorComposite backCoverComposite;
     private ImageSelectorComposite autografComposite;
     private LinkedinComposite compositeGenLiterar;
@@ -90,11 +94,13 @@ public class CarteView extends AbstractCSaveView {
 
     public CarteView(final Shell parent, final Carte carte,
                      final BookController carteController,
+                     final UserController userController,
                      final AutorController autorController,
                      final int viewMode) {
         super(parent, viewMode, carte.getId());
         this.carte = carte;
         this.carteController = carteController;
+        this.userController = userController;
         this.autorController = autorController;
 
         addComponents();
@@ -248,7 +254,7 @@ public class CarteView extends AbstractCSaveView {
         label(comp, "");
 
         label(comp, "Traducatori");
-        this.compositeTraducatori = new LinkedinComposite(comp, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "traducere.traducatori"), carte.getTraducere().getTraducatori());
+        this.compositeTraducatori = new LinkedinComposite(comp, carteController.getDistinctFieldAsContentProposal(carteController.getBooksCollectionName(), "traducatori"), carte.getTraducatori());
         ((GridData) compositeTraducatori.getLayoutData()).horizontalSpan = 5;
 
         label(comp, "Documente");
@@ -290,6 +296,9 @@ public class CarteView extends AbstractCSaveView {
         data.grabExcessVerticalSpace = false;
         data.verticalAlignment = SWT.BEGINNING;
         data.horizontalAlignment = SWT.CENTER;
+
+        starRating = new StarRating(compImages, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
+        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(starRating);
 
         label(mainCompLeft, "Titlu");
         this.textTitlu = new Text(mainCompLeft, SWT.BORDER);
@@ -615,6 +624,7 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private void populateFields() {
+        this.starRating.setCurrentNumberOfStars(userController.getRatingMediu(this.carte.getId()));
         this.textTitlu.setText(this.carte.getTitlu());
         this.textSubtitlu.setText(this.carte.getSubtitlu());
         this.textEditura.setText(this.carte.getEditura());
@@ -629,7 +639,7 @@ public class CarteView extends AbstractCSaveView {
         this.textImprimerie.setText(this.carte.getImprimerie());
         this.comboTipCoperta.select(comboTipCoperta.indexOf(this.carte.getTipCoperta().name()));
         this.comboLimba.select(comboLimba.indexOf(this.carte.getLimba().name()));
-        this.comboTraducereDin.select(comboTraducereDin.indexOf(this.carte.getTraducere().getTraducereDin().name()));
+        this.comboTraducereDin.select(comboTraducereDin.indexOf(this.carte.getTraducereDin().name()));
         this.textGoodreadsUrl.setText(this.carte.getGoodreadsUrl());
         this.textWikiUrl.setText(this.carte.getWikiUrl());
         this.textWebsite.setText(this.carte.getWebsite());
@@ -676,8 +686,8 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setDescriere(textDescriere.getText());
         this.carte.setPremii(premiiLiterareComposite.getResult());
 
-        this.carte.getTraducere().setTraducatori(compositeTraducatori.getValoriIntroduse());
-        this.carte.getTraducere().setTraducereDin(Limba.valueOf(comboTraducereDin.getText()));
+        this.carte.setTraducatori(compositeTraducatori.getValoriIntroduse());
+        this.carte.setTraducereDin(Limba.valueOf(comboTraducereDin.getText()));
 
         if (frontCoverComposite.imageChanged()) {
             carteController.removeDocument(carte.getCopertaFata().getId());
@@ -714,7 +724,7 @@ public class CarteView extends AbstractCSaveView {
         carte.setTags(compositeTags.getValoriIntroduse());
 
         if (dragAndDropTableComposite.isChanged()) {
-            for (DocumentData doc: dragAndDropTableComposite.getDeleted()) {
+            for (DocumentData doc : dragAndDropTableComposite.getDeleted()) {
                 carteController.removeDocument(doc.getId());
             }
             List<DocumentData> documents = dragAndDropTableComposite.getResult();

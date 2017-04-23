@@ -144,6 +144,8 @@ public final class AppImages {
     public final static String IMG_WORD2 = "msword2.png";
     public final static String IMG_TRUCK_YELLOW = "truck_yellow.png";
     public final static String IMG_PARTENERI = "parteneri.png";
+    public final static String IMG_FULL_STAR = "full-star.png";
+    public final static String IMG_HALD_STAR = "half-star.png";
 
     /**
      * declaram acum icoane suplimentare, diverse (misc)

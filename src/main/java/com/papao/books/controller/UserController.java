@@ -39,4 +39,24 @@ public class UserController extends AbstractController {
     public List<User> findAll() {
         return repository.findAll();
     }
+
+    public int getRatingMediu(ObjectId bookId) {
+        List<User> usersWithRatings = repository.getByBookRatings_BookId(bookId);
+        if (usersWithRatings.isEmpty()) {
+            return 0;
+        }
+        int rating = 0;
+        for (User user : usersWithRatings) {
+            rating += user.getRatingForBook(bookId);
+        }
+        return rating / usersWithRatings.size();
+    }
+
+    public int getUserRating(String userId, ObjectId bookId) {
+        User user = repository.findOne(userId);
+        if (user != null) {
+            return user.getRatingForBook(bookId);
+        }
+        return 0;
+    }
 }

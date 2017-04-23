@@ -2,7 +2,11 @@ package com.papao.books.view.custom;
 
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.controller.AutorController;
+import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
+import com.papao.books.model.DocumentData;
+import com.papao.books.view.auth.EncodeLive;
+import com.papao.books.view.custom.starrating.StarRating;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.FontUtil;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -23,6 +27,7 @@ public class BookReadOnlyDetailsComposite {
     private Composite mainComp;
     private ScrolledComposite scrolledComposite;
     private AutorController autorController;
+    private UserController userController;
 
     private CLabel rightLabelTitle;
     private ImageSelectorComposite rightFrontCoverImageComposite;
@@ -30,9 +35,14 @@ public class BookReadOnlyDetailsComposite {
     private LinkedinCompositeAutoriLinks rightAutoriComposite;
     private LinkedInSimpleValuesComposite genLiterarComposite;
     private LinkedInSimpleValuesComposite taguriComposite;
+    private StarRating ratingGeneral;
+    private StarRating notaMea;
 
-    public BookReadOnlyDetailsComposite(Composite parent, AutorController autorController) {
+    public BookReadOnlyDetailsComposite(Composite parent,
+                                        AutorController autorController,
+                                        UserController userController) {
         this.autorController = autorController;
+        this.userController = userController;
 
         scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
         mainComp = new Composite(scrolledComposite, SWT.NONE);
@@ -59,12 +69,16 @@ public class BookReadOnlyDetailsComposite {
         rightLabelTitle.setFont(FontUtil.TAHOMA14_NORMAL);
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(rightLabelTitle);
         GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 25).span(2, 1).applyTo(rightLabelTitle);
-        rightLabelTitle.setBackground(ColorUtil.COLOR_ALBASTRU_FACEBOOK);
+        rightLabelTitle.setBackground(ColorUtil.COLOR_ALBASTRU_INCHIS);
         rightLabelTitle.setForeground(ColorUtil.COLOR_WHITE);
 
         Composite temp = new Composite(mainComp, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(1).margins(5, 5).applyTo(temp);
+        GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 5, 5).applyTo(temp);
         GridDataFactory.fillDefaults().span(2, 1).align(SWT.CENTER, SWT.BEGINNING).applyTo(temp);
+
+        ratingGeneral = new StarRating(temp, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
+        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(ratingGeneral);
+
         rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null, autorController.getAppImagesFolder());
 
         label("Web");
@@ -78,26 +92,20 @@ public class BookReadOnlyDetailsComposite {
 
         label(" Taguri");
         taguriComposite = new LinkedInSimpleValuesComposite(mainComp);
+
+        label("Rating");
+        notaMea = new StarRating(mainComp, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
     }
 
     public void populateFields(Carte carte) {
-        if (carte.getTitlu().length() > 45) {
-            rightLabelTitle.setText(carte.getTitlu().substring(0, 40) + "...");
+        if (carte.getTitlu().length() > 40) {
+            rightLabelTitle.setText(carte.getTitlu().substring(0, 35) + "...");
         } else {
             rightLabelTitle.setText(carte.getTitlu());
         }
         rightLabelTitle.setToolTipText(carte.getTitlu());
 
-        Image frontCover = null;
-        String frontCoverImageName = null;
-        if (carte.getCopertaFata() != null && carte.getCopertaFata().getId() != null) {
-            GridFSDBFile dbFile = autorController.getDocumentData(carte.getCopertaFata().getId());
-            if (dbFile != null) {
-                frontCover = new Image(Display.getDefault(), dbFile.getInputStream());
-                frontCoverImageName = dbFile.getFilename();
-            }
-        }
-        rightFrontCoverImageComposite.setImage(frontCover, frontCoverImageName);
+        displayImage(carte.getCopertaFata(), rightFrontCoverImageComposite);
         rightWebResourcesComposite.setCarte(carte);
         rightAutoriComposite.setAutori(carte.getIdAutori());
         genLiterarComposite.setValues(carte.getGenLiterar());
@@ -106,6 +114,22 @@ public class BookReadOnlyDetailsComposite {
 
         Rectangle r = scrolledComposite.getClientArea();
         scrolledComposite.setMinSize(mainComp.computeSize(r.width, SWT.DEFAULT));
+
+        ratingGeneral.setCurrentNumberOfStars(userController.getRatingMediu(carte.getId()));
+        notaMea.setCurrentNumberOfStars(userController.getUserRating(EncodeLive.getIdUser(), carte.getId()));
+    }
+
+    private void displayImage(final DocumentData coverDescriptor, ImageSelectorComposite imageSelectorComposite) {
+        Image image = null;
+        String imageName = null;
+        if (coverDescriptor != null && coverDescriptor.getId() != null) {
+            GridFSDBFile dbFile = autorController.getDocumentData(coverDescriptor.getId());
+            if (dbFile != null) {
+                image = new Image(Display.getDefault(), dbFile.getInputStream());
+                imageName = dbFile.getFilename();
+            }
+        }
+        imageSelectorComposite.setImage(image, imageName);
     }
 
     private void label(String labelName) {

@@ -312,6 +312,13 @@ public class BorgSearchSystem extends Composite implements Listener, IEncodeRese
 		return this.indexMappingByPosition.get(columnIndex);
 	}
 
+	public void createRatingSearch(final int columnIndex) {
+		String colName = getColumnName(columnIndex);
+		Map<String, AbstractSearchType> map = isColumnVisibleInPrefs(colName)	? this.visibleFilters
+				: this.hiddenFilters;
+		map.put(colName, new RatingSearch(this, colName));
+	}
+
 	public void createTextSearch(final int columnIndex) {
 		String colName = getColumnName(columnIndex);
 		Map<String, AbstractSearchType> map = isColumnVisibleInPrefs(colName)	? this.visibleFilters

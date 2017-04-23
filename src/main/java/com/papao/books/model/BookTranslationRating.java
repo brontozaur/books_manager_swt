@@ -1,12 +1,23 @@
 package com.papao.books.model;
 
+import org.bson.types.ObjectId;
+
 public class BookTranslationRating {
 
+    private ObjectId bookId;
     private String createdBy;
     private String createdAt;
-    private BookTranslationRating rating;
+    private int ratingTraducere;
     private String updatedBy;
     private String updatedAt;
+
+    public ObjectId getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(ObjectId bookId) {
+        this.bookId = bookId;
+    }
 
     public String getCreatedBy() {
         return createdBy;
@@ -24,12 +35,12 @@ public class BookTranslationRating {
         this.createdAt = createdAt;
     }
 
-    public BookTranslationRating getRating() {
-        return rating;
+    public int getRatingTraducere() {
+        return ratingTraducere;
     }
 
-    public void setRating(BookTranslationRating rating) {
-        this.rating = rating;
+    public void setRatingTraducere(int ratingTraducere) {
+        this.ratingTraducere = ratingTraducere;
     }
 
     public String getUpdatedBy() {

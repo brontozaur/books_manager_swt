@@ -29,8 +29,8 @@ public class ImageSelectorComposite extends Composite implements Observer {
     private boolean imageChanged;
     private String imagesFolder;
     private String fileName;
-    private final int WIDTH = 180;
-    private final int HEIGHT = 200;
+    private final int WIDTH = 160;
+    private final int HEIGHT = 180;
     private String startUrl = "https://www.google.ro/search?tbm=isch&biw=" +
             Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
             Display.getCurrent().getPrimaryMonitor().getBounds().height + "&q=&oq=";
@@ -46,10 +46,10 @@ public class ImageSelectorComposite extends Composite implements Observer {
         this.fileName = fileName;
 
         GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(5, 5, 5, 5).applyTo(this);
-        GridDataFactory.fillDefaults().grab(false, false).hint(195, 240).applyTo(this);
+        GridDataFactory.fillDefaults().grab(false, false).hint(WIDTH + 15, HEIGHT + 40).applyTo(this);
 
         labelImage = new Label(this, SWT.NONE);
-        GridDataFactory.fillDefaults().hint(180, 200).align(SWT.CENTER, SWT.FILL).applyTo(labelImage);
+        GridDataFactory.fillDefaults().hint(WIDTH, HEIGHT).align(SWT.CENTER, SWT.FILL).applyTo(labelImage);
         labelImage.addListener(SWT.MouseDown, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -99,7 +99,6 @@ public class ImageSelectorComposite extends Composite implements Observer {
         final ToolItem itemLocalSelection = new ToolItem(bar, SWT.PUSH);
         itemLocalSelection.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
         itemLocalSelection.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
-        itemLocalSelection.setText("Local");
         itemLocalSelection.setToolTipText("Selectie imagine de pe calculator");
         itemLocalSelection.addListener(SWT.Selection, new Listener() {
             @Override
@@ -111,7 +110,6 @@ public class ImageSelectorComposite extends Composite implements Observer {
         ToolItem itemWebSelection = new ToolItem(bar, SWT.PUSH);
         itemWebSelection.setImage(AppImages.getImage16(AppImages.IMG_BROWSER));
         itemWebSelection.setHotImage(AppImages.getImage16Focus(AppImages.IMG_BROWSER));
-        itemWebSelection.setText("Web");
         itemWebSelection.setToolTipText("Cautare imagine pe internet");
         itemWebSelection.addListener(SWT.Selection, new Listener() {
             @Override
@@ -123,7 +121,6 @@ public class ImageSelectorComposite extends Composite implements Observer {
         ToolItem itemRemove = new ToolItem(bar, SWT.PUSH);
         itemRemove.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
         itemRemove.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
-        itemRemove.setText("Stergere");
         itemRemove.setToolTipText("Sterge imagine");
         itemRemove.addListener(SWT.Selection, new Listener() {
             @Override

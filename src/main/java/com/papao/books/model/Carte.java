@@ -48,11 +48,8 @@ public class Carte extends AuditObject implements Serializable {
     private String descriere;
     private String motto;
     private EditiaOriginala editiaOriginala;
-    private CarteTraducere traducere;
-    // ------ user specific data ------
-    private List<Citat> citate = new ArrayList<>();
-    private List<CarteCitita> carteCitita = new ArrayList<>();
-    private List<BookRating> notaCarte = new ArrayList<>();
+    private List<String> traducatori;
+    private Limba traducereDin;
 
     @Override
     public ObjectId getId() {
@@ -364,30 +361,6 @@ public class Carte extends AuditObject implements Serializable {
         this.motto = motto;
     }
 
-    public List<Citat> getCitate() {
-        return citate;
-    }
-
-    public void setCitate(List<Citat> citate) {
-        this.citate = citate;
-    }
-
-    public List<CarteCitita> getCarteCitita() {
-        return carteCitita;
-    }
-
-    public void setCarteCitita(List<CarteCitita> carteCitita) {
-        this.carteCitita = carteCitita;
-    }
-
-    public List<BookRating> getNotaCarte() {
-        return notaCarte;
-    }
-
-    public void setNotaCarte(List<BookRating> notaCarte) {
-        this.notaCarte = notaCarte;
-    }
-
     public EditiaOriginala getEditiaOriginala() {
         if (this.editiaOriginala == null) {
             this.editiaOriginala = new EditiaOriginala();
@@ -399,15 +372,26 @@ public class Carte extends AuditObject implements Serializable {
         this.editiaOriginala = editiaOriginala;
     }
 
-    public CarteTraducere getTraducere() {
-        if (traducere == null) {
-            traducere = new CarteTraducere();
+    public List<String> getTraducatori() {
+        if (traducatori == null) {
+            return Collections.emptyList();
         }
-        return traducere;
+        return traducatori;
     }
 
-    public void setTraducere(CarteTraducere traducere) {
-        this.traducere = traducere;
+    public void setTraducatori(List<String> traducatori) {
+        this.traducatori = traducatori;
+    }
+
+    public Limba getTraducereDin() {
+        if (traducereDin == null) {
+            return Limba.Nespecificat;
+        }
+        return traducereDin;
+    }
+
+    public void setTraducereDin(Limba traducereDin) {
+        this.traducereDin = traducereDin;
     }
 
     public String getIsbn() {
