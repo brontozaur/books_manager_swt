@@ -6,7 +6,7 @@
     <groupId>com.papao.books</groupId>
     <artifactId>books</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>books</name>
     <description>SWT based books manager</description>
@@ -96,11 +96,6 @@
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
             <version>1.14</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mihalis.opal</groupId>
-            <artifactId>opal</artifactId>
-            <version>0.9.5.2</version>
         </dependency>
 
         <!-- jface 3.6 -->

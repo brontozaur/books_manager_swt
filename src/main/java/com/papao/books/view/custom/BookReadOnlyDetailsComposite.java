@@ -21,6 +21,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
+import org.mihalis.opal.notify.Notifier;
 
 import java.io.IOException;
 import java.util.Observable;
@@ -93,6 +94,7 @@ public class BookReadOnlyDetailsComposite extends Observable{
                 }
                 ratingValue = bookRating.getCurrentNumberOfStars();
                 userController.saveBookRatingForCurrentUser(carte.getId(), ratingValue);
+                Notifier.notify("Notificare", "Nota a fost salvata cu succes!");
                 setChanged();
                 notifyObservers();
             }

@@ -1,11 +1,9 @@
-package com.papao.books;
+package org.mihalis.opal.notify;
 
 import com.papao.books.view.AppImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
-import org.mihalis.opal.notify.Notifier;
-import org.mihalis.opal.notify.NotifierColorsFactory;
 
 public class NotifierSnippet {
     /**

@@ -24,3 +24,4 @@ nbdist/
 out/
 images/
 .nb-gradle/
+!/src/main/resources
