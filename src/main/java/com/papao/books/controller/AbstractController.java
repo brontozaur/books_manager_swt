@@ -135,22 +135,24 @@ public class AbstractController extends Observable {
     /*
 
         db.carte.aggregate([
-       {
-          $unwind: "$idAutori"
-       },
-       {
-          $lookup:
-             {
-                from: "autor",
-                localField: "idAutori",
-                foreignField: "_id",
-                as: "ref"
-            }
-       },
-       { $group: { _id: "$ref", count: { $sum: 1 } } }
-       ])
+            {
+                $unwind: {
+                    "path": "$idAutori",
+                    "preserveNullAndEmptyArrays": true
+                }
+            },
+            {
+                $lookup: {
+                    from: "autor",
+                    localField: "idAutori",
+                    foreignField: "_id",
+                    as: "ref"
+                }
+            },
+            {$group: {_id: "$ref", count: {$sum: 1}}}
+        ])
 
-         */
+    */
     public IntValuePairsWrapper getDistinctValuesForReferenceCollection(String localCollection,
                                                                         String localField,
                                                                         String referenceCollection,
