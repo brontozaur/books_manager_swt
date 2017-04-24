@@ -25,316 +25,326 @@ import org.mihalis.opal.utils.SWTGraphicUtil;
  * bottom of the screen and slides.
  */
 public class Notifier {
-	private static final int FONT_SIZE = 10;
-	private static final int MAX_DURATION_FOR_OPENING = 500;
-	private static final int DISPLAY_TIME = 4500;
 
-	private static final int FADE_TIMER = 50;
-	private static final int FADE_OUT_STEP = 8;
+    private static final int MAX_DURATION_FOR_OPENING = 500;
+    private static final int STEP = 5;
 
-	private static final int STEP = 5;
+    /**
+     * If specified, the shell will use this parent's shell as a parent shell.
+     * By default, it will create a new Shell with null parent.
+     */
+    private static Scrollable parent;
 
-	/**
-	 * Starts a notification. A window will appear in the bottom of the screen,
-	 * then will disappear after 4.5 s
-	 * 
-	 * @param title the title of the popup window
-	 * @param text the text of the notification
-	 * 
-	 */
-	public static void notify(final String title, final String text) {
-		notify(null, title, text, NotifierTheme.YELLOW_THEME);
-	}
+    private static NotifierSettings settings = new NotifierSettings();
 
-	/**
-	 * Starts a notification. A window will appear in the bottom of the screen,
-	 * then will disappear after 4.5 s
-	 * 
-	 * @param image the image to display (if <code>null</code>, a default image
-	 *            is displayed)
-	 * @param title the title of the popup window
-	 * @param text the text of the notification
-	 * 
-	 */
-	public static void notify(final Image image, final String title, final String text) {
-		notify(image, title, text, NotifierTheme.YELLOW_THEME);
+    /**
+     * Starts a notification. A window will appear in the bottom of the screen,
+     * then will disappear after 4.5 s
+     *
+     * @param title the title of the popup window
+     * @param text  the text of the notification
+     */
+    public static void notify(final String title, final String text) {
+        notify(null, title, text, settings.getTheme());
+    }
 
-	}
+    /**
+     * Starts a notification. A window will appear in the bottom of the screen,
+     * then will disappear after 4.5 s
+     *
+     * @param image the image to display (if <code>null</code>, a default image
+     *              is displayed)
+     * @param title the title of the popup window
+     * @param text  the text of the notification
+     */
+    public static void notify(final Image image, final String title, final String text) {
+        notify(image, title, text, settings.getTheme());
+    }
 
-	/**
-	 * Starts a notification. A window will appear in the bottom of the screen,
-	 * then will disappear after 4.5 s
-	 * 
-	 * @param title the title of the popup window
-	 * @param text the text of the notification
-	 * @param theme the graphical theme. If <code>null</code>, the yellow theme
-	 *            is used
-	 * 
-	 * @see NotifierTheme
-	 */
-	public static void notify(final String title, final String text, final NotifierTheme theme) {
-		notify(null, title, text, theme);
-	}
+    /**
+     * Starts a notification. A window will appear in the bottom of the screen,
+     * then will disappear after 4.5 s
+     *
+     * @param title the title of the popup window
+     * @param text  the text of the notification
+     * @param theme the graphical theme. If <code>null</code>, the yellow theme
+     *              is used
+     * @see NotifierTheme
+     */
+    public static void notify(final String title, final String text, final NotifierTheme theme) {
+        notify(null, title, text, theme);
+    }
 
-	/**
-	 * Starts a notification. A window will appear in the bottom of the screen,
-	 * then will disappear after 4.5 s
-	 * 
-	 * @param image the image to display (if <code>null</code>, a default image
-	 *            is displayed)
-	 * @param title the title of the popup window
-	 * @param text the text of the notification
-	 * @param theme the graphical theme. If <code>null</code>, the yellow theme
-	 *            is used
-	 * 
-	 * @see NotifierTheme
-	 */
-	public static void notify(final Image image, final String title, final String text, final NotifierTheme theme) {
-		final Shell shell = createNotificationWindow(image, title, text, NotifierColorsFactory.getColorsForTheme(theme));
-		makeShellAppears(shell);
+    /**
+     * Starts a notification. A window will appear in the bottom of the screen,
+     * then will disappear after 4.5 s
+     *
+     * @param image the image to display (if <code>null</code>, a default image
+     *              is displayed)
+     * @param title the title of the popup window
+     * @param text  the text of the notification
+     * @param theme the graphical theme. If <code>null</code>, the yellow theme
+     *              is used
+     * @see NotifierTheme
+     */
+    public static void notify(final Image image, final String title, final String text, final NotifierTheme theme) {
+        final Shell shell = createNotificationWindow(image, title, text, NotifierColorsFactory.getColorsForTheme(theme));
+        makeShellAppears(shell);
+    }
 
-	}
+    /**
+     * Creates a notification window
+     *
+     * @param image  image. If <code>null</code>, a default image is used
+     * @param title  title, the title of the window
+     * @param text   text of the window
+     * @param colors color set
+     * @return the notification window as a shell object
+     */
+    private static Shell createNotificationWindow(final Image image, final String title, final String text, final NotifierColors colors) {
+        Shell shell = null;
+        if (parent != null && !parent.isDisposed()) {
+            shell = new Shell(parent.getShell(), SWT.NO_TRIM | SWT.NO_FOCUS);
+        } else {
+            shell = new Shell(SWT.NO_TRIM | SWT.NO_FOCUS);
+        }
+        shell.setLayout(new GridLayout(2, false));
+        shell.setBackgroundMode(SWT.INHERIT_FORCE);
 
-	/**
-	 * Creates a notification window
-	 * 
-	 * @param image image. If <code>null</code>, a default image is used
-	 * @param title title, the title of the window
-	 * @param text text of the window
-	 * @param colors color set
-	 * @return the notification window as a shell object
-	 */
-	private static Shell createNotificationWindow(final Image image, final String title, final String text, final NotifierColors colors) {
-		final Shell shell = new Shell(SWT.NO_TRIM | SWT.NO_FOCUS);
-		shell.setLayout(new GridLayout(2, false));
-		shell.setBackgroundMode(SWT.INHERIT_FORCE);
+        createTitle(shell, title, colors);
+        createImage(shell, image);
+        createText(shell, text, colors);
+        createBackground(shell, colors);
+        createCloseAction(shell);
 
-		createTitle(shell, title, colors);
-		createImage(shell, image);
-		createText(shell, text, colors);
-		createBackground(shell, colors);
-		createCloseAction(shell);
+        shell.addListener(SWT.Dispose, new Listener() {
 
-		shell.addListener(SWT.Dispose, new Listener() {
+            @Override
+            public void handleEvent(final Event event) {
+                settings.reset();
+                colors.dispose();
+            }
+        });
 
-			@Override
-			public void handleEvent(final Event event) {
-				colors.dispose();
-			}
-		});
+        shell.pack();
+        shell.setMinimumSize(settings.getShellWidth(), settings.getShellHeight());
+        return shell;
+    }
 
-		shell.pack();
-		shell.setMinimumSize(320, 100);
-		return shell;
-	}
+    /**
+     * Creates the title part of the window
+     *
+     * @param shell  the window
+     * @param title  the title
+     * @param colors the color set
+     */
+    private static void createTitle(final Shell shell, final String title, final NotifierColors colors) {
+        final Label titleLabel = new Label(shell, SWT.WRAP);
+        final GridData gdLabel = new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1);
+        gdLabel.horizontalIndent = 40;
+        titleLabel.setLayoutData(gdLabel);
+        final Color titleColor = colors.titleColor;
+        titleLabel.setForeground(titleColor);
 
-	/**
-	 * Creates the title part of the window
-	 * 
-	 * @param shell the window
-	 * @param title the title
-	 * @param colors the color set
-	 */
-	private static void createTitle(final Shell shell, final String title, final NotifierColors colors) {
-		final Label titleLabel = new Label(shell, SWT.NONE);
-		final GridData gdLabel = new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false, 2, 1);
-		gdLabel.horizontalIndent = 40;
-		titleLabel.setLayoutData(gdLabel);
-		final Color titleColor = colors.titleColor;
-		titleLabel.setForeground(titleColor);
+        final Font titleFont = SWTGraphicUtil.buildFontFrom(titleLabel, SWT.BOLD, settings.getFontSize());
+        titleLabel.setFont(titleFont);
+        titleLabel.setText(title);
+        SWTGraphicUtil.dispose(shell, titleFont);
+    }
 
-		final Font titleFont = SWTGraphicUtil.buildFontFrom(titleLabel, SWT.BOLD, FONT_SIZE);
-		titleLabel.setFont(titleFont);
-		titleLabel.setText(title);
-		SWTGraphicUtil.dispose(shell, titleFont);
-	}
+    /**
+     * Creates the image part of the window
+     *
+     * @param shell the window
+     * @param image the image
+     */
+    private static void createImage(final Shell shell, final Image image) {
+        final Label labelImage = new Label(shell, SWT.NONE);
+        final GridData gdImage = new GridData(GridData.CENTER, GridData.BEGINNING, false, true);
+        gdImage.horizontalIndent = 10;
+        labelImage.setLayoutData(gdImage);
+        if (image == null) {
+            labelImage.setImage(Display.getDefault().getSystemImage(settings.getIconStyle()));
+        } else {
+            labelImage.setImage(image);
+        }
+    }
 
-	/**
-	 * Creates the image part of the window
-	 * 
-	 * @param shell the window
-	 * @param image the image
-	 */
-	private static void createImage(final Shell shell, final Image image) {
-		final Label labelImage = new Label(shell, SWT.NONE);
-		final GridData gdImage = new GridData(GridData.CENTER, GridData.BEGINNING, false, true);
-		gdImage.horizontalIndent = 10;
-		labelImage.setLayoutData(gdImage);
-		if (image == null) {
-//			final Image temp = SWTGraphicUtil.createImage("images/information.png");
-//			labelImage.setImage(temp);
-//			SWTGraphicUtil.dispose(shell, temp);
-			labelImage.setImage(AppImages.getImage16(AppImages.IMG_INFO));
-		} else {
-			labelImage.setImage(image);
-		}
+    /**
+     * Creates the text part of the window
+     *
+     * @param shell  the window
+     * @param text   the text
+     * @param colors the color set
+     */
+    private static void createText(final Shell shell, final String text, final NotifierColors colors) {
+        final StyledText textLabel = new StyledText(shell, SWT.WRAP | SWT.READ_ONLY);
+        final GridData gdText = new GridData(GridData.FILL, GridData.FILL, true, true);
+        gdText.horizontalIndent = 15;
+        gdText.verticalIndent = 10;
+        textLabel.setLayoutData(gdText);
+        textLabel.setEnabled(false);
+        final Font textFont = SWTGraphicUtil.buildFontFrom(textLabel, SWT.NONE, settings.getFontSize());
+        textLabel.setFont(textFont);
 
-	}
+        final Color textColor = colors.textColor;
+        textLabel.setForeground(textColor);
 
-	/**
-	 * Creates the text part of the window
-	 * 
-	 * @param shell the window
-	 * @param text the text
-	 * @param colors the color set
-	 */
-	private static void createText(final Shell shell, final String text, final NotifierColors colors) {
-		final StyledText textLabel = new StyledText(shell, SWT.WRAP | SWT.READ_ONLY);
-		final GridData gdText = new GridData(GridData.FILL, GridData.FILL, true, true);
-		gdText.horizontalIndent = 15;
-		textLabel.setLayoutData(gdText);
-		textLabel.setEnabled(false);
-		final Font textFont = SWTGraphicUtil.buildFontFrom(textLabel, SWT.NONE, 10);
-		textLabel.setFont(textFont);
+        textLabel.setText(text);
+        SWTGraphicUtil.applyHTMLFormating(textLabel);
 
-		final Color textColor = colors.textColor;
-		textLabel.setForeground(textColor);
+        SWTGraphicUtil.dispose(shell, textFont);
 
-		textLabel.setText(text);
-		SWTGraphicUtil.applyHTMLFormating(textLabel);
+    }
 
-		SWTGraphicUtil.dispose(shell, textFont);
+    /**
+     * Creates the background of the window
+     *
+     * @param shell  the window
+     * @param colors the color set of the window
+     */
+    private static void createBackground(final Shell shell, final NotifierColors colors) {
+        shell.addListener(SWT.Resize, new Listener() {
 
-	}
+            @Override
+            public void handleEvent(final Event event) {
+                final Rectangle rect = shell.getClientArea();
+                final Image newImage = new Image(Display.getDefault(), Math.max(1, rect.width), rect.height);
+                final GC gc = new GC(newImage);
+                gc.setAntialias(SWT.ON);
 
-	/**
-	 * Creates the background of the window
-	 * 
-	 * @param shell the window
-	 * @param colors the color set of the window
-	 */
-	private static void createBackground(final Shell shell, final NotifierColors colors) {
-		shell.addListener(SWT.Resize, new Listener() {
+                final Color borderColor = colors.borderColor;
+                final Color fillColor1 = colors.leftColor;
+                final Color fillColor2 = colors.rightColor;
 
-			@Override
-			public void handleEvent(final Event event) {
-				final Rectangle rect = shell.getClientArea();
-				final Image newImage = new Image(Display.getDefault(), Math.max(1, rect.width), rect.height);
-				final GC gc = new GC(newImage);
-				gc.setAntialias(SWT.ON);
+                gc.setBackground(borderColor);
+                gc.fillRoundRectangle(0, 0, rect.width, rect.height, 8, 8);
 
-				final Color borderColor = colors.borderColor;
-				final Color fillColor1 = colors.leftColor;
-				final Color fillColor2 = colors.rightColor;
+                gc.setBackground(fillColor1);
+                gc.fillRoundRectangle(1, 1, rect.width - 2, rect.height - 2, 8, 8);
 
-				gc.setBackground(borderColor);
-				gc.fillRoundRectangle(0, 0, rect.width, rect.height, 8, 8);
+                gc.setBackground(fillColor2);
+                gc.fillRoundRectangle(30, 1, rect.width - 32, rect.height - 2, 8, 8);
+                gc.fillRectangle(30, 1, 10, rect.height - 2);
 
-				gc.setBackground(fillColor1);
-				gc.fillRoundRectangle(1, 1, rect.width - 2, rect.height - 2, 8, 8);
+                final Image closeImage = AppImages.getImage16(AppImages.IMG_CLOSE_NEW);
+                gc.drawImage(closeImage, rect.width - 21, 5);
 
-				gc.setBackground(fillColor2);
-				gc.fillRoundRectangle(30, 1, rect.width - 32, rect.height - 2, 8, 8);
-				gc.fillRectangle(30, 1, 10, rect.height - 2);
+                gc.dispose();
 
-				final Image closeImage = AppImages.getImage16(AppImages.IMG_CLOSE_NEW);
-				gc.drawImage(closeImage, rect.width - 21, 13);
+                shell.setBackgroundImage(newImage);
+            }
+        });
+    }
 
-				gc.dispose();
+    /**
+     * @param shell shell that will appear
+     */
+    private static void makeShellAppears(final Shell shell) {
+        if (shell == null || shell.isDisposed()) {
+            return;
+        }
 
-				shell.setBackgroundImage(newImage);
+        Rectangle clientArea = Display.getDefault().getPrimaryMonitor().getClientArea();
+        if (parent != null && !parent.isDisposed() && settings.isShowOnParent()) {
+            clientArea = parent.getBounds();
+        }
+        final int startX = clientArea.x + clientArea.width - shell.getSize().x - 5;
 
-			}
-		});
+        final int stepForPosition = MAX_DURATION_FOR_OPENING / shell.getSize().y * STEP;
+        final int stepForAlpha = STEP * 255 / shell.getSize().y;
 
-	}
+        final int lastPosition = clientArea.y + clientArea.height - shell.getSize().y;
 
-	/**
-	 * @param shell shell that will appear
-	 */
-	private static void makeShellAppears(final Shell shell) {
-		if (shell == null || shell.isDisposed()) {
-			return;
-		}
+        shell.setAlpha(0);
+        shell.setLocation(startX, clientArea.y + clientArea.height);
+        shell.open();
 
-		final Rectangle clientArea = Display.getDefault().getPrimaryMonitor().getClientArea();
-		final int startX = clientArea.x + clientArea.width - shell.getSize().x;
+        shell.getDisplay().timerExec(stepForPosition, new Runnable() {
 
-		final int stepForPosition = MAX_DURATION_FOR_OPENING / shell.getSize().y * STEP;
-		final int stepForAlpha = STEP * 255 / shell.getSize().y;
+            @Override
+            public void run() {
 
-		final int lastPosition = clientArea.y + clientArea.height - shell.getSize().y;
+                if (shell.isDisposed()) {
+                    return;
+                }
 
-		shell.setAlpha(0);
-		shell.setLocation(startX, clientArea.y + clientArea.height);
-		shell.open();
+                shell.setLocation(startX, shell.getLocation().y - STEP);
+                shell.setAlpha(shell.getAlpha() + stepForAlpha);
+                if (shell.getLocation().y >= lastPosition) {
+                    shell.getDisplay().timerExec(stepForPosition, this);
+                } else {
+                    shell.setAlpha(255);
+                    Display.getDefault().timerExec(settings.getVisibleMiliseconds(), fadeOut(shell, false));
+                }
+            }
+        });
 
-		shell.getDisplay().timerExec(stepForPosition, new Runnable() {
+    }
 
-			@Override
-			public void run() {
+    /**
+     * @param shell shell that will disappear
+     * @param fast  if true, the fading is much faster
+     * @return a runnable
+     */
+    private static Runnable fadeOut(final Shell shell, final boolean fast) {
+        return new Runnable() {
 
-				if (shell == null || shell.isDisposed()) {
-					return;
-				}
+            @Override
+            public void run() {
+                if (shell == null || shell.isDisposed()) {
+                    return;
+                }
 
-				shell.setLocation(startX, shell.getLocation().y - STEP);
-				shell.setAlpha(shell.getAlpha() + stepForAlpha);
-				if (shell.getLocation().y >= lastPosition) {
-					shell.getDisplay().timerExec(stepForPosition, this);
-				} else {
-					shell.setAlpha(255);
-					Display.getDefault().timerExec(DISPLAY_TIME, fadeOut(shell, false));
-				}
-			}
-		});
+                int currentAlpha = shell.getAlpha();
+                currentAlpha -= settings.getFadeOutStep() * (fast ? 8 : 1);
 
-	}
+                if (currentAlpha <= 0) {
+                    shell.setAlpha(0);
+                    shell.dispose();
+                    return;
+                }
 
-	/**
-	 * @param shell shell that will disappear
-	 * @param fast if true, the fading is much faster
-	 * @return a runnable
-	 */
-	private static Runnable fadeOut(final Shell shell, final boolean fast) {
-		return new Runnable() {
+                shell.setAlpha(currentAlpha);
 
-			@Override
-			public void run() {
-				if (shell == null || shell.isDisposed()) {
-					return;
-				}
+                Display.getDefault().timerExec(settings.getFadeTimer(), this);
 
-				int currentAlpha = shell.getAlpha();
-				currentAlpha -= FADE_OUT_STEP * (fast ? 8 : 1);
+            }
 
-				if (currentAlpha <= 0) {
-					shell.setAlpha(0);
-					shell.dispose();
-					return;
-				}
+        };
+    }
 
-				shell.setAlpha(currentAlpha);
+    /**
+     * Add a listener to the shell in order to handle the clicks on the close
+     * button
+     *
+     * @param shell associated shell
+     */
+    private static void createCloseAction(final Shell shell) {
+        shell.addListener(SWT.MouseDown, new Listener() {
 
-				Display.getDefault().timerExec(FADE_TIMER, this);
+            @Override
+            public void handleEvent(final Event event) {
+                final Rectangle rect = shell.getClientArea();
+                final int startingX = rect.width - 21;
+                final int upperY = 5;
 
-			}
+                if (event.x >= startingX && event.x <= rect.width && event.y >= upperY && event.y <= upperY + 16) {
+                    Display.getDefault().timerExec(0, fadeOut(shell, true));
+                }
+            }
+        });
+    }
 
-		};
-	}
+    public static Scrollable getParent() {
+        return parent;
+    }
 
-	/**
-	 * Add a listener to the shell in order to handle the clicks on the close
-	 * button
-	 * 
-	 * @param shell associated shell
-	 */
-	private static void createCloseAction(final Shell shell) {
-		shell.addListener(SWT.MouseUp, new Listener() {
+    public static void setParent(Scrollable parent) {
+        Notifier.parent = parent;
+    }
 
-			@Override
-			public void handleEvent(final Event event) {
-				final Rectangle rect = shell.getClientArea();
-				final int xUpperLeftCorner = rect.width - 21;
-				final int yUpperLeftCorner = 13;
-
-				if (event.x >= xUpperLeftCorner && event.x <= xUpperLeftCorner + 8 && event.y >= yUpperLeftCorner && event.y <= yUpperLeftCorner + 8) {
-					Display.getDefault().timerExec(0, fadeOut(shell, true));
-				}
-
-			}
-		});
-
-	}
-
+    public static NotifierSettings getSettings() {
+        return settings;
+    }
 }

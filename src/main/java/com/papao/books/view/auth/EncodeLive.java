@@ -42,6 +42,8 @@ public final class EncodeLive {
 
     public static final Locale ROMANIAN_LOCALE = new Locale("ro", "RO");
 
+    private static boolean notificationUsingOpalStyle;
+
     private EncodeLive() {
     }
 
@@ -328,4 +330,11 @@ public final class EncodeLive {
         EncodeLive.idValutaDefault = idValutaDefault;
     }
 
+    public static boolean isNotificationUsingOpalStyle() {
+        return notificationUsingOpalStyle;
+    }
+
+    public static void setNotificationUsingNotifier(boolean notificationUsingOpalStyle) {
+        EncodeLive.notificationUsingOpalStyle = notificationUsingOpalStyle;
+    }
 }

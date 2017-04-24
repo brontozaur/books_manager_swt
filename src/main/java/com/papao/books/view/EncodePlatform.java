@@ -1439,6 +1439,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     public void refreshTableViewer(boolean resetPage) {
+        SWTeXtension.displayMessageI("Va rog asteptati...", "Incarcare date");
         String value = null;
         boolean all = true;
         if (!leftTreeViewer.getSelection().isEmpty()) {

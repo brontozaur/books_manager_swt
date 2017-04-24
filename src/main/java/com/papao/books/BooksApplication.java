@@ -8,7 +8,11 @@ import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.mihalis.opal.notify.Notifier;
+import org.mihalis.opal.notify.NotifierColorsFactory;
+import org.mihalis.opal.notify.NotifierSettings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -35,12 +39,19 @@ public class BooksApplication {
     @Autowired
     private EncodePlatform encodePlatform;
 
+    @Value("${app.notification.style}")
+    String notificationStyle;
+
     @PostConstruct
     public void open() {
         try {
+            EncodeLive.setNotificationUsingNotifier("default".equals(notificationStyle));
+            initNotifierSettings();
+            Notifier.setParent(loginShell.getShell());
             loginShell.open(true, false);
             if (loginShell.getUserAction() == SWT.OK) {
                 encodePlatform.getShell().setText(encodePlatform.getShell().getText().replace("$$$", EncodeLive.getCurrentUserName()));
+                Notifier.setParent(encodePlatform.getShell());
                 encodePlatform.open();
             } else {
                 closeApp(false);
@@ -64,7 +75,36 @@ public class BooksApplication {
         }
     }
 
-    public void closeApp(final boolean forced) {
+    private void closeApp(final boolean forced) {
         encodePlatform.closeApplication(forced);
+    }
+
+    @Value("${app.notifier.shellWidth}")
+    int shellWidth;
+    @Value("${app.notifier.shellHeight}")
+    int shellHeight;
+    @Value("${app.notifier.visibleMiliseconds}")
+    int visibleMiliseconds;
+    @Value("${app.notifier.fadeTimer}")
+    int fadeTimer;
+    @Value("${app.notifier.fadeOutStep}")
+    int fadeOutStep;
+    @Value("${app.notifier.theme}")
+    NotifierColorsFactory.NotifierTheme theme;
+    @Value("${app.notifier.showOnParent}")
+    boolean showOnParent;
+    @Value("${app.notifier.fontSize}")
+    int fontSize;
+
+    private void initNotifierSettings() {
+        NotifierSettings settings = Notifier.getSettings();
+        settings.setShellWidth(shellWidth);
+        settings.setShellHeight(shellHeight);
+        settings.setVisibleMiliseconds(visibleMiliseconds);
+        settings.setFadeTimer(fadeTimer);
+        settings.setFadeOutStep(fadeOutStep);
+        settings.setTheme(theme);
+        settings.setShowOnParent(showOnParent);
+        settings.setFontSize(fontSize);
     }
 }

@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.mihalis.opal.notify.Notifier;
 
 import java.util.Observable;
 
@@ -174,6 +175,8 @@ public abstract class AbstractView extends Observable {
 
     private Text textSearchWithHighlight;
 
+    private Scrollable notificationParent;
+
     public AbstractView(final Shell parent, final Class<? extends Widget> widgetClass, final int viewMode) {
         this(parent, widgetClass, null, viewMode);
     }
@@ -281,12 +284,21 @@ public abstract class AbstractView extends Observable {
             if (this.shell == null) {
                 setShell(new Shell(Display.getDefault(), getShellStyle()));
             }
+            //we set the current shell as the parent shell for notifications. For just in case ;-)
+            this.notificationParent = Notifier.getParent();
+            if (this.notificationParent == null || this.notificationParent.isDisposed()) {
+                this.notificationParent = this.shell;
+                Notifier.setParent(this.shell);
+            }
+            Notifier.setParent(this.shell);
             this.shell.addListener(SWT.Dispose, new Listener() {
                 @Override
                 public void handleEvent(Event event) {
                     if (getDockingItem() != null && !getDockingItem().isDisposed()) {
                         getDockingItem().dispose();
                     }
+                    //we restore the original notification parent
+                    Notifier.setParent(notificationParent);
                 }
             });
             this.shell.setLayout(new GridLayout(1, true));
