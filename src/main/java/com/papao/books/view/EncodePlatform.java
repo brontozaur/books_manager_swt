@@ -1257,8 +1257,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     public void customizeView() {
         setShellText("Books Manager [utilizator: $$$]");
         setViewOptions(AbstractView.SHOW_OPS_LABELS);
-        setBigViewMessage("12:15. Press return.");
-        setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
+//        setBigViewMessage("12:15. Press return.");
+//        setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
     }
 
     public boolean add() {
