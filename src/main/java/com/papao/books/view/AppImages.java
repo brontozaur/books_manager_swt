@@ -145,7 +145,18 @@ public final class AppImages {
     public final static String IMG_TRUCK_YELLOW = "truck_yellow.png";
     public final static String IMG_PARTENERI = "parteneri.png";
     public final static String IMG_FULL_STAR = "full-star.png";
-    public final static String IMG_HALD_STAR = "half-star.png";
+
+    public final static String IMG_ARROW_DOWN_OPAL = "arrow_down.png";
+    public final static String IMG_ARROW_UP_OPAL = "arrow_up.png";
+    public final static String IMG_ARROW_LEFT_OPAL = "arrow_left.png";
+    public final static String IMG_ARROW_RIGHT_OPAL = "arrow_right";
+    public final static String IMG_CLOSE_NEW = "closeNew.png";
+    public final static String IMG_DOUBLE_DOWN = "double_down.png";
+    public final static String IMG_DOUBLE_LEFT = "double_left.png";
+    public final static String IMG_DOUBLE_RIGHT = "double_right.png";
+    public final static String IMG_DOUBLE_UP = "double_up.png";
+    public final static String IMG_FEWER_DETAILS = "fewerDetails.png";
+    public final static String IMG_MORE_DETAILS = "moreDetails.png";
 
     /**
      * declaram acum icoane suplimentare, diverse (misc)

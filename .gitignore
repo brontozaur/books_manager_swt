@@ -25,3 +25,4 @@ out/
 images/
 .nb-gradle/
 !/src/main/resources
+!/src/main/resources/images/
