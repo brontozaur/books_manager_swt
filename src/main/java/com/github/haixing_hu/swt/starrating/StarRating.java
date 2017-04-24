@@ -192,15 +192,12 @@ public class StarRating extends Canvas {
         case SWT.Paint:
           onMousePaint(event);
           break;
-        case SWT.Dispose:
-          onDispose(event);
-          break;
         }
       }
     };
 
     final int[] events = new int[] { SWT.MouseEnter, SWT.MouseMove,
-        SWT.MouseExit, SWT.MouseUp, SWT.Paint, SWT.Dispose };
+        SWT.MouseExit, SWT.MouseUp, SWT.Paint };
     for (final int event : events) {
       addListener(event, listener);
     }
@@ -275,12 +272,6 @@ public class StarRating extends Canvas {
       } else {
         x += sizeOfStars.equals(Size.BIG) ? SIZE_BIG : SIZE_SMALL;
       }
-    }
-  }
-
-  private void onDispose(final Event event) {
-    for (final Star star : stars) {
-      star.dispose();
     }
   }
 

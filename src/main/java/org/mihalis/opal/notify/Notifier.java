@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.mihalis.opal.notify;
 
+import com.papao.books.view.AppImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.*;
@@ -160,9 +161,10 @@ public class Notifier {
 		gdImage.horizontalIndent = 10;
 		labelImage.setLayoutData(gdImage);
 		if (image == null) {
-			final Image temp = SWTGraphicUtil.createImage("images/information.png");
-			labelImage.setImage(temp);
-			SWTGraphicUtil.dispose(shell, temp);
+//			final Image temp = SWTGraphicUtil.createImage("images/information.png");
+//			labelImage.setImage(temp);
+//			SWTGraphicUtil.dispose(shell, temp);
+			labelImage.setImage(AppImages.getImage16(AppImages.IMG_INFO));
 		} else {
 			labelImage.setImage(image);
 		}
@@ -225,11 +227,10 @@ public class Notifier {
 				gc.fillRoundRectangle(30, 1, rect.width - 32, rect.height - 2, 8, 8);
 				gc.fillRectangle(30, 1, 10, rect.height - 2);
 
-				final Image closeImage = SWTGraphicUtil.createImage("images/close.png");
+				final Image closeImage = AppImages.getImage16(AppImages.IMG_CLOSE_NEW);
 				gc.drawImage(closeImage, rect.width - 21, 13);
 
 				gc.dispose();
-				closeImage.dispose();
 
 				shell.setBackgroundImage(newImage);
 

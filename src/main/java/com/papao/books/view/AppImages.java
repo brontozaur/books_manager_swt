@@ -158,6 +158,17 @@ public final class AppImages {
     public final static String IMG_FEWER_DETAILS = "fewerDetails.png";
     public final static String IMG_MORE_DETAILS = "moreDetails.png";
 
+    public final static String STAR_GRAY_16 = "star16.png";
+    public final static String STAR_GRAY_32 = "star32.png";
+    public final static String STAR_GRAY_FOCUS_16 = "star_focus16.png";
+    public final static String STAR_GRAY_FOCUS_32 = "star_focus32.png";
+    public final static String STAR_MARK_16 = "star_mark16.png";
+    public final static String STAR_MARK_32 = "star_mark32.png";
+    public final static String STAR_MARK_FOCUS_16 = "star_mark_focus16.png";
+    public final static String STAR_MARK_FOCUS_32 = "star_mark_focus32.png";
+
+
+
     /**
      * declaram acum icoane suplimentare, diverse (misc)
      */
