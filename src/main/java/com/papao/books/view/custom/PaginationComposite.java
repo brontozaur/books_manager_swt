@@ -3,7 +3,6 @@ package com.papao.books.view.custom;
 import com.papao.books.controller.BookController;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
-import com.papao.books.view.searcheable.BookSearchType;
 import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -35,13 +34,12 @@ public class PaginationComposite extends Composite implements Observer {
     private int pageSize = 0;
     private BookController paginationController;
 
-    public PaginationComposite(Composite parent, BookController paginationController, BookSearchType searchType) {
+    public PaginationComposite(Composite parent, BookController paginationController) {
         super(parent, SWT.NONE);
         this.paginationController = paginationController;
         paginationController.addObserver(this);
 
-        GridLayoutFactory.fillDefaults().numColumns(8).equalWidth(false).applyTo(this);
-        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.END).grab(true, false).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(8).margins(0, 0).spacing(5, 0).extendedMargins(0, 0, 5, 0).equalWidth(false).applyTo(this);
 
         ToolBar barFirstpage = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 
@@ -58,7 +56,7 @@ public class PaginationComposite extends Composite implements Observer {
         });
 
         itemPrevious = new ToolItem(barFirstpage, SWT.NONE);
-        itemPrevious.setImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_BACK));
+        itemPrevious.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT_OPAL));
         itemPrevious.setToolTipText("Pagina anterioara");
         itemPrevious.addListener(SWT.Selection, new Listener() {
             @Override
@@ -75,7 +73,7 @@ public class PaginationComposite extends Composite implements Observer {
 
         textGoToPage = new FormattedText(this, SWT.BORDER);
         textGoToPage.setFormatter(new IntegerFormatter());
-        GridDataFactory.fillDefaults().minSize(50, SWT.DEFAULT).hint(50, SWT.DEFAULT).applyTo(textGoToPage.getControl());
+        GridDataFactory.fillDefaults().minSize(30, SWT.DEFAULT).hint(30, SWT.DEFAULT).applyTo(textGoToPage.getControl());
         textGoToPage.getControl().addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -91,12 +89,11 @@ public class PaginationComposite extends Composite implements Observer {
         });
 
         labelDin = new Label(this, SWT.NONE);
-        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).applyTo(labelDin);
 
         ToolBar barLastPage = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 
         itemNext = new ToolItem(barLastPage, SWT.NONE);
-        itemNext.setImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_NEXT));
+        itemNext.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemPrevious.setToolTipText("Pagina urmatoare");
         itemNext.addListener(SWT.Selection, new Listener() {
             @Override
@@ -135,7 +132,6 @@ public class PaginationComposite extends Composite implements Observer {
         });
 
         labelShowingXItemsOfTotal = new Label(this, SWT.NONE);
-        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(labelShowingXItemsOfTotal);
     }
 
     private boolean validatePageNumber(Event event) {
@@ -198,7 +194,7 @@ public class PaginationComposite extends Composite implements Observer {
         itemFirstPage.setEnabled(totalPages > 1 && itemPrevious.getEnabled());
 
         labelShowingXItemsOfTotal.setText(getLabelText());
-        labelShowingXItemsOfTotal.setSize(labelShowingXItemsOfTotal.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+//        labelShowingXItemsOfTotal.setSize(labelShowingXItemsOfTotal.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         textGoToPage.setValue(currentPage);
         labelDin.setText("din " + totalPages);
         layout();

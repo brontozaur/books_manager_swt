@@ -122,7 +122,7 @@ public class Notifier {
             @Override
             public void handleEvent(final Event event) {
                 settings.reset();
-                colors.dispose();
+//                colors.dispose();
             }
         });
 

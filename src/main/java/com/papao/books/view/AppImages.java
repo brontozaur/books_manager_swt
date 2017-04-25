@@ -149,7 +149,7 @@ public final class AppImages {
     public final static String IMG_ARROW_DOWN_OPAL = "arrow_down.png";
     public final static String IMG_ARROW_UP_OPAL = "arrow_up.png";
     public final static String IMG_ARROW_LEFT_OPAL = "arrow_left.png";
-    public final static String IMG_ARROW_RIGHT_OPAL = "arrow_right";
+    public final static String IMG_ARROW_RIGHT_OPAL = "arrow_right.png";
     public final static String IMG_CLOSE_NEW = "closeNew.png";
     public final static String IMG_DOUBLE_DOWN = "double_down.png";
     public final static String IMG_DOUBLE_LEFT = "double_left.png";
