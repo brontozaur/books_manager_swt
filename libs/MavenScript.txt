@@ -103,6 +103,7 @@ http://jcarrierpigeon.sourceforge.net/#features
 http://stackoverflow.com/questions/21181758/how-to-show-an-alert-message-using-swt
 http://philondev.blogspot.ro/2009/12/notification-framework.html
 https://github.com/pke/Notifications
+http://www.novocode.com/swt/
 
 Expandable composite:
 http://www.eclipse.org/mylyn/
