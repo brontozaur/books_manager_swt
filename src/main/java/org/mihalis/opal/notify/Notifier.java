@@ -20,6 +20,10 @@ import org.eclipse.swt.widgets.*;
 import org.mihalis.opal.notify.NotifierColorsFactory.NotifierTheme;
 import org.mihalis.opal.utils.SWTGraphicUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This class provides a notifier window, which is a window that appears in the
  * bottom of the screen and slides.
@@ -36,6 +40,8 @@ public class Notifier {
     private static Scrollable parent;
 
     private static NotifierSettings settings = new NotifierSettings();
+
+    private static java.util.List<Shell> activeShells = new ArrayList<>();
 
     /**
      * Starts a notification. A window will appear in the bottom of the screen,
@@ -89,7 +95,17 @@ public class Notifier {
      */
     public static void notify(final Image image, final String title, final String text, final NotifierTheme theme) {
         final Shell shell = createNotificationWindow(image, title, text, NotifierColorsFactory.getColorsForTheme(theme));
+        shell.addListener(SWT.Dispose, new Listener() {
+
+            @Override
+            public void handleEvent(final Event event) {
+                settings.reset();
+                activeShells.remove(shell);
+//                colors.dispose();
+            }
+        });
         makeShellAppears(shell);
+        activeShells.add(shell);
     }
 
     /**
@@ -116,15 +132,6 @@ public class Notifier {
         createText(shell, text, colors);
         createBackground(shell, colors);
         createCloseAction(shell);
-
-        shell.addListener(SWT.Dispose, new Listener() {
-
-            @Override
-            public void handleEvent(final Event event) {
-                settings.reset();
-//                colors.dispose();
-            }
-        });
 
         shell.pack();
         shell.setMinimumSize(settings.getShellWidth(), settings.getShellHeight());
@@ -243,6 +250,19 @@ public class Notifier {
     private static void makeShellAppears(final Shell shell) {
         if (shell == null || shell.isDisposed()) {
             return;
+        }
+
+        if (!activeShells.isEmpty()) {
+            List<Shell> modifiable = new ArrayList<>(activeShells);
+            Collections.reverse(modifiable);
+            for (Shell oldShell : modifiable) {
+                Point curLoc = oldShell.getLocation();
+                oldShell.setLocation(curLoc.x, curLoc.y - settings.getShellHeight());
+                if (curLoc.y - settings.getShellHeight() < 0) {
+                    activeShells.remove(oldShell);
+                    oldShell.dispose();
+                }
+            }
         }
 
         Rectangle clientArea = Display.getDefault().getPrimaryMonitor().getClientArea();
