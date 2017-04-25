@@ -237,8 +237,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightInnerSash);
 
         Composite secondaryComRight = new Composite(rightInnerSash, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(secondaryComRight);
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(secondaryComRight);
+        GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).spacing(0, 0).applyTo(secondaryComRight);
+        GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.BEGINNING).applyTo(secondaryComRight);
 
         int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE;
         this.tableViewer = new TableViewer(secondaryComRight, style);
@@ -291,7 +291,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        paginationComposite = new PaginationComposite(secondaryComRight, bookController, searchType);
+        paginationComposite = new PaginationComposite(secondaryComRight, bookController);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(paginationComposite);
 
         this.bottomInnerTabFolderRight = new CTabFolder(rightInnerSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.bottomInnerTabFolderRight);

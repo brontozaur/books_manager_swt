@@ -1,9 +1,10 @@
 package com.papao.books.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditiaOriginala {
+public class EditiaOriginala implements Serializable{
 
     private String titlu;
     private Limba limba;
