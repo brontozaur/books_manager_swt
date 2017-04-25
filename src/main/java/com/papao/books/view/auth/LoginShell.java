@@ -1,5 +1,6 @@
 package com.papao.books.view.auth;
 
+import com.com.novocode.naf.swt.custom.BalloonNotification;
 import com.github.haixing_hu.swt.panel.BlurredPanel;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.AMongodbComparator;
@@ -231,8 +232,8 @@ public class LoginShell extends AbstractCView implements Listener {
     @Override
     protected boolean validate() {
         if (this.comboUsers.getSelectedElement() == null) {
-            SWTeXtension.displayMessageW("Selectati un utilizator valid!");
-            this.comboUsers.getCombo().setFocus();
+//            SWTeXtension.displayMessageW("Selectati un utilizator valid!");
+            BalloonNotification.showNotification(comboUsers, "Notificare", "Selectati un utilizator valid!", 1500);
             return false;
         }
         User usrApp = (User) this.comboUsers.getSelectedElement();

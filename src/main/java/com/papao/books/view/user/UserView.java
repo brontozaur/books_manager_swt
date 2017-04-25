@@ -1,11 +1,11 @@
 package com.papao.books.view.user;
 
+import com.com.novocode.naf.swt.custom.BalloonNotification;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.User;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.view.AbstractView;
-import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
@@ -75,8 +75,13 @@ public class UserView extends AbstractCSaveView {
     protected boolean validate() {
         try {
             if (StringUtils.isEmpty(this.textNume.getText())) {
-                SWTeXtension.displayMessageW("Numele nu este introdus!");
-                this.textNume.setFocus();
+//                SWTeXtension.displayMessageW("Numele nu este introdus!");
+                BalloonNotification.showNotification(textNume, "Notificare", "Numele nu este introdus!", 1500);
+                return false;
+            }
+            if (StringUtils.isEmpty(this.textPrenume.getText())) {
+//                SWTeXtension.displayMessageW("Numele nu este introdus!");
+                BalloonNotification.showNotification(textPrenume, "Notificare", "Prenumele nu este introdus!", 1500);
                 return false;
             }
         } catch (Exception exc) {
