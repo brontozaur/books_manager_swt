@@ -93,3 +93,16 @@ pom.xml
      <artifactId>ui.forms</artifactId>
      <version>3.5</version>
 </dependency>
+
+
+Notification widgets:
+http://jtoaster.sourceforge.net/
+http://hexapixel.com/2009/06/30/creating-a-notification-popup-widget
+http://book2s.com/java/src/package/com/hexapixel/widgets/ribbon/ribbonshell.html
+http://jcarrierpigeon.sourceforge.net/#features
+http://stackoverflow.com/questions/21181758/how-to-show-an-alert-message-using-swt
+http://philondev.blogspot.ro/2009/12/notification-framework.html
+https://github.com/pke/Notifications
+
+Expandable composite:
+http://www.eclipse.org/mylyn/
