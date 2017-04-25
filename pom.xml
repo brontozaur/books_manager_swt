@@ -119,6 +119,11 @@
             <artifactId>jface</artifactId>
             <version>3.6.0.I20091207-1800</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>ui.forms</artifactId>
+            <version>3.5</version>
+        </dependency>
 
         <!-- borg images -->
         <dependency>
