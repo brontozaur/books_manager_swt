@@ -82,6 +82,8 @@ public final class AppImages {
     private final static Map<String, Image> HASH_GRAY_IMAGES_32 = new HashMap<String, Image>();
     private final static Map<String, Image> HASH_GRAY_IMAGES_MISC = new HashMap<String, Image>();
 
+    private final static Map<String, Image> FILE_TYPE_IMAGES = new HashMap<String, Image>();
+
     /**
      * declararea unui nume unic de variabila, care se va regasi in fiecare folder SKIN, la aceeasi
      * locatie.
@@ -238,12 +240,6 @@ public final class AppImages {
     private static String composeImgPath(final String skin_name, final String lastDir) {
         return AppImages.IMAGES_ROOT + skin_name + lastDir;
     }
-
-    /**
-     * @param index
-     *            index-ul imaginii, cum e definit in blocul static de intializare
-     * @return org.eclipse.swt.Graphics.Image
-     */
 
     public static Image getImage(final Image img, final int width, final int height) {
         return AppImages.resize(img, width, height);
@@ -644,4 +640,12 @@ public final class AppImages {
         }
     }
 
+    public static Image getImageForExtension(String extension) {
+        Image image = FILE_TYPE_IMAGES.get(extension);
+        if (image == null || image.isDisposed()) {
+            image = new Image(Display.getDefault(), Program.findProgram(extension).getImageData());
+            FILE_TYPE_IMAGES.put(extension, image);
+        }
+        return image;
+    }
 }

@@ -399,6 +399,9 @@ public class DragAndDropTableComposite extends Composite {
         final TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, document.getFileName() != null ? document.getFileName() : "");
         item.setText(1, document.getContentType() != null ? document.getContentType() : "");
+        if (document.getFilePath().lastIndexOf(".") != -1) {
+            item.setImage(1, AppImages.getImageForExtension(document.getFilePath().substring(document.getFilePath().lastIndexOf("."))));
+        }
         item.setText(2, document.getSizeInKb());
         item.setText(3, document.getUploadDate() != null ?
                 BorgDateUtil.getFormattedDateStr(document.getUploadDate(), "yyyy-MM-dd HH:mm:ss") : "");
