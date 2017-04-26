@@ -82,6 +82,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private SashForm rightInnerSash;
     private CTabFolder bottomInnerTabFolderRight;
     private TableViewer tableViewer;
+    private CTabFolder mainRightTabFolder;
+
     private static final String[] COLS = new String[]{"Autor", "Titlu", "Rating", "Editura", "An aparitie", "Limba"};
     private final static int IDX_AUTOR = 0;
     private final static int IDX_TITLU = 1;
@@ -108,6 +110,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private DragAndDropTableComposite dragAndDropTableComposite;
     private SashForm rightVerticalSash;
     private BookReadOnlyDetailsComposite readOnlyDetailsComposite;
+    private GalleryItem galleryItem;
+    private Gallery gallery;
 
     @Autowired
     public EncodePlatform(UserController userController,
@@ -230,9 +234,32 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         rightVerticalSash.SASH_WIDTH = 4;
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightVerticalSash);
 
-        rightSash = new SashForm(rightVerticalSash, SWT.SMOOTH | SWT.HORIZONTAL);
+        this.mainRightTabFolder = new CTabFolder(rightVerticalSash, SWT.BOTTOM);
+        GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.mainRightTabFolder);
+        this.mainRightTabFolder.setSimple(true);
+        this.mainRightTabFolder.setUnselectedImageVisible(true);
+        this.mainRightTabFolder.setUnselectedCloseVisible(false);
+        this.mainRightTabFolder.setMRUVisible(true);
+        this.mainRightTabFolder.setMinimizeVisible(false);
+        this.mainRightTabFolder.setMaximizeVisible(false);
+        mainRightTabFolder.setSelectionBackground(ColorUtil.COLOR_SYSTEM);
+
+        CTabItem tabGrid = new CTabItem(this.mainRightTabFolder, SWT.NONE);
+        tabGrid.setText("Lista");
+        tabGrid.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+        this.mainTabFolder.setSelection(tabGrid);
+
+        mainRightTabFolder.setSelection(tabGrid);
+
+        rightSash = new SashForm(mainRightTabFolder, SWT.SMOOTH | SWT.HORIZONTAL);
         rightSash.SASH_WIDTH = 4;
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightSash);
+        tabGrid.setControl(rightSash);
+
+        CTabItem tabGallery = new CTabItem(this.mainRightTabFolder, SWT.NONE);
+        tabGallery.setText("Galerie");
+        tabGallery.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
+        tabGallery.setControl(createGallery(mainRightTabFolder));
 
         this.verticalSash.setWeights(new int[]{2, 8});
 //        this.verticalSash.setMaximizedControl(rightSash);
@@ -337,10 +364,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         booksTabItem.setControl(verticalSash);
 
-        CTabItem gallery = new CTabItem(this.mainTabFolder, SWT.NONE);
-        gallery.setText("Galerie");
-        gallery.setImage(AppImages.getImage32(AppImages.IMG_SHOW));
-        gallery.setControl(createGallery(this.mainTabFolder));
+//        CTabItem gallery = new CTabItem(this.mainTabFolder, SWT.NONE);
+//        gallery.setText("Galerie");
+//        gallery.setImage(AppImages.getImage32(AppImages.IMG_SHOW));
+//        gallery.setControl(createGallery(this.mainTabFolder));
 
         getContainer().layout();
     }
@@ -351,32 +378,45 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         gr.setItemHeight(250);
         gr.setItemWidth(150);
         gr.setAutoMargin(true);
-        Gallery gallery = new Gallery(parent, SWT.V_SCROLL | SWT.MULTI);
+        gallery = new Gallery(parent, SWT.V_SCROLL | SWT.MULTI);
         gallery.setGroupRenderer(gr);
 
         DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
         ir.setShowLabels(true);
         gallery.setItemRenderer(ir);
+        gallery.addListener(SWT.MouseDoubleClick, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.item == null || event.item.getData() == null) {
+                    return;
+                }
+                Object data = event.item.getData();
+//                selectionService.setSelection(data);
+                new CarteView(getShell(), (Carte)event.widget.getData(), bookController, userController, autorController, AbstractView.MODE_MODIFY).open(true, true);
+            }
+        });
 
-        GalleryItem group = new GalleryItem(gallery, SWT.NONE);
-        List<Carte> carti = bookController.getRepository().findAll();
+        galleryItem = new GalleryItem(gallery, SWT.NONE);
 
+//        new HoverListener(gallery, Display.getCurrent().getSystemColor(
+//                SWT.COLOR_WHITE), Display.getCurrent().getSystemColor(
+//                SWT.COLOR_CYAN), 500, 5000);
+
+        return gallery;
+    }
+
+    private void populateGalerie(List<Carte> carti) {
         for (int i = 0; i < carti.size(); i++) {
             final Carte carte = carti.get(i);
-            final GalleryItem item = new GalleryItem(group, SWT.NONE);
+            final GalleryItem item = new GalleryItem(galleryItem, SWT.NONE);
             Image image = bookController.getImage(carte.getCopertaFata());
             if (image == null) {
-                image = AppImages.getImageNotFound(64, 64);
+                item.setImage(AppImages.getImageNotFound(64, 64));
+            } else {
+                item.setImage(AppImages.resize(image, 150, 200));
+                image.dispose();
             }
             item.setData(carte);
-            item.addListener(SWT.MouseDoubleClick, new Listener() {
-                @Override
-                public void handleEvent(Event event) {
-                    new CarteView(getShell(), (Carte)event.widget.getData(), bookController, userController, autorController, AbstractView.MODE_MODIFY).open(true, true);
-                }
-            });
-
-            item.setImage(image);
             item.setText(carte.getTitlu());
             item.addDisposeListener(new DisposeListener() {
                 @Override
@@ -385,7 +425,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 }
             });
         }
-        return gallery;
     }
 
     private Composite createTabDocuments(CTabFolder bottomInnerTabFolderRight) {
@@ -1510,7 +1549,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     public void refreshTableViewer(boolean resetPage) {
-        SWTeXtension.displayMessageI("Va rog asteptati...", "Incarcare date");
         String value = null;
         boolean all = true;
         if (!leftTreeViewer.getSelection().isEmpty()) {
@@ -1627,5 +1665,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 displayBookData();
             }
         }
+        gallery.remove(galleryItem);
+        gallery.redraw();
+        galleryItem = new GalleryItem(gallery, SWT.NONE);
+        populateGalerie(page.getContent());
     }
 }

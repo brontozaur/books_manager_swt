@@ -264,7 +264,7 @@ public final class AppImages {
      *         this method is called. Dispose method cannot be done here since we actually need the
      *         new Image, so it must be done by the caller.
      */
-    private static Image resize(final Image image, final int width, final int height) {
+    public static Image resize(final Image image, final int width, final int height) {
         Image scaled;
         GC gc;
         try {
