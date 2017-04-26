@@ -129,7 +129,7 @@ public class CarteView extends AbstractCSaveView {
         itemInformatiiEsentiale = new ToolItem(toolBar, SWT.RADIO);
         itemInformatiiEsentiale.setText("Informatii esentiale");
         itemInformatiiEsentiale.setImage(AppImages.getImage16(AppImages.IMG_ARROW_UP_OPAL));
-        itemInformatiiEsentiale.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_UP_OPAL));
+//        itemInformatiiEsentiale.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_UP_OPAL));
         itemInformatiiEsentiale.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -145,7 +145,7 @@ public class CarteView extends AbstractCSaveView {
         itemTraducere = new ToolItem(toolBar, SWT.RADIO);
         itemTraducere.setText("Traducere");
         itemTraducere.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-        itemTraducere.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
+//        itemTraducere.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemTraducere.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -161,7 +161,7 @@ public class CarteView extends AbstractCSaveView {
         itemBookDetails = new ToolItem(toolBar, SWT.RADIO);
         itemBookDetails.setText("Detalii");
         itemBookDetails.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-        itemBookDetails.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
+//        itemBookDetails.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemBookDetails.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -177,7 +177,7 @@ public class CarteView extends AbstractCSaveView {
         itemEditiaOriginala = new ToolItem(toolBar, SWT.RADIO);
         itemEditiaOriginala.setText("Editia originala");
         itemEditiaOriginala.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-        itemEditiaOriginala.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
+//        itemEditiaOriginala.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemEditiaOriginala.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -193,7 +193,7 @@ public class CarteView extends AbstractCSaveView {
         itemTaguri = new ToolItem(toolBar, SWT.RADIO);
         itemTaguri.setText("Taguri");
         itemTaguri.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-        itemTaguri.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
+//        itemTaguri.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemTaguri.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -209,7 +209,7 @@ public class CarteView extends AbstractCSaveView {
         itemBackCover = new ToolItem(toolBar, SWT.RADIO);
         itemBackCover.setText("Coperta spate");
         itemBackCover.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-        itemBackCover.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
+//        itemBackCover.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemBackCover.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {

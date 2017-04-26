@@ -5,6 +5,7 @@ import com.papao.books.controller.BookController;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
 import com.papao.books.view.AppImages;
+import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.util.BorgDateUtil;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.FileTypeDetector;
@@ -112,6 +113,17 @@ public class DragAndDropTableComposite extends Composite {
         table.setLinesVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(table);
         table.setToolTipText("Tabela suporta drag and drop multiplu pentru orice tip de fisier, \ncu detectia tipului acestora.");
+        table.addListener(SWT.KeyDown, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                boolean stateMask = event.stateMask == new Integer(EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+                if (stateMask) {
+                    if ((event.keyCode == 'a') || (event.keyCode == 'A')) {
+                        table.selectAll();
+                    }
+                }
+            }
+        });
         table.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -196,7 +208,7 @@ public class DragAndDropTableComposite extends Composite {
             DocumentData doc = (DocumentData) item.getData();
             if (permanentChanges) {
                 carte.getDocuments().remove(doc);
-                logger.info("Am sters un document atasat cartii " + carte.getTitlu());
+                logger.info("Am sters un document atasat cartii " + carte.getId());
                 controller.removeDocument(doc.getId());
             } else {
                 deleted.add(doc);
@@ -289,7 +301,7 @@ public class DragAndDropTableComposite extends Composite {
                 }
             }
             tryToExportAndOpenFromLocalFilesystem(item);
-        }catch (Exception exc) {
+        } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             SWTeXtension.displayMessageE("A intervenit o eroare la afisarea documentului!", exc);
         }
@@ -418,9 +430,10 @@ public class DragAndDropTableComposite extends Composite {
             public void handleEvent(Event event) {
                 Object image = item.getData(SWT_FULL_IMAGE);
                 if (image instanceof Image) {
-                    Image tmp = (Image)image;
+                    Image tmp = (Image) image;
                     if (!tmp.isDisposed()) {
-                        tmp.dispose();;
+                        tmp.dispose();
+                        ;
                     }
                 }
                 event.doit = true;
