@@ -166,14 +166,19 @@ public class DragAndDropTableComposite extends Composite {
             public final void drop(final DropTargetEvent event) {
                 if (event.data instanceof String[] && ((String[]) event.data).length > 0) {
                     String[] fileNames = (String[]) event.data;
+                    CWaitDlgClassic waitDlgClassic = new CWaitDlgClassic("Incarcare fisiere", fileNames.length);
+                    waitDlgClassic.open();
                     for (int i = 0; i < fileNames.length; i++) {
                         try {
                             loadFileIntoTable(fileNames[i]);
                         } catch (IOException | SWTException e) {
                             logger.error(e.getMessage(), e);
                             SWTeXtension.displayMessageE("Fisierul " + fileNames[i] + "nu a putut fi incarcat!", e);
+                        } finally {
+                            waitDlgClassic.advance();
                         }
                     }
+                    waitDlgClassic.close();
                 }
             }
         });
