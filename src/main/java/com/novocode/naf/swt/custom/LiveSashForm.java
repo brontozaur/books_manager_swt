@@ -10,7 +10,7 @@
  *     Stefan Zeiger (szeiger@novocode.com) - Bug fixes and new features
  *******************************************************************************/
 
-package com.com.novocode.naf.swt.custom;
+package com.novocode.naf.swt.custom;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;

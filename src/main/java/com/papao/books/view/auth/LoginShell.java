@@ -1,7 +1,7 @@
 package com.papao.books.view.auth;
 
-import com.com.novocode.naf.swt.custom.BalloonNotification;
 import com.github.haixing_hu.swt.panel.BlurredPanel;
+import com.novocode.naf.swt.custom.BalloonNotification;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.AMongodbComparator;
 import com.papao.books.model.User;

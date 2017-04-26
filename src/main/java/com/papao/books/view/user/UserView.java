@@ -1,6 +1,6 @@
 package com.papao.books.view.user;
 
-import com.com.novocode.naf.swt.custom.BalloonNotification;
+import com.novocode.naf.swt.custom.BalloonNotification;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.User;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;

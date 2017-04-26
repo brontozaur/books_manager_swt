@@ -1,4 +1,4 @@
-package com.com.novocode.naf.swt.custom;
+package com.novocode.naf.swt.custom;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;

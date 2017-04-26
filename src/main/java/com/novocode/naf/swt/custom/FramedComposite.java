@@ -9,7 +9,7 @@
  *     Stefan Zeiger (szeiger@novocode.com) - initial API and implementation
  *******************************************************************************/
 
-package com.com.novocode.naf.swt.custom;
+package com.novocode.naf.swt.custom;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;

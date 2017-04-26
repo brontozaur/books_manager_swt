@@ -10,7 +10,7 @@
  *     IBM Corporation - original SWT CLabel implementation on which this class is based
  *******************************************************************************/
 
-package com.com.novocode.naf.swt.custom;
+package com.novocode.naf.swt.custom;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
