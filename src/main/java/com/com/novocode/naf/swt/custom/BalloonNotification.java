@@ -49,6 +49,7 @@ public class BalloonNotification {
         Composite c = window.getContents();
         c.setLayout(new FillLayout());
         Label l = new Label(c, SWT.NONE);
+        l.setBackground(c.getBackground());
         l.setText(text);
         c.pack(true);
 

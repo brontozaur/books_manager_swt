@@ -272,9 +272,9 @@ public class BalloonWindow {
             }
 
             if (systemControlsBar == null && (style & SWT.CLOSE) != 0) {
-                //Color closeFG = shell.getForeground(), closeBG = shell.getBackground();
-                //Color closeFG = shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY), closeBG = shell.getBackground();
-                Color closeFG = shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND), closeBG = shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+                Color closeFG = shell.getForeground(), closeBG = shell.getBackground();
+//                Color closeFG = shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY), closeBG = shell.getBackground();
+//                Color closeFG = shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND), closeBG = shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
                 final Image closeImage = createCloseImage(shell.getDisplay(), closeBG, closeFG);
                 shell.addListener(SWT.Dispose, new Listener() {
                     public void handleEvent(Event event) {
