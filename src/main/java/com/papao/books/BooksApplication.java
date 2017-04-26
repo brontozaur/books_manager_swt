@@ -1,6 +1,7 @@
 
 package com.papao.books;
 
+import com.papao.books.controller.UserController;
 import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.auth.LoginShell;
@@ -33,8 +34,10 @@ public class BooksApplication {
         SpringApplication.run(BooksApplication.class, args);
     }
 
+    private static BooksApplication app;
+
     @Autowired
-    private LoginShell loginShell;
+    private UserController userController;
 
     @Autowired
     private EncodePlatform encodePlatform;
@@ -45,11 +48,15 @@ public class BooksApplication {
     @PostConstruct
     public void open() {
         try {
+            encodePlatform.getShell().setVisible(false);
+            app = this;
             EncodeLive.setNotificationUsingNotifier("default".equals(notificationStyle));
             initNotifierSettings();
+            LoginShell loginShell = new LoginShell(userController);
             Notifier.setParent(loginShell.getShell());
             loginShell.open(true, false);
             if (loginShell.getUserAction() == SWT.OK) {
+                encodePlatform.getShell().setText("Books Manager [utilizator: $$$]");
                 encodePlatform.getShell().setText(encodePlatform.getShell().getText().replace("$$$", EncodeLive.getCurrentUserName()));
                 Notifier.setParent(encodePlatform.getShell());
                 encodePlatform.open();
@@ -73,6 +80,10 @@ public class BooksApplication {
                     + "\nAceasta se va inchide acum. Sugestie : contactati producatorul.");
             closeApp(true);
         }
+    }
+
+    public static BooksApplication getInstance() {
+        return app;
     }
 
     private void closeApp(final boolean forced) {

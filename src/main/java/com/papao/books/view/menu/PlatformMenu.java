@@ -1,8 +1,9 @@
 package com.papao.books.view.menu;
 
+import com.papao.books.BooksApplication;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.EncodePlatform;
-import com.papao.books.view.user.UsersView;
+import com.papao.books.view.auth.EncodeLive;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -42,13 +43,13 @@ public final class PlatformMenu {
         menuAuth = new Menu(item);
         MenuItem subItem;
         subItem = new MenuItem(menuAuth, SWT.PUSH);
-        subItem.setText("Schimbare utilizator\tAlt+U");
+        subItem.setText("Logout");
         subItem.setAccelerator(SWT.ALT + 'F');
         subItem.setImage(AppImages.getImage16(AppImages.IMG_HOME));
         subItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                new UsersView(item.getParent().getShell(), EncodePlatform.getInstance().getUserController()).open();
+                BooksApplication.getInstance().open();
             }
         });
 
@@ -57,7 +58,7 @@ public final class PlatformMenu {
         subItem = new MenuItem(menuAuth, SWT.PUSH);
         subItem.setText("Exit\tAlt+Q");
         subItem.setImage(AppImages.getImage16(AppImages.IMG_STOP));
-        subItem.setAccelerator(SWT.ALT + 'Q');
+        subItem.setAccelerator(new Integer(EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL) + 'Q');
         subItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {

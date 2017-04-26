@@ -1,5 +1,6 @@
 package com.papao.books.view;
 
+import com.papao.books.BooksApplication;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
@@ -818,16 +819,29 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_HOME));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_HOME));
+        item.setToolTipText("Schimbare utilizator");
+        item.setText("Logout");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                BooksApplication.getInstance().open();
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
         item.setImage(AppImages.getImage24(AppImages.IMG_STOP));
         item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_STOP));
         item.setToolTipText("Inchidere aplicatie");
-        item.setText("Inchide aplicatia");
+        item.setText("Exit");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
                 performShellClose(new Event());
             }
         });
+
         this.mainTabFolder.setTopRight(bar);
     }
 
@@ -1161,19 +1175,20 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             trayItemMenu.setDefaultItem(menuItem);
 
             menuItem = new MenuItem(trayItemMenu, SWT.PUSH);
-            menuItem.setText("Schimbare firma/data/utilizator");
+            menuItem.setText("Logout");
             menuItem.setImage(AppImages.getImage16(AppImages.IMG_USER));
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event event) {
-                    configUsers();
+                    getShell().setVisible(false);
+                    BooksApplication.getInstance().open();
                 }
             });
 
             new MenuItem(trayItemMenu, SWT.SEPARATOR);
 
             menuItem = new MenuItem(trayItemMenu, SWT.PUSH);
-            menuItem.setText("Inchide aplicatia");
+            menuItem.setText("Exit");
             menuItem.setImage(AppImages.getImage16(AppImages.IMG_STOP));
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override

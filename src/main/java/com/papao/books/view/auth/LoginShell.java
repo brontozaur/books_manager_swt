@@ -23,13 +23,11 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@org.springframework.stereotype.Component
 public class LoginShell extends AbstractCView implements Listener {
 
     private static Logger logger = Logger.getLogger(LoginShell.class);
@@ -41,7 +39,6 @@ public class LoginShell extends AbstractCView implements Listener {
     private UserController userController;
     private BlurredPanel bp;
 
-    @Autowired
     public LoginShell(UserController userController) throws Exception {
         super(null, AbstractView.MODE_NONE);
         this.userController = userController;
