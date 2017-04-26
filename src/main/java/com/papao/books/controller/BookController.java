@@ -1,13 +1,17 @@
 package com.papao.books.controller;
 
+import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.exception.UnsupportedSearchTypeException;
 import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
+import com.papao.books.model.DocumentData;
 import com.papao.books.repository.CacheableAutorRepository;
 import com.papao.books.repository.CarteRepository;
 import com.papao.books.view.searcheable.BookSearchType;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -155,5 +159,15 @@ public class BookController extends AbstractController {
 
     public Page<Carte> getSearchResult() {
         return carti;
+    }
+
+    public Image getImage(DocumentData data) {
+        GridFSDBFile frontCover = getDocumentData(data.getId());
+        Image image = null;
+        if (frontCover != null) {
+            image = new Image(Display.getDefault(), frontCover.getInputStream());
+            data.setFileName(frontCover.getFilename());
+        }
+        return image;
     }
 }

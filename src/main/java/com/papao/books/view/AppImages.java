@@ -481,7 +481,7 @@ public final class AppImages {
         return result;
     }
 
-    private static Image getImageNotFound(final int width, final int height) {
+    public static Image getImageNotFound(final int width, final int height) {
         Image result = null;
         try {
             Image img = new Image(Display.getDefault(), width, height);

@@ -37,10 +37,16 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
+import org.eclipse.nebula.widgets.gallery.Gallery;
+import org.eclipse.nebula.widgets.gallery.GalleryItem;
+import org.eclipse.nebula.widgets.gallery.NoGroupRenderer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -56,6 +62,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 @org.springframework.stereotype.Component
 public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer {
@@ -330,7 +337,55 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         booksTabItem.setControl(verticalSash);
 
+        CTabItem gallery = new CTabItem(this.mainTabFolder, SWT.NONE);
+        gallery.setText("Galerie");
+        gallery.setImage(AppImages.getImage32(AppImages.IMG_SHOW));
+        gallery.setControl(createGallery(this.mainTabFolder));
+
         getContainer().layout();
+    }
+
+    private Composite createGallery(final Composite parent) {
+        NoGroupRenderer gr = new NoGroupRenderer();
+        gr.setMinMargin(2);
+        gr.setItemHeight(250);
+        gr.setItemWidth(150);
+        gr.setAutoMargin(true);
+        Gallery gallery = new Gallery(parent, SWT.V_SCROLL | SWT.MULTI);
+        gallery.setGroupRenderer(gr);
+
+        DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
+        ir.setShowLabels(true);
+        gallery.setItemRenderer(ir);
+
+        GalleryItem group = new GalleryItem(gallery, SWT.NONE);
+        List<Carte> carti = bookController.getRepository().findAll();
+
+        for (int i = 0; i < carti.size(); i++) {
+            final Carte carte = carti.get(i);
+            final GalleryItem item = new GalleryItem(group, SWT.NONE);
+            Image image = bookController.getImage(carte.getCopertaFata());
+            if (image == null) {
+                image = AppImages.getImageNotFound(64, 64);
+            }
+            item.setData(carte);
+            item.addListener(SWT.MouseDoubleClick, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    new CarteView(getShell(), (Carte)event.widget.getData(), bookController, userController, autorController, AbstractView.MODE_MODIFY).open(true, true);
+                }
+            });
+
+            item.setImage(image);
+            item.setText(carte.getTitlu());
+            item.addDisposeListener(new DisposeListener() {
+                @Override
+                public void widgetDisposed(DisposeEvent e) {
+                    item.getImage().dispose();
+                }
+            });
+        }
+        return gallery;
     }
 
     private Composite createTabDocuments(CTabFolder bottomInnerTabFolderRight) {

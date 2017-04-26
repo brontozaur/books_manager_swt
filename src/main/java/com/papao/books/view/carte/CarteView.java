@@ -1,7 +1,6 @@
 package com.papao.books.view.carte;
 
 import com.github.haixing_hu.swt.starrating.StarRating;
-import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
 import com.papao.books.controller.UserController;
@@ -17,7 +16,6 @@ import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
@@ -285,15 +283,9 @@ public class CarteView extends AbstractCSaveView {
         starRating = new StarRating(compImages, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
         GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(starRating);
 
-        GridFSDBFile frontCover = getGridFsFile(carte.getCopertaFata().getId());
-        Image image = null;
-        String fileName = null;
-        if (frontCover != null) {
-            image = new Image(Display.getDefault(), frontCover.getInputStream());
-            fileName = frontCover.getFilename();
-        }
+        Image frontCover = carteController.getImage(carte.getCopertaFata());
 
-        frontCoverComposite = new ImageSelectorComposite(compImages, image, fileName, carteController.getAppImagesFolder());
+        frontCoverComposite = new ImageSelectorComposite(compImages, frontCover, carte.getCopertaFata().getFileName(), carteController.getAppImagesFolder());
         GridData data = (GridData) frontCoverComposite.getLayoutData();
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = false;
@@ -585,30 +577,18 @@ public class CarteView extends AbstractCSaveView {
 
         new Label(comp, SWT.NONE).setText("Autograf");
 
-        GridFSDBFile backCover = getGridFsFile(carte.getCopertaSpate().getId());
-        Image image = null;
-        String fileName = null;
-        if (backCover != null) {
-            image = new Image(Display.getDefault(), backCover.getInputStream());
-            fileName = backCover.getFilename();
-        }
+        Image backCover = carteController.getImage(carte.getCopertaSpate());
 
-        backCoverComposite = new ImageSelectorComposite(comp, image, fileName, carteController.getAppImagesFolder());
+        backCoverComposite = new ImageSelectorComposite(comp, backCover, carte.getCopertaSpate().getFileName(), carteController.getAppImagesFolder());
         GridData backCoverData = (GridData) backCoverComposite.getLayoutData();
         backCoverData.grabExcessHorizontalSpace = false;
         backCoverData.grabExcessVerticalSpace = false;
         backCoverData.verticalAlignment = SWT.BEGINNING;
         backCoverData.horizontalAlignment = SWT.BEGINNING;
 
-        GridFSDBFile autograf = getGridFsFile(carte.getAutograf().getId());
-        Image autografImage = null;
-        String autografFileName = null;
-        if (autograf != null) {
-            autografImage = new Image(Display.getDefault(), autograf.getInputStream());
-            autografFileName = autograf.getFilename();
-        }
+        Image autograf = carteController.getImage(carte.getAutograf());
 
-        autografComposite = new ImageSelectorComposite(comp, autografImage, autografFileName, carteController.getAppImagesFolder());
+        autografComposite = new ImageSelectorComposite(comp, autograf, carte.getAutograf().getFileName(), carteController.getAppImagesFolder());
         GridData data = (GridData) autografComposite.getLayoutData();
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = false;
@@ -617,10 +597,6 @@ public class CarteView extends AbstractCSaveView {
 
 
         return comp;
-    }
-
-    private GridFSDBFile getGridFsFile(ObjectId imageId) {
-        return carteController.getDocumentData(imageId);
     }
 
     private void populateFields() {
