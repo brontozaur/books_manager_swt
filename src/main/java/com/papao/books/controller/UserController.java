@@ -54,6 +54,10 @@ public class UserController extends AbstractController {
         return userActivityRepository.getByUserIdAndBookId(userId, bookId);
     }
 
+    public int getPersonalRating(ObjectId bookId) {
+        return getPersonalRating(EncodeLive.getIdUser(), bookId);
+    }
+
     public int getPersonalRating(ObjectId userId, ObjectId bookId) {
         UserActivity activity = getUserRatingObject(userId, bookId);
         if (activity != null) {

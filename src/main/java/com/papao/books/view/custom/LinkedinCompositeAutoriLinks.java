@@ -27,14 +27,14 @@ public class LinkedinCompositeAutoriLinks extends Composite {
         }
 
         GridDataFactory.fillDefaults().grab(false, false).hint(parent.getSize().x, SWT.DEFAULT).applyTo(this);
-        RowLayoutFactory.fillDefaults().extendedMargins(3, 5, 2, 3).spacing(1).margins(0,0).pack(true).wrap(true).applyTo(this);
+        RowLayoutFactory.fillDefaults().extendedMargins(3, 5, 2, 3).spacing(1).margins(0, 0).pack(true).wrap(true).applyTo(this);
 
         populateFields();
     }
 
     private void populateFields() {
-        for (Autor autor : autori) {
-            createLink(autor);
+        for (int i = 0; i < autori.size(); i++) {
+            createLink(autori.get(i), i == autori.size() - 1);
         }
         if (autori.size() > 0) {
             layoutEverything();
@@ -47,16 +47,16 @@ public class LinkedinCompositeAutoriLinks extends Composite {
         this.getParent().layout();
     }
 
-    private void createLink(Autor autor) {
+    private void createLink(Autor autor, boolean last) {
         final Link link = new Link(this, SWT.NONE);
-        link.setText("<a>" + autor.getNumeComplet() + "</a>");
+        link.setText("<a>" + autor.getNumeComplet() + (last ? "</a>" : "</a>, "));
         link.setData(autor);
         link.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 Autor autor = (Autor) event.widget.getData();
                 autor = autorController.findOne(autor.getId()); //reload from db
-                new AutorView(getShell(), (Autor) event.widget.getData(), autorController, AbstractView.MODE_MODIFY).open();
+                new AutorView(getShell(), autor, autorController, AbstractView.MODE_MODIFY).open();
             }
         });
     }

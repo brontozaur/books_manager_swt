@@ -1,5 +1,6 @@
 package com.papao.books.view;
 
+import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.BooksApplication;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.AutorController;
@@ -13,6 +14,7 @@ import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.custom.BookReadOnlyDetailsComposite;
 import com.papao.books.view.custom.DragAndDropTableComposite;
+import com.papao.books.view.custom.ImageGalleryComposite;
 import com.papao.books.view.custom.PaginationComposite;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbMongoContentProvider;
@@ -108,10 +110,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private BookController bookController;
     private Combo comboModAfisare;
     private DragAndDropTableComposite dragAndDropTableComposite;
-    private SashForm rightVerticalSash;
+    private LiveSashForm rightVerticalSash;
     private BookReadOnlyDetailsComposite readOnlyDetailsComposite;
     private GalleryItem galleryItem;
     private Gallery gallery;
+    private ImageGalleryComposite galleryComposite;
 
     @Autowired
     public EncodePlatform(UserController userController,
@@ -230,8 +233,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         createBarOps(compRight);
 
-        rightVerticalSash = new SashForm(compRight, SWT.HORIZONTAL | SWT.SMOOTH);
-        rightVerticalSash.SASH_WIDTH = 4;
+        rightVerticalSash = new LiveSashForm(compRight, SWT.HORIZONTAL | SWT.SMOOTH);
+        rightVerticalSash.sashWidth = 4;
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightVerticalSash);
 
         this.mainRightTabFolder = new CTabFolder(rightVerticalSash, SWT.BOTTOM);
@@ -259,7 +262,17 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         CTabItem tabGallery = new CTabItem(this.mainRightTabFolder, SWT.NONE);
         tabGallery.setText("Galerie");
         tabGallery.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
-        tabGallery.setControl(createGallery(mainRightTabFolder));
+        mainRightTabFolder.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                event.doit = true;
+                displayBookData();
+            }
+        });
+//        tabGallery.setControl(createGallery(mainRightTabFolder));
+
+        galleryComposite = new ImageGalleryComposite(mainRightTabFolder, bookController, userController);
+        tabGallery.setControl(galleryComposite.getContent());
 
         this.verticalSash.setWeights(new int[]{2, 8});
 //        this.verticalSash.setMaximizedControl(rightSash);
@@ -300,6 +313,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 if (e.keyCode == SWT.F5) {
                     refreshTableViewer(false);
                 }
+            }
+        });
+        this.tableViewer.getTable().addListener(SWT.MouseEnter, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                tableViewer.getTable().setFocus();
             }
         });
         this.tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
@@ -352,6 +371,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash, autorController, bookController, userController);
         //table viewer is notified when rating changes on the details composite
         readOnlyDetailsComposite.addObserver(this);
+        galleryComposite.addObserver(this);
+        galleryComposite.addObserver(readOnlyDetailsComposite);
 
         rightVerticalSash.setWeights(new int[]{9, 3});
         rightVerticalSash.setMaximizedControl(null);
@@ -392,7 +413,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 }
                 Object data = event.item.getData();
 //                selectionService.setSelection(data);
-                new CarteView(getShell(), (Carte)event.widget.getData(), bookController, userController, autorController, AbstractView.MODE_MODIFY).open(true, true);
+                new CarteView(getShell(), (Carte) event.widget.getData(), bookController, userController, autorController, AbstractView.MODE_MODIFY).open(true, true);
             }
         });
 
@@ -439,16 +460,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     private void displayBookData() {
-        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
-            return;
-        }
-        Carte carte = null;
-        if (this.tableViewer.getTable().getSelectionCount() != 0) {
-            carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
-        }
-        if (carte == null) {
-            //reset fields by passing and empty book
-            carte = new Carte();
+        Carte carte = new Carte();
+        if (mainRightTabFolder.getSelectionIndex() == 0) {
+            if (tableViewer.getTable().getSelectionCount() > 0) {
+                carte = (Carte) tableViewer.getTable().getSelection()[0].getData();
+            }
         }
         rightVerticalSash.setMaximizedControl(null);
         dragAndDropTableComposite.setCarte(carte);
@@ -515,6 +531,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         leftTreeViewer.getTree().setHeaderVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(leftTreeViewer.getTree());
         leftTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+        leftTreeViewer.getTree().addListener(SWT.MouseEnter, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                leftTreeViewer.getTree().setFocus();
+            }
+        });
 
         final TreeViewerColumn treeCol = new TreeViewerColumn(leftTreeViewer, SWT.NONE);
         treeCol.getColumn().setText("Grupare elemente");
@@ -1432,7 +1454,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         int viewMode = MODE_MODIFY;
         if (createDuplicate) {
             carte = (Carte) ObjectCloner.copy(carte);
-            carte.setId(null);
+            carte.initCopy();
             viewMode = MODE_CLONE;
         }
         view = new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, userController, autorController, viewMode);
@@ -1440,8 +1462,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        tableViewer.refresh(view.getCarte(), true, true);
-        tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+        if (createDuplicate) {
+            tableViewer.add(view.getCarte());
+            tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+        } else {
+            tableViewer.refresh(view.getCarte(), true, true);
+            tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+        }
         displayBookData();
         return true;
     }
@@ -1654,6 +1681,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             Carte carte = ((BookReadOnlyDetailsComposite) o).getCarte();
             tableViewer.refresh(carte, true, true);
             return;
+        } else if (o instanceof ImageGalleryComposite) {
+            Carte carte = ((ImageGalleryComposite) o).getSelected();
+            tableViewer.refresh(carte, true, true);
+            return;
         }
         BookController controller = (BookController) o;
         Page<Carte> page = controller.getSearchResult();
@@ -1665,9 +1696,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 displayBookData();
             }
         }
-        gallery.remove(galleryItem);
-        gallery.redraw();
-        galleryItem = new GalleryItem(gallery, SWT.NONE);
-        populateGalerie(page.getContent());
+//        gallery.remove(galleryItem);
+//        gallery.redraw();
+//        galleryItem = new GalleryItem(gallery, SWT.NONE);
+//        populateGalerie(page.getContent());
     }
 }

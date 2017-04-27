@@ -21,11 +21,13 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
+import org.springframework.scheduling.annotation.Async;
 
 import java.io.IOException;
 import java.util.Observable;
+import java.util.Observer;
 
-public class BookReadOnlyDetailsComposite extends Observable{
+public class BookReadOnlyDetailsComposite extends Observable implements Observer{
 
     private Composite mainComp;
     private ScrolledComposite scrolledComposite;
@@ -51,7 +53,7 @@ public class BookReadOnlyDetailsComposite extends Observable{
         this.userController = userController;
         this.bookController = bookController;
 
-        scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
+        scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL);
         mainComp = new Composite(scrolledComposite, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).margins(0, 0).spacing(0, 0).applyTo(mainComp);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(mainComp);
@@ -66,7 +68,11 @@ public class BookReadOnlyDetailsComposite extends Observable{
                 scrolledComposite.setMinSize(mainComp.computeSize(r.width, SWT.DEFAULT));
             }
         });
-
+        scrolledComposite.addListener(SWT.Activate, new Listener() {
+            public void handleEvent(Event e) {
+                scrolledComposite.setFocus();
+            }
+        });
 
         addComponents();
     }
@@ -120,19 +126,24 @@ public class BookReadOnlyDetailsComposite extends Observable{
             }
         });
 
-        label("Web");
-        rightWebResourcesComposite = new LinkedInUrlsComposite(mainComp, null);
+        temp = new Composite(mainComp, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).margins(5,5).spacing(5, 2).applyTo(temp);
+        GridDataFactory.fillDefaults().span(2, 1).grab(true, true).applyTo(temp);
 
-        label(" Autori");
-        rightAutoriComposite = new LinkedinCompositeAutoriLinks(mainComp, null, autorController);
+        label("Web", temp);
+        rightWebResourcesComposite = new LinkedInUrlsComposite(temp, null);
 
-        label("Gen");
-        genLiterarComposite = new LinkedInSimpleValuesComposite(mainComp);
+        label(" Autori", temp);
+        rightAutoriComposite = new LinkedinCompositeAutoriLinks(temp, null, autorController);
 
-        label(" Taguri");
-        taguriComposite = new LinkedInSimpleValuesComposite(mainComp);
+        label("Gen", temp);
+        genLiterarComposite = new LinkedInSimpleValuesComposite(temp);
+
+        label(" Taguri", temp);
+        taguriComposite = new LinkedInSimpleValuesComposite(temp);
     }
 
+    @Async
     public void populateFields(Carte carte) {
         this.carte = carte;
         if (carte.getTitlu().length() > 40) {
@@ -169,13 +180,19 @@ public class BookReadOnlyDetailsComposite extends Observable{
         imageSelectorComposite.setImage(image, imageName);
     }
 
-    private void label(String labelName) {
-        Label label = new Label(mainComp, SWT.NONE);
+    private void label(String labelName, Composite parent) {
+        Label label = new Label(parent, SWT.NONE);
         label.setText(labelName);
         GridDataFactory.fillDefaults().align(SWT.END, SWT.BEGINNING).applyTo(label);
     }
 
     public Carte getCarte() {
         return carte;
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        ImageGalleryComposite gallery = (ImageGalleryComposite)observable;
+        populateFields(gallery.getSelected());
     }
 }

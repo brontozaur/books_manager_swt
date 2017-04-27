@@ -404,4 +404,12 @@ public class Carte extends AuditObject implements Serializable {
     public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
+
+    public void initCopy() {
+        id = null;
+        copertaFata = null;
+        copertaSpate = null;
+        autograf = null;
+        documents = new ArrayList<>();
+    }
 }

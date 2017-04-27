@@ -22,6 +22,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.StreamUtils;
 
 import java.io.*;
@@ -122,6 +123,12 @@ public class DragAndDropTableComposite extends Composite {
                         table.selectAll();
                     }
                 }
+            }
+        });
+        table.addListener(SWT.MouseEnter, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                table.setFocus();
             }
         });
         table.addSelectionListener(new SelectionAdapter() {
@@ -392,6 +399,7 @@ public class DragAndDropTableComposite extends Composite {
         return false;
     }
 
+    @Async
     private void populateFields() {
         this.result = (List<DocumentData>) ObjectUtil.copy(carte.getDocuments());
         for (DocumentData document : result) {

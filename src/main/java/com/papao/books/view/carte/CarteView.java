@@ -638,28 +638,28 @@ public class CarteView extends AbstractCSaveView {
 
     @Override
     protected void saveData() throws Exception {
-        this.carte.setTitlu(this.textTitlu.getText());
-        this.carte.setSubtitlu(this.textSubtitlu.getText());
-        this.carte.setEditura(textEditura.getText());
-        this.carte.setAnAparitie(textAnAparitie.getText());
+        this.carte.setTitlu(this.textTitlu.getText().trim());
+        this.carte.setSubtitlu(this.textSubtitlu.getText().trim());
+        this.carte.setEditura(textEditura.getText().trim());
+        this.carte.setAnAparitie(textAnAparitie.getText().trim());
         this.carte.setInaltime(Integer.valueOf(textLungime.getValue().toString()));
         this.carte.setLatime(Integer.valueOf(textLatime.getValue().toString()));
         this.carte.setNrPagini(Integer.valueOf(textNrPagini.getValue().toString()));
         this.carte.setGreutate(Double.valueOf(textGreutate.getValue().toString()));
-        this.carte.setSerie(textSerie.getText());
-        this.carte.setEditia(textEditia.getText());
-        this.carte.setIsbn(textIsbn.getText());
+        this.carte.setSerie(textSerie.getText().trim());
+        this.carte.setEditia(textEditia.getText().trim());
+        this.carte.setIsbn(textIsbn.getText().trim());
         this.carte.setAutoriIlustratii(compositeAutoriIlustratii.getValoriIntroduse());
         this.carte.setTehnoredactori(compositeTehnoredactori.getValoriIntroduse());
-        this.carte.setImprimerie(textImprimerie.getText());
+        this.carte.setImprimerie(textImprimerie.getText().trim());
         this.carte.setTipCoperta(TipCoperta.valueOf(comboTipCoperta.getText()));
         this.carte.setLimba(Limba.valueOf(comboLimba.getText()));
-        this.carte.setGoodreadsUrl(textGoodreadsUrl.getText());
-        this.carte.setWikiUrl(textWikiUrl.getText());
-        this.carte.setWebsite(textWebsite.getText());
+        this.carte.setGoodreadsUrl(textGoodreadsUrl.getText().trim());
+        this.carte.setWikiUrl(textWikiUrl.getText().trim());
+        this.carte.setWebsite(textWebsite.getText().trim());
         this.carte.setIdAutori(compositeAutori.getSelectedIds());
-        this.carte.setMotto(textMotto.getText());
-        this.carte.setDescriere(textDescriere.getText());
+        this.carte.setMotto(textMotto.getText().trim());
+        this.carte.setDescriere(textDescriere.getText().trim());
         this.carte.setPremii(premiiLiterareComposite.getResult());
 
         this.carte.setTraducatori(compositeTraducatori.getValoriIntroduse());
@@ -672,11 +672,11 @@ public class CarteView extends AbstractCSaveView {
         }
 
         EditiaOriginala editiaOriginala = carte.getEditiaOriginala();
-        editiaOriginala.setTitlu(this.textEditiaPrincepsTitlu.getText());
-        editiaOriginala.setEditura(this.textEditiaPrincepsEditura.getText());
+        editiaOriginala.setTitlu(this.textEditiaPrincepsTitlu.getText().trim());
+        editiaOriginala.setEditura(this.textEditiaPrincepsEditura.getText().trim());
         editiaOriginala.setLimba(Limba.valueOf(comboEditiaPrincepsLimba.getText()));
-        editiaOriginala.setAn(this.textEditiaPrincepsAn.getText());
-        editiaOriginala.setTara(this.textEditiaPrincepsTara.getText());
+        editiaOriginala.setAn(this.textEditiaPrincepsAn.getText().trim());
+        editiaOriginala.setTara(this.textEditiaPrincepsTara.getText().trim());
         editiaOriginala.setIlustratori(compositeEditiaPrincepsAutoriIlustratii.getValoriIntroduse());
         this.carte.setEditiaOriginala(editiaOriginala);
 
