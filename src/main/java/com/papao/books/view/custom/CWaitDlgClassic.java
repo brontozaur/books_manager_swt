@@ -11,9 +11,8 @@ public final class CWaitDlgClassic {
 
     private Shell shell;
     private Shell parentShell;
-    private Label labelMsg;
+    private Label labelMessage;
     private ProgressBarComposite cpbar;
-    private Canvas canvasImage;
 	private static Logger logger = Logger.getLogger(CWaitDlgClassic.class);
 
     public CWaitDlgClassic() {
@@ -41,31 +40,31 @@ public final class CWaitDlgClassic {
             if (this.parentShell == null) {
                 this.parentShell = new Shell(Display.getDefault());
             }
-            setShell(new Shell(this.parentShell, SWT.BORDER | SWT.TITLE | SWT.ON_TOP));
+            this.shell = new Shell(this.parentShell, SWT.BORDER | SWT.TITLE | SWT.ON_TOP);
             GridLayout gridLayout = new GridLayout(2, false);
-            getShell().setLayout(gridLayout);
-            getShell().setText("Procesare date...");
+            this.shell.setLayout(gridLayout);
+            this.shell.setText("Procesare date...");
 
-            setCanvasImage(new Canvas(getShell(), SWT.NONE));
-            GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).minSize(32, 32).hint(32, 32).applyTo(getCanvasImage());
-            getCanvasImage().addListener(SWT.Paint, new Listener() {
+            Canvas canvasImage = new Canvas(this.shell, SWT.NONE);
+            GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).minSize(32, 32).hint(32, 32).applyTo(canvasImage);
+            canvasImage.addListener(SWT.Paint, new Listener() {
                 @Override
                 public void handleEvent(final Event e) {
                     e.gc.drawImage(Display.getDefault().getSystemImage(SWT.ICON_INFORMATION), 0, 0);
                 }
             });
 
-            setLabelMsg(new Label(getShell(), SWT.WRAP));
+            this.labelMessage = new Label(this.shell, SWT.WRAP);
             if (operatie != null) {
-                getLabelMsg().setText(operatie);
+                this.labelMessage.setText(operatie);
             } else {
-                getLabelMsg().setText("Va rugam asteptati procesarea datelor...");
+                this.labelMessage.setText("Va rugam asteptati procesarea datelor...");
             }
             GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).hint(400, SWT.DEFAULT).minSize(400,
-                    SWT.DEFAULT).applyTo(getLabelMsg());
-            new Label(getShell(), SWT.NONE);
+                    SWT.DEFAULT).applyTo(this.labelMessage);
+            new Label(this.shell, SWT.NONE);
 
-            this.cpbar = new ProgressBarComposite(getShell(), MAX_SIZE, MAX_SIZE > 0 ? SWT.SMOOTH : SWT.INDETERMINATE);
+            this.cpbar = new ProgressBarComposite(this.shell, MAX_SIZE, MAX_SIZE > 0 ? SWT.SMOOTH : SWT.INDETERMINATE);
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).applyTo(this.cpbar);
         } catch (Exception exc) {
             close();
@@ -74,7 +73,7 @@ public final class CWaitDlgClassic {
     }
 
     public void setMessageLabel(final String message) {
-        getLabelMsg().setText(message);
+        this.labelMessage.setText(message);
     }
 
     public void setMax(final int count) {
@@ -92,12 +91,12 @@ public final class CWaitDlgClassic {
 
     public void open() {
         try {
-            getShell().getDisplay().syncExec(new Runnable() {
+            this.shell.getDisplay().syncExec(new Runnable() {
                 @Override
                 public void run() {
-                    getShell().pack();
-                    WidgetCompositeUtil.centerInDisplay(getShell());
-                    getShell().open();
+                    shell.pack();
+                    WidgetCompositeUtil.centerInDisplay(shell);
+                    shell.open();
                 }
             });
         } catch (Exception exc) {
@@ -108,18 +107,18 @@ public final class CWaitDlgClassic {
 
     public void close() {
         try {
-            if (getShell() != null) {
-                if (!getShell().isDisposed()) {
-                    getShell().close();
+            if (this.shell != null) {
+                if (!this.shell.isDisposed()) {
+                    this.shell.close();
                 }
-                getShell().dispose();
+                this.shell.dispose();
             }
-            setShell(null);
-            if (getLabelMsg() != null) {
-                if (!getLabelMsg().isDisposed()) {
-                    getLabelMsg().dispose();
+            this.shell = null;
+            if (this.labelMessage != null) {
+                if (!this.labelMessage.isDisposed()) {
+                    this.labelMessage.dispose();
                 }
-                setLabelMsg(null);
+                this.labelMessage = null;
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -127,7 +126,7 @@ public final class CWaitDlgClassic {
     }
 
     public boolean isClosed() {
-        return (getShell() == null) || getShell().isDisposed();
+        return (this.shell == null) || this.shell.isDisposed();
     }
 
     public void advance() {
@@ -138,35 +137,11 @@ public final class CWaitDlgClassic {
         this.cpbar.advance(idx);
     }
 
-    private Label getLabelMsg() {
-        return this.labelMsg;
-    }
-
-    private void setLabelMsg(final Label labelMsg) {
-        this.labelMsg = labelMsg;
-    }
-
-    private Canvas getCanvasImage() {
-        return this.canvasImage;
-    }
-
-    private void setCanvasImage(final Canvas canvasImage) {
-        this.canvasImage = canvasImage;
-    }
-
-    private void setShell(final Shell shell) {
-        this.shell = shell;
-    }
-
-    private Shell getShell() {
-        return this.shell;
-    }
-
     public String getMessage() {
         if (isClosed()) {
             return "";
         }
-        return this.labelMsg.getText();
+        return this.labelMessage.getText();
     }
 
     public int getSelection() {
