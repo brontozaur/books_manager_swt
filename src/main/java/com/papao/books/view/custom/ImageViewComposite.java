@@ -61,7 +61,7 @@ public class ImageViewComposite extends Observable {
         });
 
         labelImage = new Label(mainComposite, SWT.NONE);
-        labelImage.addListener(SWT.MouseDoubleClick, new Listener() {
+        labelImage.addListener(SWT.MouseHover, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 displayImage(event);
