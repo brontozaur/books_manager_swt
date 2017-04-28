@@ -127,6 +127,7 @@ public class ProgressBarComposite extends Composite {
                         return;
                     }
                     ProgressBarComposite.this.progressBar.setSelection(ProgressBarComposite.this.progressBar.getMaximum());
+                    Display.getDefault().readAndDispatch();
                 }
             });
         } catch (Exception exc) {
