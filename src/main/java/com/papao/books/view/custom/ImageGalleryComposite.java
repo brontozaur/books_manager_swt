@@ -93,10 +93,10 @@ public class ImageGalleryComposite extends Observable implements Observer {
                     dlg.advance();
                     ImageViewComposite view = new ImageViewComposite(mainComp, bookController, userController, carte);
                     view.addObserver(ImageGalleryComposite.this);
+                    mainComp.layout();
+                    scrolledComposite.notifyListeners(SWT.Resize, new Event());
                     Display.getDefault().readAndDispatch();
                 }
-                mainComp.layout();
-                scrolledComposite.notifyListeners(SWT.Resize, new Event());
                 dlg.close();
             }
         };
