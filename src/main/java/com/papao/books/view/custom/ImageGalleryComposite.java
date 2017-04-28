@@ -26,10 +26,15 @@ public class ImageGalleryComposite extends Observable implements Observer {
     private ScrolledComposite scrolledComposite;
     private Composite mainComp;
     private Carte selected;
+    private ProgressBarComposite progressBarComposite;
 
-    public ImageGalleryComposite(Composite parent, BookController bookController, UserController userController) {
+    public ImageGalleryComposite(Composite parent,
+                                 BookController bookController,
+                                 UserController userController,
+                                 ProgressBarComposite progressBarComposite) {
         this.bookController = bookController;
         this.userController = userController;
+        this.progressBarComposite = progressBarComposite;
         this.bookController.addObserver(this);
 
         scrolledComposite = new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL);
@@ -86,18 +91,17 @@ public class ImageGalleryComposite extends Observable implements Observer {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                CWaitDlgClassic dlg = new CWaitDlgClassic(carti.size());
-                dlg.open();
+                progressBarComposite.setMax(carti.size());
                 clearAll();
                 for (Carte carte : carti) {
-                    dlg.advance();
+                    progressBarComposite.advance();
                     ImageViewComposite view = new ImageViewComposite(mainComp, bookController, userController, carte);
                     view.addObserver(ImageGalleryComposite.this);
                     mainComp.layout();
                     scrolledComposite.notifyListeners(SWT.Resize, new Event());
                     Display.getDefault().readAndDispatch();
                 }
-                dlg.close();
+                progressBarComposite.setMax(0);
             }
         };
         Display.getDefault().asyncExec(runnable);

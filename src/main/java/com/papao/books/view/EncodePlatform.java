@@ -12,10 +12,7 @@ import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.auth.LoggerMyWay;
 import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
-import com.papao.books.view.custom.BookReadOnlyDetailsComposite;
-import com.papao.books.view.custom.DragAndDropTableComposite;
-import com.papao.books.view.custom.ImageGalleryComposite;
-import com.papao.books.view.custom.PaginationComposite;
+import com.papao.books.view.custom.*;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
@@ -106,6 +103,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private LiveSashForm rightVerticalSash;
     private BookReadOnlyDetailsComposite readOnlyDetailsComposite;
     private ImageGalleryComposite galleryComposite;
+    private ProgressBarComposite progressBarComposite;
 
     @Autowired
     public EncodePlatform(UserController userController,
@@ -228,8 +226,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         tabGrid.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
         this.mainRightTabFolder.setSelection(tabGrid);
 
-//        aaaaaa
-//        mainRightTabFolder.setTopRight(paginationComposite);
+        progressBarComposite = new ProgressBarComposite(mainRightTabFolder, SWT.SMOOTH);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(progressBarComposite);
+        mainRightTabFolder.setTopRight(progressBarComposite);
 
         rightSash = new LiveSashForm(mainRightTabFolder, SWT.SMOOTH | SWT.HORIZONTAL);
         rightSash.sashWidth = 4;
@@ -247,7 +246,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        galleryComposite = new ImageGalleryComposite(mainRightTabFolder, bookController, userController);
+        galleryComposite = new ImageGalleryComposite(mainRightTabFolder, bookController, userController, progressBarComposite);
         tabGallery.setControl(galleryComposite.getContent());
 
         this.verticalSash.setWeights(new int[]{2, 8});
@@ -1595,9 +1594,5 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 displayBookData();
             }
         }
-//        gallery.remove(galleryItem);
-//        gallery.redraw();
-//        galleryItem = new GalleryItem(gallery, SWT.NONE);
-//        populateGalerie(page.getContent());
     }
 }
