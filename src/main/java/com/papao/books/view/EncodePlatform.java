@@ -207,7 +207,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         this.compRight = new Composite(verticalSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this.compRight);
-        GridLayoutFactory.fillDefaults().numColumns(1).spacing(0,0).margins(0,0).applyTo(compRight);
+        GridLayoutFactory.fillDefaults().numColumns(1).spacing(0, 0).extendedMargins(0, 0, 0, 2).applyTo(compRight);
 
         rightVerticalSash = new LiveSashForm(compRight, SWT.HORIZONTAL | SWT.SMOOTH);
         rightVerticalSash.sashWidth = 4;
@@ -228,9 +228,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         tabGrid.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
         this.mainRightTabFolder.setSelection(tabGrid);
 
-        paginationComposite = new PaginationComposite(mainRightTabFolder, bookController);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(paginationComposite);
-        mainRightTabFolder.setTopRight(paginationComposite);
+//        aaaaaa
+//        mainRightTabFolder.setTopRight(paginationComposite);
 
         rightSash = new LiveSashForm(mainRightTabFolder, SWT.SMOOTH | SWT.HORIZONTAL);
         rightSash.sashWidth = 4;
@@ -342,6 +341,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         rightSash.setWeights(new int[]{3, 9});
         rightSash.setMaximizedControl(rightInnerSash);
+
+        paginationComposite = new PaginationComposite(compRight, bookController);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(paginationComposite);
 
         WidgetCursorUtil.addHandCursorListener(this.tableViewer.getTable());
         SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
@@ -684,7 +686,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     private ToolBar createBarOps(Composite parent) {
-        ToolBar barOps = new ToolBar(parent, SWT.FLAT);
+        ToolBar barOps = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
 
         this.toolItemAdd = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
         this.toolItemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
