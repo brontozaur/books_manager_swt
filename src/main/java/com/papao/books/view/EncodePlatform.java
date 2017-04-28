@@ -315,12 +315,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 }
             }
         });
-        this.tableViewer.getTable().addListener(SWT.MouseEnter, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                tableViewer.getTable().setFocus();
-            }
-        });
         this.tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -531,12 +525,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         leftTreeViewer.getTree().setHeaderVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(leftTreeViewer.getTree());
         leftTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-        leftTreeViewer.getTree().addListener(SWT.MouseEnter, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                leftTreeViewer.getTree().setFocus();
-            }
-        });
 
         final TreeViewerColumn treeCol = new TreeViewerColumn(leftTreeViewer, SWT.NONE);
         treeCol.getColumn().setText("Grupare elemente");

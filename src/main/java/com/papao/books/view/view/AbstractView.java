@@ -849,7 +849,6 @@ public abstract class AbstractView extends Observable {
     }
 
     public void open(final boolean centerInDisplay, boolean automaticallyComputeSize) {
-        Display display = null;
         try {
             if (automaticallyComputeSize && (this.shellHeight > 0 || this.shellWidth > 0)) {
                 throw new IllegalArgumentException("You cannot specify both manual and automatic shell sizes!");
@@ -860,7 +859,6 @@ public abstract class AbstractView extends Observable {
             if (isOpened()) {
                 return;
             }
-            display = this.shell.getDisplay();
             if (centerInDisplay) {
                 if (automaticallyComputeSize) {
                     WidgetCompositeUtil.centerInDisplay(this.shell);
@@ -882,8 +880,8 @@ public abstract class AbstractView extends Observable {
             }
 
             while ((this.shell != null) && !this.shell.isDisposed()) {
-                if ((display != null) && !display.readAndDispatch()) {
-                    display.sleep();
+                if (!shell.getDisplay().readAndDispatch()) {
+                    this.shell.getDisplay().sleep();
                 }
             }
         } catch (Exception exc) {

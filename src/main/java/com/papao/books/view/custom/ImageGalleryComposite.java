@@ -56,7 +56,7 @@ public class ImageGalleryComposite extends Observable implements Observer {
                 scrolledComposite.setFocus();
             }
         });
-        mainComp.addListener(SWT.MouseEnter, new Listener() {
+        mainComp.addListener(SWT.Activate, new Listener() {
             public void handleEvent(Event e) {
                 scrolledComposite.notifyListeners(SWT.Activate, new Event());
             }

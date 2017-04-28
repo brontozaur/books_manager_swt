@@ -61,12 +61,6 @@ public class ImageViewComposite extends Observable {
         });
 
         labelImage = new Label(mainComposite, SWT.NONE);
-//        labelImage.addListener(SWT.MouseHover, new Listener() {
-//            @Override
-//            public void handleEvent(Event event) {
-//                displayImage(event);
-//            }
-//        });
         GridDataFactory.fillDefaults().hint(WIDTH, HEIGHT).align(SWT.CENTER, SWT.CENTER).applyTo(labelImage);
         labelImage.addListener(SWT.Paint, new Listener() {
             @Override
