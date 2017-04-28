@@ -40,6 +40,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
@@ -69,7 +70,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private AutorController autorController;
     private static ToolBar barDocking;
     private static EncodePlatform instance;
-    private CTabFolder mainTabFolder;
+    private CBanner mainCBanner;
     private SashForm verticalSash;
     private Composite compLeftTree;
     private SashForm rightSash;
@@ -191,24 +192,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     private void createComponents(Composite parent) {
 
-        this.mainTabFolder = new CTabFolder(parent, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.mainTabFolder);
-        this.mainTabFolder.setSimple(true);
-        this.mainTabFolder.setUnselectedImageVisible(true);
-        this.mainTabFolder.setUnselectedCloseVisible(false);
-        this.mainTabFolder.setMRUVisible(true);
-        this.mainTabFolder.setMinimizeVisible(false);
-        this.mainTabFolder.setMaximizeVisible(false);
-        mainTabFolder.setSelectionBackground(ColorUtil.COLOR_SYSTEM);
+        this.mainCBanner = new CBanner(parent, SWT.NONE);
+        GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.mainCBanner);
+        this.mainCBanner.setSimple(false);
+        this.mainCBanner.setRight(createTopRightComponents(mainCBanner));
 
-        CTabItem booksTabItem = new CTabItem(this.mainTabFolder, SWT.NONE);
-        booksTabItem.setText("Carti");
-        booksTabItem.setImage(AppImages.getImage32(AppImages.IMG_DETAILS_NEW));
-        this.mainTabFolder.setSelection(booksTabItem);
+        this.mainCBanner.setLeft(createBarOps(mainCBanner));
 
-        createTopRightComponents(mainTabFolder);
-
-        verticalSash = new SashForm(mainTabFolder, SWT.HORIZONTAL | SWT.SMOOTH);
+        verticalSash = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
         verticalSash.SASH_WIDTH = 4;
         GridDataFactory.fillDefaults().grab(true, true).span(((org.eclipse.swt.layout.GridLayout) getContainer().getLayout()).numColumns,
                 1).applyTo(verticalSash);
@@ -222,13 +213,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         lay.marginHeight = 2;
         this.compRight.setLayout(lay);
 
-        createBarOps(compRight);
-
         rightVerticalSash = new LiveSashForm(compRight, SWT.HORIZONTAL | SWT.SMOOTH);
         rightVerticalSash.sashWidth = 4;
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightVerticalSash);
 
-        this.mainRightTabFolder = new CTabFolder(rightVerticalSash, SWT.BOTTOM);
+        this.mainRightTabFolder = new CTabFolder(rightVerticalSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.mainRightTabFolder);
         this.mainRightTabFolder.setSimple(true);
         this.mainRightTabFolder.setUnselectedImageVisible(true);
@@ -241,9 +230,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         CTabItem tabGrid = new CTabItem(this.mainRightTabFolder, SWT.NONE);
         tabGrid.setText("Lista");
         tabGrid.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
-        this.mainTabFolder.setSelection(tabGrid);
+        this.mainRightTabFolder.setSelection(tabGrid);
 
-        mainRightTabFolder.setSelection(tabGrid);
+        paginationComposite = new PaginationComposite(mainRightTabFolder, bookController);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(paginationComposite);
+        mainRightTabFolder.setTopRight(paginationComposite);
 
         rightSash = new SashForm(mainRightTabFolder, SWT.SMOOTH | SWT.HORIZONTAL);
         rightSash.SASH_WIDTH = 4;
@@ -274,12 +265,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         rightInnerSash.setLayout(new GridLayout(2, false));
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightInnerSash);
 
-        Composite secondaryComRight = new Composite(rightInnerSash, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).spacing(0, 0).applyTo(secondaryComRight);
-        GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.BEGINNING).applyTo(secondaryComRight);
-
         int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE;
-        this.tableViewer = new TableViewer(secondaryComRight, style);
+        this.tableViewer = new TableViewer(rightInnerSash, style);
         this.tableViewer.setUseHashlookup(true);
         this.tableViewer.getTable().setHeaderVisible(true);
         this.tableViewer.getTable().setLinesVisible(true);
@@ -329,9 +316,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        paginationComposite = new PaginationComposite(secondaryComRight, bookController);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(paginationComposite);
-
         this.bottomInnerTabFolderRight = new CTabFolder(rightInnerSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.bottomInnerTabFolderRight);
         this.bottomInnerTabFolderRight.setSimple(true);
@@ -345,10 +329,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         CTabItem tabItemDetaliiCarte = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
         tabItemDetaliiCarte.setText("Documente");
         tabItemDetaliiCarte.setImage(AppImages.getImage16(AppImages.IMG_DETAILS_NEW));
-        this.mainTabFolder.setSelection(tabItemDetaliiCarte);
+        this.bottomInnerTabFolderRight.setSelection(tabItemDetaliiCarte);
 
         tabItemDetaliiCarte.setControl(createTabDocuments(bottomInnerTabFolderRight));
-        bottomInnerTabFolderRight.setSelection(tabItemDetaliiCarte);
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
 
@@ -366,8 +349,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         WidgetCursorUtil.addHandCursorListener(this.tableViewer.getTable());
         SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
-
-        booksTabItem.setControl(verticalSash);
 
         getContainer().layout();
     }
@@ -423,7 +404,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         Composite comp = new Composite(compLeftTree, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(comp);
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comp);
-        new Label(comp, SWT.NONE).setText("Filtru");
+        new Label(comp, SWT.NONE).setText(" Filtru");
         final Text textUpperSearch = new Text(comp, SWT.SEARCH);
         GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(textUpperSearch);
         SWTeXtension.addColoredFocusListener(textUpperSearch, ColorUtil.COLOR_FOCUS_YELLOW);
@@ -706,7 +687,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
     }
 
-    private void createBarOps(Composite parent) {
+    private ToolBar createBarOps(Composite parent) {
         ToolBar barOps = new ToolBar(parent, SWT.FLAT);
 
         this.toolItemAdd = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
@@ -798,6 +779,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 modify(true);
             }
         });
+
+        return barOps;
     }
 
     public void handleLeftTreeDisplay() {
@@ -813,7 +796,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
     }
 
-    private void createTopRightComponents(Composite parent) {
+    private ToolBar createTopRightComponents(Composite parent) {
         ToolBar bar = new ToolBar(parent, SWT.FLAT | SWT.RIGHT | SWT.WRAP);
 
         ToolItem item = new ToolItem(bar, SWT.NONE);
@@ -876,7 +859,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        this.mainTabFolder.setTopRight(bar);
+        return bar;
     }
 
     public final void createViewerFilters() {

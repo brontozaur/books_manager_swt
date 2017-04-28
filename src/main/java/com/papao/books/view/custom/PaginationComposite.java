@@ -26,7 +26,6 @@ public class PaginationComposite extends Composite implements Observer {
     private ToolItem itemFirstPage;
     private ToolItem itemNext;
     private ToolItem itemLastPage;
-    private Label labelDin;
 
     private long totalCount = 0;
     private long totalPages = 0;
@@ -39,7 +38,7 @@ public class PaginationComposite extends Composite implements Observer {
         this.paginationController = paginationController;
         paginationController.addObserver(this);
 
-        GridLayoutFactory.fillDefaults().numColumns(8).margins(0, 0).spacing(5, 0).extendedMargins(0, 0, 5, 0).equalWidth(false).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(6).margins(0, 0).spacing(5, 0).extendedMargins(0, 0, 5, 0).equalWidth(false).applyTo(this);
 
         ToolBar barFirstpage = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 
@@ -58,6 +57,7 @@ public class PaginationComposite extends Composite implements Observer {
         itemPrevious = new ToolItem(barFirstpage, SWT.NONE);
         itemPrevious.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT_OPAL));
         itemPrevious.setToolTipText("Pagina anterioara");
+        itemPrevious.setText("pagina");
         itemPrevious.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -67,9 +67,6 @@ public class PaginationComposite extends Composite implements Observer {
                 search();
             }
         });
-
-
-        new Label(this, SWT.NONE).setText("pagina");
 
         textGoToPage = new FormattedText(this, SWT.BORDER);
         textGoToPage.setFormatter(new IntegerFormatter());
@@ -87,8 +84,6 @@ public class PaginationComposite extends Composite implements Observer {
                 }
             }
         });
-
-        labelDin = new Label(this, SWT.NONE);
 
         ToolBar barLastPage = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 
@@ -196,7 +191,7 @@ public class PaginationComposite extends Composite implements Observer {
         labelShowingXItemsOfTotal.setText(getLabelText());
 //        labelShowingXItemsOfTotal.setSize(labelShowingXItemsOfTotal.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         textGoToPage.setValue(currentPage);
-        labelDin.setText("din " + totalPages);
+        itemNext.setText("din " + totalPages);
         layout();
     }
 }

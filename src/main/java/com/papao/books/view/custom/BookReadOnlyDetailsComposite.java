@@ -78,7 +78,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     }
 
     private void addComponents() {
-        rightLabelTitle = new CLabel(mainComp, SWT.CENTER);
+        rightLabelTitle = new CLabel(mainComp, SWT.CENTER|SWT.BORDER);
         rightLabelTitle.setFont(FontUtil.TAHOMA12_NORMAL);
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(rightLabelTitle);
         GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 25).span(2, 1).applyTo(rightLabelTitle);
