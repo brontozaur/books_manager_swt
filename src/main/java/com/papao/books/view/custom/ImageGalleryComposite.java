@@ -12,10 +12,7 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.*;
 import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
@@ -35,7 +32,7 @@ public class ImageGalleryComposite extends Observable implements Observer {
         this.userController = userController;
         this.bookController.addObserver(this);
 
-        scrolledComposite = new ScrolledComposite(parent, SWT.BORDER| SWT.V_SCROLL);
+        scrolledComposite = new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL);
         scrolledComposite.setLayout(new GridLayout());
         scrolledComposite.setBackground(ColorUtil.COLOR_WHITE);
 
@@ -72,7 +69,7 @@ public class ImageGalleryComposite extends Observable implements Observer {
             BookController controller = (BookController) o;
             populateFields(controller.getSearchResult().getContent());
         } else if (o instanceof ImageViewComposite) {
-            this.selected = ((ImageViewComposite)o).getCarte();
+            this.selected = ((ImageViewComposite) o).getCarte();
             setChanged();
             notifyObservers();
         }
@@ -85,18 +82,25 @@ public class ImageGalleryComposite extends Observable implements Observer {
     }
 
     @Async
-    private void populateFields(List<Carte> carti) {
-        CWaitDlgClassic dlg = new CWaitDlgClassic(carti.size());
-        dlg.open();
-        clearAll();
-        for (Carte carte : carti) {
-            dlg.advance();
-            ImageViewComposite view = new ImageViewComposite(mainComp, bookController, userController, carte);
-            view.addObserver(this);
-        }
-        mainComp.layout();
-        scrolledComposite.notifyListeners(SWT.Resize, new Event());
-        dlg.close();
+    private void populateFields(final List<Carte> carti) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                CWaitDlgClassic dlg = new CWaitDlgClassic(carti.size());
+                dlg.open();
+                clearAll();
+                for (Carte carte : carti) {
+                    dlg.advance();
+                    ImageViewComposite view = new ImageViewComposite(mainComp, bookController, userController, carte);
+                    view.addObserver(ImageGalleryComposite.this);
+                    Display.getDefault().readAndDispatch();
+                }
+                mainComp.layout();
+                scrolledComposite.notifyListeners(SWT.Resize, new Event());
+                dlg.close();
+            }
+        };
+        Display.getDefault().asyncExec(runnable);
     }
 
     public Composite getContent() {
