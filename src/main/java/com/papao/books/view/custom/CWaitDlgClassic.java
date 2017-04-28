@@ -44,6 +44,14 @@ public final class CWaitDlgClassic {
             GridLayout gridLayout = new GridLayout(2, false);
             this.shell.setLayout(gridLayout);
             this.shell.setText("Procesare date...");
+            this.shell.addListener(SWT.KeyDown, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    if (event.keyCode == SWT.ESC) {
+                        close();
+                    }
+                }
+            });
 
             Canvas canvasImage = new Canvas(this.shell, SWT.NONE);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).minSize(32, 32).hint(32, 32).applyTo(canvasImage);
