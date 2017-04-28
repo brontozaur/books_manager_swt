@@ -87,65 +87,65 @@ public class BookController extends AbstractController {
             switch (searchType) {
                 case EDITURA: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByEdituraContainsIgnoreCase(value, pageable);
+                        carti = repository.getByEdituraContainsIgnoreCaseOrderByTitluAsc(value, pageable);
                     } else {
-                        carti = repository.getByEdituraIsNullOrEdituraIs("", pageable);
+                        carti = repository.getByEdituraIsNullOrEdituraIsOrderByTitluAsc("", pageable);
                     }
                     break;
                 }
                 case AUTOR: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByIdAutoriLike(new ObjectId(value), pageable);
+                        carti = repository.getByIdAutoriLikeOrderByTitluAsc(new ObjectId(value), pageable);
                     } else {
-                        carti = repository.getByIdAutoriIsNullOrIdAutoriIsLessThanEqual(new String[]{""}, pageable);
+                        carti = repository.getByIdAutoriIsNullOrIdAutoriIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
                     }
                     break;
                 }
                 case TRADUCATOR: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByTraducatoriContainsIgnoreCase(value, pageable);
+                        carti = repository.getByTraducatoriContainsIgnoreCaseOrderByTitluAsc(value, pageable);
                     } else {
-                        carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqual(new String[]{""}, pageable);
+                        carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
                     }
                     break;
                 }
                 case AN_APARITIE: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByAnAparitieContainsIgnoreCase(value, pageable);
+                        carti = repository.getByAnAparitieContainsIgnoreCaseOrderByTitluAsc(value, pageable);
                     } else {
-                        carti = repository.getByAnAparitieIsNullOrAnAparitieIs("", pageable);
+                        carti = repository.getByAnAparitieIsNullOrAnAparitieIsOrderByTitluAsc("", pageable);
                     }
                     break;
                 }
                 case LIMBA: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByLimbaContainsIgnoreCase(value, pageable);
+                        carti = repository.getByLimbaContainsIgnoreCaseOrderByTitluAsc(value, pageable);
                     } else {
-                        carti = repository.getByLimbaIsNullOrLimbaIs("", pageable);
+                        carti = repository.getByLimbaIsNullOrLimbaIsOrderByTitluAsc("", pageable);
                     }
                     break;
                 }
                 case LIMBA_ORIGINALA: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByEditiaOriginala_LimbaContainsIgnoreCase(value, pageable);
+                        carti = repository.getByEditiaOriginala_LimbaContainsIgnoreCaseOrderByTitluAsc(value, pageable);
                     } else {
-                        carti = repository.getByEditiaOriginala_LimbaIsNullOrEditiaOriginala_LimbaIs("", pageable);
+                        carti = repository.getByEditiaOriginala_LimbaIsNullOrEditiaOriginala_LimbaIsOrderByTitluAsc("", pageable);
                     }
                     break;
                 }
                 case TIP_COPERTA: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByTipCopertaContainsIgnoreCase(value, pageable);
+                        carti = repository.getByTipCopertaContainsIgnoreCaseOrderByTitluAsc(value, pageable);
                     } else {
-                        carti = repository.getByTipCopertaIsNullOrTipCopertaIs("", pageable);
+                        carti = repository.getByTipCopertaIsNullOrTipCopertaIsOrderByTitluAsc("", pageable);
                     }
                     break;
                 }
                 case TITLU: {
                     if (StringUtils.isNotEmpty(value)) {
-                        carti = repository.getByTitluStartingWithIgnoreCase(value, pageable);
+                        carti = repository.getByTitluStartingWithIgnoreCaseOrderByTitluAsc(value, pageable);
                     } else {
-                        carti = repository.getByTitluIsNullOrTitluIs("", pageable);
+                        carti = repository.getByTitluIsNullOrTitluIsOrderByTitluAsc("", pageable);
                     }
                     break;
                 }

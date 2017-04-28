@@ -209,6 +209,9 @@ public class StarRating extends Canvas {
     }
 
     for (final Star star : stars) {
+      if (star.bounds == null) {
+        continue;
+      }
       final boolean mouseHover = star.bounds.contains(event.x, event.y);
       star.hover = true;
       if (mouseHover) {
