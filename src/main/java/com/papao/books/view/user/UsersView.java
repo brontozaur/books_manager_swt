@@ -1,5 +1,6 @@
 package com.papao.books.view.user;
 
+import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.User;
@@ -21,7 +22,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.*;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
     private final static int IDX_PRENUME = 1;
 
     protected TableViewer tableViewer;
-    private SashForm sash;
+    private LiveSashForm sash;
     private Composite compRight;
     protected BorgSearchSystem searchSystem;
     private UserController controller;
@@ -296,8 +296,8 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
 
     private void addComponents() {
         int style = SWT.SMOOTH | SWT.HORIZONTAL;
-        this.sash = new SashForm(getContainer(), style);
-        this.sash.SASH_WIDTH = 4;
+        this.sash = new LiveSashForm(getContainer(), style);
+        this.sash.sashWidth = 4;
         GridDataFactory.fillDefaults().grab(true, true).minSize(350, 250).applyTo(this.sash);
 
         this.searchSystem = new BorgSearchSystem(this.sash);

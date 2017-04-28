@@ -1,5 +1,6 @@
 package com.papao.books.view.searcheable;
 
+import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.model.AbstractDB;
 import com.papao.books.model.BlankDbObject;
 import com.papao.books.view.AppImages;
@@ -12,7 +13,6 @@ import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -30,7 +30,7 @@ public class BorgSearchSystem extends Composite implements Listener, IEncodeRese
 	private final static String VISIBLE_FILTERS_GROUP_SPLIT_CHAR = "##";
 	private Map<String, Boolean> visibleFiltersMap;
 
-	private final SashForm sashParinte;
+	private final LiveSashForm sashParinte;
 	private Composite compRight;
 	private ScrolledComposite scrolledComp;
 	private Composite compCriterii;
@@ -44,7 +44,7 @@ public class BorgSearchSystem extends Composite implements Listener, IEncodeRese
 	private final Map<String, Integer> indexMapping = new HashMap<String, Integer>();
 	private final Map<Integer, String> indexMappingByPosition = new HashMap<Integer, String>();
 
-	public BorgSearchSystem(final SashForm sashParinte) {
+	public BorgSearchSystem(final LiveSashForm sashParinte) {
 		super(sashParinte, SWT.NONE);
 		this.sashParinte = sashParinte;
 		this.addListener(SWT.Dispose, this);

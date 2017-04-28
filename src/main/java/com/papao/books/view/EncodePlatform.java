@@ -43,7 +43,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -71,11 +70,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static ToolBar barDocking;
     private static EncodePlatform instance;
     private CBanner mainCBanner;
-    private SashForm verticalSash;
+    private LiveSashForm verticalSash;
     private Composite compLeftTree;
-    private SashForm rightSash;
+    private LiveSashForm rightSash;
     private BorgSearchSystem searchSystem;
-    private SashForm rightInnerSash;
+    private LiveSashForm rightInnerSash;
     private CTabFolder bottomInnerTabFolderRight;
     private TableViewer tableViewer;
     private CTabFolder mainRightTabFolder;
@@ -199,8 +198,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         this.mainCBanner.setLeft(createBarOps(mainCBanner));
 
-        verticalSash = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
-        verticalSash.SASH_WIDTH = 4;
+        verticalSash = new LiveSashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
+        verticalSash.sashWidth = 4;
         GridDataFactory.fillDefaults().grab(true, true).span(((org.eclipse.swt.layout.GridLayout) getContainer().getLayout()).numColumns,
                 1).applyTo(verticalSash);
 
@@ -208,10 +207,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         this.compRight = new Composite(verticalSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this.compRight);
-        GridLayout lay = new GridLayout(1, false);
-        lay.verticalSpacing = 0;
-        lay.marginHeight = 2;
-        this.compRight.setLayout(lay);
+        GridLayoutFactory.fillDefaults().numColumns(1).spacing(0,0).margins(0,0).applyTo(compRight);
 
         rightVerticalSash = new LiveSashForm(compRight, SWT.HORIZONTAL | SWT.SMOOTH);
         rightVerticalSash.sashWidth = 4;
@@ -236,8 +232,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, false).applyTo(paginationComposite);
         mainRightTabFolder.setTopRight(paginationComposite);
 
-        rightSash = new SashForm(mainRightTabFolder, SWT.SMOOTH | SWT.HORIZONTAL);
-        rightSash.SASH_WIDTH = 4;
+        rightSash = new LiveSashForm(mainRightTabFolder, SWT.SMOOTH | SWT.HORIZONTAL);
+        rightSash.sashWidth = 4;
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightSash);
         tabGrid.setControl(rightSash);
 
@@ -260,8 +256,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         searchSystem = new BorgSearchSystem(rightSash);
 
-        rightInnerSash = new SashForm(rightSash, SWT.VERTICAL | SWT.SMOOTH);
-        rightInnerSash.SASH_WIDTH = 4;
+        rightInnerSash = new LiveSashForm(rightSash, SWT.VERTICAL | SWT.SMOOTH);
+        rightInnerSash.sashWidth = 4;
         rightInnerSash.setLayout(new GridLayout(2, false));
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightInnerSash);
 
@@ -393,7 +389,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         toolItemClone.setEnabled(enable); // clone
     }
 
-    private void createCompLeftTree(SashForm verticalSash) {
+    private void createCompLeftTree(LiveSashForm verticalSash) {
         compLeftTree = new Composite(verticalSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(false, true).applyTo(compLeftTree);
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(2, 2).extendedMargins(0,

@@ -1,5 +1,6 @@
 package com.papao.books.view.carte;
 
+import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.controller.AutorController;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
@@ -21,7 +22,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.*;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
     private final static int IDX_NUME = 0;
 
     protected TableViewer tableViewer;
-    private SashForm sash;
+    private LiveSashForm sash;
     private Composite compRight;
     protected BorgSearchSystem searchSystem;
     private AutorController autorController;
@@ -287,8 +287,8 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
 
     private void addComponents() {
         int style = SWT.SMOOTH | SWT.HORIZONTAL;
-        this.sash = new SashForm(getContainer(), style);
-        this.sash.SASH_WIDTH = 4;
+        this.sash = new LiveSashForm(getContainer(), style);
+        this.sash.sashWidth = 4;
         GridDataFactory.fillDefaults().grab(true, true).minSize(350, 250).applyTo(this.sash);
 
         this.searchSystem = new BorgSearchSystem(this.sash);

@@ -1,5 +1,6 @@
 package com.papao.books.view.bones.impl.bones;
 
+import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.AbstractBone;
 import com.papao.books.view.bones.AbstractBoneDescriptor;
@@ -33,7 +34,7 @@ public abstract class AbstractBoneUnifiedLV1 extends AbstractBone implements Lis
 	private ToolBar barOps;
 	private ScrolledComposite compDetailsScrolled;
 	private ToolItem itemShowSearch;
-	private SashForm searchSash;
+	private LiveSashForm searchSash;
 	private Table table;
 	private Tree treeDocs;
 	public int[] verticalSashWeights = new int[] {
@@ -94,8 +95,8 @@ public abstract class AbstractBoneUnifiedLV1 extends AbstractBone implements Lis
 		});
 
 		int style = SWT.SMOOTH | SWT.HORIZONTAL;
-		setSearchSash(new SashForm(getMainCompRight(), style));
-		getSearchSash().SASH_WIDTH = 4;
+		setSearchSash(new LiveSashForm(getMainCompRight(), style));
+		getSearchSash().sashWidth = 4;
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(getSearchSash());
 		setSearchSystem(new BorgSearchSystem(getSearchSash()));
 
@@ -329,11 +330,11 @@ public abstract class AbstractBoneUnifiedLV1 extends AbstractBone implements Lis
 		this.itemShowSearch = itemShowSearch;
 	}
 
-	public final SashForm getSearchSash() {
+	public final LiveSashForm getSearchSash() {
 		return this.searchSash;
 	}
 
-	private final void setSearchSash(final SashForm searchSash) {
+	private final void setSearchSash(final LiveSashForm searchSash) {
 		this.searchSash = searchSash;
 	}
 
