@@ -20,10 +20,6 @@ mvn install:install-file -Dfile=tika-core-1.14.jar -DgroupId=org.apache.tika -Da
 mvn install:install-file -Dfile=opal-0.9.5.2.jar -DgroupId=org.mihalis.opal -DartifactId=opal -Dversion=0.9.5.2 -Dpackaging=jar -Dsources=opal-0.9.5-src.zip
 mvn install:install-file -Dfile=org.eclipse.ui.forms-3.5.jar -DgroupId=org.eclipse.ui -DartifactId=forms -Dversion=3.5 -Dpackaging=jar
 
-mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.gallery_1.0.0.jar -Dsources=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.gallery.source_1.0.0.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=gallery -Dversion=1.0 -Dpackaging=jar
-
-see also https://github.com/lcaron/opal/wiki/Notifier
-
 pom.xml
 ------------
 
@@ -91,11 +87,6 @@ pom.xml
      <version>1.0</version>
 </dependency>
 <dependency>
-     <groupId>org.eclipse.nebula.widgets</groupId>
-     <artifactId>gallery</artifactId>
-     <version>1.0</version>
-</dependency>
-<dependency>
      <groupId>org.eclipse.ui</groupId>
      <artifactId>forms</artifactId>
      <version>3.5</version>
@@ -111,6 +102,7 @@ http://stackoverflow.com/questions/21181758/how-to-show-an-alert-message-using-s
 http://philondev.blogspot.ro/2009/12/notification-framework.html
 https://github.com/pke/Notifications
 http://www.novocode.com/swt/
+https://github.com/lcaron/opal/wiki/Notifier
 
 Expandable composite:
 http://www.eclipse.org/mylyn/
