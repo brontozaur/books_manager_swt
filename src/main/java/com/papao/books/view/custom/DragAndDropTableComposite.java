@@ -125,12 +125,6 @@ public class DragAndDropTableComposite extends Composite {
                 }
             }
         });
-        table.addListener(SWT.MouseEnter, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                table.setFocus();
-            }
-        });
         table.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {

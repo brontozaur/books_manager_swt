@@ -42,6 +42,9 @@ public class AbstractController extends Observable {
     @Value("${app.mongo.autori.collection}")
     private String autoriCollectionName;
 
+    @Value("${app.mongo.reports.collection}")
+    private String reportsCollectionName;
+
     @Value("${app.images.folder}")
     private String appImagesFolder;
 
@@ -59,6 +62,10 @@ public class AbstractController extends Observable {
 
     public String getBooksCollectionName() {
         return booksCollectionName;
+    }
+
+    public String getReportsCollectionName() {
+        return reportsCollectionName;
     }
 
     public String getAppImagesFolder() {

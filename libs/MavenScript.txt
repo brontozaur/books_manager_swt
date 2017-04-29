@@ -20,6 +20,8 @@ mvn install:install-file -Dfile=tika-core-1.14.jar -DgroupId=org.apache.tika -Da
 mvn install:install-file -Dfile=opal-0.9.5.2.jar -DgroupId=org.mihalis.opal -DartifactId=opal -Dversion=0.9.5.2 -Dpackaging=jar -Dsources=opal-0.9.5-src.zip
 mvn install:install-file -Dfile=org.eclipse.ui.forms-3.5.jar -DgroupId=org.eclipse.ui -DartifactId=forms -Dversion=3.5 -Dpackaging=jar
 
+mvn install:install-file -Dfile=com.inamik.utils.tableformatter-0.96.0/com.inamik.utils.tableformatter-0.96.0.jar -Dsources=com.inamik.utils.tableformatter-0.96.0/com.inamik.utils.tableformatter-0.96.0.sources.zip -DgroupId=com.inamik.utils -DartifactId=tableformatter -Dversion=0.96.0 -Dpackaging=jar
+
 pom.xml
 ------------
 
@@ -91,6 +93,11 @@ pom.xml
      <artifactId>forms</artifactId>
      <version>3.5</version>
 </dependency>
+<dependency>
+     <groupId>com.inamik.utils</groupId>
+     <artifactId>tableformatter</artifactId>
+     <version>0.96.0</version>
+</dependency>
 
 
 Notification widgets:
@@ -106,3 +113,5 @@ https://github.com/lcaron/opal/wiki/Notifier
 
 Expandable composite:
 http://www.eclipse.org/mylyn/
+
+inamik table formatter is moving: https://github.com/iNamik/Java-Text-Table-Formatter

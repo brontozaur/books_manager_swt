@@ -1,6 +1,7 @@
 package com.papao.books.view.view;
 
 import com.papao.books.view.AppImages;
+import com.papao.books.view.auth.LoggerMyWay;
 import com.papao.books.view.util.FontUtil;
 import com.papao.books.view.util.StringUtil;
 import com.papao.books.view.util.WidgetCompositeUtil;
@@ -562,7 +563,7 @@ public class MsgBox implements Listener {
 
 	private void showAppLog() {
 		try {
-//			Program.launch(LoggerMyWay.applicationLog);
+			Program.launch(LoggerMyWay.applicationLog);
 		}
 		catch (Exception exc) {
 			logger.error(exc.getMessage(), exc);

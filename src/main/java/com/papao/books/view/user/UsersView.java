@@ -1,7 +1,10 @@
 package com.papao.books.view.user;
 
 import com.novocode.naf.swt.custom.LiveSashForm;
+import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.controller.UserController;
+import com.papao.books.export.ExportType;
+import com.papao.books.export.Exporter;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.User;
 import com.papao.books.view.AppImages;
@@ -27,7 +30,7 @@ import org.eclipse.swt.widgets.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete, IEncodeSearch {
+public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete, IEncodeSearch, IEncodeExport {
 
     private static Logger logger = Logger.getLogger(UsersView.class);
 
@@ -41,10 +44,13 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
     private Composite compRight;
     protected BorgSearchSystem searchSystem;
     private UserController controller;
+    private ApplicationReportController applicationReportController;
 
-    public UsersView(final Shell parent, UserController controller) {
+    public UsersView(final Shell parent, UserController controller,
+                     ApplicationReportController applicationReportController) {
         super(parent, AbstractView.MODE_NONE);
         this.controller = controller;
+        this.applicationReportController = applicationReportController;
 
         getShell().setText("Utilizatori aplicatie");
         getShell().setImage(AppImages.getImage16(AppImages.IMG_CONFIG));
@@ -450,5 +456,30 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         } else {
             this.sash.setMaximizedControl(this.compRight);
         }
+    }
+
+    @Override
+    public void exportTxt() {
+        Exporter.export(ExportType.TXT, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
+    }
+
+    @Override
+    public void exportPDF() {
+        Exporter.export(ExportType.PDF, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
+    }
+
+    @Override
+    public void exportExcel() {
+        Exporter.export(ExportType.XLS, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
+    }
+
+    @Override
+    public void exportRTF() {
+        Exporter.export(ExportType.RTF, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
+    }
+
+    @Override
+    public void exportHTML() {
+        Exporter.export(ExportType.HTML, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
     }
 }

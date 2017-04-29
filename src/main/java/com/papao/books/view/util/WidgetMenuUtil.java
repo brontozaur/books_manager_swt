@@ -28,7 +28,7 @@ public final class WidgetMenuUtil {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-//                    Exporter.export(Exporter.PDF, table, reportName, clazz, sufix);
+//                    Exporter.export(ExportType.PDF, table, reportName, clazz, sufix);
                 }
             });
 

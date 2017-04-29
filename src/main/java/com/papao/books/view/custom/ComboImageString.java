@@ -25,7 +25,6 @@ import java.util.Map;
 
 /**
  * @category Custom hand-maded SWT components.
- * @since Encode Borg v.1.0!!!!!
  * <p>
  * Description : Custom implementation for issues regarding a combo. It provides the following :
  * <ol>

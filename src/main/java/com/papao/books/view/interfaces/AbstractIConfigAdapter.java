@@ -39,7 +39,7 @@ public abstract class AbstractIConfigAdapter extends Composite implements IConfi
 	}
 
     @Override
-    public void save() {
+    public void save() throws ConfigurationException {
     }
 
 }

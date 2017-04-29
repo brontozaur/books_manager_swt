@@ -3,9 +3,11 @@ package com.papao.books.view;
 import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.BooksApplication;
 import com.papao.books.FiltruAplicatie;
+import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
 import com.papao.books.controller.UserController;
+import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
 import com.papao.books.view.auth.EncodeLive;
@@ -98,6 +100,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private PaginationComposite paginationComposite;
     private BookSearchType searchType = BookSearchType.AUTOR;
     private BookController bookController;
+    private ApplicationReportController applicationReportController;
     private Combo comboModAfisare;
     private DragAndDropTableComposite dragAndDropTableComposite;
     private LiveSashForm rightVerticalSash;
@@ -108,11 +111,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     @Autowired
     public EncodePlatform(UserController userController,
                           AutorController autorController,
-                          BookController bookController) {
+                          BookController bookController,
+                          ApplicationReportController applicationReportController) {
         super(null, AbstractView.MODE_NONE);
         this.userController = userController;
         this.autorController = autorController;
         this.bookController = bookController;
+        this.applicationReportController = applicationReportController;
         this.bookController.addObserver(this);
         /**
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
@@ -797,6 +802,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         ToolBar bar = new ToolBar(parent, SWT.FLAT | SWT.RIGHT | SWT.WRAP);
 
         ToolItem item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_MOD_VIZUALIZARE));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_MOD_VIZUALIZARE));
+        item.setToolTipText("Afisare rapoarte");
+        item.setText("Rapoarte");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                VizualizareRapoarte.show(applicationReportController);
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
         item.setImage(AppImages.getImage24(AppImages.IMG_OK));
         item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_OK));
         item.setToolTipText("Validator diferite coduri");
@@ -1173,7 +1190,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             });
 
             menuItem = new MenuItem(trayItemMenu, SWT.PUSH);
-            menuItem.setText("Afisare Encode Borg");
+            menuItem.setText("Afisare Books Manager");
             menuItem.setImage(AppImages.getImage16(AppImages.IMG_BORG_MAIN));
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -1248,7 +1265,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     public final void configUsers() {
-        new UsersView(new Shell(), userController).open();
+        new UsersView(getShell(), userController, applicationReportController).open();
     }
 
     @Override

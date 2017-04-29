@@ -25,7 +25,7 @@ public final class EncodeLive {
     public static final String APP_TEMP_DIR = "temp";
     public final static String ERROR_CREATING_DIR = "Nu s-a putut crea directorul ";
 
-    public static final boolean IS_MAC = "carbon".equals(SWT.getPlatform());
+    public static final boolean IS_MAC = "carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform());
 
     /**
      * numele directorului din logs, care va retine fisiere generate de un printStream, pentru cazul

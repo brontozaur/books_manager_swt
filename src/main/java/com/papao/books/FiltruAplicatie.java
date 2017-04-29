@@ -216,4 +216,8 @@ public final class FiltruAplicatie {
     public static boolean isLeftTreeShowRecentActivity() {
         return true;
     }
+
+    public static boolean isReportsShowingOptions() {
+        return FiltruAplicatie.KEY_APP_REPORTS_SHOW_OPTIONS_DEFAULT;
+    }
 }
