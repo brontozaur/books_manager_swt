@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
+
 @Controller
 public class BookController extends AbstractController {
 
@@ -169,5 +171,9 @@ public class BookController extends AbstractController {
             data.setFileName(frontCover.getFilename());
         }
         return image;
+    }
+
+    public Carte getByTitluAndIdAutori(String titlu, List<ObjectId> idAutori) {
+        return repository.getByTitluAndIdAutori(titlu, idAutori);
     }
 }

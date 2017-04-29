@@ -285,11 +285,7 @@ public abstract class AbstractView extends Observable {
                 setShell(new Shell(Display.getDefault(), getShellStyle()));
             }
             //we set the current shell as the parent shell for notifications. For just in case ;-)
-            this.notificationParent = Notifier.getParent();
-            if (this.notificationParent == null || this.notificationParent.isDisposed()) {
-                this.notificationParent = this.shell;
-                Notifier.setParent(this.shell);
-            }
+            this.notificationParent = this.shell;
             Notifier.setParent(this.shell);
             this.shell.addListener(SWT.Dispose, new Listener() {
                 @Override

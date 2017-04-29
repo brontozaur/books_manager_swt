@@ -49,4 +49,9 @@ public class AutorController extends AbstractController {
         }
         return autori;
     }
+
+
+    public Autor getByNumeComplet(String numeComplet) {
+        return cacheableAutorRepository.getByNumeComplet(numeComplet);
+    }
 }

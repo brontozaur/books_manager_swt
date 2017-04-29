@@ -14,10 +14,8 @@ public final class ReadTabDelimitedFile {
 
     private static final Logger logger = Logger.getLogger(ReadTabDelimitedFile.class);
 
-    private ReadTabDelimitedFile() {}
-
-    public final static String DELIMITER_TAB = "\t";
-    public final static String DELIMITER_COMMA = ",";
+    private ReadTabDelimitedFile() {
+    }
 
     public static List<String[]> readTabDelimitedFile(final String fileName, final String delimiter) throws Exception {
         List<String[]> fileContents = new ArrayList<String[]>();
@@ -43,9 +41,7 @@ public final class ReadTabDelimitedFile {
             StringTokenizer tokenizer = new StringTokenizer(contents.toString(), System.getProperty("line.separator"));
             while (tokenizer.hasMoreTokens()) {
                 String[] tokens = tokenizer.nextToken().split(delimiter);
-                if (tokens != null) {
-                    fileContents.add(tokens);
-                }
+                fileContents.add(tokens);
             }
         } catch (Exception exc) {
             logger.warn(exc);

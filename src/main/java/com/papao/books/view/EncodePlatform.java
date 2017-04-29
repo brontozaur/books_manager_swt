@@ -8,6 +8,8 @@ import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
 import com.papao.books.controller.UserController;
 import com.papao.books.export.VizualizareRapoarte;
+import com.papao.books.imports.AutoriImportView;
+import com.papao.books.imports.BookImportView;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
 import com.papao.books.view.auth.EncodeLive;
@@ -810,6 +812,30 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             @Override
             public void handleEvent(final Event e) {
                 VizualizareRapoarte.show(applicationReportController);
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_IMPORT));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_IMPORT));
+        item.setToolTipText("Import carti");
+        item.setText("Import carti");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                new BookImportView(getShell(), bookController, autorController, applicationReportController).open();
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_IMPORT));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_IMPORT));
+        item.setToolTipText("Import autori");
+        item.setText("Test import autori");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                new AutoriImportView(getShell(), applicationReportController, autorController).open();
             }
         });
 

@@ -7,8 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CarteRepository extends MongoRepository<Carte, String> {
+
+    Carte getByTitluAndIdAutori(String titlu, List<ObjectId> idAutori);
 
     //string values - contains
     Page<Carte> getByEdituraIsNullOrEdituraIsOrderByTitluAsc(String emptyString, Pageable pageable);

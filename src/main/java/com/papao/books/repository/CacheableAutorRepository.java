@@ -38,4 +38,9 @@ public class CacheableAutorRepository {
         }
         return autorRepository.findAll(idsStr);
     }
+
+    @Cacheable("byNumeComplet")
+    public Autor getByNumeComplet(String numeComplet) {
+        return autorRepository.getByNumeComplet(numeComplet);
+    }
 }
