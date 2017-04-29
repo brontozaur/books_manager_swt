@@ -365,8 +365,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comp);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
 
-        dragAndDropTableComposite = new DragAndDropTableComposite(comp, bookController, new Carte(), true);
+        dragAndDropTableComposite = new DragAndDropTableComposite(comp, bottomInnerTabFolderRight,
+                bookController, new Carte(), true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(dragAndDropTableComposite);
+        bottomInnerTabFolderRight.setTopRight(dragAndDropTableComposite.getBarOps());
 
         return comp;
     }

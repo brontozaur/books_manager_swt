@@ -47,12 +47,30 @@ public class DragAndDropTableComposite extends Composite {
     private ToolItem itemAdd;
     private boolean permanentChanges;
     private ImageViewer previewShell;
+    private Composite barOpsParent;
+    private ToolBar barOps;
 
-    public DragAndDropTableComposite(Composite parent, BookController controller, Carte carte, boolean permanentChanges) {
+    public DragAndDropTableComposite(Composite parent,
+                                     BookController controller,
+                                     Carte carte,
+                                     boolean permanentChanges) {
+        this(parent, null, controller, carte, permanentChanges);
+    }
+
+    public DragAndDropTableComposite(Composite parent,
+                                     Composite barOpsParent,
+                                     BookController controller,
+                                     Carte carte,
+                                     boolean permanentChanges) {
         super(parent, SWT.NONE);
         this.controller = controller;
         this.carte = carte;
         this.permanentChanges = permanentChanges;
+        if (barOpsParent == null) {
+            this.barOpsParent = this;
+        } else {
+            this.barOpsParent = barOpsParent;
+        }
 
         GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(this);
         GridDataFactory.fillDefaults().grab(true, true).hint(300, 150).applyTo(this);
@@ -62,9 +80,13 @@ public class DragAndDropTableComposite extends Composite {
         enableOps();
     }
 
+    public ToolBar getBarOps() {
+        return this.barOps;
+    }
+
     private void addComponents() {
-        ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.NO_FOCUS | SWT.RIGHT);
-        itemAdd = new ToolItem(bar, SWT.NONE);
+        barOps = new ToolBar(barOpsParent, SWT.FLAT | SWT.NO_FOCUS | SWT.RIGHT);
+        itemAdd = new ToolItem(barOps, SWT.NONE);
         itemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
         itemAdd.setHotImage(AppImages.getImage16Focus(AppImages.IMG_PLUS));
         itemAdd.setToolTipText("Adaugare");
@@ -87,7 +109,7 @@ public class DragAndDropTableComposite extends Composite {
             }
         });
 
-        itemView = new ToolItem(bar, SWT.NONE);
+        itemView = new ToolItem(barOps, SWT.NONE);
         itemView.setImage(AppImages.getImage16(AppImages.IMG_MOD_VIZUALIZARE));
         itemView.setHotImage(AppImages.getImage16Focus(AppImages.IMG_MOD_VIZUALIZARE));
         itemView.setToolTipText("Vizualizare");
@@ -98,7 +120,7 @@ public class DragAndDropTableComposite extends Composite {
             }
         });
 
-        itemDel = new ToolItem(bar, SWT.NONE);
+        itemDel = new ToolItem(barOps, SWT.NONE);
         itemDel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
         itemDel.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
         itemDel.setToolTipText("Stergere");
