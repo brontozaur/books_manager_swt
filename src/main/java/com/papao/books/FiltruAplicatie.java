@@ -47,7 +47,7 @@ public final class FiltruAplicatie {
      * fereastra, folosind ultimele coordonate/dimensiuni, daca exista
      */
     public final static String KEY_WINDOWS_USE_COORDS = "windows.use.coords";
-    public final static boolean KEY_WINDOWS_USE_COORDS_DEFAULT = false;
+    public final static boolean KEY_WINDOWS_USE_COORDS_DEFAULT = true;
 
     /**
      * proprietate ce conditioneaza restaurarea coloanelor vizibile, a alinierii si a dimensiunii

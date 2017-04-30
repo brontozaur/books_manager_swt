@@ -1,9 +1,15 @@
 package com.papao.books.view.util;
 
 import com.papao.books.FiltruAplicatie;
+import com.papao.books.model.config.WindowSetting;
+import com.papao.books.repository.AbstractSettingRepository;
+import com.papao.books.view.auth.EncodeLive;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -12,9 +18,15 @@ import java.util.TreeMap;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+@Component
 public final class FilterUtil {
 
-	private FilterUtil() {}
+    private static AbstractSettingRepository settingRepository;
+
+    @Autowired
+	public FilterUtil(AbstractSettingRepository settingRepository) {
+	    this.settingRepository = settingRepository;
+    }
 
 	public final static String NODE_LV1_BORG = "borg_application";
 	// si lista ar putea continua, in mod inutil :D
@@ -273,10 +285,6 @@ public final class FilterUtil {
 		return FilterUtil.getNodeCurrentDb().get(FilterUtil.KEY_LAST_USER_NAME, FilterUtil.KEY_LAST_USER_NAME_DEFAULT);
 	}
 
-	public static String getLastPersistenceUnitName() {
-		return FilterUtil.getNodeBorgRoot().get(FilterUtil.KEY_LAST_DB, FilterUtil.KEY_LAST_DB_DEFAULT);
-	}
-
 	/**
 	 * @param clazz
 	 *            orice clasa
@@ -528,4 +536,21 @@ public final class FilterUtil {
 		}
 		return dims;
 	}
+
+	public static WindowSetting getWindowSetting(String windowKey) {
+	    return settingRepository.getWindowSetting(windowKey, EncodeLive.getIdUser());
+    }
+
+	public static void saveWindowCoords(Rectangle bounds, String windowKey){
+        WindowSetting setting = getWindowSetting(windowKey);
+        if (setting == null) {
+            setting = new WindowSetting();
+        }
+        setting.setX(bounds.x);
+        setting.setY(bounds.y);
+        setting.setWidth(bounds.width);
+        setting.setHeight(bounds.height);
+        setting.setWindowKey(windowKey);
+        settingRepository.save(setting);
+    }
 }

@@ -1,5 +1,7 @@
 package com.papao.books.view.view;
 
+import com.papao.books.FiltruAplicatie;
+import com.papao.books.model.config.WindowSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.custom.CWaitDlgClassic;
@@ -81,11 +83,6 @@ public abstract class AbstractView extends Observable {
     private boolean addCloseListener;
 
     private boolean automaticallyShowSaveOKMessage = false;
-
-    private final static String COORD_X = "#x";
-    private final static String COORD_Y = "#y";
-    private final static String WIDTH = "#width";
-    private final static String HEIGHT = "#height";
 
     private Shell shell;
     private Shell parent;
@@ -286,6 +283,7 @@ public abstract class AbstractView extends Observable {
             }
             //we set the current shell as the parent shell for notifications. For just in case ;-)
             this.notificationParent = this.shell;
+            Notifier.setParent(this.shell);
             Notifier.setParent(this.shell);
             this.shell.addListener(SWT.Dispose, new Listener() {
                 @Override
@@ -862,18 +860,23 @@ public abstract class AbstractView extends Observable {
                     WidgetCompositeUtil.centerInDisplayForFixedWidthsShells(this.shell);
                 }
             }
-            if (this.parentPos != null) {
-                this.shell.pack();
-                this.shell.setLocation(SWTeXtension.computeChildLocation(this.parentPos, this.shell.getBounds()));
+            WindowSetting setting = null;
+            if (useCoords && FiltruAplicatie.isWindowsUsingCoords()) {
+                setting = FilterUtil.getWindowSetting(getClass().getCanonicalName());
             }
-            if (automaticallyComputeSize) {
-                this.shell.setVisible(false);
-                this.shell.open();
-                this.shell.setSize(this.shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-                this.shell.setVisible(true);
+            if (setting != null && setting.isValid()) {
+                this.shell.setBounds(new Rectangle(setting.getX(), setting.getY(), setting.getWidth(), setting.getHeight()));
             } else {
-                this.shell.open();
+                if (this.parentPos != null) {
+                    this.shell.pack();
+                    this.shell.setLocation(SWTeXtension.computeChildLocation(this.parentPos, this.shell.getBounds()));
+                } else if (automaticallyComputeSize) {
+                    this.shell.setVisible(false);
+                    this.shell.setSize(this.shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+                    this.shell.setVisible(true);
+                }
             }
+            this.shell.open();
 
             while ((this.shell != null) && !this.shell.isDisposed()) {
                 if (!shell.getDisplay().readAndDispatch()) {
@@ -1049,6 +1052,8 @@ public abstract class AbstractView extends Observable {
 
     private final void shellCloseEvent(final Event e) {
         try {
+            FilterUtil.saveWindowCoords(getShell().getBounds(), getClass().getCanonicalName());
+
             if ((getDockingItem() != null) && !getDockingItem().isDisposed()) {
                 getDockingItem().dispose();
                 getDockingBar().layout();
