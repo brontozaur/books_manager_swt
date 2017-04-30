@@ -1,11 +1,14 @@
 package com.papao.books.view.custom;
 
 import com.github.haixing_hu.swt.starrating.StarRating;
+import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
+import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.util.ColorUtil;
+import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -26,17 +29,24 @@ public class ImageViewComposite extends Observable {
     private final int HEIGHT = 180;
     private BookController bookController;
     private UserController userController;
+    private AutorController autorController;
     private StarRating starRating;
     private CLabel labelName;
     private Composite mainComposite;
     private Carte carte;
+    private boolean permanentSelection = false;
 
     private static String SWT_FULL_IMAGE = "SWT_FULL_IMAGE";
     private static final Logger logger = Logger.getLogger(ImageViewComposite.class);
 
-    public ImageViewComposite(Composite parent, BookController controller, final UserController userController, final Carte carte) {
-        this.bookController = controller;
+    public ImageViewComposite(Composite parent,
+                              final BookController carteController,
+                              final UserController userController,
+                              final AutorController autorController,
+                              final Carte carte) {
+        this.bookController = carteController;
         this.userController = userController;
+        this.autorController = autorController;
         this.carte = carte;
 
         mainComposite = new Composite(parent, SWT.NONE);
@@ -78,38 +88,35 @@ public class ImageViewComposite extends Observable {
         labelImage.addListener(SWT.MouseEnter, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                labelImage.setCursor(Display.getDefault().getSystemCursor(SWT.CURSOR_HAND));
-                mainComposite.setBackground(ColorUtil.COLOR_ALBASTRU_INCHIS);
-                mainComposite.setForeground(ColorUtil.COLOR_WHITE);
-                for (Control control : mainComposite.getChildren()) {
-                    if (control == labelImage) {
-                        continue;
-                    }
-                    control.setBackground(ColorUtil.COLOR_ALBASTRU_INCHIS);
-                    control.setForeground(ColorUtil.COLOR_WHITE);
-                }
+                setSelection(false);
             }
         });
         labelImage.addListener(SWT.MouseExit, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                labelImage.setCursor(Display.getDefault().getSystemCursor(SWT.CURSOR_ARROW));
-                mainComposite.setBackground(ColorUtil.COLOR_WHITE);
-                mainComposite.setForeground(ColorUtil.COLOR_BLACK);
-                for (Control control : mainComposite.getChildren()) {
-                    if (control == labelImage) {
-                        continue;
-                    }
-                    control.setBackground(ColorUtil.COLOR_WHITE);
-                    control.setForeground(ColorUtil.COLOR_BLACK);
-                }
+                resetSelection(false);
             }
         });
         labelImage.addListener(SWT.MouseDown, new Listener() {
             @Override
             public void handleEvent(final Event e) {
+                setSelection(true);
                 ImageViewComposite.this.setChanged();
                 ImageViewComposite.this.notifyObservers();
+            }
+        });
+        labelImage.addListener(SWT.MouseDoubleClick, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                permanentSelection = true;
+                CarteView view = new CarteView(labelImage.getShell(), carte, carteController, userController, autorController, AbstractView.MODE_MODIFY);
+                view.open(true, true);
+                if (view.getUserAction() == SWT.OK) {
+                    ImageViewComposite.this.carte = view.getCarte();
+                    populateFields(view.getCarte());
+                    ImageViewComposite.this.setChanged();
+                    ImageViewComposite.this.notifyObservers();
+                }
             }
         });
 
@@ -150,22 +157,41 @@ public class ImageViewComposite extends Observable {
         labelImage.setToolTipText(bookController.getBookAuthorNames(carte) + " - " + carte.getTitlu());
     }
 
-    private void displayImage(Event event) {
-        if (event.widget.getData(SWT_FULL_IMAGE) instanceof Image) {
-            Image image = (Image) event.widget.getData(SWT_FULL_IMAGE);
-            if (!image.isDisposed()) {
-                if (previewShell != null && !previewShell.getShell().isDisposed()) {
-                    previewShell.getShell().close();
-                    previewShell = null;
-                }
-                previewShell = new ImageViewer(image);
-                previewShell.setImageName(labelImage.getData() + "");
-                previewShell.open();
+    public Carte getCarte() {
+        return this.carte;
+    }
+
+    public void setSelection(boolean permanent) {
+        this.permanentSelection = permanent;
+        labelImage.setCursor(Display.getDefault().getSystemCursor(SWT.CURSOR_HAND));
+        mainComposite.setBackground(ColorUtil.COLOR_ALBASTRU_INCHIS);
+        mainComposite.setForeground(ColorUtil.COLOR_WHITE);
+        for (Control control : mainComposite.getChildren()) {
+            if (control == labelImage) {
+                continue;
             }
+            control.setBackground(ColorUtil.COLOR_ALBASTRU_INCHIS);
+            control.setForeground(ColorUtil.COLOR_WHITE);
         }
     }
 
-    public Carte getCarte() {
-        return this.carte;
+    public void resetSelection(boolean resetPermanetSelection) {
+        if (permanentSelection && !resetPermanetSelection) {
+            return;
+        }
+        permanentSelection = false;
+        if (labelImage.isDisposed()) {
+            return;
+        }
+        labelImage.setCursor(Display.getDefault().getSystemCursor(SWT.CURSOR_ARROW));
+        mainComposite.setBackground(ColorUtil.COLOR_WHITE);
+        mainComposite.setForeground(ColorUtil.COLOR_BLACK);
+        for (Control control : mainComposite.getChildren()) {
+            if (control == labelImage) {
+                continue;
+            }
+            control.setBackground(ColorUtil.COLOR_WHITE);
+            control.setForeground(ColorUtil.COLOR_BLACK);
+        }
     }
 }

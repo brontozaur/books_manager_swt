@@ -256,7 +256,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        galleryComposite = new ImageGalleryComposite(mainRightTabFolder, bookController, userController, progressBarComposite);
+        galleryComposite = new ImageGalleryComposite(mainRightTabFolder, bookController, userController, autorController, progressBarComposite);
         tabGallery.setControl(galleryComposite.getContent());
 
         this.verticalSash.setWeights(new int[]{2, 8});

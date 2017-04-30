@@ -1,5 +1,6 @@
 package com.papao.books.view.custom;
 
+import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
@@ -23,17 +24,20 @@ public class ImageGalleryComposite extends Observable implements Observer {
 
     private BookController bookController;
     private UserController userController;
+    private AutorController autorController;
     private ScrolledComposite scrolledComposite;
     private Composite mainComp;
-    private Carte selected;
     private ProgressBarComposite progressBarComposite;
+    private ImageViewComposite selected;
 
     public ImageGalleryComposite(Composite parent,
                                  BookController bookController,
                                  UserController userController,
+                                 AutorController autorController,
                                  ProgressBarComposite progressBarComposite) {
         this.bookController = bookController;
         this.userController = userController;
+        this.autorController = autorController;
         this.progressBarComposite = progressBarComposite;
         this.bookController.addObserver(this);
 
@@ -74,7 +78,10 @@ public class ImageGalleryComposite extends Observable implements Observer {
             BookController controller = (BookController) o;
             populateFields(controller.getSearchResult().getContent());
         } else if (o instanceof ImageViewComposite) {
-            this.selected = ((ImageViewComposite) o).getCarte();
+            if (this.selected != null) {
+                this.selected.resetSelection(true);
+            }
+            this.selected = (ImageViewComposite) o;
             setChanged();
             notifyObservers();
         }
@@ -95,7 +102,7 @@ public class ImageGalleryComposite extends Observable implements Observer {
                 clearAll();
                 for (Carte carte : carti) {
                     progressBarComposite.advance();
-                    ImageViewComposite view = new ImageViewComposite(mainComp, bookController, userController, carte);
+                    ImageViewComposite view = new ImageViewComposite(mainComp, bookController, userController, autorController, carte);
                     view.addObserver(ImageGalleryComposite.this);
                     mainComp.layout();
                     scrolledComposite.notifyListeners(SWT.Resize, new Event());
@@ -112,6 +119,6 @@ public class ImageGalleryComposite extends Observable implements Observer {
     }
 
     public Carte getSelected() {
-        return selected;
+        return selected != null ? selected.getCarte() : null;
     }
 }
