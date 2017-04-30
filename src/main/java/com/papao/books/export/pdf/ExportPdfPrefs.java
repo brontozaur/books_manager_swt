@@ -1,7 +1,7 @@
 package com.papao.books.export.pdf;
 
 import com.papao.books.view.auth.EncodeLive;
-import com.papao.books.view.util.FilterUtil;
+import com.papao.books.view.util.ConfigController;
 import org.eclipse.swt.SWT;
 
 import java.io.File;
@@ -71,42 +71,42 @@ public final class ExportPdfPrefs {
     public final static String PDF_IS_USING_PAGE_NO = "pdf.is.using.page.no";
     public final static boolean PDF_IS_USING_PAGE_NO_DEFAULT = true;
 
-    private final static Preferences prefs = FilterUtil.getNodeExportPdfCurrentUser();
+    private final static Preferences prefs = ConfigController.getNodeExportPdfCurrentUser();
 
     /**
      * static methods for accessing private filter prefs
      */
 
     public static void put(final String key, final String value) throws IllegalArgumentException {
-        FilterUtil.put(key, value, ExportPdfPrefs.prefs);
+        ConfigController.put(key, value, ExportPdfPrefs.prefs);
     }
 
     public static void putBoolean(final String key, final boolean value) throws IllegalArgumentException {
-        FilterUtil.putBoolean(key, value, ExportPdfPrefs.prefs);
+        ConfigController.putBoolean(key, value, ExportPdfPrefs.prefs);
     }
 
     public static void putByteArray(final String key, final byte[] value) throws IllegalArgumentException {
-        FilterUtil.putByteArray(key, value, ExportPdfPrefs.prefs);
+        ConfigController.putByteArray(key, value, ExportPdfPrefs.prefs);
     }
 
     public static void putDouble(final String key, final double value) throws IllegalArgumentException {
-        FilterUtil.putDouble(key, value, ExportPdfPrefs.prefs);
+        ConfigController.putDouble(key, value, ExportPdfPrefs.prefs);
     }
 
     public static void putFloat(final String key, final float value) throws IllegalArgumentException {
-        FilterUtil.putFloat(key, value, ExportPdfPrefs.prefs);
+        ConfigController.putFloat(key, value, ExportPdfPrefs.prefs);
     }
 
     public static void putInt(final String key, final int value) throws IllegalArgumentException {
-        FilterUtil.putInt(key, value, ExportPdfPrefs.prefs);
+        ConfigController.putInt(key, value, ExportPdfPrefs.prefs);
     }
 
     public static void putLong(final String key, final long value) throws IllegalArgumentException {
-        FilterUtil.putLong(key, value, ExportPdfPrefs.prefs);
+        ConfigController.putLong(key, value, ExportPdfPrefs.prefs);
     }
 
     public static void flush() throws BackingStoreException {
-        FilterUtil.flush(ExportPdfPrefs.prefs);
+        ConfigController.flush(ExportPdfPrefs.prefs);
     }
 
     public static void reset() {

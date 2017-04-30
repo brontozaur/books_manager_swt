@@ -9,7 +9,7 @@ import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.ApplicationReport;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.CWaitDlgClassic;
-import com.papao.books.view.util.FilterUtil;
+import com.papao.books.view.util.ConfigController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -78,10 +78,10 @@ public final class ExportPdf {
                 return;
             }
 
-            selectedCols = FilterUtil.getSavedVisibleCols(swtTable.getColumnCount(), clazz, sufix);
-            aligns = FilterUtil.getSavedGridAligns(swtTable.getColumnCount(), clazz, sufix);
-            widths = FilterUtil.getSavedGridDims(swtTable.getColumnCount(), clazz, sufix);
-            order = FilterUtil.getSavedGridColumnOrder(swtTable.getColumnCount(), clazz, sufix);
+            selectedCols = ConfigController.getSavedVisibleCols(swtTable.getColumnCount(), clazz, sufix);
+            aligns = ConfigController.getSavedGridAligns(swtTable.getColumnCount(), clazz, sufix);
+            widths = ConfigController.getSavedGridDims(swtTable.getColumnCount(), clazz, sufix);
+            order = ConfigController.getSavedGridColumnOrder(swtTable.getColumnCount(), clazz, sufix);
 
             boolean atLeastOneCol = false;
             for (int i = 0; i < nrOfColumns; i++) {

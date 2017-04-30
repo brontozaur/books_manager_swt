@@ -101,7 +101,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this.leftViewer.getTree());
         this.leftViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 
-        int[] dims = FilterUtil.getSavedGridDims(1, getClass(), "left");
+        int[] dims = ConfigController.getSavedGridDims(1, getClass(), "left");
         if (dims[0] == 100) {
             dims[0] = 160;
         }
@@ -184,9 +184,9 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         });
 
         this.rightViewer.setContentProvider(new AdbMongoContentProvider());
-        dims = FilterUtil.getSavedGridDims(VizualizareRapoarte.COLS.length, getClass(), "right");
-        int[] aligns = FilterUtil.getSavedGridAligns(VizualizareRapoarte.COLS.length, getClass(), "right");
-        boolean[] visible = FilterUtil.getSavedVisibleCols(VizualizareRapoarte.COLS.length, getClass(), "right");
+        dims = ConfigController.getSavedGridDims(VizualizareRapoarte.COLS.length, getClass(), "right");
+        int[] aligns = ConfigController.getSavedGridAligns(VizualizareRapoarte.COLS.length, getClass(), "right");
+        boolean[] visible = ConfigController.getSavedVisibleCols(VizualizareRapoarte.COLS.length, getClass(), "right");
 
         for (int i = 0; i < VizualizareRapoarte.COLS.length; i++) {
             final TableViewerColumn tblCol = new TableViewerColumn(this.rightViewer, SWT.NONE);

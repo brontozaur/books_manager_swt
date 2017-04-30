@@ -12,7 +12,7 @@ import com.papao.books.export.pdf.ExportPdfPrefs;
 import com.papao.books.model.ApplicationReport;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.CWaitDlgClassic;
-import com.papao.books.view.util.FilterUtil;
+import com.papao.books.view.util.ConfigController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -73,10 +73,10 @@ public final class ExportRtf {
                 return;
             }
 
-            selectedCols = FilterUtil.getSavedVisibleCols(nrOfColumns, clazz, sufix);
-            aligns = FilterUtil.getSavedGridAligns(nrOfColumns, clazz, sufix);
-            widths = FilterUtil.getSavedGridDims(nrOfColumns, clazz, sufix);
-            order = FilterUtil.getSavedGridColumnOrder(nrOfColumns, clazz, sufix);
+            selectedCols = ConfigController.getSavedVisibleCols(nrOfColumns, clazz, sufix);
+            aligns = ConfigController.getSavedGridAligns(nrOfColumns, clazz, sufix);
+            widths = ConfigController.getSavedGridDims(nrOfColumns, clazz, sufix);
+            order = ConfigController.getSavedGridColumnOrder(nrOfColumns, clazz, sufix);
 
             boolean atLeastOneCol = false;
             for (int i = 0; i < nrOfColumns; i++) {

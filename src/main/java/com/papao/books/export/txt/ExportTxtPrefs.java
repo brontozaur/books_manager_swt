@@ -1,7 +1,7 @@
 package com.papao.books.export.txt;
 
 import com.papao.books.view.auth.EncodeLive;
-import com.papao.books.view.util.FilterUtil;
+import com.papao.books.view.util.ConfigController;
 
 import java.io.File;
 import java.util.prefs.BackingStoreException;
@@ -26,42 +26,42 @@ public final class ExportTxtPrefs {
     public final static String TXT_IS_USING_TITLE = "txt.is.using.title";
     public final static boolean TXT_IS_USING_TITLE_DEFAULT = false;
 
-    private final static Preferences prefs = FilterUtil.getNodeExportTxtCurrentUser();
+    private final static Preferences prefs = ConfigController.getNodeExportTxtCurrentUser();
 
     /**
      * static methods for accessing private filter prefs
      */
 
     public static void put(final String key, final String value) throws IllegalArgumentException {
-        FilterUtil.put(key, value, ExportTxtPrefs.prefs);
+        ConfigController.put(key, value, ExportTxtPrefs.prefs);
     }
 
     public static void putBoolean(final String key, final boolean value) throws IllegalArgumentException {
-        FilterUtil.putBoolean(key, value, ExportTxtPrefs.prefs);
+        ConfigController.putBoolean(key, value, ExportTxtPrefs.prefs);
     }
 
     public static void putByteArray(final String key, final byte[] value) throws IllegalArgumentException {
-        FilterUtil.putByteArray(key, value, ExportTxtPrefs.prefs);
+        ConfigController.putByteArray(key, value, ExportTxtPrefs.prefs);
     }
 
     public static void putDouble(final String key, final double value) throws IllegalArgumentException {
-        FilterUtil.putDouble(key, value, ExportTxtPrefs.prefs);
+        ConfigController.putDouble(key, value, ExportTxtPrefs.prefs);
     }
 
     public static void putFloat(final String key, final float value) throws IllegalArgumentException {
-        FilterUtil.putFloat(key, value, ExportTxtPrefs.prefs);
+        ConfigController.putFloat(key, value, ExportTxtPrefs.prefs);
     }
 
     public static void putInt(final String key, final int value) throws IllegalArgumentException {
-        FilterUtil.putInt(key, value, ExportTxtPrefs.prefs);
+        ConfigController.putInt(key, value, ExportTxtPrefs.prefs);
     }
 
     public static void putLong(final String key, final long value) throws IllegalArgumentException {
-        FilterUtil.putLong(key, value, ExportTxtPrefs.prefs);
+        ConfigController.putLong(key, value, ExportTxtPrefs.prefs);
     }
 
     public static void flush() throws BackingStoreException {
-        FilterUtil.flush(ExportTxtPrefs.prefs);
+        ConfigController.flush(ExportTxtPrefs.prefs);
     }
 
     public static void reset() {

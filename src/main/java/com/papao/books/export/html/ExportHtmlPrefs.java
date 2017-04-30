@@ -1,7 +1,7 @@
 package com.papao.books.export.html;
 
 import com.papao.books.view.auth.EncodeLive;
-import com.papao.books.view.util.FilterUtil;
+import com.papao.books.view.util.ConfigController;
 import org.eclipse.swt.SWT;
 
 import java.io.File;
@@ -45,42 +45,42 @@ public final class ExportHtmlPrefs {
     public final static String HTML_IS_USING_GRAY_EFFECT = "html.is.using.gray.effect";
     public final static boolean HTML_IS_USING_GRAY_EFFECT_DEFAULT = false;
 
-    private final static Preferences prefs = FilterUtil.getNodeExportHtmlCurrentUser();
+    private final static Preferences prefs = ConfigController.getNodeExportHtmlCurrentUser();
 
     /**
      * static methods for accessing private filter prefs
      */
 
     public static void put(final String key, final String value) throws IllegalArgumentException {
-        FilterUtil.put(key, value, ExportHtmlPrefs.prefs);
+        ConfigController.put(key, value, ExportHtmlPrefs.prefs);
     }
 
     public static void putBoolean(final String key, final boolean value) throws IllegalArgumentException {
-        FilterUtil.putBoolean(key, value, ExportHtmlPrefs.prefs);
+        ConfigController.putBoolean(key, value, ExportHtmlPrefs.prefs);
     }
 
     public static void putByteArray(final String key, final byte[] value) throws IllegalArgumentException {
-        FilterUtil.putByteArray(key, value, ExportHtmlPrefs.prefs);
+        ConfigController.putByteArray(key, value, ExportHtmlPrefs.prefs);
     }
 
     public static void putDouble(final String key, final double value) throws IllegalArgumentException {
-        FilterUtil.putDouble(key, value, ExportHtmlPrefs.prefs);
+        ConfigController.putDouble(key, value, ExportHtmlPrefs.prefs);
     }
 
     public static void putFloat(final String key, final float value) throws IllegalArgumentException {
-        FilterUtil.putFloat(key, value, ExportHtmlPrefs.prefs);
+        ConfigController.putFloat(key, value, ExportHtmlPrefs.prefs);
     }
 
     public static void putInt(final String key, final int value) throws IllegalArgumentException {
-        FilterUtil.putInt(key, value, ExportHtmlPrefs.prefs);
+        ConfigController.putInt(key, value, ExportHtmlPrefs.prefs);
     }
 
     public static void putLong(final String key, final long value) throws IllegalArgumentException {
-        FilterUtil.putLong(key, value, ExportHtmlPrefs.prefs);
+        ConfigController.putLong(key, value, ExportHtmlPrefs.prefs);
     }
 
     public static void flush() throws BackingStoreException {
-        FilterUtil.flush(ExportHtmlPrefs.prefs);
+        ConfigController.flush(ExportHtmlPrefs.prefs);
     }
 
     public static void reset() {

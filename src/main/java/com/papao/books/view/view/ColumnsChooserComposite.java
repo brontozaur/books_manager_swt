@@ -5,7 +5,7 @@ import com.papao.books.model.AbstractDBDummy;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.interfaces.IEncodeReset;
 import com.papao.books.view.providers.AdbStringContentProvider;
-import com.papao.books.view.util.FilterUtil;
+import com.papao.books.view.util.ConfigController;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -233,13 +233,13 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
 		final int length = this.table == null	? this.tree.getColumnCount()
 												: this.table.getColumnCount();
 		input = new AbstractDB[length];
-		int[] order = FilterUtil.getSavedGridColumnOrder(length, this.clazz, this.sufix);
-		int[] dims = getCorrectDims(FilterUtil.getSavedGridDims(length, this.clazz, this.sufix),
+		int[] order = ConfigController.getSavedGridColumnOrder(length, this.clazz, this.sufix);
+		int[] dims = getCorrectDims(ConfigController.getSavedGridDims(length, this.clazz, this.sufix),
 				order);
-		boolean[] visibleCols = getCorrectVisible(FilterUtil.getSavedVisibleCols(length,
+		boolean[] visibleCols = getCorrectVisible(ConfigController.getSavedVisibleCols(length,
 				this.clazz,
 				this.sufix), order);
-		int[] aligns = getCorrectAligns(FilterUtil.getSavedGridAligns(length,
+		int[] aligns = getCorrectAligns(ConfigController.getSavedGridAligns(length,
 				this.clazz,
 				this.sufix), order);
 		for (int i = 0; i < length; i++) {
@@ -331,10 +331,10 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
 			}
 
 			if (makeitPermanent) {
-				FilterUtil.saveVisibleCols(this.gridSelectie, this.clazz, this.sufix);
-				FilterUtil.saveAligns(this.gridAligns, this.clazz, this.sufix);
-				FilterUtil.saveDims(this.gridDims, this.clazz, this.sufix);
-				FilterUtil.saveOrder(this.gridOrder, this.clazz, this.sufix);
+				ConfigController.saveVisibleCols(this.gridSelectie, this.clazz, this.sufix);
+				ConfigController.saveAligns(this.gridAligns, this.clazz, this.sufix);
+				ConfigController.saveDims(this.gridDims, this.clazz, this.sufix);
+				ConfigController.saveOrder(this.gridOrder, this.clazz, this.sufix);
 			}
 
 		}

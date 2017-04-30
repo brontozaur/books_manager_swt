@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -18,13 +18,13 @@ import java.util.TreeMap;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-@Component
-public final class FilterUtil {
+@Controller
+public class ConfigController {
 
     private static AbstractSettingRepository settingRepository;
 
     @Autowired
-	public FilterUtil(AbstractSettingRepository settingRepository) {
+	public ConfigController(AbstractSettingRepository settingRepository) {
 	    this.settingRepository = settingRepository;
     }
 
@@ -50,7 +50,7 @@ public final class FilterUtil {
 	public final static String GRID_COLS_WIDTHS = "cols.widths";
 	public final static String GRID_COLS_ORDER = "cols.order";
 
-	private static Logger logger = Logger.getLogger(FilterUtil.class);
+	private static Logger logger = Logger.getLogger(ConfigController.class);
 
 	/**
 	 * node processing and mapping - start. There are 2 types here : current user nodes, and absolute nodes.
@@ -67,7 +67,7 @@ public final class FilterUtil {
 	 *         </ul>
 	 */
 	public static Preferences getNodeBorgRoot() {
-		return Preferences.systemRoot().node(FilterUtil.NODE_LV1_BORG);
+		return Preferences.systemRoot().node(ConfigController.NODE_LV1_BORG);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public final class FilterUtil {
 	 *         </p>
 	 */
 	public static Preferences getNodeCurrentDb() {
-		return FilterUtil.getNodeBorgRoot().node(FilterUtil.getNodeBorgRoot().get(FilterUtil.KEY_LAST_DB, FilterUtil.KEY_LAST_DB_DEFAULT));
+		return ConfigController.getNodeBorgRoot().node(ConfigController.getNodeBorgRoot().get(ConfigController.KEY_LAST_DB, ConfigController.KEY_LAST_DB_DEFAULT));
 	}
 
 	/**
@@ -87,11 +87,11 @@ public final class FilterUtil {
 	 *         </p>
 	 */
 	public static Preferences getNodeCurrentUser() {
-		return FilterUtil.getNodeCurrentDb().node(String.valueOf(FilterUtil.getLastUserId()));
+		return ConfigController.getNodeCurrentDb().node(String.valueOf(ConfigController.getLastUserId()));
 	}
 
 	public static Preferences getNodeUserRoot(final long idUser) {
-		return FilterUtil.getNodeCurrentDb().node(String.valueOf(idUser));
+		return ConfigController.getNodeCurrentDb().node(String.valueOf(idUser));
 	}
 
 	/**
@@ -101,11 +101,11 @@ public final class FilterUtil {
 	 *         </p>
 	 */
 	public static Preferences getNodeCoordsCurrentUser() {
-		return FilterUtil.getNodeCurrentUser().node(FilterUtil.NODE_LV5_COORDS);
+		return ConfigController.getNodeCurrentUser().node(ConfigController.NODE_LV5_COORDS);
 	}
 
 	public static Preferences getNodeViewerFilterCurrentUser() {
-		return FilterUtil.getNodeCurrentUser().node(FilterUtil.NODE_LV5_VIEWER_FILTERS);
+		return ConfigController.getNodeCurrentUser().node(ConfigController.NODE_LV5_VIEWER_FILTERS);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public final class FilterUtil {
 	 *         </p>
 	 */
 	public static Preferences getNodeCoordsWTables() {
-		return FilterUtil.getNodeCurrentUser().node(FilterUtil.NODE_LV5_W_TABLES);
+		return ConfigController.getNodeCurrentUser().node(ConfigController.NODE_LV5_W_TABLES);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public final class FilterUtil {
 	 *         </p>
 	 */
 	public static Preferences getNodeUserSettings(final int idNode) {
-		return FilterUtil.getNodeCurrentUser().node(String.valueOf(idNode));
+		return ConfigController.getNodeCurrentUser().node(String.valueOf(idNode));
 	}
 
 	/**
@@ -137,27 +137,27 @@ public final class FilterUtil {
 	 *         </p>
 	 */
 	public static Preferences getNodeExportCurrentUser() {
-		return FilterUtil.getNodeCurrentUser().node(FilterUtil.NODE_LV5_EXPORT);
+		return ConfigController.getNodeCurrentUser().node(ConfigController.NODE_LV5_EXPORT);
 	}
 
 	public static Preferences getNodeExportTxtCurrentUser() {
-		return FilterUtil.getNodeExportCurrentUser().node("text");
+		return ConfigController.getNodeExportCurrentUser().node("text");
 	}
 
 	public static Preferences getNodeExportPdfCurrentUser() {
-		return FilterUtil.getNodeExportCurrentUser().node("pdf");
+		return ConfigController.getNodeExportCurrentUser().node("pdf");
 	}
 
 	public static Preferences getNodeExportExcelCurrentUser() {
-		return FilterUtil.getNodeExportCurrentUser().node("excel");
+		return ConfigController.getNodeExportCurrentUser().node("excel");
 	}
 
 	public static Preferences getNodeExportHtmlCurrentUser() {
-		return FilterUtil.getNodeExportCurrentUser().node("html");
+		return ConfigController.getNodeExportCurrentUser().node("html");
 	}
 
 	public static Preferences getNodeExportRtfCurrentUser() {
-		return FilterUtil.getNodeExportCurrentUser().node("rtf");
+		return ConfigController.getNodeExportCurrentUser().node("rtf");
 	}
 
 	/**
@@ -178,37 +178,37 @@ public final class FilterUtil {
 	 */
 
 	public static void put(final String key, final String value, final Preferences prefs) throws IllegalArgumentException {
-		FilterUtil.checkValue(key, value);
+		ConfigController.checkValue(key, value);
 		prefs.put(key, value);
 	}
 
 	public static void putBoolean(final String key, final boolean value, final Preferences prefs) throws IllegalArgumentException {
-		FilterUtil.checkValue(key, value);
+		ConfigController.checkValue(key, value);
 		prefs.putBoolean(key, value);
 	}
 
 	public static void putByteArray(final String key, final byte[] value, final Preferences prefs) throws IllegalArgumentException {
-		FilterUtil.checkValue(key, value);
+		ConfigController.checkValue(key, value);
 		prefs.putByteArray(key, value);
 	}
 
 	public static void putDouble(final String key, final double value, final Preferences prefs) throws IllegalArgumentException {
-		FilterUtil.checkValue(key, value);
+		ConfigController.checkValue(key, value);
 		prefs.putDouble(key, value);
 	}
 
 	public static void putFloat(final String key, final float value, final Preferences prefs) throws IllegalArgumentException {
-		FilterUtil.checkValue(key, value);
+		ConfigController.checkValue(key, value);
 		prefs.putFloat(key, value);
 	}
 
 	public static void putInt(final String key, final int value, final Preferences prefs) throws IllegalArgumentException {
-		FilterUtil.checkValue(key, value);
+		ConfigController.checkValue(key, value);
 		prefs.putInt(key, value);
 	}
 
 	public static void putLong(final String key, final long value, final Preferences prefs) throws IllegalArgumentException {
-		FilterUtil.checkValue(key, value);
+		ConfigController.checkValue(key, value);
 		prefs.putLong(key, value);
 	}
 
@@ -278,11 +278,11 @@ public final class FilterUtil {
 	 */
 
 	public static long getLastUserId() {
-		return FilterUtil.getNodeCurrentDb().getLong(FilterUtil.KEY_LAST_USER_ID, FilterUtil.KEY_LAST_USER_ID_DEFAULT);
+		return ConfigController.getNodeCurrentDb().getLong(ConfigController.KEY_LAST_USER_ID, ConfigController.KEY_LAST_USER_ID_DEFAULT);
 	}
 
 	public static String getLastUserName() {
-		return FilterUtil.getNodeCurrentDb().get(FilterUtil.KEY_LAST_USER_NAME, FilterUtil.KEY_LAST_USER_NAME_DEFAULT);
+		return ConfigController.getNodeCurrentDb().get(ConfigController.KEY_LAST_USER_NAME, ConfigController.KEY_LAST_USER_NAME_DEFAULT);
 	}
 
 	/**
@@ -317,7 +317,7 @@ public final class FilterUtil {
 	 *            </p>
 	 */
 	public static void saveDims(final int[] dims, final Class<?> clazz) {
-		FilterUtil.saveDims(dims, clazz, null);
+		ConfigController.saveDims(dims, clazz, null);
 	}
 
 	/**
@@ -330,7 +330,7 @@ public final class FilterUtil {
 	 *            un string cu rol de delimitator, daca pe clasa param tb sa salvam setarile mai multor grid-uri. Poate fi null.
 	 */
 	public static void saveDims(final int[] dims, final Class<?> clazz, final String sufix2) {
-		Preferences prefs = FilterUtil.getNodeCoordsWTables();
+		Preferences prefs = ConfigController.getNodeCoordsWTables();
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < dims.length; i++) {
 			if (i > 0) {
@@ -338,11 +338,11 @@ public final class FilterUtil {
 			}
 			sb.append(String.valueOf(dims[i]));
 		}
-		prefs.put(FilterUtil.getGridKey(clazz, FilterUtil.GRID_COLS_WIDTHS, sufix2), sb.toString());
+		prefs.put(ConfigController.getGridKey(clazz, ConfigController.GRID_COLS_WIDTHS, sufix2), sb.toString());
 	}
 
 	public static int[] getSavedGridDims(final int colsLength, final Class<?> clazz) {
-		return FilterUtil.getSavedGridDims(colsLength, clazz, null);
+		return ConfigController.getSavedGridDims(colsLength, clazz, null);
 	}
 
 	public static int[] getSavedGridDims(final int colsLength, final Class<?> clazz, final String sufix2) {
@@ -351,7 +351,7 @@ public final class FilterUtil {
 			Arrays.fill(dims, 100);
 			return dims;
 		}
-		String prop = FilterUtil.getNodeCoordsWTables().get(FilterUtil.getGridKey(clazz, FilterUtil.GRID_COLS_WIDTHS, sufix2), "");
+		String prop = ConfigController.getNodeCoordsWTables().get(ConfigController.getGridKey(clazz, ConfigController.GRID_COLS_WIDTHS, sufix2), "");
 		String[] colsDims = prop.split(",");
 		int[] dims = new int[colsLength];
 		if ((colsDims.length != colsLength) || ((colsDims.length == 1) && StringUtils.isEmpty(colsDims[0]))) {
@@ -382,7 +382,7 @@ public final class FilterUtil {
 	 *            </p>
 	 */
 	public static void saveOrder(final int[] orderArray, final Class<?> clazz) {
-		FilterUtil.saveOrder(orderArray, clazz, null);
+		ConfigController.saveOrder(orderArray, clazz, null);
 	}
 
 	/**
@@ -395,7 +395,7 @@ public final class FilterUtil {
 	 *            un string cu rol de delimitator, daca pe clasa param tb sa salvam setarile mai multor grid-uri. Poate fi null.
 	 */
 	public static void saveOrder(final int[] orderArray, final Class<?> clazz, final String sufix2) {
-		Preferences prefs = FilterUtil.getNodeCoordsWTables();
+		Preferences prefs = ConfigController.getNodeCoordsWTables();
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < orderArray.length; i++) {
 			if (i > 0) {
@@ -403,11 +403,11 @@ public final class FilterUtil {
 			}
 			sb.append(String.valueOf(orderArray[i]));
 		}
-		prefs.put(FilterUtil.getGridKey(clazz, FilterUtil.GRID_COLS_ORDER, sufix2), sb.toString());
+		prefs.put(ConfigController.getGridKey(clazz, ConfigController.GRID_COLS_ORDER, sufix2), sb.toString());
 	}
 
 	public static int[] getSavedGridColumnOrder(final int colsLength, final Class<?> clazz) {
-		return FilterUtil.getSavedGridColumnOrder(colsLength, clazz, null);
+		return ConfigController.getSavedGridColumnOrder(colsLength, clazz, null);
 	}
 
 	public static int[] getSavedGridColumnOrder(final int colsLength, final Class<?> clazz, final String sufix2) {
@@ -418,7 +418,7 @@ public final class FilterUtil {
 			}
 			return order;
 		}
-		String prop = FilterUtil.getNodeCoordsWTables().get(FilterUtil.getGridKey(clazz, FilterUtil.GRID_COLS_ORDER, sufix2), "");
+		String prop = ConfigController.getNodeCoordsWTables().get(ConfigController.getGridKey(clazz, ConfigController.GRID_COLS_ORDER, sufix2), "");
 		String[] colsOrder = prop.split(",");
 		int[] order = new int[colsLength];
 		if ((colsOrder.length != colsLength) || ((colsOrder.length == 1) && StringUtils.isEmpty(colsOrder[0]))) {
@@ -450,7 +450,7 @@ public final class FilterUtil {
 	}
 
 	public static boolean[] getSavedVisibleCols(final int colsLength, final Class<?> clazz) {
-		return FilterUtil.getSavedVisibleCols(colsLength, clazz, null);
+		return ConfigController.getSavedVisibleCols(colsLength, clazz, null);
 	}
 
 	public static boolean[] getSavedVisibleCols(final int colsLength, final Class<?> clazz, final String sufix2) {
@@ -459,7 +459,7 @@ public final class FilterUtil {
 			Arrays.fill(visibleCols, true);
 			return visibleCols;
 		}
-		String prop = FilterUtil.getNodeCoordsWTables().get(FilterUtil.getGridKey(clazz, FilterUtil.GRID_VISIBLE_COLS, sufix2), "");
+		String prop = ConfigController.getNodeCoordsWTables().get(ConfigController.getGridKey(clazz, ConfigController.GRID_VISIBLE_COLS, sufix2), "");
 		char[] visibleCols = prop.toCharArray();
 		boolean[] b = new boolean[colsLength];
 		if (visibleCols.length != colsLength) {
@@ -473,26 +473,26 @@ public final class FilterUtil {
 	}
 
 	public static void saveVisibleCols(final boolean[] visibleCols, final Class<?> clazz) {
-		FilterUtil.saveVisibleCols(visibleCols, clazz, null);
+		ConfigController.saveVisibleCols(visibleCols, clazz, null);
 	}
 
 	public static void saveVisibleCols(final boolean[] visibleCols, final Class<?> clazz, final String sufix2) {
-		Preferences prefs = FilterUtil.getNodeCoordsWTables();
+		Preferences prefs = ConfigController.getNodeCoordsWTables();
 		StringBuilder sb = new StringBuilder();
 		for (boolean b : visibleCols) {
 			sb.append(b ? "1" : "0");
 		}
-		prefs.put(FilterUtil.getGridKey(clazz, FilterUtil.GRID_VISIBLE_COLS, sufix2), sb.toString());
+		prefs.put(ConfigController.getGridKey(clazz, ConfigController.GRID_VISIBLE_COLS, sufix2), sb.toString());
 	}
 
 	public static void saveAligns(final int[] aligns, final Class<?> clazz) {
-		FilterUtil.saveAligns(aligns, clazz, null);
+		ConfigController.saveAligns(aligns, clazz, null);
 	}
 
 	public static void saveAligns(final int[] aligns, final Class<?> clazz, final String sufix2) {
-		Preferences prefs = FilterUtil.getNodeCoordsWTables();
-		final boolean[] visible = FilterUtil.getSavedVisibleCols(aligns.length, clazz, sufix2);
-		final int[] savedAligns = FilterUtil.getSavedGridAligns(aligns.length, clazz, sufix2);
+		Preferences prefs = ConfigController.getNodeCoordsWTables();
+		final boolean[] visible = ConfigController.getSavedVisibleCols(aligns.length, clazz, sufix2);
+		final int[] savedAligns = ConfigController.getSavedGridAligns(aligns.length, clazz, sufix2);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < aligns.length; i++) {
 			if (i > 0) {
@@ -504,11 +504,11 @@ public final class FilterUtil {
 				sb.append(String.valueOf(savedAligns[i]));
 			}
 		}
-		prefs.put(FilterUtil.getGridKey(clazz, FilterUtil.GRID_COLS_ALIGNS, sufix2), sb.toString());
+		prefs.put(ConfigController.getGridKey(clazz, ConfigController.GRID_COLS_ALIGNS, sufix2), sb.toString());
 	}
 
 	public static int[] getSavedGridAligns(final int colsLength, final Class<?> clazz) {
-		return FilterUtil.getSavedGridAligns(colsLength, clazz, null);
+		return ConfigController.getSavedGridAligns(colsLength, clazz, null);
 	}
 
 	public static int[] getSavedGridAligns(final int colsLength, final Class<?> clazz, final String sufix2) {
@@ -517,7 +517,7 @@ public final class FilterUtil {
 			Arrays.fill(aligns, SWT.LEFT);
 			return aligns;
 		}
-		String prop = FilterUtil.getNodeCoordsWTables().get(FilterUtil.getGridKey(clazz, FilterUtil.GRID_COLS_ALIGNS, sufix2), "");
+		String prop = ConfigController.getNodeCoordsWTables().get(ConfigController.getGridKey(clazz, ConfigController.GRID_COLS_ALIGNS, sufix2), "");
 		String[] colsAligns = prop.split(",");
 		int[] dims = new int[colsLength];
 		if ((colsAligns.length != colsLength) || ((colsAligns.length == 1) && StringUtils.isEmpty(colsAligns[0]))) {
