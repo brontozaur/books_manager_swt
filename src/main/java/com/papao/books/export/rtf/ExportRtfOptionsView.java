@@ -10,7 +10,6 @@ import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.DirectorySelectorComposite;
 import com.papao.books.view.custom.FontSelectorComposite;
 import com.papao.books.view.interfaces.AbstractIConfigAdapter;
-import com.papao.books.view.interfaces.ConfigurationException;
 import com.papao.books.view.interfaces.IConfig;
 import com.papao.books.view.util.*;
 import com.papao.books.view.view.AbstractView;
@@ -368,7 +367,7 @@ public class ExportRtfOptionsView extends AbstractExportView {
         }
 
         @Override
-        public final void save() throws ConfigurationException {
+        public final void save() {
             String numeFisier = this.textFileName.getText();
             if (StringUtils.isEmpty(numeFisier)) {
                 numeFisier = "RaportRTF_" + System.currentTimeMillis();
@@ -510,10 +509,8 @@ public class ExportRtfOptionsView extends AbstractExportView {
         }
 
         @Override
-        public final void save() throws ConfigurationException {
-            if (!this.chooser.save(false)) {
-                throw new ConfigurationException("eroare la salvare selectiei");
-            }
+        public final void save() {
+            this.chooser.save(false);
             ExportRtfOptionsView.this.settings.setAligns(this.chooser.getAligns());
             ExportRtfOptionsView.this.settings.setDims(this.chooser.getDims());
             ExportRtfOptionsView.this.settings.setSelection(this.chooser.getSelection());

@@ -10,7 +10,7 @@ public interface IConfig extends Listener {
 
     void populateFields();
 
-    void save() throws ConfigurationException;
+    void save();
 
     boolean validate();
 

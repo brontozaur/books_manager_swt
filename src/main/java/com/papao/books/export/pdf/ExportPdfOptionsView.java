@@ -12,7 +12,6 @@ import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.DirectorySelectorComposite;
 import com.papao.books.view.custom.FontSelectorComposite;
 import com.papao.books.view.interfaces.AbstractIConfigAdapter;
-import com.papao.books.view.interfaces.ConfigurationException;
 import com.papao.books.view.interfaces.IConfig;
 import com.papao.books.view.util.*;
 import com.papao.books.view.view.AbstractView;
@@ -551,10 +550,8 @@ public class ExportPdfOptionsView extends AbstractExportView {
         }
 
         @Override
-        public final void save() throws ConfigurationException {
-            if (!this.chooser.save(false)) {
-                throw new ConfigurationException("eroare la salvare selectiei");
-            }
+        public final void save() {
+            this.chooser.save(false);
             ExportPdfOptionsView.this.settings.setAligns(this.chooser.getAligns());
             ExportPdfOptionsView.this.settings.setDims(this.chooser.getDims());
             ExportPdfOptionsView.this.settings.setSelection(this.chooser.getSelection());

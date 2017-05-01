@@ -6,7 +6,6 @@ import com.papao.books.view.AppImages;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.DirectorySelectorComposite;
 import com.papao.books.view.interfaces.AbstractIConfigAdapter;
-import com.papao.books.view.interfaces.ConfigurationException;
 import com.papao.books.view.interfaces.IConfig;
 import com.papao.books.view.util.*;
 import com.papao.books.view.view.AbstractView;
@@ -169,7 +168,7 @@ public class ExportTxtOptionsView extends AbstractExportView {
         }
 
         @Override
-        public final void save() throws ConfigurationException {
+        public final void save() {
             String numeFisier = this.textFileName.getText();
             if (StringUtils.isEmpty(numeFisier)) {
                 numeFisier = "RaportTXT_" + System.currentTimeMillis();
@@ -180,6 +179,9 @@ public class ExportTxtOptionsView extends AbstractExportView {
             exportTxtSetting.setShowNrCrt(buttonShowNrCrt.getSelection());
             exportTxtSetting.setShowTitle(buttonShowTitle.getSelection());
             SettingsController.saveExportTxtSetting(exportTxtSetting);
+
+            settings.setNumeFisier(this.dsc.getSelectedDirPath().concat(numeFisier));
+            settings.setTitlu(this.textTitleName.getText());
         }
 
         @Override
@@ -264,10 +266,8 @@ public class ExportTxtOptionsView extends AbstractExportView {
         }
 
         @Override
-        public final void save() throws ConfigurationException {
-            if (!this.chooser.save(false)) {
-                throw new ConfigurationException("eroare la salvare selectiei");
-            }
+        public final void save() {
+            this.chooser.save(false);
             ExportTxtOptionsView.this.settings.setAligns(this.chooser.getAligns());
             ExportTxtOptionsView.this.settings.setDims(this.chooser.getDims());
             ExportTxtOptionsView.this.settings.setSelection(this.chooser.getSelection());

@@ -17,6 +17,7 @@ import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.auth.LoggerMyWay;
 import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
+import com.papao.books.view.config.AppConfigView;
 import com.papao.books.view.custom.*;
 import com.papao.books.view.menu.PlatformMenu;
 import com.papao.books.view.providers.AdbMongoContentProvider;
@@ -116,6 +117,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ImageGalleryComposite galleryComposite;
     private ProgressBarComposite progressBarComposite;
     private ToolItem itemImport;
+    private ToolItem itemConfig;
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
 
@@ -893,8 +895,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         item = new ToolItem(bar, SWT.NONE);
-        item.setImage(AppImages.getImage24(AppImages.IMG_CONFIG));
-        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CONFIG));
+        item.setImage(AppImages.getImage24(AppImages.IMG_LISTA));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_LISTA));
         item.setToolTipText("Configurare autori");
         item.setText("Autori");
         item.addListener(SWT.Selection, new Listener() {
@@ -913,6 +915,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             @Override
             public void handleEvent(final Event e) {
                 configUsers();
+            }
+        });
+
+        item = new ToolItem(bar, SWT.NONE);
+        item.setImage(AppImages.getImage24(AppImages.IMG_CONFIG));
+        item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CONFIG));
+        item.setToolTipText("Configurare aplicatie");
+        item.setText("Setari");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                new AppConfigView(getShell()).open();
             }
         });
 
