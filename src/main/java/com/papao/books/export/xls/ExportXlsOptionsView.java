@@ -129,13 +129,13 @@ public class ExportXlsOptionsView extends AbstractExportView {
             GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(0, 0).applyTo(comp);
 
             this.textFileName = new Text(comp, SWT.BORDER);
-            GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).grab(false, false).hint(250,
+            GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).hint(250,
                     SWT.DEFAULT).minSize(250, SWT.DEFAULT).applyTo(this.textFileName);
             this.textFileName.addListener(SWT.FocusIn, this);
             this.textFileName.addListener(SWT.Modify, this);
 
             this.comboExtension = new Combo(comp, SWT.BORDER | SWT.READ_ONLY);
-            GridDataFactory.fillDefaults().align(SWT.END, SWT.BEGINNING).grab(false, false).hint(50,
+            GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).grab(false, false).hint(75,
                     SWT.DEFAULT).applyTo(this.comboExtension);
             this.comboExtension.setItems(ExportXlsOptionsView.EXTENSIONS);
             this.comboExtension.select(0);
@@ -208,6 +208,7 @@ public class ExportXlsOptionsView extends AbstractExportView {
             exportXlsSetting.setExportDir(this.dsc.getSelectedDirPath());
             exportXlsSetting.setExtension(comboExtension.getText());
             exportXlsSetting.setShowHeader(buttonShowHeader.getSelection());
+            SettingsController.saveExportXlsSetting(exportXlsSetting);
 
             ExportXlsOptionsView.this.settings.setNumeFisier(this.dsc.getSelectedDirPath().concat(numeFisier).concat(this.comboExtension.getText()));
             ExportXlsOptionsView.this.settings.setSheetName(this.textSheetName.getText());

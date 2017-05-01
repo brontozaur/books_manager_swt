@@ -179,6 +179,7 @@ public class ExportTxtOptionsView extends AbstractExportView {
             exportTxtSetting.setHasBorder(buttonShowBorder.getSelection());
             exportTxtSetting.setShowNrCrt(buttonShowNrCrt.getSelection());
             exportTxtSetting.setShowTitle(buttonShowTitle.getSelection());
+            SettingsController.saveExportTxtSetting(exportTxtSetting);
         }
 
         @Override
