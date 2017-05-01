@@ -38,8 +38,8 @@ public final class ExportXls {
     public final static int MAX_ELEMENTS_FOR_AUTO_RESIZE = 10000;
     public final static int MAX_ELEMENTS_FOR_WARNING_650MB = 50000;
 
-    public final static String TEMPLATE_EXCEL = "com/papao/books/export/xls/ExcelTemplate.txt";
-    public final static String TEMPLATE_EXCEL2007 = "com/papao/books/export/xls/ExcelTemplate2007.txt";
+    public final static String TEMPLATE_EXCEL = "xls_template/ExcelTemplate.txt";
+    public final static String TEMPLATE_EXCEL2007 = "xls_template/ExcelTemplate2007.txt";
 
     private ExportXls() {
 
@@ -164,7 +164,7 @@ public final class ExportXls {
             output = new File(fileName);
             logger.info("Exporting Excel content to file : " + fileName);
 
-            if (fileExtension.intern() == ExportXls.XLSX_EXTENSION.intern()) {
+            if (ExportXls.XLSX_EXTENSION.equals(fileExtension)) {
                 // workBook = new XSSFWorkbook();
                 try {
                     InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(ExportXls.TEMPLATE_EXCEL2007);
