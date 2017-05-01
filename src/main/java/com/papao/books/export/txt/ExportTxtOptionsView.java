@@ -37,6 +37,10 @@ public class ExportTxtOptionsView extends AbstractExportView {
         super(parent);
 
         this.settings = settings;
+        exportTxtSetting = SettingsController.getExportTxtSetting();
+        if (exportTxtSetting == null) {
+            exportTxtSetting = new ExportTxtSetting();
+        }
 
         for (String str : ExportTxtOptionsView.ITEMS) {
             new TableItem(this.leftTable, SWT.NONE).setText(str);
@@ -47,11 +51,6 @@ public class ExportTxtOptionsView extends AbstractExportView {
 
         this.leftTable.select(0);
         this.leftTable.notifyListeners(SWT.Selection, new Event());
-
-        exportTxtSetting = SettingsController.getExportTxtSetting();
-        if (exportTxtSetting == null) {
-            exportTxtSetting = new ExportTxtSetting();
-        }
     }
 
     @Override

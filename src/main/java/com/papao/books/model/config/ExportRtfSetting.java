@@ -30,7 +30,7 @@ public class ExportRtfSetting extends AbstractSetting {
     }
 
     public ExportRtfSetting(ObjectId idUser, String numeUser) {
-        super(idUser, numeUser, SettingType.GENERAL);
+        super(idUser, numeUser, SettingType.EXPORT_RTF);
     }
 
     public String getExportDir() {
@@ -135,6 +135,25 @@ public class ExportRtfSetting extends AbstractSetting {
 
     public void setShowPageNumber(boolean showPageNumber) {
         this.showPageNumber = showPageNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "ExportRtfSetting{" +
+                "exportDir='" + exportDir + '\'' +
+                ", automaticExportPath=" + automaticExportPath +
+                ", pageOrientation='" + pageOrientation + '\'' +
+                ", pageSize='" + pageSize + '\'' +
+                ", fontName='" + fontName + '\'' +
+                ", fontNameUser='" + fontNameUser + '\'' +
+                ", fontSize=" + fontSize +
+                ", fontStyle=" + fontStyle +
+                ", showTitle=" + showTitle +
+                ", showNrCrt=" + showNrCrt +
+                ", showHeader=" + showHeader +
+                ", showGrayEffect=" + showGrayEffect +
+                ", showPageNumber=" + showPageNumber +
+                '}';
     }
 
     @Override

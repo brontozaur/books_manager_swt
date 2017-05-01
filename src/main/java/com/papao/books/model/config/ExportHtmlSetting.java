@@ -22,7 +22,7 @@ public class ExportHtmlSetting extends AbstractSetting {
     }
 
     public ExportHtmlSetting(ObjectId idUser, String numeUser) {
-        super(idUser, numeUser, SettingType.GENERAL);
+        super(idUser, numeUser, SettingType.EXPORT_HTML);
     }
 
     public String getExportDir() {
@@ -103,6 +103,22 @@ public class ExportHtmlSetting extends AbstractSetting {
 
     public void setShowGrayEffect(boolean showGrayEffect) {
         this.showGrayEffect = showGrayEffect;
+    }
+
+    @Override
+    public String toString() {
+        return "ExportHtmlSetting{" +
+                "exportDir='" + exportDir + '\'' +
+                ", automaticExportPath=" + automaticExportPath +
+                ", fontName='" + fontName + '\'' +
+                ", fontNameUser='" + fontNameUser + '\'' +
+                ", fontSize=" + fontSize +
+                ", fontStyle=" + fontStyle +
+                ", showTitle=" + showTitle +
+                ", showNrCrt=" + showNrCrt +
+                ", showHeader=" + showHeader +
+                ", showGrayEffect=" + showGrayEffect +
+                '}';
     }
 
     @Override

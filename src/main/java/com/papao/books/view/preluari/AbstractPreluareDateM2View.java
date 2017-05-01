@@ -562,27 +562,27 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
 
     @Override
     public final void exportTxt() {
-        Exporter.export(ExportType.TXT, tableDocumente, getShell().getText(), getClass(), controller);
+        Exporter.export(ExportType.TXT, tableDocumente, getShell().getText(), getClass(), "", controller);
     }
 
     @Override
     public final void exportPDF() {
-        Exporter.export(ExportType.PDF, tableDocumente, getShell().getText(), getClass(), controller);
+        Exporter.export(ExportType.PDF, tableDocumente, getShell().getText(), getClass(), "", controller);
     }
 
     @Override
     public final void exportExcel() {
-        Exporter.export(ExportType.XLS, tableDocumente, getShell().getText(), getClass(), controller);
+        Exporter.export(ExportType.XLS, tableDocumente, getShell().getText(), getClass(), "", controller);
     }
 
     @Override
     public final void exportRTF() {
-        Exporter.export(ExportType.RTF, tableDocumente, getShell().getText(), getClass(), controller);
+        Exporter.export(ExportType.RTF, tableDocumente, getShell().getText(), getClass(), "", controller);
     }
 
     @Override
     public final void exportHTML() {
-        Exporter.export(ExportType.HTML, tableDocumente, getShell().getText(), getClass(), controller);
+        Exporter.export(ExportType.HTML, tableDocumente, getShell().getText(), getClass(), "", controller);
     }
 
 }

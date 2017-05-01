@@ -15,14 +15,6 @@ public class Exporter {
                                     final Table table,
                                     final String reportName,
                                     final Class<?> clazz,
-                                    ApplicationReportController controller) {
-        Exporter.export(type, table, reportName, clazz, null, controller);
-    }
-
-    public static final void export(final ExportType type,
-                                    final Table table,
-                                    final String reportName,
-                                    final Class<?> clazz,
                                     final String sufix,
                                     ApplicationReportController controller) {
         switch (type) {

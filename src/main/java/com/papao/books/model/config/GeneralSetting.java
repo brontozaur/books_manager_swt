@@ -34,6 +34,14 @@ public class GeneralSetting extends AbstractSetting {
     }
 
     @Override
+    public String toString() {
+        return "GeneralSetting{" +
+                "key='" + key + '\'' +
+                ", value=" + value +
+                '}';
+    }
+
+    @Override
     public boolean isValid() {
         return StringUtils.isNotBlank(key) && value != null;
     }

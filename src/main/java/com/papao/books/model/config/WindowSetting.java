@@ -61,6 +61,17 @@ public class WindowSetting extends AbstractSetting {
     }
 
     @Override
+    public String toString() {
+        return "WindowSetting{" +
+                "x=" + x +
+                ", y=" + y +
+                ", width=" + width +
+                ", height=" + height +
+                ", windowKey='" + windowKey + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean isValid() {
         return StringUtils.isNotBlank(windowKey) && width > 0 && height > 0;
     }

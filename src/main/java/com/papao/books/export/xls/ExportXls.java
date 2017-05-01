@@ -150,6 +150,7 @@ public final class ExportXls {
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
 
+                exportSetting = SettingsController.getExportXlsSetting();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }

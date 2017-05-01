@@ -3,6 +3,7 @@ package com.papao.books.view.util;
 import com.papao.books.model.config.*;
 import com.papao.books.repository.SettingsRepository;
 import com.papao.books.view.auth.EncodeLive;
+import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.swt.graphics.Rectangle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,11 @@ public class SettingsController {
         setting.setWidth(bounds.width);
         setting.setHeight(bounds.height);
         setting.setWindowKey(windowKey);
-        settingRepository.save(setting);
+        if (setting.isValid()) {
+            settingRepository.save(setting);
+        } else {
+            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+        }
     }
 
     public static TableSetting getTableSetting(int nrOfColumns, Class clazz, String tableKey) {
@@ -39,20 +44,20 @@ public class SettingsController {
         if (setting == null || setting.getNrOfColumns() == 0) {
             setting = new TableSetting(nrOfColumns, clazz.getCanonicalName(), tableKey);
             if (setting.isValid()) {
-                settingRepository.save(setting);
+                setting = settingRepository.save(setting);
+            } else {
+                SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
             }
         }
         return setting;
     }
 
-    public static void saveTableConfig(TableSetting tableSetting) {
-        if (tableSetting == null) {
-            throw new NullPointerException("Cannot save null table setting!");
+    public static void saveTableConfig(TableSetting setting) {
+        if (setting.isValid()) {
+            settingRepository.save(setting);
+        } else {
+            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
         }
-        if (!tableSetting.isValid()) {
-            throw new NullPointerException("invalid configuration " + tableSetting);
-        }
-        settingRepository.save(tableSetting);
     }
 
     public static GeneralSetting getGeneralSetting(String settingKey) {
@@ -66,15 +71,32 @@ public class SettingsController {
         }
         setting.setKey(key);
         setting.setValue(value);
-        settingRepository.save(setting);
+        if (setting.isValid()) {
+            settingRepository.save(setting);
+        } else {
+            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+        }
     }
 
     public static ExportPdfSetting getExportPdfSetting() {
-        return settingRepository.getExportPdfSetting(EncodeLive.getIdUser());
+        ExportPdfSetting setting = settingRepository.getExportPdfSetting(EncodeLive.getIdUser());
+        if (setting == null) {
+            setting = new ExportPdfSetting();
+            if (setting.isValid()) {
+                settingRepository.save(setting);
+            } else {
+                SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            }
+        }
+        return setting;
     }
 
     public static void saveExportPdfSetting(ExportPdfSetting setting) {
-        settingRepository.save(setting);
+        if (setting.isValid()) {
+            settingRepository.save(setting);
+        } else {
+            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+        }
     }
 
     public static ExportXlsSetting getExportXlsSetting() {
@@ -82,7 +104,11 @@ public class SettingsController {
     }
 
     public static void saveExportXlsSetting(ExportXlsSetting setting) {
-        settingRepository.save(setting);
+        if (setting.isValid()) {
+            settingRepository.save(setting);
+        } else {
+            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+        }
     }
 
     public static ExportHtmlSetting getExportHtmlSetting() {
@@ -90,7 +116,11 @@ public class SettingsController {
     }
 
     public static void saveExportHtmlSetting(ExportHtmlSetting setting) {
-        settingRepository.save(setting);
+        if (setting.isValid()) {
+            settingRepository.save(setting);
+        } else {
+            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+        }
     }
 
     public static ExportRtfSetting getExportRtfSetting() {
@@ -106,6 +136,10 @@ public class SettingsController {
     }
 
     public static void saveExportTxtSetting(ExportTxtSetting setting) {
-        settingRepository.save(setting);
+        if (setting.isValid()) {
+            settingRepository.save(setting);
+        } else {
+            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+        }
     }
 }

@@ -17,7 +17,7 @@ public class ExportXlsSetting extends AbstractSetting {
     }
 
     public ExportXlsSetting(ObjectId idUser, String numeUser) {
-        super(idUser, numeUser, SettingType.GENERAL);
+        super(idUser, numeUser, SettingType.EXPORT_XLS);
     }
 
     public String getExportDir() {
@@ -58,6 +58,17 @@ public class ExportXlsSetting extends AbstractSetting {
 
     public void setAutoResizeCols(boolean autoResizeCols) {
         this.autoResizeCols = autoResizeCols;
+    }
+
+    @Override
+    public String toString() {
+        return "ExportXlsSetting{" +
+                "exportDir='" + exportDir + '\'' +
+                ", automaticExportPath=" + automaticExportPath +
+                ", showHeader=" + showHeader +
+                ", extension='" + extension + '\'' +
+                ", autoResizeCols=" + autoResizeCols +
+                '}';
     }
 
     public void reset() {

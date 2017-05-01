@@ -105,7 +105,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         this.leftViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 
         final TreeViewerColumn treeCol = new TreeViewerColumn(this.leftViewer, SWT.NONE);
-        TableSetting setting = SettingsController.getTableSetting(COLS.length, getClass(), TREE_KEY);
+        TableSetting setting = SettingsController.getTableSetting(1, getClass(), TREE_KEY);
         treeCol.getColumn().setText("Tip fisier");
         treeCol.getColumn().setWidth(setting.getWidths()[0]);
         treeCol.getColumn().setAlignment(setting.getAligns()[0]);

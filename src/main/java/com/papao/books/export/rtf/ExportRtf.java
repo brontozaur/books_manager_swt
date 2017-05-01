@@ -142,6 +142,8 @@ public final class ExportRtf {
                 order = settings.getOrder();
                 font = settings.getiTextFont();
                 pageSize = settings.getPageSize();
+
+                exportSetting = SettingsController.getExportRtfSetting();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }

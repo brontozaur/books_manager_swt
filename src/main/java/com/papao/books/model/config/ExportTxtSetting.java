@@ -16,7 +16,7 @@ public class ExportTxtSetting extends AbstractSetting {
     }
 
     public ExportTxtSetting(ObjectId idUser, String numeUser) {
-        super(idUser, numeUser, SettingType.GENERAL);
+        super(idUser, numeUser, SettingType.EXPORT_TXT);
     }
 
     public String getExportDir() {
@@ -65,6 +65,17 @@ public class ExportTxtSetting extends AbstractSetting {
         showNrCrt = true;
         showTitle = true;
         hasBorder = true;
+    }
+
+    @Override
+    public String toString() {
+        return "ExportTxtSetting{" +
+                "exportDir='" + exportDir + '\'' +
+                ", automaticExportPath=" + automaticExportPath +
+                ", showNrCrt=" + showNrCrt +
+                ", showTitle=" + showTitle +
+                ", hasBorder=" + hasBorder +
+                '}';
     }
 
     @Override

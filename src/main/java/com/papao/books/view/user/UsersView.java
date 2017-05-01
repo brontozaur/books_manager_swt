@@ -466,26 +466,26 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
 
     @Override
     public void exportTxt() {
-        Exporter.export(ExportType.TXT, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
+        Exporter.export(ExportType.TXT, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
     }
 
     @Override
     public void exportPDF() {
-        Exporter.export(ExportType.PDF, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
+        Exporter.export(ExportType.PDF, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
     }
 
     @Override
     public void exportExcel() {
-        Exporter.export(ExportType.XLS, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
+        Exporter.export(ExportType.XLS, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
     }
 
     @Override
     public void exportRTF() {
-        Exporter.export(ExportType.RTF, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
+        Exporter.export(ExportType.RTF, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
     }
 
     @Override
     public void exportHTML() {
-        Exporter.export(ExportType.HTML, tableViewer.getTable(), "Utilizatori", User.class, applicationReportController);
+        Exporter.export(ExportType.HTML, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
     }
 }

@@ -65,6 +65,11 @@ public class ExportRtfOptionsView extends AbstractExportView {
     public ExportRtfOptionsView(final Shell parent, final ExportRtfSettings settings) {
         super(parent);
         this.settings = settings;
+        exportRtfSetting = SettingsController.getExportRtfSetting();
+        if (exportRtfSetting == null) {
+            exportRtfSetting = new ExportRtfSetting();
+        }
+
         for (String str : ExportRtfOptionsView.ITEMS) {
             new TableItem(this.leftTable, SWT.NONE).setText(str);
         }
@@ -74,11 +79,6 @@ public class ExportRtfOptionsView extends AbstractExportView {
 
         this.leftTable.select(0);
         this.leftTable.notifyListeners(SWT.Selection, new Event());
-
-        exportRtfSetting = SettingsController.getExportRtfSetting();
-        if (exportRtfSetting == null) {
-            exportRtfSetting = new ExportRtfSetting();
-        }
     }
 
     @Override

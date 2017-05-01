@@ -33,7 +33,7 @@ public class ExportPdfSetting extends AbstractSetting {
     }
 
     public ExportPdfSetting(ObjectId idUser, String numeUser) {
-        super(idUser, numeUser, SettingType.GENERAL);
+        super(idUser, numeUser, SettingType.EXPORT_PDF);
     }
 
     public String getExportDir() {
@@ -154,6 +154,27 @@ public class ExportPdfSetting extends AbstractSetting {
 
     public void setShowPageNumber(boolean showPageNumber) {
         this.showPageNumber = showPageNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "ExportPdfSetting{" +
+                "exportDir='" + exportDir + '\'' +
+                ", automaticExportPath=" + automaticExportPath +
+                ", pageOrientation='" + pageOrientation + '\'' +
+                ", pageSize='" + pageSize + '\'' +
+                ", docVersion='" + docVersion + '\'' +
+                ", fontName='" + fontName + '\'' +
+                ", fontNameUser='" + fontNameUser + '\'' +
+                ", fontSize=" + fontSize +
+                ", fontStyle=" + fontStyle +
+                ", compression=" + compression +
+                ", showTitle=" + showTitle +
+                ", showNrCrt=" + showNrCrt +
+                ", showHeader=" + showHeader +
+                ", showGrayEffect=" + showGrayEffect +
+                ", showPageNumber=" + showPageNumber +
+                '}';
     }
 
     @Override

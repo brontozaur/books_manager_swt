@@ -57,6 +57,7 @@ public class ExportPdfOptionsView extends AbstractExportView {
     public ExportPdfOptionsView(final Shell parent, final ExportPdfSettings settings) {
         super(parent);
         this.settings = settings;
+        exportPdfSetting = SettingsController.getExportPdfSetting();
 
         for (String str : ExportPdfOptionsView.ITEMS) {
             new TableItem(this.leftTable, SWT.NONE).setText(str);
@@ -67,11 +68,6 @@ public class ExportPdfOptionsView extends AbstractExportView {
 
         this.leftTable.select(0);
         this.leftTable.notifyListeners(SWT.Selection, new Event());
-
-        exportPdfSetting = SettingsController.getExportPdfSetting();
-        if (exportPdfSetting == null) {
-            exportPdfSetting = new ExportPdfSetting();
-        }
     }
 
     @Override

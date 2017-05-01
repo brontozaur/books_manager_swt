@@ -149,6 +149,8 @@ public final class ExportPdf {
                 widths = settings.getDims();
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
+
+                exportSetting = SettingsController.getExportPdfSetting();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }

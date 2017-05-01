@@ -140,6 +140,8 @@ public final class ExportHtml {
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
                 font = settings.getiTextFont();
+
+                exportSetting = SettingsController.getExportHtmlSetting();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }

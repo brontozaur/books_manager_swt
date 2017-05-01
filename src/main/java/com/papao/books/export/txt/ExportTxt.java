@@ -130,6 +130,8 @@ public final class ExportTxt {
                 widths = settings.getDims();
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
+
+                exportSetting = SettingsController.getExportTxtSetting();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }

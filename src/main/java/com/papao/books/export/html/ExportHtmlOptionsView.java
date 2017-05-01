@@ -50,6 +50,10 @@ public class ExportHtmlOptionsView extends AbstractExportView {
     public ExportHtmlOptionsView(final Shell parent, final ExportHtmlSettings settings) {
         super(parent);
         this.settings = settings;
+        exportHtmlSetting = SettingsController.getExportHtmlSetting();
+        if (exportHtmlSetting == null) {
+            exportHtmlSetting = new ExportHtmlSetting();
+        }
 
         for (String str : ExportHtmlOptionsView.ITEMS) {
             new TableItem(this.leftTable, SWT.NONE).setText(str);
@@ -60,11 +64,6 @@ public class ExportHtmlOptionsView extends AbstractExportView {
 
         this.leftTable.select(0);
         this.leftTable.notifyListeners(SWT.Selection, new Event());
-
-        exportHtmlSetting = SettingsController.getExportHtmlSetting();
-        if (exportHtmlSetting == null) {
-            exportHtmlSetting = new ExportHtmlSetting();
-        }
     }
 
     @Override

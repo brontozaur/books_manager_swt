@@ -40,6 +40,10 @@ public class ExportXlsOptionsView extends AbstractExportView {
         super(parent);
 
         this.settings = settings;
+        exportXlsSetting = SettingsController.getExportXlsSetting();
+        if (exportXlsSetting == null) {
+            exportXlsSetting = new ExportXlsSetting();
+        }
 
         for (String str : ExportXlsOptionsView.ITEMS) {
             new TableItem(this.leftTable, SWT.NONE).setText(str);
@@ -50,11 +54,6 @@ public class ExportXlsOptionsView extends AbstractExportView {
 
         this.leftTable.select(0);
         this.leftTable.notifyListeners(SWT.Selection, new Event());
-
-        exportXlsSetting = SettingsController.getExportXlsSetting();
-        if (exportXlsSetting == null) {
-            exportXlsSetting = new ExportXlsSetting();
-        }
     }
 
     @Override

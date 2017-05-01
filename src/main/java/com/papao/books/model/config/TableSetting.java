@@ -127,4 +127,17 @@ public class TableSetting extends AbstractSetting {
         }
         return dd;
     }
+
+    @Override
+    public String toString() {
+        return "TableSetting{" +
+                "widths=" + Arrays.toString(widths) +
+                ", aligns=" + Arrays.toString(aligns) +
+                ", order=" + Arrays.toString(order) +
+                ", visibility=" + Arrays.toString(visibility) +
+                ", clazz='" + clazz + '\'' +
+                ", tableKey='" + tableKey + '\'' +
+                ", nrOfColumns=" + nrOfColumns +
+                '}';
+    }
 }
