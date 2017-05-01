@@ -8,11 +8,12 @@ import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
-import com.papao.books.export.pdf.ExportPdfPrefs;
 import com.papao.books.model.ApplicationReport;
+import com.papao.books.model.config.ExportHtmlSetting;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.CWaitDlgClassic;
-import com.papao.books.view.util.ConfigController;
+import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.TableItem;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,7 +38,7 @@ public final class ExportHtml {
     public static void exportHTML(final org.eclipse.swt.widgets.Table swtTable,
                                   final String reportName,
                                   final Class<?> clazz,
-                                  final String sufix,
+                                  final String tableKey,
                                   ApplicationReportController controller) {
         Document document;
         Table iTextTable;
@@ -55,6 +57,7 @@ public final class ExportHtml {
         HeaderFooter hf;
         Font font = ExportHtmlOptionsView.HTML_FONT;
         String titleName = reportName;
+        ExportHtmlSetting exportSetting;
         try {
 
             if (StringUtils.isNotEmpty(reportName)) {
@@ -71,10 +74,24 @@ public final class ExportHtml {
                 return;
             }
 
-            selectedCols = ConfigController.getSavedVisibleCols(nrOfColumns, clazz, sufix);
-            aligns = ConfigController.getSavedGridAligns(nrOfColumns, clazz, sufix);
-            widths = ConfigController.getSavedGridDims(nrOfColumns, clazz, sufix);
-            order = ConfigController.getSavedGridColumnOrder(nrOfColumns, clazz, sufix);
+            TableSetting setting = SettingsController.getTableSetting(nrOfColumns, clazz, tableKey);
+            if (setting == null) {
+                selectedCols = new boolean[nrOfColumns];
+                Arrays.fill(selectedCols, true);
+                order = swtTable.getColumnOrder();
+
+                aligns = new int[nrOfColumns];
+                widths = new int[nrOfColumns];
+                for (int i = 0; i < nrOfColumns; i++) {
+                    aligns[i] = swtTable.getColumns()[i].getAlignment();
+                    widths[i] = swtTable.getColumns()[i].getWidth();
+                }
+            } else {
+                selectedCols = setting.getVisibility();
+                order = setting.getOrder();
+                aligns = setting.getAligns();
+                widths = setting.getWidths();
+            }
 
             boolean atLeastOneCol = false;
             for (int i = 0; i < nrOfColumns; i++) {
@@ -88,6 +105,12 @@ public final class ExportHtml {
                 selectedCols[0] = true;
             }
 
+            exportSetting = SettingsController.getExportHtmlSetting();
+            if (exportSetting == null) {
+                exportSetting = new ExportHtmlSetting();
+                SettingsController.saveExportHtmlSetting(exportSetting);
+            }
+
             if (FiltruAplicatie.isReportsShowingOptions()) {
                 ExportHtmlOptionsView view;
                 ExportHtmlSettings settings = new ExportHtmlSettings();
@@ -96,7 +119,7 @@ public final class ExportHtml {
                 settings.setNumeFisier(fileName);
                 settings.setSwtTable(swtTable);
                 settings.setClazz(clazz);
-                settings.setSufix(sufix);
+                settings.setSufix(tableKey);
                 settings.setTitlu(titleName);
                 settings.setNrOfItems(nrOfItems);
 
@@ -118,7 +141,7 @@ public final class ExportHtml {
                 order = settings.getOrder();
                 font = settings.getiTextFont();
             } else {
-                fileName = ExportPdfPrefs.getExportPath() + File.separator;
+                fileName = exportSetting.getExportDir() + File.separator;
             }
 
             if (StringUtils.isEmpty(fileName)) {
@@ -150,7 +173,7 @@ public final class ExportHtml {
 
             document.open();
 
-            if (ExportHtmlPrefs.isUsingTitle()) {
+            if (exportSetting.isShowTitle()) {
                 chuckie = new Chunk(titleName, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, Font.UNDERLINE | Font.BOLD, Color.BLACK));
                 p = new Paragraph(chuckie);
                 p.setAlignment(Element.ALIGN_CENTER);
@@ -170,7 +193,7 @@ public final class ExportHtml {
             }
             int[] sizes;
             int w = 0;
-            if (ExportHtmlPrefs.isUsingNrCrt()) {
+            if (exportSetting.isShowNrCrt()) {
                 sizes = new int[dims.size() + 1];
                 sizes[0] = 70;
                 w = 1;
@@ -194,8 +217,8 @@ public final class ExportHtml {
             wait.setMessageLabel("Se genereaza fisierul...");
             wait.open();
 
-            if (ExportHtmlPrefs.isShowingHeader()) {
-                ExportHtml.createTableHeader(swtTable, iTextTable, ExportHtmlPrefs.isUsingNrCrt(), selectedCols, order, widths, font);
+            if (exportSetting.isShowHeader()) {
+                ExportHtml.createTableHeader(swtTable, iTextTable, exportSetting.isShowNrCrt(), selectedCols, order, widths, font);
             }
 
             hf = new HeaderFooter(new Phrase("Raport generat cu Books Manager, https://github.com/brontozaur"), false);
@@ -207,12 +230,12 @@ public final class ExportHtml {
             for (int i = 0; i < items.length; i++) {
                 wait.advance(i);
 
-                if (ExportHtmlPrefs.isUsingNrCrt()) {
+                if (exportSetting.isShowNrCrt()) {
                     p = new Paragraph(String.valueOf(i + 1), font);
                     p.setAlignment(Element.ALIGN_JUSTIFIED);
                     cell = new Cell(p);
                     cell.setWidth(70f);
-                    if (ExportHtmlPrefs.isUsingGrayEffect()) {
+                    if (exportSetting.isShowGrayEffect()) {
                         if (Math.abs(i) % 2 == 1) {
                             cell.setGrayFill(0.9f);
                         }
@@ -239,7 +262,7 @@ public final class ExportHtml {
                         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                         p.setAlignment(Element.ALIGN_LEFT);
                     }
-                    if (ExportHtmlPrefs.isUsingGrayEffect()) {
+                    if (exportSetting.isShowHeader()) {
                         if (Math.abs(i) % 2 == 1) {
                             cell.setGrayFill(0.9f);
                         }

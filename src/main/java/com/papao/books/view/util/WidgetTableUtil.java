@@ -1,6 +1,9 @@
 package com.papao.books.view.util;
 
 import com.papao.books.model.AbstractDB;
+import com.papao.books.model.config.TableSetting;
+import com.papao.books.view.view.ColumnsChooserView;
+import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
@@ -11,13 +14,14 @@ import java.util.List;
 
 public final class WidgetTableUtil {
 
-	private static Logger logger = Logger.getLogger(WidgetTableUtil.class);
+    private static Logger logger = Logger.getLogger(WidgetTableUtil.class);
 
     public static final int ADD_RESIZE = 1 << 1;
     public static final int ADD_ORDER = 1 << 2;
     public static final int ADD_HEADER = 1 << 3;
 
-    private WidgetTableUtil() {}
+    private WidgetTableUtil() {
+    }
 
     public static void addXRenderListener(final Table table, final Color c1, final Color c2) {
         try {
@@ -59,13 +63,10 @@ public final class WidgetTableUtil {
     /**
      * La evenimentul de selectie se deseneaza un gradient pe itemul selectat, pe toata lungimea
      * tabelei, format din c1(stanga) + c2(dreapta)
-     * 
-     * @param table
-     *            tabela parama
-     * @param c1
-     *            culoarea din stanga
-     * @param c2
-     *            culoarea din dreapta
+     *
+     * @param table tabela parama
+     * @param c1    culoarea din stanga
+     * @param c2    culoarea din dreapta
      */
     public static void addCustomGradientSelectionListenerToTable(final Table table, final Color c1, final Color c2) {
         try {
@@ -232,29 +233,45 @@ public final class WidgetTableUtil {
         return checkedItems;
     }
 
-    private static void addTableColumnsResizeObserver(final Table table, final Class<?> clazz, final String sufix2) {
+    private static void addTableColumnsResizeObserver(final Table table, final Class<?> clazz, final String tableKey) {
         if ((table == null) || table.isDisposed() || (table.getColumnCount() == 0) || (clazz == null)) {
             return;
         }
         final TableColumn[] cols = table.getColumns();
+        for (final TableColumn col : cols) {
+            col.addListener(SWT.Resize, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    TableSetting setting = SettingsController.getTableSetting(cols.length, clazz, tableKey);
+                    int[] dims = setting.getWidths();
+                    if (col.getWidth() > 0) {
+                        dims[table.indexOf(col)] = col.getWidth();
+                        SettingsController.saveTableConfig(setting);
+                    }
+                    col.setResizable(col.getWidth() > 0);
+                }
+            });
+        }
     }
 
-    private static void addTableColumnsOrderListener(final Table table, final Class<?> clazz, final String sufix2) {
+    private static void addTableColumnsOrderListener(final Table table, final Class<?> clazz, final String tableKey) {
         if ((table == null) || table.isDisposed() || (table.getColumnCount() == 0) || (clazz == null)) {
             return;
         }
-//        final TableColumn[] cols = table.getColumns();
-//        for (TableColumn col : cols) {
-//            col.addListener(SWT.Move, new Listener() {
-//                @Override
-//                public final void handleEvent(final Event e) {
-//                    FilterUtil.saveOrder(table.getColumnOrder(), clazz, sufix2);
-//                }
-//            });
-//        }
+        final TableColumn[] cols = table.getColumns();
+        for (TableColumn col : cols) {
+            col.addListener(SWT.Move, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    TableSetting tableSetting = SettingsController.getTableSetting(cols.length, clazz, tableKey);
+                    tableSetting.setOrder(table.getColumnOrder());
+                    SettingsController.saveTableConfig(tableSetting);
+                }
+            });
+        }
     }
 
-    private static Menu createTableHeaderMenu(final Table table, final Class<?> clazz, final Menu tableMenu, final String sufix2) {
+    private static Menu createTableHeaderMenu(final Table table, final Class<?> clazz, final Menu tableMenu, final String tableKey) {
         if ((table == null) || table.isDisposed() || (clazz == null)) {
             return null;
         }
@@ -262,50 +279,52 @@ public final class WidgetTableUtil {
         headerMenu.setData("header");
         try {
             String[] colNames = WidgetTableUtil.getColumnsNames(table);
-//            headerMenu.addListener(SWT.Show, new Listener() {
-//                @Override
-//                public final void handleEvent(final Event e) {
-//                    final boolean[] visibleCols = FilterUtil.getSavedVisibleCols(table.getColumnCount(), clazz, sufix2);
-//                    for (int i = 2; i < headerMenu.getItemCount(); i++) {
-//                        headerMenu.getItem(i).setSelection(visibleCols[table.getColumnOrder()[i - 2]]);
-//                    }
-//                }
-//            });
+            headerMenu.addListener(SWT.Show, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    final boolean[] visibleCols = SettingsController.getTableSetting(table.getColumnCount(), clazz, tableKey).getVisibility();
+                    for (int i = 2; i < headerMenu.getItemCount(); i++) {
+                        headerMenu.getItem(i).setSelection(visibleCols[table.getColumnOrder()[i - 2]]);
+                    }
+                }
+            });
 
             final MenuItem itemAdvanced = new MenuItem(headerMenu, SWT.PUSH);
             itemAdvanced.setText("Selectie avansata");
-//            itemAdvanced.addListener(SWT.Selection, new Listener() {
-//                @Override
-//                public final void handleEvent(final Event e) {
-//                    new ColumnsChooserView(table, clazz, sufix2).open();
-//                }
-//            });
+            itemAdvanced.addListener(SWT.Selection, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    new ColumnsChooserView(table, clazz, tableKey).open();
+                }
+            });
 
             new MenuItem(headerMenu, SWT.SEPARATOR);
 
             for (int i = 0; i < colNames.length; i++) {
                 final MenuItem item = new MenuItem(headerMenu, SWT.CHECK);
                 item.setText(colNames[i]);
-//                item.addListener(SWT.Selection, new Listener() {
-//                    @Override
-//                    public final void handleEvent(final Event e) {
-//                        final int[] savedDims = FilterUtil.getSavedGridDims(table.getColumnCount(), clazz, sufix2);
-//                        boolean[] visible = FilterUtil.getSavedVisibleCols(table.getColumnCount(), clazz, sufix2);
-//                        final int itemIndex = headerMenu.indexOf(item) - 2;
-//                        if (item.getSelection()) {
-//                            table.getColumn(table.getColumnOrder()[itemIndex]).setWidth(savedDims[table.getColumnOrder()[itemIndex]]);
-//                            visible[table.getColumnOrder()[itemIndex]] = true;
-//                            table.getColumn(table.getColumnOrder()[itemIndex]).setResizable(true);
-//                            table.getColumn(table.getColumnOrder()[itemIndex]).setMoveable(true);
-//                        } else {
-//                            table.getColumn(table.getColumnOrder()[itemIndex]).setWidth(0);
-//                            visible[table.getColumnOrder()[itemIndex]] = false;
-//                            table.getColumn(table.getColumnOrder()[itemIndex]).setResizable(false);
-//                            table.getColumn(table.getColumnOrder()[itemIndex]).setMoveable(false);
-//                        }
-//                        FilterUtil.saveVisibleCols(visible, clazz, sufix2);
-//                    }
-//                });
+                item.addListener(SWT.Selection, new Listener() {
+                    @Override
+                    public final void handleEvent(final Event e) {
+                        TableSetting tableSetting = SettingsController.getTableSetting(table.getColumnCount(), clazz, tableKey);
+                        final int[] savedDims = tableSetting.getWidths();
+                        boolean[] visible = tableSetting.getVisibility();
+                        final int itemIndex = headerMenu.indexOf(item) - 2;
+                        if (item.getSelection()) {
+                            table.getColumn(table.getColumnOrder()[itemIndex]).setWidth(savedDims[table.getColumnOrder()[itemIndex]]);
+                            visible[table.getColumnOrder()[itemIndex]] = true;
+                            table.getColumn(table.getColumnOrder()[itemIndex]).setResizable(true);
+                            table.getColumn(table.getColumnOrder()[itemIndex]).setMoveable(true);
+                        } else {
+                            table.getColumn(table.getColumnOrder()[itemIndex]).setWidth(0);
+                            visible[table.getColumnOrder()[itemIndex]] = false;
+                            table.getColumn(table.getColumnOrder()[itemIndex]).setResizable(false);
+                            table.getColumn(table.getColumnOrder()[itemIndex]).setMoveable(false);
+                        }
+                        tableSetting.setVisibility(visible);
+                        SettingsController.saveTableConfig(tableSetting);
+                    }
+                });
             }
 
             table.addListener(SWT.Dispose, new Listener() {
@@ -318,58 +337,50 @@ public final class WidgetTableUtil {
                 }
             });
         } catch (Exception exc) {
-//			SQLLibrary.processErr(exc, logger);
+            logger.error(exc.getMessage(), exc);
+            SWTeXtension.displayMessageE(exc.getMessage(), exc);
         }
         return headerMenu;
     }
 
     /**
-     * @param table
-     *            some real non-null, non-disposed table. If null or disposed, method will return
-     *            quietely
-     * @param clazz
-     *            some class
+     * @param table some real non-null, non-disposed table. If null or disposed, method will return
+     *              quietely
+     * @param clazz some class
      */
     public static void customizeTable(final Table table, final Class<?> clazz) {
         WidgetTableUtil.customizeTable(table, clazz, null);
     }
 
     /**
-     * @param table
-     *            some real non-null, non-disposed table. If null or disposed, method will return
-     *            quietely
-     * @param clazz
-     *            some class
-     * @param sufix2
-     *            a string delimiter to create unique que on the specified class. May be ignored if
-     *            class has
-     *            a single grid
-     *            The method calls {@link #customizeTable(Table, Class, String, int)} with all three
-     *            available flags
+     * @param table  some real non-null, non-disposed table. If null or disposed, method will return
+     *               quietely
+     * @param clazz  some class
+     * @param sufix2 a string delimiter to create unique que on the specified class. May be ignored if
+     *               class has
+     *               a single grid
+     *               The method calls {@link #customizeTable(Table, Class, String, int)} with all three
+     *               available flags
      */
     public static void customizeTable(final Table table, final Class<?> clazz, final String sufix2) {
         WidgetTableUtil.customizeTable(table, clazz, sufix2, WidgetTableUtil.ADD_RESIZE | WidgetTableUtil.ADD_HEADER | WidgetTableUtil.ADD_ORDER);
     }
 
     /**
-     * @param table
-     *            some real non-null, non-disposed table. If null or disposed, method will return
-     *            quietely
-     * @param clazz
-     *            some class
-     * @param sufix2
-     *            a string delimiter to create unique que on the specified class. May be ignored if
-     *            class has
-     *            a single grid
-     * @param flags
-     *            at least one options, or this method will be a dummy call
+     * @param table  some real non-null, non-disposed table. If null or disposed, method will return
+     *               quietely
+     * @param clazz  some class
+     * @param tableKey a string delimiter to create unique que on the specified class. May be ignored if
+     *               class has
+     *               a single grid
+     * @param flags  at least one options, or this method will be a dummy call
      */
-    public static void customizeTable(final Table table, final Class<?> clazz, final String sufix2, final int flags) {
+    public static void customizeTable(final Table table, final Class<?> clazz, final String tableKey, final int flags) {
         if ((table == null) || table.isDisposed() || (clazz == null)) {
             return;
         }
         if ((flags & WidgetTableUtil.ADD_RESIZE) == WidgetTableUtil.ADD_RESIZE) {
-            WidgetTableUtil.addTableColumnsResizeObserver(table, clazz, sufix2);
+            WidgetTableUtil.addTableColumnsResizeObserver(table, clazz, tableKey);
         }
         if ((flags & WidgetTableUtil.ADD_HEADER) == WidgetTableUtil.ADD_HEADER) {
             // TODO metoda are un bug cand se da click pe header prima data, nu mai apare meniul initial al tabelei
@@ -391,7 +402,7 @@ public final class WidgetTableUtil {
                         if ((table.getMenu() != null) && "header".equals(table.getMenu().getData())) {
                             table.getMenu().dispose();
                         }
-                        headerMenu = WidgetTableUtil.createTableHeaderMenu(table, clazz, table.getMenu(), sufix2);
+                        headerMenu = WidgetTableUtil.createTableHeaderMenu(table, clazz, table.getMenu(), tableKey);
                         table.setData("header", headerMenu);
                     }
                     if (header) {
@@ -416,7 +427,9 @@ public final class WidgetTableUtil {
             });
         }
         if ((flags & WidgetTableUtil.ADD_ORDER) == WidgetTableUtil.ADD_ORDER) {
-            WidgetTableUtil.addTableColumnsOrderListener(table, clazz, sufix2);
+            WidgetTableUtil.addTableColumnsOrderListener(table, clazz, tableKey);
+            TableSetting setting = SettingsController.getTableSetting(table.getColumnCount(), clazz, tableKey);
+            table.setColumnOrder(setting.getOrder());
         }
     }
 

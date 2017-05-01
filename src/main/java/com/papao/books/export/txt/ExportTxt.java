@@ -7,9 +7,11 @@ import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.ApplicationReport;
+import com.papao.books.model.config.ExportTxtSetting;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.CWaitDlgClassic;
-import com.papao.books.view.util.ConfigController;
+import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -19,6 +21,7 @@ import org.eclipse.swt.widgets.Table;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -33,22 +36,23 @@ public final class ExportTxt {
     public static void exportTxt(final Table table,
                                  final String numeRaport,
                                  final Class<?> clazz,
-                                 final String sufix,
+                                 final String tableKey,
                                  ApplicationReportController controller) {
-        boolean[] selectedCols;
         TableFormatter tf;
         File output;
         PrintStream ps = null;
         int nrOfItems;
         int nrOfColumns;
-        int[] order;
-        int[] aligns;
-        int[] widths;
         String[] tbl;
         CWaitDlgClassic wait = null;
         String fileName;
         boolean showNrCrt;
         String titleName = numeRaport;
+        boolean[] selectedCols;
+        int[] aligns;
+        int[] widths;
+        int[] order;
+        ExportTxtSetting exportSetting;
         try {
             if ((table == null) || table.isDisposed()) {
                 return;
@@ -67,10 +71,24 @@ public final class ExportTxt {
                 fileName = "Raport_TXT_" + System.currentTimeMillis();
             }
 
-            selectedCols = ConfigController.getSavedVisibleCols(nrOfColumns, clazz, sufix);
-            aligns = ConfigController.getSavedGridAligns(nrOfColumns, clazz, sufix);
-            widths = ConfigController.getSavedGridDims(nrOfColumns, clazz, sufix);
-            order = ConfigController.getSavedGridColumnOrder(nrOfColumns, clazz, sufix);
+            TableSetting setting = SettingsController.getTableSetting(nrOfColumns, clazz, tableKey);
+            if (setting == null) {
+                selectedCols = new boolean[nrOfColumns];
+                Arrays.fill(selectedCols, true);
+                order = table.getColumnOrder();
+
+                aligns = new int[nrOfColumns];
+                widths = new int[nrOfColumns];
+                for (int i = 0; i < nrOfColumns; i++) {
+                    aligns[i] = table.getColumns()[i].getAlignment();
+                    widths[i] = table.getColumns()[i].getWidth();
+                }
+            } else {
+                selectedCols = setting.getVisibility();
+                order = setting.getOrder();
+                aligns = setting.getAligns();
+                widths = setting.getWidths();
+            }
 
             boolean atLeastOneCol = false;
             for (int i = 0; i < nrOfColumns; i++) {
@@ -84,12 +102,18 @@ public final class ExportTxt {
                 selectedCols[0] = true;
             }
 
+            exportSetting = SettingsController.getExportTxtSetting();
+            if (exportSetting == null) {
+                exportSetting = new ExportTxtSetting();
+                SettingsController.saveExportTxtSetting(exportSetting);
+            }
+
             if (FiltruAplicatie.isReportsShowingOptions()) {
                 ExportTxtSettings settings = new ExportTxtSettings();
                 settings.setNumeFisier(fileName);
                 settings.setSwtTable(table);
                 settings.setClazz(clazz);
-                settings.setSufix(sufix);
+                settings.setTableKey(tableKey);
                 settings.setTitlu(titleName);
                 settings.setNrOfItems(nrOfItems);
 
@@ -107,10 +131,10 @@ public final class ExportTxt {
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
             } else {
-                fileName = ExportTxtPrefs.getExportPath() + File.separator;
+                fileName = exportSetting.getExportDir() + File.separator;
             }
 
-            showNrCrt = ExportTxtPrefs.isShowingNrCrt();
+            showNrCrt = exportSetting.isShowNrCrt();
 
             if (StringUtils.isEmpty(fileName)) {
                 return;
@@ -142,7 +166,7 @@ public final class ExportTxt {
                 w++;
             }
 
-            tf = new SimpleTableFormatter(ExportTxtPrefs.isHavingBorder());
+            tf = new SimpleTableFormatter(exportSetting.isHasBorder());
             tf.nextRow();
             if (showNrCrt) {
                 tf.nextCell(TableFormatter.ALIGN_CENTER, TableFormatter.VALIGN_CENTER);
@@ -185,14 +209,14 @@ public final class ExportTxt {
             logger.info("ExportTXT content to file : " + fileName);
             ps = new PrintStream(output);
 
-            if (ExportTxtPrefs.isUsingTitle()) {
+            if (exportSetting.isShowTitle()) {
                 ps.println(titleName);
                 ps.println();
             }
 
             for (int i = 0, size = tbl.length; i < size; i++) {
                 ps.println("\t" + tbl[i]);
-                if (ExportTxtPrefs.isHavingBorder()) {
+                if (exportSetting.isHasBorder()) {
                     if (i == 2) {
                         ps.println();
                         i++;

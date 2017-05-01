@@ -4,12 +4,14 @@ import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.controller.AutorController;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCView;
 import com.papao.books.view.interfaces.*;
 import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.searcheable.AbstractSearchType;
 import com.papao.books.view.searcheable.BorgSearchSystem;
+import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.util.StringUtil;
 import com.papao.books.view.util.WidgetCursorUtil;
 import com.papao.books.view.util.WidgetTableUtil;
@@ -40,6 +42,8 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
     private Composite compRight;
     protected BorgSearchSystem searchSystem;
     private AutorController autorController;
+
+    private static final String TABLE_KEY = "usersTable";
 
     public AutoriView(final Shell parent, AutorController autorController) {
         super(parent, AbstractView.MODE_NONE);
@@ -333,7 +337,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
         this.tableViewer.getTable().setMenu(createTableMenu());
 
         initViewerCols();
-        WidgetTableUtil.customizeTable(this.tableViewer.getTable(), getClass());
+        WidgetTableUtil.customizeTable(this.tableViewer.getTable(), getClass(), TABLE_KEY);
 
         this.searchSystem.setViewer(this.tableViewer);
         this.searchSystem.indexColumns(COLS);
@@ -373,9 +377,10 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
         }
 
         this.tableViewer.setContentProvider(new AdbMongoContentProvider());
-        int[] dims = new int[]{250, 250};
-        int[] aligns = new int[]{SWT.LEFT, SWT.LEFT};
-        boolean[] visible = new boolean[]{true, true};
+        TableSetting setting = SettingsController.getTableSetting(COLS.length, getClass(), TABLE_KEY);
+        int[] dims = setting.getWidths();
+        int[] aligns = setting.getAligns();
+        boolean[] visible = setting.getVisibility();
         for (int i = 0; i < COLS.length; i++) {
             final TableViewerColumn col = new TableViewerColumn(this.tableViewer, SWT.NONE);
             col.getColumn().setText(COLS[i]);

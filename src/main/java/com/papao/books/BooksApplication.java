@@ -5,7 +5,7 @@ import com.papao.books.controller.UserController;
 import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.auth.LoginShell;
-import com.papao.books.view.util.ConfigController;
+import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
@@ -38,13 +38,13 @@ public class BooksApplication {
     private static BooksApplication app;
 
     @Autowired
+    private SettingsController settingsController;
+
+    @Autowired
     private UserController userController;
 
     @Autowired
     private EncodePlatform encodePlatform;
-
-    @Autowired //TODO convert into controller
-    private ConfigController configController;
 
     @Value("${app.notification.style}")
     String notificationStyle;

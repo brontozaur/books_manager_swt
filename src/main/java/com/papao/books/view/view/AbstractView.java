@@ -862,7 +862,7 @@ public abstract class AbstractView extends Observable {
             }
             WindowSetting setting = null;
             if (useCoords && FiltruAplicatie.isWindowsUsingCoords()) {
-                setting = ConfigController.getWindowSetting(getClass().getCanonicalName());
+                setting = SettingsController.getWindowSetting(getClass().getCanonicalName());
             }
             if (setting != null && setting.isValid()) {
                 this.shell.setBounds(new Rectangle(setting.getX(), setting.getY(), setting.getWidth(), setting.getHeight()));
@@ -1052,7 +1052,7 @@ public abstract class AbstractView extends Observable {
 
     private final void shellCloseEvent(final Event e) {
         try {
-            ConfigController.saveWindowCoords(getShell().getBounds(), getClass().getCanonicalName());
+            SettingsController.saveWindowCoords(getShell().getBounds(), getClass().getCanonicalName());
 
             if ((getDockingItem() != null) && !getDockingItem().isDisposed()) {
                 getDockingItem().dispose();

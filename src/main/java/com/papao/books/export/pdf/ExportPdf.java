@@ -7,9 +7,11 @@ import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.ApplicationReport;
+import com.papao.books.model.config.ExportPdfSetting;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.CWaitDlgClassic;
-import com.papao.books.view.util.ConfigController;
+import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -19,6 +21,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,8 +42,8 @@ public final class ExportPdf {
     public static void exportPDF(final Table swtTable,
                                  final String reportName,
                                  final Class<?> clazz,
-                                 final String sufix,
-                                 ApplicationReportController controller) {
+                                 final String tableKey,
+                                 final ApplicationReportController controller) {
         Document document;
         PdfPTable pdfTable;
         Paragraph p;
@@ -56,6 +59,7 @@ public final class ExportPdf {
         CWaitDlgClassic wait = null;
         PdfWriter writer;
         Chunk chuckie;
+        ExportPdfSetting exportSetting;
 
         Rectangle pageSize = PageSize.A4;
         String titleName = reportName;
@@ -78,10 +82,24 @@ public final class ExportPdf {
                 return;
             }
 
-            selectedCols = ConfigController.getSavedVisibleCols(swtTable.getColumnCount(), clazz, sufix);
-            aligns = ConfigController.getSavedGridAligns(swtTable.getColumnCount(), clazz, sufix);
-            widths = ConfigController.getSavedGridDims(swtTable.getColumnCount(), clazz, sufix);
-            order = ConfigController.getSavedGridColumnOrder(swtTable.getColumnCount(), clazz, sufix);
+            TableSetting setting = SettingsController.getTableSetting(nrOfColumns, clazz, tableKey);
+            if (setting == null) {
+                selectedCols = new boolean[nrOfColumns];
+                Arrays.fill(selectedCols, true);
+                order = swtTable.getColumnOrder();
+
+                aligns = new int[nrOfColumns];
+                widths = new int[nrOfColumns];
+                for (int i = 0; i < nrOfColumns; i++) {
+                    aligns[i] = swtTable.getColumns()[i].getAlignment();
+                    widths[i] = swtTable.getColumns()[i].getWidth();
+                }
+            } else {
+                selectedCols = setting.getVisibility();
+                order = setting.getOrder();
+                aligns = setting.getAligns();
+                widths = setting.getWidths();
+            }
 
             boolean atLeastOneCol = false;
             for (int i = 0; i < nrOfColumns; i++) {
@@ -95,6 +113,12 @@ public final class ExportPdf {
                 selectedCols[0] = true;
             }
 
+            exportSetting = SettingsController.getExportPdfSetting();
+            if (exportSetting == null) {
+                exportSetting = new ExportPdfSetting();
+                SettingsController.saveExportPdfSetting(exportSetting);
+            }
+
             if (FiltruAplicatie.isReportsShowingOptions()) {
                 ExportPdfSettings settings = new ExportPdfSettings();
                 settings.setFont(font);
@@ -105,7 +129,7 @@ public final class ExportPdf {
                 settings.setNrOfItems(nrOfItems);
                 settings.setSwtTable(swtTable);
                 settings.setClazz(clazz);
-                settings.setSufix(sufix);
+                settings.setSufix(tableKey);
 
                 ExportPdfOptionsView view = new ExportPdfOptionsView(swtTable.getShell(), settings);
                 view.open();
@@ -126,7 +150,7 @@ public final class ExportPdf {
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
             } else {
-                fileName = ExportPdfPrefs.getExportPath() + File.separator;
+                fileName = exportSetting.getExportDir() + File.separator;
             }
 
             if (StringUtils.isEmpty(fileName)) {
@@ -150,10 +174,10 @@ public final class ExportPdf {
 
             document = new Document(pageSize, 10, 10, 50, 50);
             writer = PdfWriter.getInstance(document, new FileOutputStream(output));
-            writer.setCompressionLevel(ExportPdfPrefs.getCompression());
+            writer.setCompressionLevel(exportSetting.getCompression());
             writer.setSpaceCharRatio(PdfWriter.NO_SPACE_CHAR_RATIO);
             writer.setPdfVersion(pdfVersion);
-            if (ExportPdfPrefs.isUsingPageNo()) {
+            if (exportSetting.isShowPageNumber()) {
                 writer.setPageEvent(new MyPageEvent());
             }
 
@@ -161,16 +185,16 @@ public final class ExportPdf {
 
             document.open();
 
-            final boolean showNrCrt = ExportPdfPrefs.isUsingNrCrt();
-            final boolean isShowingGradient = ExportPdfPrefs.isUsingGrayEffect();
+            final boolean showNrCrt = exportSetting.isShowNrCrt();
+            final boolean isShowingGradient = exportSetting.isShowGrayEffect();
 
-            if (ExportPdfPrefs.isUsingTitle()) {
+            if (exportSetting.isShowTitle()) {
                 chuckie = new Chunk(titleName, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.BLACK));
                 chuckie.setUnderline(0.7f, -2f);
                 chuckie.setCharacterSpacing(0.5f);
                 chuckie.setTextRenderMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE, 0.7f, BaseColor.LIGHT_GRAY);
                 // chuckie.setSkew(10f, 45f); - chestia asta roteste textul :-))
-                /**
+                /*
                  * chestia asta pune un background pe Chunk-ul cu numele raportului.
                  */
                 // chuckie.setBackground(BaseColor.YELLOW, 50, 5, 50, 5);
@@ -221,7 +245,7 @@ public final class ExportPdf {
             wait.setMessageLabel("Se genereaza fisierul...");
             wait.open();
 
-            if (ExportPdfPrefs.isShowingHeader()) {
+            if (exportSetting.isShowHeader()) {
                 ExportPdf.createHeader(swtTable, selectedCols, pdfTable, order, showNrCrt);
             }
 
@@ -231,12 +255,12 @@ public final class ExportPdf {
 
             ExportPdf.createFooter(pdfTable);
 
-            if (ExportPdfPrefs.isShowingHeader()) {
+            if (exportSetting.isShowHeader()) {
                 pdfTable.setHeaderRows(2);
             }
             pdfTable.setFooterRows(1);
 
-            if (ExportPdfPrefs.isShowingHeader()) {
+            if (exportSetting.isShowHeader()) {
                 ExportPdf.createHeader(swtTable, selectedCols, pdfTable, order, showNrCrt);
             }
 

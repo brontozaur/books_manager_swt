@@ -7,12 +7,14 @@ import com.papao.books.export.ExportType;
 import com.papao.books.export.Exporter;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.User;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCView;
 import com.papao.books.view.interfaces.*;
 import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.searcheable.AbstractSearchType;
 import com.papao.books.view.searcheable.BorgSearchSystem;
+import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.util.StringUtil;
 import com.papao.books.view.util.WidgetCursorUtil;
 import com.papao.books.view.util.WidgetTableUtil;
@@ -45,6 +47,8 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
     protected BorgSearchSystem searchSystem;
     private UserController controller;
     private ApplicationReportController applicationReportController;
+
+    private static final String TABLE_KEY = "usersViewer";
 
     public UsersView(final Shell parent, UserController controller,
                      ApplicationReportController applicationReportController) {
@@ -144,6 +148,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         }
         new UserView(this.tableViewer.getTable().getShell(), usr, controller, AbstractView.MODE_VIEW).open();
     }
+
     @Override
     public void refresh() {
         this.tableViewer.setInput(controller.findAll());
@@ -263,7 +268,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
     public final void search() {
         this.tableViewer.resetFilters();
         java.util.List<ViewerFilter> listFilters = new ArrayList<ViewerFilter>();
-        for (Iterator<AbstractSearchType> it = this.searchSystem.getVisibleFilters().values().iterator(); it.hasNext();) {
+        for (Iterator<AbstractSearchType> it = this.searchSystem.getVisibleFilters().values().iterator(); it.hasNext(); ) {
             ViewerFilter filter = null;
             final AbstractSearchType searchType = it.next();
             if (!searchType.isModified()) {
@@ -348,7 +353,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         this.tableViewer.getTable().setMenu(createTableMenu());
 
         initViewerCols();
-        WidgetTableUtil.customizeTable(this.tableViewer.getTable(), getClass());
+        WidgetTableUtil.customizeTable(this.tableViewer.getTable(), getClass(), TABLE_KEY);
 
         this.searchSystem.setViewer(this.tableViewer);
         this.searchSystem.indexColumns(COLS);
@@ -389,9 +394,10 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         }
 
         this.tableViewer.setContentProvider(new AdbMongoContentProvider());
-        int[] dims = new int[]{250, 250};
-        int[] aligns = new int[]{SWT.LEFT, SWT.LEFT};
-        boolean[] visible = new boolean[]{true, true};
+        TableSetting setting = SettingsController.getTableSetting(COLS.length, getClass(), TABLE_KEY);
+        int[] dims = setting.getWidths();
+        int[] aligns = setting.getAligns();
+        boolean[] visible = setting.getVisibility();
         for (int i = 0; i < UsersView.COLS.length; i++) {
             final TableViewerColumn col = new TableViewerColumn(this.tableViewer, SWT.NONE);
             col.getColumn().setText(UsersView.COLS[i]);

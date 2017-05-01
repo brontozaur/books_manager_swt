@@ -8,11 +8,12 @@ import com.lowagie.text.rtf.document.output.RtfDataCache;
 import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
-import com.papao.books.export.pdf.ExportPdfPrefs;
 import com.papao.books.model.ApplicationReport;
+import com.papao.books.model.config.ExportRtfSetting;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.CWaitDlgClassic;
-import com.papao.books.view.util.ConfigController;
+import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.TableItem;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,7 +38,7 @@ public final class ExportRtf {
     public static void exportRTF(final org.eclipse.swt.widgets.Table swtTable,
                                  final String reportName,
                                  final Class<?> clazz,
-                                 final String sufix,
+                                 final String tableKey,
                                  ApplicationReportController controller) {
         Document document;
         Table rtfTable;
@@ -57,6 +59,7 @@ public final class ExportRtf {
         Font font = ExportRtfOptionsView.RTF_FONT;
         Rectangle pageSize = PageSize.A4;
         String titleName = reportName;
+        ExportRtfSetting exportSetting;
         try {
 
             if (StringUtils.isNotEmpty(reportName)) {
@@ -73,10 +76,24 @@ public final class ExportRtf {
                 return;
             }
 
-            selectedCols = ConfigController.getSavedVisibleCols(nrOfColumns, clazz, sufix);
-            aligns = ConfigController.getSavedGridAligns(nrOfColumns, clazz, sufix);
-            widths = ConfigController.getSavedGridDims(nrOfColumns, clazz, sufix);
-            order = ConfigController.getSavedGridColumnOrder(nrOfColumns, clazz, sufix);
+            TableSetting setting = SettingsController.getTableSetting(nrOfColumns, clazz, tableKey);
+            if (setting == null) {
+                selectedCols = new boolean[nrOfColumns];
+                Arrays.fill(selectedCols, true);
+                order = swtTable.getColumnOrder();
+
+                aligns = new int[nrOfColumns];
+                widths = new int[nrOfColumns];
+                for (int i = 0; i < nrOfColumns; i++) {
+                    aligns[i] = swtTable.getColumns()[i].getAlignment();
+                    widths[i] = swtTable.getColumns()[i].getWidth();
+                }
+            } else {
+                selectedCols = setting.getVisibility();
+                order = setting.getOrder();
+                aligns = setting.getAligns();
+                widths = setting.getWidths();
+            }
 
             boolean atLeastOneCol = false;
             for (int i = 0; i < nrOfColumns; i++) {
@@ -90,6 +107,12 @@ public final class ExportRtf {
                 selectedCols[0] = true;
             }
 
+            exportSetting = SettingsController.getExportRtfSetting();
+            if (exportSetting == null) {
+                exportSetting = new ExportRtfSetting();
+                SettingsController.saveExportRtfSetting(exportSetting);
+            }
+
             if (FiltruAplicatie.isReportsShowingOptions()) {
                 ExportRtfSettings settings = new ExportRtfSettings();
                 settings.setiTextFont(font);
@@ -99,7 +122,7 @@ public final class ExportRtf {
                 settings.setNrOfItems(nrOfItems);
                 settings.setSwtTable(swtTable);
                 settings.setClazz(clazz);
-                settings.setSufix(sufix);
+                settings.setSufix(tableKey);
 
                 ExportRtfOptionsView view = new ExportRtfOptionsView(swtTable.getShell(), settings);
                 view.open();
@@ -120,7 +143,7 @@ public final class ExportRtf {
                 font = settings.getiTextFont();
                 pageSize = settings.getPageSize();
             } else {
-                fileName = ExportPdfPrefs.getExportPath() + File.separator;
+                fileName = exportSetting.getExportDir() + File.separator;
             }
 
             if (StringUtils.isEmpty(fileName)) {
@@ -159,7 +182,7 @@ public final class ExportRtf {
             }
             int[] sizes;
             int w = 0;
-            if (ExportRtfPrefs.isUsingNrCrt()) {
+            if (exportSetting.isShowNrCrt()) {
                 sizes = new int[dims.size() + 1];
                 sizes[0] = 70;
                 w = 1;
@@ -179,7 +202,7 @@ public final class ExportRtf {
              */
             // table.setExtendLastRow(true);
 
-            if (ExportRtfPrefs.isUsingTitle()) {
+            if (exportSetting.isShowTitle()) {
                 chuckie = new Chunk(titleName, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, Font.UNDERLINE | Font.BOLD, Color.BLACK));
                 p = new Paragraph(chuckie);
                 p.setAlignment(Element.ALIGN_CENTER);
@@ -195,11 +218,11 @@ public final class ExportRtf {
             wait.setMessageLabel("Se genereaza fisierul...");
             wait.open();
 
-            if (ExportRtfPrefs.isShowingHeader()) {
-                ExportRtf.createTableHeader(swtTable, rtfTable, ExportRtfPrefs.isUsingNrCrt(), selectedCols, order, font);
+            if (exportSetting.isShowHeader()) {
+                ExportRtf.createTableHeader(swtTable, rtfTable, exportSetting.isShowNrCrt(), selectedCols, order, font);
             }
 
-            if (ExportRtfPrefs.isUsingPageNo()) {
+            if (exportSetting.isShowPageNumber()) {
                 hf = new HeaderFooter(new Phrase("Pag. "), new Phrase(" - a fost generata cu Books Manager, https://github.com/brontozaur"));
             } else {
                 hf = new HeaderFooter(new Phrase("Raport generat cu Books Manager, https://github.com/brontozaur"), false);
@@ -212,11 +235,11 @@ public final class ExportRtf {
             for (int i = 0; i < items.length; i++) {
                 wait.advance(i);
 
-                if (ExportRtfPrefs.isUsingNrCrt()) {
+                if (exportSetting.isShowNrCrt()) {
                     p = new Paragraph(String.valueOf(i + 1), font);
                     p.setAlignment(Element.ALIGN_JUSTIFIED);
                     cell = new Cell(p);
-                    if (ExportRtfPrefs.isUsingGrayEffect()) {
+                    if (exportSetting.isShowGrayEffect()) {
                         if (Math.abs(i) % 2 == 1) {
                             cell.setGrayFill(0.9f);
                         }
@@ -243,7 +266,7 @@ public final class ExportRtf {
                         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                         p.setAlignment(Element.ALIGN_LEFT);
                     }
-                    if (ExportRtfPrefs.isUsingGrayEffect()) {
+                    if (exportSetting.isShowGrayEffect()) {
                         if (Math.abs(i) % 2 == 1) {
                             cell.setGrayFill(0.9f);
                         }

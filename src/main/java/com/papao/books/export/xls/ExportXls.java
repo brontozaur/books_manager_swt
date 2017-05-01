@@ -4,10 +4,12 @@ import com.papao.books.FiltruAplicatie;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.model.ApplicationReport;
+import com.papao.books.model.config.ExportXlsSetting;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.CWaitDlgClassic;
-import com.papao.books.view.util.ConfigController;
 import com.papao.books.view.util.Constants;
+import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -21,6 +23,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +48,7 @@ public final class ExportXls {
     public static void exportExcel(final Table swtTable,
                                    final String reportName,
                                    final Class<?> clazz,
-                                   final String sufix,
+                                   final String tableKey,
                                    ApplicationReportController controller) {
         Workbook workBook;
         Sheet sheet = null;
@@ -66,6 +69,7 @@ public final class ExportXls {
         boolean afisareHeader = true;
         String fileName;
         boolean isXLSX = false;
+        ExportXlsSetting exportSetting;
         try {
 
             fileExtension = isXLSX ? ExportXls.XLSX_EXTENSION : ExportXls.XLS_EXTENSION;
@@ -85,9 +89,21 @@ public final class ExportXls {
                 return;
             }
 
-            selectedCols = ConfigController.getSavedVisibleCols(nrOfColumns, clazz, sufix);
-            aligns = ConfigController.getSavedGridAligns(nrOfColumns, clazz, sufix);
-            order = ConfigController.getSavedGridColumnOrder(nrOfColumns, clazz, sufix);
+            TableSetting setting = SettingsController.getTableSetting(nrOfColumns, clazz, tableKey);
+            if (setting == null) {
+                selectedCols = new boolean[nrOfColumns];
+                Arrays.fill(selectedCols, true);
+                order = swtTable.getColumnOrder();
+
+                aligns = new int[nrOfColumns];
+                for (int i = 0; i < nrOfColumns; i++) {
+                    aligns[i] = swtTable.getColumns()[i].getAlignment();
+                }
+            } else {
+                selectedCols = setting.getVisibility();
+                order = setting.getOrder();
+                aligns = setting.getAligns();
+            }
 
             boolean atLeastOneCol = false;
             for (int i = 0; i < nrOfColumns; i++) {
@@ -101,12 +117,18 @@ public final class ExportXls {
                 selectedCols[0] = true;
             }
 
+            exportSetting = SettingsController.getExportXlsSetting();
+            if (exportSetting == null) {
+                exportSetting = new ExportXlsSetting();
+                SettingsController.saveExportXlsSetting(exportSetting);
+            }
+
             if (FiltruAplicatie.isReportsShowingOptions()) {
                 ExportXlsSettings settings = new ExportXlsSettings();
                 settings.setNumeFisier(fileName);
                 settings.setSwtTable(swtTable);
                 settings.setClazz(clazz);
-                settings.setSufix(sufix);
+                settings.setSufix(tableKey);
                 settings.setTitlu(titleName);
                 settings.setSheetName(numeSheet);
                 settings.setNrOfItems(nrOfItems);
@@ -119,23 +141,23 @@ public final class ExportXls {
                 }
 
                 settings = view.getSettings().cloneObject();
-                fileExtension = ExportXlsPrefs.getExtension();
+                fileExtension = exportSetting.getExtension();
                 fileName = settings.getNumeFisier();
                 numeSheet = settings.getSheetName();
-                afisareHeader = ExportXlsPrefs.isShowingHeader();
+                afisareHeader = exportSetting.isShowHeader();
                 titleName = settings.getTitlu();
                 aligns = settings.getAligns();
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
 
             } else {
-                fileName = ExportXlsPrefs.getExportPath() + File.separator;
+                fileName = exportSetting.getExportDir() + File.separator;
             }
 
             final int NR_OF_SHEETS = nrOfItems / ExportXls.MAX_ROWS + 1;
 
             if (!fileName.endsWith(ExportXls.XLS_EXTENSION) && !fileName.endsWith(ExportXls.XLSX_EXTENSION)) {
-                fileName += ExportXlsPrefs.getExtension();
+                fileName += exportSetting.getExtension();
             }
 
             output = new File(fileName);

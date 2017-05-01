@@ -1,6 +1,9 @@
 package com.papao.books.view.util;
 
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
+import com.papao.books.view.view.ColumnsChooserView;
+import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeAdapter;
@@ -389,7 +392,7 @@ public final class WidgetTreeUtil {
 
 	private static void addTreeColumnsResizeObserver(	final Tree tree,
 														final Class<?> clazz,
-														final String sufix2) {
+														final String tableKey) {
 		if ((tree == null) || tree.isDisposed() || (tree.getColumnCount() == 0) || (clazz == null)) {
 			return;
 		}
@@ -398,12 +401,13 @@ public final class WidgetTreeUtil {
 			col.addListener(SWT.Resize, new Listener() {
 				@Override
 				public final void handleEvent(final Event e) {
-//					int[] dims = FileFilterUtil.getSavedGridDims(cols.length, clazz, sufix2);
-//					if (col.getWidth() > 0) {
-//						dims[tree.indexOf(col)] = col.getWidth();
-//						FilterUtil.saveDims(dims, clazz, sufix2);
-//					}
-//					col.setResizable(col.getWidth() > 0);
+                    TableSetting tableSetting = SettingsController.getTableSetting(cols.length, clazz, tableKey);
+					int[] dims = tableSetting.getWidths();
+					if (col.getWidth() > 0) {
+						dims[tree.indexOf(col)] = col.getWidth();
+						SettingsController.saveTableConfig(tableSetting);
+					}
+					col.setResizable(col.getWidth() > 0);
 				}
 			});
 		}
@@ -412,7 +416,7 @@ public final class WidgetTreeUtil {
 	private static Menu createTreeHeaderMenu(final Tree tree,
                                              final Class<?> clazz,
                                              final Menu tableMenu,
-                                             final String sufix2) {
+                                             final String tableKey) {
 		if ((tree == null) || tree.isDisposed() || (clazz == null)) {
 			return null;
 		}
@@ -420,51 +424,58 @@ public final class WidgetTreeUtil {
 		headerMenu.setData("header");
 		try {
 			String[] colNames = WidgetTreeUtil.getColumnsNames(tree);
-//			headerMenu.addListener(SWT.Show, new Listener() {
-//				@Override
-//				public final void handleEvent(final Event e) {
-//					final boolean[] visibleCols = FilterUtil.getSavedVisibleCols(tree.getColumnCount(),
-//							clazz,
-//							sufix2);
-//					for (int i = 2; i < headerMenu.getItemCount(); i++) {
-//						headerMenu.getItem(i).setSelection(visibleCols[tree.getColumnOrder()[i - 2]]);
-//					}
-//				}
-//			});
+			headerMenu.addListener(SWT.Show, new Listener() {
+				@Override
+				public final void handleEvent(final Event e) {
+				    TableSetting tableSetting = SettingsController.getTableSetting(tree.getColumnCount(),
+                            clazz,
+                            tableKey);
+					final boolean[] visibleCols = tableSetting.getVisibility();
+					for (int i = 2; i < headerMenu.getItemCount(); i++) {
+						headerMenu.getItem(i).setSelection(visibleCols[tree.getColumnOrder()[i - 2]]);
+					}
+				}
+			});
 
 			final MenuItem itemAdvanced = new MenuItem(headerMenu, SWT.PUSH);
 			itemAdvanced.setText("Selectie avansata");
+            itemAdvanced.addListener(SWT.Selection, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    new ColumnsChooserView(tree, clazz, tableKey).open();
+                }
+            });
 
 			new MenuItem(headerMenu, SWT.SEPARATOR);
 
-//			for (int i = 0; i < colNames.length; i++) {
-//				final MenuItem item = new MenuItem(headerMenu, SWT.CHECK);
-//				item.setText(colNames[i]);
-//				item.addListener(SWT.Selection, new Listener() {
-//					@Override
-//					public final void handleEvent(final Event e) {
-//						final int[] savedDims = FilterUtil.getSavedGridDims(tree.getColumnCount(),
-//								clazz,
-//								sufix2);
-//						boolean[] visible = FilterUtil.getSavedVisibleCols(tree.getColumnCount(),
-//								clazz,
-//								sufix2);
-//						final int itemIndex = headerMenu.indexOf(item) - 2;
-//						if (item.getSelection()) {
-//							tree.getColumn(tree.getColumnOrder()[itemIndex]).setWidth(savedDims[tree.getColumnOrder()[itemIndex]]);
-//							visible[tree.getColumnOrder()[itemIndex]] = true;
-//							tree.getColumn(tree.getColumnOrder()[itemIndex]).setResizable(true);
-//							tree.getColumn(tree.getColumnOrder()[itemIndex]).setMoveable(true);
-//						} else {
-//							tree.getColumn(tree.getColumnOrder()[itemIndex]).setWidth(0);
-//							visible[tree.getColumnOrder()[itemIndex]] = false;
-//							tree.getColumn(tree.getColumnOrder()[itemIndex]).setResizable(false);
-//							tree.getColumn(tree.getColumnOrder()[itemIndex]).setMoveable(false);
-//						}
-//						FilterUtil.saveVisibleCols(visible, clazz, sufix2);
-//					}
-//				});
-//			}
+			for (int i = 0; i < colNames.length; i++) {
+				final MenuItem item = new MenuItem(headerMenu, SWT.CHECK);
+				item.setText(colNames[i]);
+				item.addListener(SWT.Selection, new Listener() {
+					@Override
+					public final void handleEvent(final Event e) {
+                        TableSetting tableSetting = SettingsController.getTableSetting(tree.getColumnCount(),
+                                clazz,
+                                tableKey);
+						final int[] savedDims = tableSetting.getWidths();
+						boolean[] visible = tableSetting.getVisibility();
+						final int itemIndex = headerMenu.indexOf(item) - 2;
+						if (item.getSelection()) {
+							tree.getColumn(tree.getColumnOrder()[itemIndex]).setWidth(savedDims[tree.getColumnOrder()[itemIndex]]);
+							visible[tree.getColumnOrder()[itemIndex]] = true;
+							tree.getColumn(tree.getColumnOrder()[itemIndex]).setResizable(true);
+							tree.getColumn(tree.getColumnOrder()[itemIndex]).setMoveable(true);
+						} else {
+							tree.getColumn(tree.getColumnOrder()[itemIndex]).setWidth(0);
+							visible[tree.getColumnOrder()[itemIndex]] = false;
+							tree.getColumn(tree.getColumnOrder()[itemIndex]).setResizable(false);
+							tree.getColumn(tree.getColumnOrder()[itemIndex]).setMoveable(false);
+						}
+						tableSetting.setVisibility(visible);
+						SettingsController.saveTableConfig(tableSetting);
+					}
+				});
+			}
 
 			tree.addListener(SWT.Dispose, new Listener() {
 				@Override
@@ -477,26 +488,29 @@ public final class WidgetTreeUtil {
 			});
 		}
 		catch (Exception exc) {
-//			SQLLibrary.processErr(exc, logger);
+            logger.error(exc.getMessage(), exc);
+            SWTeXtension.displayMessageE(exc.getMessage(), exc);
 		}
 		return headerMenu;
 	}
 
 	private static void addTreeColumnsOrderListener(final Tree tree,
 													final Class<?> clazz,
-													final String sufix2) {
+													final String tableKey) {
 		if ((tree == null) || tree.isDisposed() || (tree.getColumnCount() == 0) || (clazz == null)) {
 			return;
 		}
 		final TreeColumn[] cols = tree.getColumns();
-//		for (TreeColumn col : cols) {
-//			col.addListener(SWT.Move, new Listener() {
-//				@Override
-//				public final void handleEvent(final Event e) {
-//					FilterUtil.saveOrder(tree.getColumnOrder(), clazz, sufix2);
-//				}
-//			});
-//		}
+		for (TreeColumn col : cols) {
+			col.addListener(SWT.Move, new Listener() {
+				@Override
+				public final void handleEvent(final Event e) {
+				    TableSetting tableSetting = SettingsController.getTableSetting(cols.length, clazz, tableKey);
+				    tableSetting.setOrder(tree.getColumnOrder());
+				    SettingsController.saveTableConfig(tableSetting);
+				}
+			});
+		}
 	}
 
 	/**
@@ -531,7 +545,7 @@ public final class WidgetTreeUtil {
 	 *            quietely
 	 * @param clazz
 	 *            some class
-	 * @param sufix2
+	 * @param tableKey
 	 *            a string delimiter to create unique que on the specified class. May be ignored if
 	 *            class has a single grid
 	 * @param flags
@@ -539,13 +553,13 @@ public final class WidgetTreeUtil {
 	 */
 	public static void customizeTree(	final Tree tree,
 										final Class<?> clazz,
-										final String sufix2,
+										final String tableKey,
 										final int flags) {
 		if ((tree == null) || tree.isDisposed() || (clazz == null)) {
 			return;
 		}
 		if ((flags & WidgetTreeUtil.ADD_RESIZE) == WidgetTreeUtil.ADD_RESIZE) {
-			WidgetTreeUtil.addTreeColumnsResizeObserver(tree, clazz, sufix2);
+			WidgetTreeUtil.addTreeColumnsResizeObserver(tree, clazz, tableKey);
 		}
 		if ((flags & WidgetTreeUtil.ADD_HEADER) == WidgetTreeUtil.ADD_HEADER) {
 			tree.addListener(SWT.MenuDetect, new Listener() {
@@ -569,7 +583,7 @@ public final class WidgetTreeUtil {
 						headerMenu = WidgetTreeUtil.createTreeHeaderMenu(tree,
 								clazz,
 								tree.getMenu(),
-								sufix2);
+								tableKey);
 						tree.setData("header", headerMenu);
 					}
 					if (header) {
@@ -594,7 +608,9 @@ public final class WidgetTreeUtil {
 			});
 		}
 		if ((flags & WidgetTreeUtil.ADD_ORDER) == WidgetTreeUtil.ADD_ORDER) {
-			WidgetTreeUtil.addTreeColumnsOrderListener(tree, clazz, sufix2);
+			WidgetTreeUtil.addTreeColumnsOrderListener(tree, clazz, tableKey);
 		}
+        TableSetting setting = SettingsController.getTableSetting(tree.getColumnCount(), clazz, tableKey);
+        tree.setColumnOrder(setting.getOrder());
 	}
 }

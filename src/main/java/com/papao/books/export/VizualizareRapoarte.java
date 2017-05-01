@@ -2,6 +2,7 @@ package com.papao.books.export;
 
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.model.ApplicationReport;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCViewAdapter;
 import com.papao.books.view.providers.AdbMongoContentProvider;
@@ -44,6 +45,8 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
     private ToolItem itemShowRaport;
     private ToolItem itemLaunchRaport;
     private ToolItem itemRefresh;
+    private static final String TREE_KEY = "leftTree";
+    private static final String TABLE_KEY = "reportsViewer";
     private final static String[] COLS = new String[]{"Nume raport", "Tip raport", "Cale", "Data server"};
 
     private final static int IDX_NUME = 0;
@@ -101,15 +104,11 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this.leftViewer.getTree());
         this.leftViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 
-        int[] dims = ConfigController.getSavedGridDims(1, getClass(), "left");
-        if (dims[0] == 100) {
-            dims[0] = 160;
-        }
-
         final TreeViewerColumn treeCol = new TreeViewerColumn(this.leftViewer, SWT.NONE);
+        TableSetting setting = SettingsController.getTableSetting(COLS.length, getClass(), TREE_KEY);
         treeCol.getColumn().setText("Tip fisier");
-        treeCol.getColumn().setWidth(dims[0]);
-        treeCol.getColumn().setAlignment(SWT.CENTER);
+        treeCol.getColumn().setWidth(setting.getWidths()[0]);
+        treeCol.getColumn().setAlignment(setting.getAligns()[0]);
         treeCol.getColumn().setResizable(true);
         treeCol.getColumn().setMoveable(false);
         treeCol.setLabelProvider(new UnifiedStyledLabelProvider());
@@ -133,7 +132,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         this.leftViewer.getTree().setSortColumn(null);
 
         this.leftViewer.getTree().setCursor(WidgetCursorUtil.getCursor(SWT.CURSOR_HAND));
-        WidgetTreeUtil.customizeTree(this.leftViewer.getTree(), getClass(), "left");
+        WidgetTreeUtil.customizeTree(this.leftViewer.getTree(), getClass(), TREE_KEY);
 
         this.leftViewer.getTree().addListener(SWT.Selection, this);
         // right component
@@ -184,9 +183,10 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         });
 
         this.rightViewer.setContentProvider(new AdbMongoContentProvider());
-        dims = ConfigController.getSavedGridDims(VizualizareRapoarte.COLS.length, getClass(), "right");
-        int[] aligns = ConfigController.getSavedGridAligns(VizualizareRapoarte.COLS.length, getClass(), "right");
-        boolean[] visible = ConfigController.getSavedVisibleCols(VizualizareRapoarte.COLS.length, getClass(), "right");
+        TableSetting tableSetting = SettingsController.getTableSetting(COLS.length, getClass(), TABLE_KEY);
+        int[] dims = tableSetting.getWidths();
+        int[] aligns = tableSetting.getAligns();
+        boolean[] visible = tableSetting.getVisibility();
 
         for (int i = 0; i < VizualizareRapoarte.COLS.length; i++) {
             final TableViewerColumn tblCol = new TableViewerColumn(this.rightViewer, SWT.NONE);
@@ -283,7 +283,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         }
 
         this.rightViewer.getTable().setSortColumn(null);
-        WidgetTableUtil.customizeTable(this.rightViewer.getTable(), getClass(), "right");
+        WidgetTableUtil.customizeTable(this.rightViewer.getTable(), getClass(), TABLE_KEY);
 
         sash.SASH_WIDTH = 4;
         sash.setWeights(new int[]{2, 8});

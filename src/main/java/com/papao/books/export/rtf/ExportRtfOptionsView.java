@@ -4,6 +4,7 @@ import com.lowagie.text.FontFactory;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
 import com.papao.books.export.AbstractExportView;
+import com.papao.books.model.config.ExportRtfSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.DirectorySelectorComposite;
@@ -11,10 +12,7 @@ import com.papao.books.view.custom.FontSelectorComposite;
 import com.papao.books.view.interfaces.AbstractIConfigAdapter;
 import com.papao.books.view.interfaces.ConfigurationException;
 import com.papao.books.view.interfaces.IConfig;
-import com.papao.books.view.util.ColorUtil;
-import com.papao.books.view.util.FontUtil;
-import com.papao.books.view.util.WidgetCompositeUtil;
-import com.papao.books.view.util.WidgetCursorUtil;
+import com.papao.books.view.util.*;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.ColumnsChooserComposite;
 import com.papao.books.view.view.SWTeXtension;
@@ -55,6 +53,7 @@ public class ExportRtfOptionsView extends AbstractExportView {
     public final static String RTF_FONT_ALIAS = "trilulilucrododiluRTF";
 
     public final static int MAX_ROWS_4_WARNING = 3500;
+    private ExportRtfSetting exportRtfSetting;
 
     static {
         ExportRtfOptionsView.getPageSizes();
@@ -75,6 +74,11 @@ public class ExportRtfOptionsView extends AbstractExportView {
 
         this.leftTable.select(0);
         this.leftTable.notifyListeners(SWT.Selection, new Event());
+
+        exportRtfSetting = SettingsController.getExportRtfSetting();
+        if (exportRtfSetting == null) {
+            exportRtfSetting = new ExportRtfSetting();
+        }
     }
 
     @Override
@@ -95,7 +99,7 @@ public class ExportRtfOptionsView extends AbstractExportView {
 
     @Override
     public void reset() {
-        ExportRtfPrefs.reset();
+        exportRtfSetting.reset();
         for (IConfig cfg : this.mapComponents.values()) {
             cfg.populateFields();
         }
@@ -188,7 +192,7 @@ public class ExportRtfOptionsView extends AbstractExportView {
             new Label(groupOptions, SWT.NONE).setText("Orientare");
             this.comboOrientation = new Combo(groupOptions, SWT.BORDER | SWT.READ_ONLY);
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).applyTo(this.comboOrientation);
-            this.comboOrientation.setItems(ExportRtfPrefs.ORIENTATIONS);
+            this.comboOrientation.setItems(ExportRtfSetting.ORIENTATIONS);
             this.comboOrientation.addListener(SWT.FocusIn, this);
 
             new Label(groupOptions, SWT.NONE).setText("Dimensiune");
@@ -262,22 +266,22 @@ public class ExportRtfOptionsView extends AbstractExportView {
         @Override
         public final void populateFields() {
             this.textFileName.setText(ExportRtfOptionsView.this.settings.getNumeFisier());
-            this.buttonShowTitle.setSelection(ExportRtfPrefs.isUsingTitle());
+            this.buttonShowTitle.setSelection(exportRtfSetting.isShowTitle());
             this.textTitleName.setText(ExportRtfOptionsView.this.settings.getTitlu());
-            ExportRtfOptionsView.this.buttonExportPathAuto.setSelection(ExportRtfPrefs.isUsingAutoExportPath());
+            ExportRtfOptionsView.this.buttonExportPathAuto.setSelection(exportRtfSetting.isAutomaticExportPath());
             if (ExportRtfOptionsView.this.buttonExportPathAuto.getSelection()) {
                 this.dsc.setDirPath(EncodeLive.getReportsDir());
             } else {
-                this.dsc.setDirPath(ExportRtfPrefs.getExportPath());
+                this.dsc.setDirPath(exportRtfSetting.getExportDir());
             }
             this.dsc.getItemSelectie().setEnabled(!ExportRtfOptionsView.this.buttonExportPathAuto.getSelection());
-            if (this.comboOrientation.indexOf(ExportRtfPrefs.getPageOrientation()) != -1) {
-                this.comboOrientation.select(this.comboOrientation.indexOf(ExportRtfPrefs.getPageOrientation()));
+            if (this.comboOrientation.indexOf(exportRtfSetting.getPageOrientation()) != -1) {
+                this.comboOrientation.select(this.comboOrientation.indexOf(exportRtfSetting.getPageOrientation()));
             } else {
-                this.comboOrientation.select(this.comboOrientation.indexOf(ExportRtfPrefs.PORTRAIT));
+                this.comboOrientation.select(this.comboOrientation.indexOf(ExportRtfSetting.PORTRAIT));
             }
-            if (this.comboPageSize.indexOf(ExportRtfPrefs.getPageSize()) != -1) {
-                this.comboPageSize.select(this.comboPageSize.indexOf(ExportRtfPrefs.getPageSize()));
+            if (this.comboPageSize.indexOf(exportRtfSetting.getPageSize()) != -1) {
+                this.comboPageSize.select(this.comboPageSize.indexOf(exportRtfSetting.getPageSize()));
             } else {
                 this.comboPageSize.select(this.comboPageSize.indexOf("A4"));
             }
@@ -287,18 +291,18 @@ public class ExportRtfOptionsView extends AbstractExportView {
             try {
                 this.fs.setNewFont(new Font(
                         Display.getDefault(),
-                        ExportRtfPrefs.getFontNameUser(),
-                        ExportRtfPrefs.getFontSize(),
-                        ExportRtfPrefs.getFontStyle()));
+                        exportRtfSetting.getFontNameUser(),
+                        exportRtfSetting.getFontSize(),
+                        exportRtfSetting.getFontStyle()));
             } catch (Exception exc) {
                 logger.error(exc, exc);
                 this.fs.setNewFont(new Font(Display.getDefault(), "Times New Roman", 10, SWT.NONE));
             }
             this.textTitleName.setEnabled(this.buttonShowTitle.getSelection());
-            this.buttonShowNrCrt.setSelection(ExportRtfPrefs.isUsingNrCrt());
-            this.buttonShowHeader.setSelection(ExportRtfPrefs.isShowingHeader());
-            this.buttonShowGradient.setSelection(ExportRtfPrefs.isUsingGrayEffect());
-            this.buttonShowPageNumbers.setSelection(ExportRtfPrefs.isUsingPageNo());
+            this.buttonShowNrCrt.setSelection(exportRtfSetting.isShowNrCrt());
+            this.buttonShowHeader.setSelection(exportRtfSetting.isShowHeader());
+            this.buttonShowGradient.setSelection(exportRtfSetting.isShowGrayEffect());
+            this.buttonShowPageNumbers.setSelection(exportRtfSetting.isShowPageNumber());
         }
 
         @Override
@@ -356,7 +360,7 @@ public class ExportRtfOptionsView extends AbstractExportView {
                     if (ExportRtfOptionsView.this.buttonExportPathAuto.getSelection()) {
                         this.dsc.setDirPath(EncodeLive.getReportsDir().concat(File.separator));
                     } else {
-                        this.dsc.setDirPath(ExportRtfPrefs.getExportPath());
+                        this.dsc.setDirPath(exportRtfSetting.getExportDir());
                     }
                     this.dsc.getItemSelectie().setEnabled(!ExportRtfOptionsView.this.buttonExportPathAuto.getSelection());
                 }
@@ -369,36 +373,31 @@ public class ExportRtfOptionsView extends AbstractExportView {
             if (StringUtils.isEmpty(numeFisier)) {
                 numeFisier = "RaportRTF_" + System.currentTimeMillis();
             }
-            if (!ExportRtfOptionsView.this.buttonExportPathAuto.getSelection()) {
-                ExportRtfPrefs.put(ExportRtfPrefs.RTF_EXPORT_PATH, this.dsc.getSelectedDirPath());
-            }
-            ExportRtfPrefs.putBoolean(ExportRtfPrefs.RTF_EXPORT_PATH_AUTO,
-                    ExportRtfOptionsView.this.buttonExportPathAuto.getSelection());
+
+            exportRtfSetting.setAutomaticExportPath(buttonExportPathAuto.getSelection());
+            exportRtfSetting.setShowTitle(buttonShowTitle.getSelection());
+            exportRtfSetting.setShowNrCrt(buttonShowNrCrt.getSelection());
+            exportRtfSetting.setShowHeader(buttonShowHeader.getSelection());
+            exportRtfSetting.setShowGrayEffect(buttonShowGradient.getSelection());
+            exportRtfSetting.setShowPageNumber(buttonShowPageNumbers.getSelection());
+            exportRtfSetting.setPageSize(comboPageSize.getText());
+            exportRtfSetting.setPageOrientation(comboOrientation.getText());
+
             ExportRtfOptionsView.this.settings.setNumeFisier(this.dsc.getSelectedDirPath().concat(numeFisier));
             ExportRtfOptionsView.this.settings.setTitlu(this.textTitleName.getText());
-            ExportRtfPrefs.putBoolean(ExportRtfPrefs.RTF_IS_USING_TITLE,
-                    this.buttonShowTitle.getSelection());
             ExportRtfOptionsView.this.settings.setPageSize(ExportRtfOptionsView.sizes.get(this.comboPageSize.getText()));
             if (ExportRtfOptionsView.this.settings.getPageSize() == null) {
                 ExportRtfOptionsView.this.settings.setPageSize(PageSize.A4);
             }
-            ExportRtfPrefs.put(ExportRtfPrefs.RTF_PAGE_SIZE, this.comboPageSize.getText());
-            ExportRtfPrefs.putBoolean(ExportRtfPrefs.RTF_IS_USING_NR_CRT,
-                    this.buttonShowNrCrt.getSelection());
-            ExportRtfPrefs.putBoolean(ExportRtfPrefs.RTF_IS_SHOWING_HEADER,
-                    this.buttonShowHeader.getSelection());
-            ExportRtfPrefs.putBoolean(ExportRtfPrefs.RTF_IS_USING_GRAY_EFFECT,
-                    this.buttonShowGradient.getSelection());
-            ExportRtfPrefs.putBoolean(ExportRtfPrefs.RTF_IS_USING_PAGE_NO,
-                    this.buttonShowPageNumbers.getSelection());
-            ExportRtfPrefs.put(ExportRtfPrefs.RTF_PAGE_ORIENTATION, this.comboOrientation.getText());
-            if (this.comboOrientation.getText().equals(ExportRtfPrefs.LANDSCAPE)) {
+            if (this.comboOrientation.getText().equals(ExportRtfSetting.LANDSCAPE)) {
                 ExportRtfOptionsView.this.settings.setPageSize(ExportRtfOptionsView.this.settings.getPageSize().rotate());
             }
 
             if (!EncodeLive.IS_MAC) {
                 translateFont();
             }
+
+            SettingsController.saveExportRtfSetting(exportRtfSetting);
         }
 
         private void translateFont() {
@@ -447,13 +446,10 @@ public class ExportRtfOptionsView extends AbstractExportView {
                 this.font = FontFactory.getFont(ExportRtfOptionsView.RTF_FONT_ALIAS,
                         swtFont.getFontData()[0].getHeight(),
                         style);
-                ExportRtfPrefs.put(ExportRtfPrefs.RTF_FONT_NAME, fontName);
-                ExportRtfPrefs.put(ExportRtfPrefs.RTF_FONT_NAME_USER,
-                        swtFont.getFontData()[0].getName());
-                ExportRtfPrefs.putInt(ExportRtfPrefs.RTF_FONT_SIZE,
-                        swtFont.getFontData()[0].getHeight());
-                ExportRtfPrefs.putInt(ExportRtfPrefs.RTF_FONT_STYLE,
-                        swtFont.getFontData()[0].getStyle());
+                exportRtfSetting.setFontName(fontName);
+                exportRtfSetting.setFontNameUser(swtFont.getFontData()[0].getName());
+                exportRtfSetting.setFontSize(swtFont.getFontData()[0].getHeight());
+                exportRtfSetting.setFontStyle(swtFont.getFontData()[0].getStyle());
             } catch (Exception exc) {
                 logger.warn(exc);
                 SWTeXtension.displayMessageEGeneric(exc);

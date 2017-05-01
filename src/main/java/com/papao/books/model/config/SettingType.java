@@ -4,5 +4,10 @@ public enum SettingType {
     GENERAL,
     WINDOW,
     TABLE,
-    NOTIFICATION
+    NOTIFICATION,
+    EXPORT_PDF,
+    EXPORT_XLS,
+    EXPORT_TXT,
+    EXPORT_HTML,
+    EXPORT_RTF
 }

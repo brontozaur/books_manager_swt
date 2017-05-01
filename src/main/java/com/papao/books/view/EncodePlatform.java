@@ -12,6 +12,7 @@ import com.papao.books.imports.AutoriImportView;
 import com.papao.books.imports.BookImportView;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.auth.LoggerMyWay;
 import com.papao.books.view.carte.AutoriView;
@@ -60,7 +61,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 
 @org.springframework.stereotype.Component
 public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer {
@@ -112,6 +116,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ImageGalleryComposite galleryComposite;
     private ProgressBarComposite progressBarComposite;
     private ToolItem itemImport;
+    private static final String TREE_KEY = "leftTreeViewer";
+    private static final String TABLE_KEY = "booksViewer";
 
     @Autowired
     public EncodePlatform(UserController userController,
@@ -305,7 +311,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.tableViewer.getTable().setMenu(createTableMenu());
 
         initViewerCols();
-        WidgetTableUtil.customizeTable(this.tableViewer.getTable(), getClass());
+        WidgetTableUtil.customizeTable(this.tableViewer.getTable(), getClass(), TABLE_KEY);
 
         this.searchSystem.setViewer(this.tableViewer);
         this.searchSystem.indexColumns(COLS);
@@ -462,10 +468,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(leftTreeViewer.getTree());
         leftTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 
+        TableSetting setting = SettingsController.getTableSetting(1, getClass(), TREE_KEY);
+        int[] dims = setting.getWidths();
+        int[] aligns = setting.getAligns();
+
         final TreeViewerColumn treeCol = new TreeViewerColumn(leftTreeViewer, SWT.NONE);
         treeCol.getColumn().setText("Grupare elemente");
-        treeCol.getColumn().setWidth(250);
-        treeCol.getColumn().setAlignment(SWT.CENTER);
+        treeCol.getColumn().setWidth(dims[0]);
+        treeCol.getColumn().setAlignment(aligns[0]);
         treeCol.getColumn().setResizable(true);
         treeCol.getColumn().setMoveable(false);
         this.leftTreeColumnProvider = new UnifiedStyledLabelProvider();
@@ -493,8 +503,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         leftTreeViewer.getTree().setCursor(WidgetCursorUtil.getCursor(SWT.CURSOR_HAND));
         leftTreeViewer.getTree().setMenu(createLeftTreeMenu());
-        //TODO wtf is this? :)
-        WidgetTreeUtil.customizeTree(leftTreeViewer.getTree(), getClass(), "aaaaadsadfsfdf'gljdnvlkj sjklb ds;b f;dakn v;adkj v;dkaj vds;kj vds;k");
+        WidgetTreeUtil.customizeTree(leftTreeViewer.getTree(), getClass(), TREE_KEY);
 
         leftTreeViewer.getTree().addListener(SWT.Selection, new Listener() {
             @Override
@@ -949,12 +958,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
 
         this.tableViewer.setContentProvider(new AdbMongoContentProvider());
-        int[] dims = new int[COLS.length];
-        Arrays.fill(dims, 250);
-        int[] aligns = new int[COLS.length];
-        Arrays.fill(aligns, SWT.LEFT);
-        boolean[] visible = new boolean[COLS.length];
-        Arrays.fill(visible, true);
+        TableSetting setting = SettingsController.getTableSetting(COLS.length, getClass(), TABLE_KEY);
+        int[] dims = setting.getWidths();
+        int[] aligns = setting.getAligns();
+        boolean[] visible = setting.getVisibility();
         for (int i = 0; i < COLS.length; i++) {
             final TableViewerColumn col = new TableViewerColumn(this.tableViewer, SWT.NONE);
             col.getColumn().setText(COLS[i]);

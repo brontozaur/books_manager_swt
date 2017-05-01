@@ -88,7 +88,7 @@ public abstract class AbstractBoneUnifiedLV2 extends AbstractBoneUnifiedLV1 {
 		});
 
 		menuItem = new MenuItem(menu, SWT.NONE);
-		menuItem.setText("Aliniere la stanga");
+		menuItem.setText("Aliniere la stânga");
 		menuItem.addListener(SWT.Selection, new Listener() {
 			@Override
 			public final void handleEvent(final Event e) {

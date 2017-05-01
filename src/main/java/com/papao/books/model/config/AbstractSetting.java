@@ -34,4 +34,8 @@ public abstract class AbstractSetting implements ISetting {
     public SettingType getType() {
         return type;
     }
+
+    public ObjectId getId() {
+        return id;
+    }
 }

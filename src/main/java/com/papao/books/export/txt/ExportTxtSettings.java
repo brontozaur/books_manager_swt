@@ -11,7 +11,7 @@ public final class ExportTxtSettings implements Cloneable {
     private String numeFisier;
     private Table swtTable;
     private Class<?> clazz;
-    private String sufix;
+    private String tableKey;
     private String titlu;
     private int nrOfItems;
     private boolean[] selection;
@@ -58,12 +58,12 @@ public final class ExportTxtSettings implements Cloneable {
         this.clazz = clazz;
     }
 
-    public String getSufix() {
-        return this.sufix;
+    public String getTableKey() {
+        return this.tableKey;
     }
 
-    public void setSufix(final String sufix) {
-        this.sufix = sufix;
+    public void setTableKey(final String tableKey) {
+        this.tableKey = tableKey;
     }
 
     public String getTitlu() {

@@ -1,5 +1,6 @@
 package com.papao.books.model.config;
 
+import com.papao.books.view.auth.EncodeLive;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 
@@ -7,6 +8,10 @@ public class GeneralSetting extends AbstractSetting {
 
     private String key;
     private Object value;
+
+    public GeneralSetting() {
+        this(EncodeLive.getIdUser(), EncodeLive.getCurrentUserName());
+    }
 
     public GeneralSetting(ObjectId idUser, String numeUser) {
         super(idUser, numeUser, SettingType.GENERAL);
