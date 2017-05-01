@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.*;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.TreeMap;
@@ -299,9 +300,7 @@ public class ExportPdfOptionsView extends AbstractExportView {
             }
             ExportPdfOptionsView.this.settings.setPdfVersion(pdfVersion);
 
-            if (!EncodeLive.IS_MAC) {
-                translateFont();
-            }
+            translateFont();
             SettingsController.saveExportPdfSetting(exportPdfSetting);
         }
 
@@ -417,6 +416,51 @@ public class ExportPdfOptionsView extends AbstractExportView {
             }
         }
 
+        private boolean tryToRegisterFont(Font swtFont, String fontDirectory) throws IOException {
+            File directory = new File(fontDirectory);
+            File[] ff = directory.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(final File pathname) {
+                    String fileName = pathname.getName().toLowerCase();
+                    return fileName.endsWith(".ttf") || fileName.endsWith(".otf") || fileName.contains(".ttc,");
+                }
+            });
+            if (ff == null) {
+                ff = new File[0];
+            }
+            String fontName = "";
+            for (File temp : ff) {
+                if (temp.getName().toLowerCase().trim().startsWith(swtFont.getFontData()[0].nsName.replace("-", " ").toLowerCase())) {
+                    fontName = temp.getName();
+                    break;
+                }
+            }
+            if (StringUtils.isEmpty(fontName)) {
+                return false;
+            }
+
+            FontFactory.register(directory.getCanonicalPath() + File.separator + fontName,
+                    ExportPdf.PDF_FONT_ALIAS);
+
+            int style = com.itextpdf.text.Font.UNDEFINED;
+            final boolean isBold = (swtFont.getFontData()[0].getStyle() & SWT.BOLD) == SWT.BOLD;
+            final boolean isItalic = (swtFont.getFontData()[0].getStyle() & SWT.ITALIC) == SWT.ITALIC;
+
+            if (isBold && isItalic) {
+                style = com.itextpdf.text.Font.BOLDITALIC;
+            } else if (isBold) {
+                style = com.itextpdf.text.Font.BOLD;
+            } else if (isItalic) {
+                style = com.itextpdf.text.Font.ITALIC;
+            }
+
+            this.font = FontFactory.getFont(ExportPdf.PDF_FONT_ALIAS,
+                    swtFont.getFontData()[0].getHeight() - 2,
+                    style);
+            exportPdfSetting.setFontName(fontName);
+            return true;
+        }
+
         private void translateFont() {
             this.font = ExportPdf.PDF_FONT;
             if ((this.fs.getFont() == null) || this.fs.getFont().isDisposed()) {
@@ -424,55 +468,31 @@ public class ExportPdfOptionsView extends AbstractExportView {
             }
             Font swtFont = this.fs.getSelectedFont();
             try {
-                String osDir = System.getProperty("user.home");
-                if (StringUtils.isEmpty(osDir)) {
-                    return;
-                }
-                File f = new File(osDir.substring(0, 1) + ":\\windows\\fonts");
-                File[] ff = f.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(final File pathname) {
-                        if ((pathname == null)
-                                || (!pathname.getName().endsWith(".ttf") && !pathname.getName().endsWith(".TTF"))) {
-                            return false;
-                        }
-                        return true;
+                boolean fontDetected = false;
+                if (EncodeLive.IS_MAC) {
+                    fontDetected = tryToRegisterFont(swtFont, "~/Library/Fonts/");
+                    if (!fontDetected) {
+                        fontDetected = tryToRegisterFont(swtFont, "/Library/Fonts/");
                     }
-                });
-                if (ff == null) {
-                    ff = new File[0];
-                }
-                String fontName = "";
-                for (File temp : ff) {
-                    if (temp.getName().toUpperCase(EncodeLive.ROMANIAN_LOCALE).trim().startsWith(swtFont.getFontData()[0].getName().toUpperCase(EncodeLive.ROMANIAN_LOCALE).substring(0,
-                            3))) {
-                        fontName = temp.getName();
-                        break;
+                    if (!fontDetected) {
+                        fontDetected = tryToRegisterFont(swtFont, "/Network/Library/Fonts/");
                     }
+                    if (!fontDetected) {
+                        fontDetected = tryToRegisterFont(swtFont, "/System/Library/Fonts/");
+                    }
+                    if (!fontDetected) {
+                        fontDetected = tryToRegisterFont(swtFont, "/System Folder/Fonts/");
+                    }
+                } else {
+                    String osDir = System.getProperty("user.home");
+                    fontDetected = tryToRegisterFont(swtFont, osDir.substring(0, 1) + ":\\windows\\fonts");
                 }
-                if (StringUtils.isEmpty(fontName)) {
-                    return;
-                }
-
-                FontFactory.register(f.getCanonicalPath() + File.separator + fontName,
-                        ExportPdf.PDF_FONT_ALIAS);
-
-                int style = com.itextpdf.text.Font.UNDEFINED;
-                if ((swtFont.getFontData()[0].getStyle() & SWT.BOLD) == SWT.BOLD) {
-                    style |= com.itextpdf.text.Font.BOLD;
-                } else if ((swtFont.getFontData()[0].getStyle() & SWT.ITALIC) == SWT.ITALIC) {
-                    style |= com.itextpdf.text.Font.ITALIC;
-                }
-                this.font = FontFactory.getFont(ExportPdf.PDF_FONT_ALIAS,
-                        swtFont.getFontData()[0].getHeight() - 2,
-                        style);
-                exportPdfSetting.setFontName(fontName);
                 exportPdfSetting.setFontNameUser(swtFont.getFontData()[0].getName());
                 exportPdfSetting.setFontSize(swtFont.getFontData()[0].getHeight());
                 exportPdfSetting.setFontStyle(swtFont.getFontData()[0].getStyle());
 
             } catch (Exception exc) {
-                SWTeXtension.displayMessageEGeneric(exc);
+                logger.error(exc.getMessage(), exc);
                 this.font = ExportPdf.PDF_FONT;
             } finally {
                 ExportPdfOptionsView.this.settings.setFont(this.font);
