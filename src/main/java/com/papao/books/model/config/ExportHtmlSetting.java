@@ -123,7 +123,7 @@ public class ExportHtmlSetting extends AbstractSetting {
 
     @Override
     public boolean isValid() {
-        return true;
+        return getIdUser() != null;
     }
 
     public void reset() {

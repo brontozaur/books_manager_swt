@@ -128,7 +128,11 @@ public class SettingsController {
     }
 
     public static void saveExportRtfSetting(ExportRtfSetting setting) {
-        settingRepository.save(setting);
+        if (setting.isValid()) {
+            settingRepository.save(setting);
+        } else {
+            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+        }
     }
 
     public static ExportTxtSetting getExportTxtSetting() {

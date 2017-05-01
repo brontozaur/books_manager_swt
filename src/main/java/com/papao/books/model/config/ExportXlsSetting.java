@@ -81,6 +81,6 @@ public class ExportXlsSetting extends AbstractSetting {
 
     @Override
     public boolean isValid() {
-        return true;
+        return getIdUser() != null;
     }
 }
