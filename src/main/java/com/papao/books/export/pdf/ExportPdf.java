@@ -139,6 +139,7 @@ public final class ExportPdf {
                 }
 
                 settings = view.getSettings().cloneObject();
+                exportSetting = SettingsController.getExportPdfSetting();
 
                 fileName = settings.getNumeFisier();
                 pageSize = settings.getPageSize();
@@ -149,8 +150,6 @@ public final class ExportPdf {
                 widths = settings.getDims();
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
-
-                exportSetting = SettingsController.getExportPdfSetting();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }
@@ -165,7 +164,7 @@ public final class ExportPdf {
             output = new File(fileName);
             logger.info("Exporting PDF content to file : " + fileName);
 
-            /**
+            /*
              * daca, prin absurd se doreste setarea unei culori pentru background-ul paginii, se vor
              * decomenta liniile urmatoare
              */

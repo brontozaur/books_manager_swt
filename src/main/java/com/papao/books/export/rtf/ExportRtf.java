@@ -132,6 +132,7 @@ public final class ExportRtf {
                 }
 
                 settings = view.getSettings().cloneObject();
+                exportSetting = SettingsController.getExportRtfSetting();
 
                 fileName = settings.getNumeFisier();
                 titleName = settings.getTitlu();
@@ -140,10 +141,7 @@ public final class ExportRtf {
                 widths = settings.getDims();
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
-                font = settings.getiTextFont();
                 pageSize = settings.getPageSize();
-
-                exportSetting = SettingsController.getExportRtfSetting();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }

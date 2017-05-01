@@ -140,17 +140,18 @@ public final class ExportXls {
                     return;
                 }
 
+                exportSetting = SettingsController.getExportXlsSetting();
                 settings = view.getSettings().cloneObject();
-                fileExtension = exportSetting.getExtension();
+
                 fileName = settings.getNumeFisier();
                 numeSheet = settings.getSheetName();
-                afisareHeader = exportSetting.isShowHeader();
                 titleName = settings.getTitlu();
                 aligns = settings.getAligns();
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
 
-                exportSetting = SettingsController.getExportXlsSetting();
+                afisareHeader = exportSetting.isShowHeader();
+                fileExtension = exportSetting.getExtension();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }

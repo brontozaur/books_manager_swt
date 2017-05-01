@@ -124,14 +124,15 @@ public final class ExportTxt {
                     return;
                 }
 
+                settings = view.getSettings().cloneObject();
+                exportSetting = SettingsController.getExportTxtSetting();
+
                 fileName = settings.getNumeFisier();
                 titleName = settings.getTitlu();
                 aligns = settings.getAligns();
                 widths = settings.getDims();
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
-
-                exportSetting = SettingsController.getExportTxtSetting();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }

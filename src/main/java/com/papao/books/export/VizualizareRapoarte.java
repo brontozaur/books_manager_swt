@@ -171,7 +171,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         this.rightViewer.getTable().addListener(SWT.Selection, this);
         this.rightViewer.getTable().addListener(SWT.KeyDown, this);
         this.rightViewer.getTable().setMenu(createTableMenu());
-        this.rightViewer.getTable().addListener(SWT.Selection, new Listener() {
+        this.rightViewer.getTable().addListener(SWT.MouseDoubleClick, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 if (itemShowRaport.isEnabled()) {

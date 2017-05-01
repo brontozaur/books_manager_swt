@@ -130,18 +130,16 @@ public final class ExportHtml {
                     return;
                 }
 
+                exportSetting = SettingsController.getExportHtmlSetting();
                 settings = view.getSettings().cloneObject();
 
                 fileName = settings.getNumeFisier();
                 titleName = settings.getTitlu();
-                font = settings.getiTextFont();
                 aligns = settings.getAligns();
                 widths = settings.getDims();
                 selectedCols = settings.getSelection();
                 order = settings.getOrder();
                 font = settings.getiTextFont();
-
-                exportSetting = SettingsController.getExportHtmlSetting();
             } else {
                 fileName = exportSetting.getExportDir() + File.separator;
             }
