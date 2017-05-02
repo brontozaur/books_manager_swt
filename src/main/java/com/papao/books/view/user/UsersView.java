@@ -1,6 +1,7 @@
 package com.papao.books.view.user;
 
 import com.novocode.naf.swt.custom.LiveSashForm;
+import com.papao.books.BooleanSetting;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.controller.UserController;
 import com.papao.books.export.ExportType;
@@ -77,6 +78,9 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             return true;
         }
         refresh();
+        if (SettingsController.getBoolean(BooleanSetting.WINDOWS_REENTER_DATA)) {
+            add();
+        }
         return true;
     }
 
@@ -100,7 +104,8 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        refresh();
+        tableViewer.refresh(view.getUser(), true, true);
+        tableViewer.setSelection(new StructuredSelection(view.getUser()));
         return true;
     }
 

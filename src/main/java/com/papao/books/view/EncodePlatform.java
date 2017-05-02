@@ -1399,7 +1399,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         tableViewer.add(view.getCarte());
         tableViewer.setSelection(new StructuredSelection(view.getCarte()));
-        displayBookData();
+        if (SettingsController.getBoolean(BooleanSetting.WINDOWS_REENTER_DATA)) {
+            return add();
+        } else {
+            displayBookData();
+        }
         return true;
     }
 

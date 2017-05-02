@@ -1,6 +1,7 @@
 package com.papao.books.view.carte;
 
 import com.novocode.naf.swt.custom.LiveSashForm;
+import com.papao.books.BooleanSetting;
 import com.papao.books.controller.AutorController;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
@@ -70,6 +71,9 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
             return true;
         }
         refresh();
+        if (SettingsController.getBoolean(BooleanSetting.WINDOWS_REENTER_DATA)) {
+            return add();
+        }
         return true;
     }
 
@@ -93,7 +97,8 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        refresh();
+        tableViewer.refresh(view.getAutor(), true, true);
+        tableViewer.setSelection(new StructuredSelection(view.getAutor()));
         return true;
     }
 
@@ -118,7 +123,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
             }
             //TODO foreign key checks!!
             autorController.delete(autor);
-            tableViewer.setInput(autorController.findAll());
+            refresh();
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
