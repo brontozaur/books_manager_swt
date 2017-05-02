@@ -429,7 +429,7 @@ public class ExportPdfOptionsView extends AbstractExportView {
             }
             String fontName = "";
             for (File temp : ff) {
-                if (temp.getName().toLowerCase().trim().startsWith(swtFont.getFontData()[0].nsName.replace("-", " ").toLowerCase())) {
+                if (temp.getName().toLowerCase().trim().startsWith(swtFont.getFontData()[0].getName().replace("-", " ").toLowerCase())) {
                     fontName = temp.getName();
                     break;
                 }

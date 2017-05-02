@@ -1,6 +1,7 @@
 package com.papao.books.view.config;
 
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.StringSetting;
+import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.interfaces.AbstractIConfigAdapter;
 import com.papao.books.view.interfaces.IConfig;
@@ -18,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.nebula.widgets.formattedtext.FormattedText;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
@@ -32,6 +32,8 @@ import org.eclipse.swt.widgets.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.papao.books.BooleanSetting.*;
 
 public class AppConfigView extends AbstractCView implements Listener, IEncodeReset {
 
@@ -352,21 +354,20 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
             WidgetCursorUtil.addHandCursorListener(this.buttonSystemTrayAfiseazaMesaje);
 
             WidgetCompositeUtil.addColoredFocusListener2Childrens(group);
-
         }
 
         @Override
         public final void populateFields() {
-//            this.buttonFolosireSystemTray.setSelection(FiltruAplicatie.isUsingTray());
-//            this.buttonSystemTrayAfiseazaMesaje.setSelection(FiltruAplicatie.isTraySendingMessages());
+            this.buttonFolosireSystemTray.setSelection(SettingsController.getBoolean(APP_USE_SYSTEM_TRAY));
+            this.buttonSystemTrayAfiseazaMesaje.setSelection(SettingsController.getBoolean(SYSTEM_TRAY_MESSAGES));
             WidgetCompositeUtil.enableGUI(this.buttonFolosireSystemTray.getParent(), this.buttonFolosireSystemTray.getSelection());
             this.buttonFolosireSystemTray.setEnabled(true);
         }
 
         @Override
         public void save() {
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_APP_IS_USING_TRAY, this.buttonFolosireSystemTray.getSelection());
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_APP_TRAY_SEND_MESSAGES, this.buttonSystemTrayAfiseazaMesaje.getSelection());
+            SettingsController.saveBooleanSetting(APP_USE_SYSTEM_TRAY, buttonFolosireSystemTray.getSelection());
+            SettingsController.saveBooleanSetting(SYSTEM_TRAY_MESSAGES, buttonSystemTrayAfiseazaMesaje.getSelection());
         }
 
         @Override
@@ -430,12 +431,12 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
 
         @Override
         public final void populateFields() {
-            this.buttonReportsShowOptions.setSelection(FiltruAplicatie.isReportsShowingOptions());
+            this.buttonReportsShowOptions.setSelection(SettingsController.getBoolean(REPORT_SHOW_OPTIONS));
         }
 
         @Override
         public void save() {
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_APP_REPORTS_SHOW_OPTIONS, this.buttonReportsShowOptions.getSelection());
+            SettingsController.saveBooleanSetting(REPORT_SHOW_OPTIONS, buttonReportsShowOptions.getSelection());
         }
 
         @Override
@@ -542,14 +543,20 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
 
         @Override
         public final void populateFields() {
-            this.buttonRichWindows.setSelection(FiltruAplicatie.isWindowsUsingRichWindows());
-            this.buttonUseCoords.setSelection(FiltruAplicatie.isWindowsUsingCoords());
-            this.buttonUseTablePrefs.setSelection(FiltruAplicatie.isTableUsingPrefs());
-            this.buttonWindowsAsk.setSelection(FiltruAplicatie.isWindowsAskingOnClose());
-            this.buttonWindowsReenterData.setSelection(FiltruAplicatie.isWindowsReenteringData());
-            this.buttonHighlightUseColor.setSelection(FiltruAplicatie.isHighlightUsingColor());
-            this.buttonHighlightUseBold.setSelection(FiltruAplicatie.isHighlightUsingBold());
-            this.compColorTab.setBackground(FiltruAplicatie.getHighlightColor());
+            this.buttonRichWindows.setSelection(SettingsController.getBoolean(SHOW_RICH_WINDOWS));
+            this.buttonUseCoords.setSelection(SettingsController.getBoolean(WINDOWS_USE_COORDS));
+            this.buttonUseTablePrefs.setSelection(SettingsController.getBoolean(TABLES_USE_CONFIG));
+            this.buttonWindowsAsk.setSelection(SettingsController.getBoolean(WINDOWS_ASK_ON_CLOSE));
+            this.buttonWindowsReenterData.setSelection(SettingsController.getBoolean(WINDOWS_REENTER_DATA));
+            this.buttonHighlightUseColor.setSelection(SettingsController.getBoolean(SEARCH_HIGHLIGHT_USES_COLOR));
+            this.buttonHighlightUseBold.setSelection(SettingsController.getBoolean(SEARCH_HIGHLIGHT_USES_BOLD));
+            GeneralSetting searchHighlightColor = SettingsController.getGeneralSetting("searchHighlightColor");
+            if (searchHighlightColor != null) {
+                int[] rgb = (int[]) searchHighlightColor.getValue();
+                this.compColorTab.setBackground(new Color(Display.getDefault(), rgb[0], rgb[1], rgb[2]));
+            } else {
+                this.compColorTab.setBackground(SettingsController.HIGHLIGHT_COLOR_DEFAULT);
+            }
             this.compColorTab.setEnabled(this.buttonHighlightUseColor.getSelection());
         }
 
@@ -574,16 +581,21 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
 
         @Override
         public void save() {
-
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_RICH_APP_WINDOWS, this.buttonRichWindows.getSelection());
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_WINDOWS_USE_COORDS, this.buttonUseCoords.getSelection());
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_TABLE_USE_PREFS, this.buttonUseTablePrefs.getSelection());
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_WINDOWS_ASK_ON_CLOSE, this.buttonWindowsAsk.getSelection());
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_WINDOWS_REENTER_DATA, this.buttonWindowsReenterData.getSelection());
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_HIGHLIGHT_SEARCH_USE_BOLD, this.buttonHighlightUseBold.getSelection());
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_HIGHLIGHT_SEARCH_USE_COLOR, this.buttonHighlightUseColor.getSelection());
+            SettingsController.saveBooleanSetting(SHOW_RICH_WINDOWS, buttonRichWindows.getSelection());
+            SettingsController.saveBooleanSetting(WINDOWS_USE_COORDS, buttonUseCoords.getSelection());
+            SettingsController.saveBooleanSetting(TABLES_USE_CONFIG, buttonUseTablePrefs.getSelection());
+            SettingsController.saveBooleanSetting(WINDOWS_ASK_ON_CLOSE, buttonWindowsAsk.getSelection());
+            SettingsController.saveBooleanSetting(WINDOWS_REENTER_DATA, buttonWindowsReenterData.getSelection());
+            SettingsController.saveBooleanSetting(SEARCH_HIGHLIGHT_USES_BOLD, buttonHighlightUseBold.getSelection());
+            SettingsController.saveBooleanSetting(SEARCH_HIGHLIGHT_USES_COLOR, buttonHighlightUseColor.getSelection());
             if (this.buttonHighlightUseColor.getSelection()) {
-//                FiltruAplicatie.saveHighlightRgbCodes(this.compColorTab.getBackground());
+                GeneralSetting searchHighlightColor = SettingsController.getGeneralSetting("searchHighlightColor");
+                if (searchHighlightColor == null) {
+                    searchHighlightColor = new GeneralSetting();
+                }
+                RGB rgb = this.compColorTab.getBackground().getRGB();
+                searchHighlightColor.setValue(new int[]{rgb.red, rgb.green, rgb.blue});
+                SettingsController.saveGeneralSetting(searchHighlightColor);
             }
         }
 
@@ -614,7 +626,7 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
 
         private void disposeLabelColor() {
             if ((this.compColorTab.getBackground() != null) && !(this.compColorTab.getBackground()).isDisposed()
-                    && !(this.compColorTab.getBackground().getRGB().equals(FiltruAplicatie.HIGHLIGHT_COLOR_DEFAULT.getRGB()))) {
+                    && !(this.compColorTab.getBackground().getRGB().equals(SettingsController.HIGHLIGHT_COLOR_DEFAULT.getRGB()))) {
                 this.compColorTab.getBackground().dispose();
             }
         }
@@ -631,7 +643,7 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
         private Button buttonShowAll;
         private Button buttonShowRecentActivity;
         private Button buttonAutopopulateTabs;
-        private FormattedText textCount;
+        private Button buttonShowNumbers;
 
         public ConfigApp() {
             super(AppConfigView.this.rightForm);
@@ -670,6 +682,11 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowRecentActivity);
             WidgetCursorUtil.addHandCursorListener(this.buttonShowRecentActivity);
 
+            this.buttonShowNumbers = new Button(group, SWT.CHECK);
+            this.buttonShowNumbers.setText("afisare nr inregistrari in grupaje");
+            GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowNumbers);
+            WidgetCursorUtil.addHandCursorListener(this.buttonShowNumbers);
+
             this.buttonAutopopulateTabs = new Button(group, SWT.CHECK);
             this.buttonAutopopulateTabs.setText("afisare inregistrari la deschiderea unei componente");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonAutopopulateTabs);
@@ -680,16 +697,18 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
 
         @Override
         public final void populateFields() {
-//            this.buttonShowAll.setSelection(FiltruAplicatie.isLeftTreeShowingAll());
-//            this.buttonShowRecentActivity.setSelection(FiltruAplicatie.isLeftTreeShowRecentActivity());
-//            this.buttonAutopopulateTabs.setSelection(FiltruAplicatie.isAutopopulateTabs());
+            this.buttonShowAll.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_ALL));
+            this.buttonShowRecentActivity.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_RECENT));
+            this.buttonShowNumbers.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_NUMBERS));
+            this.buttonAutopopulateTabs.setSelection(SettingsController.getBoolean(AUTOPOPULATE_TABS));
         }
 
         @Override
         public void save() {
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_LEFT_TREE_SHOW_ALL, this.buttonShowAll.getSelection());
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_LEFT_TREE_SHOW_RECENT_ACTIVITY, this.buttonShowRecentActivity.getSelection());
-//            FiltruAplicatie.putBoolean(FiltruAplicatie.KEY_AUTOPOPULATE_TABS, this.buttonAutopopulateTabs.getSelection());
+            SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_ALL, buttonShowAll.getSelection());
+            SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_RECENT, buttonShowRecentActivity.getSelection());
+            SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_NUMBERS, buttonShowNumbers.getSelection());
+            SettingsController.saveBooleanSetting(AUTOPOPULATE_TABS, buttonAutopopulateTabs.getSelection());
         }
 
         @Override
@@ -728,7 +747,7 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(tmp);
 
             this.comboDateFormat = new Combo(group, SWT.READ_ONLY);
-            this.comboDateFormat.setItems(FiltruAplicatie.AVAILABLE_DATE_FORMATS);
+            this.comboDateFormat.setItems(SettingsController.AVAILABLE_DATE_FORMATS);
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.comboDateFormat);
             this.comboDateFormat.addListener(SWT.Selection, this);
 
@@ -744,7 +763,7 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(tmp);
 
             this.comboTimeFormat = new Combo(group, SWT.READ_ONLY);
-            this.comboTimeFormat.setItems(FiltruAplicatie.AVAILABLE_TIME_FORMATS);
+            this.comboTimeFormat.setItems(SettingsController.AVAILABLE_TIME_FORMATS);
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.comboTimeFormat);
             this.comboTimeFormat.addListener(SWT.Selection, this);
 
@@ -758,14 +777,14 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
 
         @Override
         public final void populateFields() {
-            this.comboDateFormat.select(this.comboDateFormat.indexOf(FiltruAplicatie.getAppDateFormat()));
-            this.comboTimeFormat.select(this.comboTimeFormat.indexOf(FiltruAplicatie.getAppTimeFormat()));
+            this.comboDateFormat.select(this.comboDateFormat.indexOf(SettingsController.getString(StringSetting.APP_DATE_FORMAT)));
+            this.comboDateFormat.select(this.comboTimeFormat.indexOf(SettingsController.getString(StringSetting.APP_TIME_FORMAT)));
         }
 
         @Override
         public void save() {
-//            FiltruAplicatie.put(FiltruAplicatie.KEY_APP_DATE_FORMAT, this.comboDateFormat.getText());
-//            FiltruAplicatie.put(FiltruAplicatie.KEY_APP_TIME_FORMAT, this.comboTimeFormat.getText());
+            SettingsController.saveStringSetting(StringSetting.APP_DATE_FORMAT, comboDateFormat.getText());
+            SettingsController.saveStringSetting(StringSetting.APP_TIME_FORMAT, comboTimeFormat.getText());
         }
 
         @Override

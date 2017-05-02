@@ -1,6 +1,6 @@
 package com.papao.books.view.bones.impl.bones;
 
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.BooleanSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.AbstractBone;
 import com.papao.books.view.bones.AbstractBoneDescriptor;
@@ -9,10 +9,7 @@ import com.papao.books.view.bones.impl.filters.AbstractFilterViewMode;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
 import com.papao.books.view.providers.tree.SimpleTextNode;
 import com.papao.books.view.providers.tree.TreeContentProvider;
-import com.papao.books.view.util.BorgDateUtil;
-import com.papao.books.view.util.ColorUtil;
-import com.papao.books.view.util.WidgetCursorUtil;
-import com.papao.books.view.util.WidgetTreeUtil;
+import com.papao.books.view.util.*;
 import com.papao.books.view.util.sorter.AbstractColumnViewerSorter;
 import com.papao.books.view.util.sorter.AbstractTreeColumnViewerSorter;
 import com.papao.books.view.view.SWTeXtension;
@@ -63,7 +60,7 @@ public abstract class AbstractBoneUnifiedLV2 extends AbstractBoneUnifiedLV1 {
 				menu.getItem(idx++).setEnabled(getFiltru().getTreeAlignment() == SWT.LEFT);
 				menu.getItem(idx++).setEnabled(true); // separator
 				menu.getItem(idx++).setEnabled(true); // selectie tip afisare
-				menu.getItem(idx++).setEnabled(FiltruAplicatie.isLeftTreeShowRecentActivity());
+				menu.getItem(idx++).setEnabled(SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_RECENT));
 			}
 		});
 
@@ -408,7 +405,7 @@ public abstract class AbstractBoneUnifiedLV2 extends AbstractBoneUnifiedLV1 {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (FiltruAplicatie.isTabsUsingCount()) {
+//				if (FiltruAplicatie.isTabsUsingCount()) {
 					final int count = getCount();
 //					if ((count != 0) && (count != Integer.MAX_VALUE)
 //							&& (count > FiltruAplicatie.getCount())) {
@@ -418,7 +415,7 @@ public abstract class AbstractBoneUnifiedLV2 extends AbstractBoneUnifiedLV1 {
 //							return;
 //						}
 //					}
-				}
+//				}
 				populateLeftTree(true);
 				enableOps();
 			}

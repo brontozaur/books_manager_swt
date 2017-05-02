@@ -1,5 +1,6 @@
 package com.papao.books.export;
 
+import com.papao.books.BooleanSetting;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.model.ApplicationReport;
 import com.papao.books.model.config.TableSetting;
@@ -374,8 +375,8 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
 
     private void createTreeNodes(IntValuePairsWrapper wrapper, String rootNodeName) {
         SimpleTextNode baseNode;
-        boolean showAllNode = true;
-        boolean showNumbers = true;
+        boolean showAllNode = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_ALL);
+        boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
         if (showAllNode) {
             SimpleTextNode allNode = new SimpleTextNode(rootNodeName);

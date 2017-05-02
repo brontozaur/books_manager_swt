@@ -1,6 +1,6 @@
 package com.papao.books.view.view;
 
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.BooleanSetting;
 import com.papao.books.model.config.WindowSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.EncodePlatform;
@@ -853,15 +853,8 @@ public abstract class AbstractView extends Observable {
             if (isOpened()) {
                 return;
             }
-            if (centerInDisplay) {
-                if (automaticallyComputeSize) {
-                    WidgetCompositeUtil.centerInDisplay(this.shell);
-                } else {
-                    WidgetCompositeUtil.centerInDisplayForFixedWidthsShells(this.shell);
-                }
-            }
             WindowSetting setting = null;
-            if (useCoords && FiltruAplicatie.isWindowsUsingCoords()) {
+            if (useCoords && SettingsController.getBoolean(BooleanSetting.WINDOWS_USE_COORDS)) {
                 setting = SettingsController.getWindowSetting(getClass().getCanonicalName());
             }
             if (setting != null && setting.isValid()) {
@@ -870,10 +863,19 @@ public abstract class AbstractView extends Observable {
                 if (this.parentPos != null) {
                     this.shell.pack();
                     this.shell.setLocation(SWTeXtension.computeChildLocation(this.parentPos, this.shell.getBounds()));
-                } else if (automaticallyComputeSize) {
-                    this.shell.setVisible(false);
-                    this.shell.setSize(this.shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-                    this.shell.setVisible(true);
+                } else {
+                    if (centerInDisplay) {
+                        if (automaticallyComputeSize) {
+                            WidgetCompositeUtil.centerInDisplay(this.shell);
+                        } else {
+                            WidgetCompositeUtil.centerInDisplayForFixedWidthsShells(this.shell);
+                        }
+                    }
+                    if (automaticallyComputeSize) {
+                        this.shell.setVisible(false);
+                        this.shell.setSize(this.shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+                        this.shell.setVisible(true);
+                    }
                 }
             }
             this.shell.open();

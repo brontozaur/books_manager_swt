@@ -2,7 +2,7 @@ package com.papao.books.export.pdf;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.BooleanSetting;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
@@ -119,7 +119,7 @@ public final class ExportPdf {
                 SettingsController.saveExportPdfSetting(exportSetting);
             }
 
-            if (FiltruAplicatie.isReportsShowingOptions()) {
+            if (SettingsController.getBoolean(BooleanSetting.REPORT_SHOW_OPTIONS)) {
                 ExportPdfSettings settings = new ExportPdfSettings();
                 settings.setFont(font);
                 settings.setNumeFisier(fileName);

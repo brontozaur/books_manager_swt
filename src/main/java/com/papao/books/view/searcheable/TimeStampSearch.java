@@ -1,6 +1,7 @@
 package com.papao.books.view.searcheable;
 
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.StringSetting;
+import com.papao.books.view.util.SettingsController;
 import org.aspencloud.widgets.ACW;
 import org.aspencloud.widgets.cdatepicker.CDatepickerCombo;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -27,12 +28,11 @@ public class TimeStampSearch extends AbstractSearchType {
     /**
      * @param searchSystem
      * @param colName
-     * @param widgetStyle
-     *            <ul>
-     *            <li>{@link #TYPE_DATE} - will allow only date selection</li>
-     *            <li>{@link #TYPE_TIME} - will allow only time selection</li>
-     *            <li>{@link #TYPE_TIMESTAMP} - will allow date and time selection</li>
-     *            </ul>
+     * @param widgetStyle  <ul>
+     *                     <li>{@link #TYPE_DATE} - will allow only date selection</li>
+     *                     <li>{@link #TYPE_TIME} - will allow only time selection</li>
+     *                     <li>{@link #TYPE_TIMESTAMP} - will allow date and time selection</li>
+     *                     </ul>
      */
     public TimeStampSearch(final BorgSearchSystem searchSystem, final String colName, final int widgetStyle) {
         super(searchSystem, colName, widgetStyle);
@@ -80,13 +80,13 @@ public class TimeStampSearch extends AbstractSearchType {
     private String getFormat() {
         switch (this.dateWidgetStyle) {
             case TYPE_DATE: {
-                return FiltruAplicatie.getAppDateFormat();
+                return SettingsController.getString(StringSetting.APP_DATE_FORMAT);
             }
             case TYPE_TIME: {
-                return FiltruAplicatie.getAppTimeFormat();
+                return SettingsController.getString(StringSetting.APP_TIME_FORMAT);
             }
             case TYPE_TIMESTAMP: {
-                return FiltruAplicatie.getAppTimestampFormat();
+                return SettingsController.getString(StringSetting.APP_DATE_FORMAT).concat(" ").concat(SettingsController.getString(StringSetting.APP_DATE_FORMAT));
             }
             default:
                 throw new IllegalArgumentException("invalid widget style [" + this.dateWidgetStyle + "]");

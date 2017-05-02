@@ -1,6 +1,5 @@
 package com.papao.books.view.bones;
 
-import com.papao.books.FiltruAplicatie;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.filter.AbstractBoneFilter;
 import com.papao.books.view.custom.CWaitDlgClassic;
@@ -92,9 +91,9 @@ public abstract class AbstractBone extends Composite {
 	public final void initialize() {
 		try {
 			finishImplementation();
-			if (FiltruAplicatie.isAutopopulateTabs()) {
-				refresh();
-			}
+//			if (FiltruAplicatie.isAutopopulateTabs()) {
+//				refresh();
+//			}
 		}
 		catch (Exception exc) {
 			logger.error(exc.getMessage(), exc);

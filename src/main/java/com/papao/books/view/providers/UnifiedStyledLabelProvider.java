@@ -1,10 +1,9 @@
 package com.papao.books.view.providers;
 
-import com.papao.books.FiltruAplicatie;
 import com.papao.books.model.AbstractDB;
 import com.papao.books.view.providers.tree.ITreeNode;
-import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.FontUtil;
+import com.papao.books.view.util.SettingsController;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.StyleRange;
@@ -64,8 +63,8 @@ public class UnifiedStyledLabelProvider extends StyledCellLabelProvider implemen
 				StyleRange myStyleRange = new StyleRange(0, 0, null, null);
 				myStyleRange.start = intRangesCorrectSize[i];
 				myStyleRange.length = intRangesCorrectSize[++i];
-					myStyleRange.font = FontUtil.TAHOMA14_NORMAL;
-					myStyleRange.background = FiltruAplicatie.getHighlightColor();
+					myStyleRange.font = FontUtil.TAHOMA12_NORMAL;
+					myStyleRange.background = SettingsController.getHighlightColor();
 				styleRange.add(myStyleRange);
 			}
 			cell.setStyleRanges(styleRange.toArray(new StyleRange[styleRange.size()]));
@@ -97,7 +96,7 @@ public class UnifiedStyledLabelProvider extends StyledCellLabelProvider implemen
 	public static int[] getSearchTermOccurrences(final String searchTerm, final String content) {
 		List<StyleRange> styleRange;
 		List<Integer> ranges;
-		StyleRange myStyleRange = new StyleRange(0, 0, null, ColorUtil.COLOR_ALBASTRU_DESCHIS_PHEX);
+		StyleRange myStyleRange = new StyleRange(0, 0, null, SettingsController.getHighlightColor());
 
 		/*
 		 * reset the StyleRange-Array for each new field

@@ -4,7 +4,7 @@ import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.html.HtmlWriter;
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.BooleanSetting;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
@@ -111,7 +111,7 @@ public final class ExportHtml {
                 SettingsController.saveExportHtmlSetting(exportSetting);
             }
 
-            if (FiltruAplicatie.isReportsShowingOptions()) {
+            if (SettingsController.getBoolean(BooleanSetting.REPORT_SHOW_OPTIONS)) {
                 ExportHtmlOptionsView view;
                 ExportHtmlSettings settings = new ExportHtmlSettings();
 

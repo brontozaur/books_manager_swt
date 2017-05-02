@@ -2,7 +2,7 @@ package com.papao.books.view;
 
 import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.BooksApplication;
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.BooleanSetting;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
@@ -154,7 +154,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
             createTraySystem();
 
-            if (!FiltruAplicatie.isWindowsUsingCoords()) {
+            if (!SettingsController.getBoolean(BooleanSetting.WINDOWS_USE_COORDS)) {
                 int width;
                 int height;
 
@@ -595,16 +595,16 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     private void createTreeNodes(IntValuePairsWrapper wrapper, String rootNodeName) {
         SimpleTextNode baseNode;
-        boolean showAllNode = true;
-        boolean showNumbers = true;
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
-        if (showAllNode) {
+        boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
+        boolean showAll = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
+        if (SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_ALL)) {
             SimpleTextNode allNode = new SimpleTextNode(rootNodeName);
             allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
             allNode.setCount(wrapper.getValidDistinctValues());
             allNode.setAllNode(true);
             allNode.setQueryValue(null);
-            if (showNumbers) {
+            if (showAll) {
                 allNode.setName(rootNodeName + " (" + allNode.getCount() + ")");
             }
             invisibleRoot.add(allNode);

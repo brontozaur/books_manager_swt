@@ -1,6 +1,6 @@
 package com.papao.books.export.xls;
 
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.BooleanSetting;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.model.ApplicationReport;
@@ -123,7 +123,7 @@ public final class ExportXls {
                 SettingsController.saveExportXlsSetting(exportSetting);
             }
 
-            if (FiltruAplicatie.isReportsShowingOptions()) {
+            if (SettingsController.getBoolean(BooleanSetting.REPORT_SHOW_OPTIONS)) {
                 ExportXlsSettings settings = new ExportXlsSettings();
                 settings.setNumeFisier(fileName);
                 settings.setSwtTable(swtTable);

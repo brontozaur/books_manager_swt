@@ -1,10 +1,14 @@
 package com.papao.books.view.util;
 
+import com.papao.books.BooleanSetting;
+import com.papao.books.StringSetting;
 import com.papao.books.model.config.*;
 import com.papao.books.repository.SettingsRepository;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.view.SWTeXtension;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -17,6 +21,20 @@ public class SettingsController {
     public SettingsController(SettingsRepository settingRepository) {
         this.settingRepository = settingRepository;
     }
+
+    public final static Color HIGHLIGHT_COLOR_DEFAULT = ColorUtil.COLOR_ALBASTRU_DESCHIS_PHEX;
+    private static Color HIGHLIGHT_COLOR = HIGHLIGHT_COLOR_DEFAULT;
+
+    public final static String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+
+    public final static String DEFAULT_TIME_FORMAT = "HH:mm:ss";
+
+    public static final String[] AVAILABLE_DATE_FORMATS = new String[]{
+            DEFAULT_DATE_FORMAT, "yyyy/MM/dd", "yyyy.MM.dd", "dd-MM-yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "yy-MM-dd", "yy/MM/dd", "yy.MM.dd", "dd-MM-yy",
+            "dd/MM/yy", "dd.MM.yy", "EEEE, dd MMM yyyy", "dd-MMMM-yyyy"};
+
+    public static final String[] AVAILABLE_TIME_FORMATS = new String[]{
+            DEFAULT_TIME_FORMAT, "HH:mm", "hh:mm:ss a", "hh:mm a"};
 
     public static WindowSetting getWindowSetting(String windowKey) {
         return settingRepository.getWindowSetting(windowKey, EncodeLive.getIdUser());
@@ -62,6 +80,32 @@ public class SettingsController {
 
     public static GeneralSetting getGeneralSetting(String settingKey) {
         return settingRepository.getGeneralSetting(settingKey, EncodeLive.getIdUser());
+    }
+
+    public static boolean getBoolean(BooleanSetting booleanSetting) {
+        GeneralSetting setting = SettingsController.getGeneralSetting(booleanSetting.name());
+        return setting != null ? (boolean) setting.getValue() : booleanSetting.isDefaultValue();
+    }
+
+    public static void saveBooleanSetting(BooleanSetting setting, boolean value) {
+        saveGeneralSetting(setting.name(), value);
+    }
+
+    public static String getString(StringSetting stringSetting) {
+        GeneralSetting setting = SettingsController.getGeneralSetting(stringSetting.name());
+        return setting != null ? (String) setting.getValue() : stringSetting.getDefaultValue();
+    }
+
+    public static void saveStringSetting(StringSetting setting, String value) {
+        saveGeneralSetting(setting.name(), value);
+    }
+
+    public static void saveGeneralSetting(GeneralSetting setting) {
+        if (setting.isValid()) {
+            settingRepository.save(setting);
+        } else {
+            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+        }
     }
 
     public static void saveGeneralSetting(String key, Object value) {
@@ -145,5 +189,14 @@ public class SettingsController {
         } else {
             SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
         }
+    }
+
+    public static Color getHighlightColor() {
+        GeneralSetting setting = getGeneralSetting("searchHighlightColor");
+        if (setting != null) {
+            int[] rgb = (int[]) setting.getValue();
+            HIGHLIGHT_COLOR = new Color(Display.getDefault(), rgb[0], rgb[1], rgb[2]);
+        }
+        return HIGHLIGHT_COLOR;
     }
 }

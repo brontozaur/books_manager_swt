@@ -2,7 +2,7 @@ package com.papao.books.export.txt;
 
 import com.inamik.utils.SimpleTableFormatter;
 import com.inamik.utils.TableFormatter;
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.BooleanSetting;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
@@ -108,7 +108,7 @@ public final class ExportTxt {
                 SettingsController.saveExportTxtSetting(exportSetting);
             }
 
-            if (FiltruAplicatie.isReportsShowingOptions()) {
+            if (SettingsController.getBoolean(BooleanSetting.REPORT_SHOW_OPTIONS)) {
                 ExportTxtSettings settings = new ExportTxtSettings();
                 settings.setNumeFisier(fileName);
                 settings.setSwtTable(table);

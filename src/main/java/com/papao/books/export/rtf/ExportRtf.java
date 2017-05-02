@@ -5,7 +5,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.rtf.RtfWriter2;
 import com.lowagie.text.rtf.document.output.RtfDataCache;
-import com.papao.books.FiltruAplicatie;
+import com.papao.books.BooleanSetting;
 import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.model.ApplicationReport;
@@ -113,7 +113,7 @@ public final class ExportRtf {
                 SettingsController.saveExportRtfSetting(exportSetting);
             }
 
-            if (FiltruAplicatie.isReportsShowingOptions()) {
+            if (SettingsController.getBoolean(BooleanSetting.REPORT_SHOW_OPTIONS)) {
                 ExportRtfSettings settings = new ExportRtfSettings();
                 settings.setiTextFont(font);
                 settings.setNumeFisier(fileName);
