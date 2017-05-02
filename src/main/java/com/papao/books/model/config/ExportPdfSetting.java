@@ -33,7 +33,7 @@ public class ExportPdfSetting extends AbstractSetting {
     }
 
     public ExportPdfSetting(ObjectId idUser, String numeUser) {
-        super(idUser, numeUser, SettingType.GENERAL);
+        super(idUser, numeUser, SettingType.EXPORT_PDF);
     }
 
     public String getExportDir() {

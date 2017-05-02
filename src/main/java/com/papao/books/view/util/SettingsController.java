@@ -123,16 +123,7 @@ public class SettingsController {
     }
 
     public static ExportPdfSetting getExportPdfSetting() {
-        ExportPdfSetting setting = settingRepository.getExportPdfSetting(EncodeLive.getIdUser());
-        if (setting == null) {
-            setting = new ExportPdfSetting();
-            if (setting.isValid()) {
-                settingRepository.save(setting);
-            } else {
-                SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
-            }
-        }
-        return setting;
+        return settingRepository.getExportPdfSetting(EncodeLive.getIdUser());
     }
 
     public static void saveExportPdfSetting(ExportPdfSetting setting) {
