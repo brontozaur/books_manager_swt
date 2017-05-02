@@ -5,15 +5,13 @@ import com.novocode.naf.swt.custom.BalloonNotification;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.AMongodbComparator;
 import com.papao.books.model.User;
+import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.custom.ComboImage;
 import com.papao.books.view.custom.XButton;
 import com.papao.books.view.custom.XButtonData;
 import com.papao.books.view.user.UserView;
-import com.papao.books.view.util.ColorUtil;
-import com.papao.books.view.util.Constants;
-import com.papao.books.view.util.FontUtil;
-import com.papao.books.view.util.WidgetCompositeUtil;
+import com.papao.books.view.util.*;
 import com.papao.books.view.view.AbstractCView;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
@@ -21,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
@@ -238,6 +237,12 @@ public class LoginShell extends AbstractCView implements Listener {
         EncodeLive.setCurrentUserName(usrApp.getNumeComplet());
         LoggerMyWay.configure(LoggerMyWay.LOG_TXT, usrApp.getNumeComplet(), true);
         logger.info("**********UTILIZATOR CURENT : " + usrApp.getNumeComplet() + " **********");
+
+        GeneralSetting setting = SettingsController.getGeneralSetting("searchHighlightColor");
+        if (setting != null) {
+            List<Integer> rgb = (List<Integer>) setting.getValue();
+            SettingsController.HIGHLIGHT_COLOR = new Color(Display.getDefault(), rgb.get(0), rgb.get(1), rgb.get(2));
+        }
         return true;
     }
 

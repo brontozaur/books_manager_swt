@@ -8,7 +8,6 @@ import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.view.SWTeXtension;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -16,14 +15,8 @@ import org.springframework.stereotype.Controller;
 public class SettingsController {
 
     private static SettingsRepository settingRepository;
-
-    @Autowired
-    public SettingsController(SettingsRepository settingRepository) {
-        this.settingRepository = settingRepository;
-    }
-
     public final static Color HIGHLIGHT_COLOR_DEFAULT = ColorUtil.COLOR_ALBASTRU_DESCHIS_PHEX;
-    private static Color HIGHLIGHT_COLOR = HIGHLIGHT_COLOR_DEFAULT;
+    public static Color HIGHLIGHT_COLOR = HIGHLIGHT_COLOR_DEFAULT;
 
     public final static String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
 
@@ -35,6 +28,12 @@ public class SettingsController {
 
     public static final String[] AVAILABLE_TIME_FORMATS = new String[]{
             DEFAULT_TIME_FORMAT, "HH:mm", "hh:mm:ss a", "hh:mm a"};
+
+
+    @Autowired
+    public SettingsController(SettingsRepository settingRepository) {
+        this.settingRepository = settingRepository;
+    }
 
     public static WindowSetting getWindowSetting(String windowKey) {
         return settingRepository.getWindowSetting(windowKey, EncodeLive.getIdUser());
@@ -183,11 +182,6 @@ public class SettingsController {
     }
 
     public static Color getHighlightColor() {
-        GeneralSetting setting = getGeneralSetting("searchHighlightColor");
-        if (setting != null) {
-            int[] rgb = (int[]) setting.getValue();
-            HIGHLIGHT_COLOR = new Color(Display.getDefault(), rgb[0], rgb[1], rgb[2]);
-        }
         return HIGHLIGHT_COLOR;
     }
 }

@@ -536,7 +536,6 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
             GridDataFactory.fillDefaults().hint(16, 16).align(SWT.BEGINNING, SWT.CENTER).grab(false, false).applyTo(this.compColorTab);
             GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(this.compColorTab);
             this.compColorTab.addListener(SWT.MouseDown, this);
-            this.compColorTab.addListener(SWT.Dispose, this);
 
             WidgetCompositeUtil.addColoredFocusListener2Childrens(this);
         }
@@ -550,13 +549,7 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
             this.buttonWindowsReenterData.setSelection(SettingsController.getBoolean(WINDOWS_REENTER_DATA));
             this.buttonHighlightUseColor.setSelection(SettingsController.getBoolean(SEARCH_HIGHLIGHT_USES_COLOR));
             this.buttonHighlightUseBold.setSelection(SettingsController.getBoolean(SEARCH_HIGHLIGHT_USES_BOLD));
-            GeneralSetting searchHighlightColor = SettingsController.getGeneralSetting("searchHighlightColor");
-            if (searchHighlightColor != null) {
-                int[] rgb = (int[]) searchHighlightColor.getValue();
-                this.compColorTab.setBackground(new Color(Display.getDefault(), rgb[0], rgb[1], rgb[2]));
-            } else {
-                this.compColorTab.setBackground(SettingsController.HIGHLIGHT_COLOR_DEFAULT);
-            }
+            this.compColorTab.setBackground(SettingsController.HIGHLIGHT_COLOR);
             this.compColorTab.setEnabled(this.buttonHighlightUseColor.getSelection());
         }
 
@@ -592,10 +585,12 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
                 GeneralSetting searchHighlightColor = SettingsController.getGeneralSetting("searchHighlightColor");
                 if (searchHighlightColor == null) {
                     searchHighlightColor = new GeneralSetting();
+                    searchHighlightColor.setKey("searchHighlightColor");
                 }
                 RGB rgb = this.compColorTab.getBackground().getRGB();
                 searchHighlightColor.setValue(new int[]{rgb.red, rgb.green, rgb.blue});
                 SettingsController.saveGeneralSetting(searchHighlightColor);
+                SettingsController.HIGHLIGHT_COLOR = this.compColorTab.getBackground();
             }
         }
 
@@ -610,8 +605,6 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
                     return;
                 }
                 selectColor();
-            } else if (e.type == SWT.Dispose) {
-                disposeLabelColor();
             }
         }
 
@@ -620,15 +613,7 @@ public class AppConfigView extends AbstractCView implements Listener, IEncodeRes
             if (result == null) {
                 return;
             }
-            disposeLabelColor();
             this.compColorTab.setBackground(new Color(Display.getDefault(), result));
-        }
-
-        private void disposeLabelColor() {
-            if ((this.compColorTab.getBackground() != null) && !(this.compColorTab.getBackground()).isDisposed()
-                    && !(this.compColorTab.getBackground().getRGB().equals(SettingsController.HIGHLIGHT_COLOR_DEFAULT.getRGB()))) {
-                this.compColorTab.getBackground().dispose();
-            }
         }
 
         @Override
