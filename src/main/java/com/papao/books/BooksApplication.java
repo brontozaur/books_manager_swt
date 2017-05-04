@@ -5,6 +5,7 @@ import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.auth.LoggerMyWay;
 import com.papao.books.view.auth.LoginShell;
+import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
@@ -53,6 +54,7 @@ public class BooksApplication {
     public void open() {
         try {
             if (encodePlatform != null) {
+                SettingsController.saveWindowCoords(encodePlatform.getShell().getBounds(), encodePlatform.getClass().getCanonicalName());
                 Listener[] closeListeners = encodePlatform.getShell().getListeners(SWT.Close);
                 for (Listener listener : closeListeners) {
                     encodePlatform.getShell().removeListener(SWT.Close, listener);
