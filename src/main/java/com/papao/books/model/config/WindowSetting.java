@@ -73,6 +73,6 @@ public class WindowSetting extends AbstractSetting {
 
     @Override
     public boolean isValid() {
-        return StringUtils.isNotBlank(windowKey) && width > 0 && height > 0 && x > 0 && y > 0;
+        return getIdUser() != null && StringUtils.isNotBlank(windowKey) && width > 0 && height > 0 && x > 0 && y > 0;
     }
 }

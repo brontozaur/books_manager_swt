@@ -5,6 +5,9 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Repository
 public interface SettingsRepository extends MongoRepository<AbstractSetting, String> {
@@ -32,5 +35,8 @@ public interface SettingsRepository extends MongoRepository<AbstractSetting, Str
 
     @Query(value = "{'type':'EXPORT_HTML', 'idUser' : ?0 }")
     ExportHtmlSetting getExportHtmlSetting(ObjectId idUser);
+
+    @Transactional
+    List<AbstractSetting> removeByIdUser(ObjectId idUser);
 
 }

@@ -6,10 +6,13 @@ import com.papao.books.model.config.*;
 import com.papao.books.repository.SettingsRepository;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.view.SWTeXtension;
+import org.bson.types.ObjectId;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
 
 @Controller
 public class SettingsController {
@@ -33,6 +36,10 @@ public class SettingsController {
     @Autowired
     public SettingsController(SettingsRepository settingRepository) {
         SettingsController.settingRepository = settingRepository;
+    }
+
+    public static List<AbstractSetting> removeAllUserSettings(ObjectId idUser) {
+        return settingRepository.removeByIdUser(idUser);
     }
 
     public static WindowSetting getWindowSetting(String windowKey) {

@@ -5,6 +5,7 @@ import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
+import com.papao.books.model.Carte;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.impl.view.AbstractCView;
@@ -111,15 +112,20 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
                 SWTeXtension.displayMessageI("Autorul selectat este invalid!");
                 return false;
             }
-            if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti autorul selectat?", "Confirmare stergere autor") == SWT.NO) {
-                return true;
-            }
             autor = ApplicationService.getAutorController().findOne(autor.getId());
             if (autor == null) {
                 SWTeXtension.displayMessageW("Autorul nu mai exista!");
                 return false;
             }
-            //TODO foreign key checks!!
+            java.util.List<Carte> cartileAutorului = ApplicationService.getBookController().getRepository().getByIdAutoriContains(autor.getId());
+            if (cartileAutorului != null && !cartileAutorului.isEmpty()) {
+                SWTeXtension.displayMessageW("Nu se poate sterge autorul selectat, pentru ca exista " + cartileAutorului.size() +
+                        " carti cu acest autor in baza de date!");
+                return false;
+            }
+            if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti autorul selectat?", "Confirmare stergere autor") == SWT.NO) {
+                return true;
+            }
             ApplicationService.getAutorController().delete(autor);
             refresh();
             SWTeXtension.displayMessageI("Operatie executata cu succes!");

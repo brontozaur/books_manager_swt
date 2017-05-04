@@ -76,4 +76,8 @@ public class UserController extends AbstractController {
         userActivity.getBookRating().setRating(rating);
         return saveUserActivity(userActivity);
     }
+
+    public List<UserActivity> removeAllUserActivities(ObjectId userId) {
+        return userActivityRepository.removeByUserId(userId);
+    }
 }

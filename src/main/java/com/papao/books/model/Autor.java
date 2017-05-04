@@ -2,6 +2,7 @@ package com.papao.books.model;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ public class Autor extends AuditObject implements Serializable {
     @Id
     private ObjectId id;
 
+    @Indexed
     private String numeComplet = "";
     private int anNastere;
     private int lunaNastere;

@@ -9,6 +9,7 @@ import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.User;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
+import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.bones.impl.view.AbstractCView;
 import com.papao.books.view.interfaces.*;
 import com.papao.books.view.providers.AdbMongoContentProvider;
@@ -114,15 +115,21 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
                 SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
                 return false;
             }
-            if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti utilizatorul selectat?", "Confirmare stergere utilizator") == SWT.NO) {
-                return true;
-            }
             usr = ApplicationService.getUserController().findOne(usr.getId());
             if (usr == null) {
                 SWTeXtension.displayMessageW("Utilizatorul nu mai exista!");
                 return false;
             }
+            if (usr.getId().equals(EncodeLive.getIdUser())) {
+                SWTeXtension.displayMessageW("Nu puteti sterge utilizatorul curent!");
+                return false;
+            }
+            if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti utilizatorul selectat si toate informatiile asociate (rating-uri, review-uri, etc)?", "Confirmare stergere utilizator") == SWT.NO) {
+                return false;
+            }
             ApplicationService.getUserController().delete(usr);
+            SettingsController.removeAllUserSettings(usr.getId());
+            ApplicationService.getUserController().removeAllUserActivities(usr.getId());
             refresh();
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {

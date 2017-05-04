@@ -5,6 +5,7 @@ import com.papao.books.ApplicationService;
 import com.papao.books.BooksApplication;
 import com.papao.books.BooleanSetting;
 import com.papao.books.controller.BookController;
+import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.imports.AutoriImportView;
 import com.papao.books.imports.BookImportView;
 import com.papao.books.model.AbstractMongoDB;
@@ -876,7 +877,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-//                VizualizareRapoarte.show();
+                VizualizareRapoarte.show();
             }
         });
 
