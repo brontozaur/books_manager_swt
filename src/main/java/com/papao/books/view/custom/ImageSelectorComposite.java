@@ -302,15 +302,18 @@ public class ImageSelectorComposite extends Composite implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        String valueChanged = null;
         if (o instanceof AbstractView) {
-            String valueChanged = ((AbstractView) o).getObservableProperty();
-            if (valueChanged != null) {
-                String query = valueChanged.replace(" ", "+");
-                startUrl = "https://www.google.ro/search?tbm=isch&biw=" +
-                        Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
-                        Display.getCurrent().getPrimaryMonitor().getBounds().height +
-                        "&q=" + query + "&oq=" + query;
-            }
+            valueChanged = ((AbstractView) o).getObservableProperty();
+        } else if (o instanceof BookReadOnlyDetailsComposite) {
+            valueChanged = ((BookReadOnlyDetailsComposite) o).getObservableProperty();
+        }
+        if (valueChanged != null) {
+            String query = valueChanged.replace(" ", "+");
+            startUrl = "https://www.google.ro/search?tbm=isch&biw=" +
+                    Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
+                    Display.getCurrent().getPrimaryMonitor().getBounds().height +
+                    "&q=" + query + "&oq=" + query;
         }
     }
 }

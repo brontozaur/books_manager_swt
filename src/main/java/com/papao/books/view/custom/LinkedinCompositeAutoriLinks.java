@@ -69,4 +69,15 @@ public class LinkedinCompositeAutoriLinks extends Composite {
         }
         populateFields();
     }
+
+    public String getGoogleSearchTerm() {
+        StringBuilder searchTerm = new StringBuilder();
+        for (Autor autor : autori) {
+            if (searchTerm.length() > 0) {
+                searchTerm.append(",");
+            }
+            searchTerm.append(autor.getNumeComplet());
+        }
+        return searchTerm.toString();
+    }
 }

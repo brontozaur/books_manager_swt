@@ -66,7 +66,6 @@ public class BooksApplication {
             EncodeLive.setNotificationUsingNotifier("default".equals(notificationStyle));
             initNotifierSettings();
             LoginShell loginShell = new LoginShell();
-            Notifier.setParent(loginShell.getShell());
             loginShell.open(true, false);
             if (loginShell.getUserAction() == SWT.OK) {
                 if (encodePlatform == null) {
@@ -74,7 +73,6 @@ public class BooksApplication {
                 }
                 encodePlatform.getShell().setText("Books Manager [utilizator: $$$]");
                 encodePlatform.getShell().setText(encodePlatform.getShell().getText().replace("$$$", EncodeLive.getCurrentUserName()));
-                Notifier.setParent(encodePlatform.getShell());
                 encodePlatform.open();
             } else {
                 closeApplication(false);

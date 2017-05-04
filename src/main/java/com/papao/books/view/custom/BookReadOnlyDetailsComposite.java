@@ -39,6 +39,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private StarRating bookRating;
     private int ratingValue = 0;
     private Carte carte;
+    private String observableProperty = null;
 
     public BookReadOnlyDetailsComposite(Composite parent) {
 
@@ -95,6 +96,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         });
 
         rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null, ApplicationService.getAutorController().getAppImagesFolder());
+        this.addObserver(rightFrontCoverImageComposite);
         rightFrontCoverImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -154,6 +156,10 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
 
         bookRating.setCurrentNumberOfStars(ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
         ratingValue = bookRating.getCurrentNumberOfStars();
+        observableProperty = rightAutoriComposite.getGoogleSearchTerm() + " - " + carte.getTitlu();
+
+        setChanged();
+        notifyObservers();
     }
 
     private void displayImage(final DocumentData coverDescriptor, ImageSelectorComposite imageSelectorComposite) {
@@ -183,5 +189,9 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     public void update(Observable observable, Object o) {
         ImageGalleryComposite gallery = (ImageGalleryComposite)observable;
         populateFields(gallery.getSelected());
+    }
+
+    public String getObservableProperty() {
+        return this.observableProperty;
     }
 }
