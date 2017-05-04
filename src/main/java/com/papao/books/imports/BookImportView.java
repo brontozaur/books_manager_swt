@@ -90,9 +90,9 @@ public class BookImportView extends AbstractPreluareDateM2View {
         Integer[] array = succesfullyImportedIndices.toArray(new Integer[succesfullyImportedIndices.size()]);
         tableDocumente.remove(ArrayUtils.toPrimitive(array));
         if (succesfullyImportedIndices.size() == items.length) {
-            SWTeXtension.displayMessageI("Toti autorii au fost importati cu succes!");
+            SWTeXtension.displayMessageI("Tate cartile au fost importate cu succes!");
         } else {
-            SWTeXtension.displayMessageI("S-au importat cu succes doar " + succesfullyImportedIndices.size() + " din " + items.length + ".");
+            SWTeXtension.displayMessageI("S-au importat cu succes doar " + succesfullyImportedIndices.size() + " carti din " + items.length + ".");
         }
     }
 

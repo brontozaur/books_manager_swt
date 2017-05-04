@@ -187,6 +187,19 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         super.open();
     }
 
+    private Menu createMainRightTabFolderMenu() {
+        final Menu tabFolderMenu = new Menu(mainRightTabFolder.getShell(), SWT.POP_UP);
+        MenuItem item = new MenuItem(tabFolderMenu, SWT.PUSH);
+        item.setText("Afiseaza galerie");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                SWTeXtension.displayMessageI("Galerie!");
+            }
+        });
+        return tabFolderMenu;
+    }
+
     private void createComponents(Composite parent) {
 
         this.mainCBanner = new CBanner(parent, SWT.NONE);
@@ -221,6 +234,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.mainRightTabFolder.setMaximizeVisible(false);
         mainRightTabFolder.setSelectionBackground(ColorUtil.COLOR_SYSTEM);
 
+        mainRightTabFolder.setMenu(createMainRightTabFolderMenu());
+
         CTabItem tabGrid = new CTabItem(this.mainRightTabFolder, SWT.NONE);
         tabGrid.setText("Lista");
         tabGrid.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
@@ -235,8 +250,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightSash);
         tabGrid.setControl(rightSash);
 
-        CTabItem tabGallery = new CTabItem(this.mainRightTabFolder, SWT.NONE);
+        CTabItem tabGallery = new CTabItem(this.mainRightTabFolder, SWT.CLOSE);
         tabGallery.setText("Galerie");
+        tabGallery.setShowClose(true);
         tabGallery.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
         mainRightTabFolder.addListener(SWT.Selection, new Listener() {
             @Override
