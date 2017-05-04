@@ -1,6 +1,6 @@
 package com.papao.books.view.custom;
 
-import com.papao.books.controller.AutorController;
+import com.papao.books.ApplicationService;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
 import com.papao.books.view.carte.AutorView;
@@ -26,14 +26,12 @@ public class LinkedinCompositeAutori extends Composite {
     private ComboImage comboAutor;
     private Composite compSelections;
     private List<Autor> autori = Collections.emptyList();
-    private final AutorController autorController;
 
-    public LinkedinCompositeAutori(Composite parent, final List<ObjectId> autori, final AutorController autorController) {
+    public LinkedinCompositeAutori(Composite parent, final List<ObjectId> autori) {
         super(parent, SWT.BORDER);
-        this.autorController = autorController;
 
         if (autori != null) {
-            this.autori = autorController.findByIds(autori);
+            this.autori = ApplicationService.getAutorController().findByIds(autori);
         }
 
         this.setBackground(ColorUtil.COLOR_WHITE);
@@ -46,7 +44,7 @@ public class LinkedinCompositeAutori extends Composite {
         descriptor.setClazz(Autor.class);
         descriptor.setTextMethodName("getNumeComplet");
         descriptor.setToolItemStyle(ComboImage.ADD_ADD | ComboImage.ADD_MOD);
-        descriptor.setInput(autorController.findAll());
+        descriptor.setInput(ApplicationService.getAutorController().findAll());
 
         comboAutor = new ComboImage(this, descriptor);
         comboAutor.setBackground(ColorUtil.COLOR_WHITE);
@@ -59,13 +57,13 @@ public class LinkedinCompositeAutori extends Composite {
         comboAutor.getItemAdd().addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                AutorView view = new AutorView(getShell(), new Autor(), autorController, AbstractView.MODE_ADD);
+                AutorView view = new AutorView(getShell(), new Autor(), AbstractView.MODE_ADD);
                 view.open();
                 if (view.getUserAction() == SWT.CANCEL) {
                     return;
                 }
                 Autor newAutor = view.getAutor();
-                comboAutor.setInput(autorController.findAll());
+                comboAutor.setInput(ApplicationService.getAutorController().findAll());
                 createClosableCanvas(newAutor, true);
             }
         });
@@ -76,12 +74,12 @@ public class LinkedinCompositeAutori extends Composite {
                     return;
                 }
                 Autor autor = (Autor) comboAutor.getSelectedElement();
-                AutorView view = new AutorView(getShell(), autor, autorController, AbstractView.MODE_MODIFY);
+                AutorView view = new AutorView(getShell(), autor, AbstractView.MODE_MODIFY);
                 view.open();
                 if (view.getUserAction() == SWT.CANCEL) {
                     return;
                 }
-                comboAutor.setInput(autorController.findAll());
+                comboAutor.setInput(ApplicationService.getAutorController().findAll());
                 createOrModifyClosableCanvas(autor);
             }
         });
@@ -152,7 +150,7 @@ public class LinkedinCompositeAutori extends Composite {
                 public void handleEvent(Event event) {
                     if (!comboAutor.isDisposed()) {
                         autori.remove((Autor) canvas.getDataObject());
-                        comboAutor.setInput(autorController.findAll());
+                        comboAutor.setInput(ApplicationService.getAutorController().findAll());
                     }
                     layoutEverything(true);
                 }
@@ -192,7 +190,7 @@ public class LinkedinCompositeAutori extends Composite {
     public void setAutori(List<ObjectId> ids) {
         this.autori.clear();
         if (ids != null && !ids.isEmpty()) {
-            this.autori = autorController.findByIds(ids);
+            this.autori = ApplicationService.getAutorController().findByIds(ids);
         }
         populateFields();
     }

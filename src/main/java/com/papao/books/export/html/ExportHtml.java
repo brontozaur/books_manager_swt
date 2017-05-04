@@ -4,8 +4,8 @@ import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.html.HtmlWriter;
+import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
-import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.ApplicationReport;
@@ -38,8 +38,7 @@ public final class ExportHtml {
     public static void exportHTML(final org.eclipse.swt.widgets.Table swtTable,
                                   final String reportName,
                                   final Class<?> clazz,
-                                  final String tableKey,
-                                  ApplicationReportController controller) {
+                                  final String tableKey) {
         Document document;
         Table iTextTable;
         Paragraph p;
@@ -293,8 +292,8 @@ public final class ExportHtml {
             dbRap.setNume(titleName);
             dbRap.setType(ExportType.HTML);
 
-            controller.save(dbRap);
-            VizualizareRapoarte.showRaport(dbRap, controller);
+            ApplicationService.getApplicationReportController().save(dbRap);
+            VizualizareRapoarte.showRaport(dbRap);
 
         } catch (OutOfMemoryError exc) {
             if (wait != null) {

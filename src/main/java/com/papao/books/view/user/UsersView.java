@@ -1,9 +1,8 @@
 package com.papao.books.view.user;
 
 import com.novocode.naf.swt.custom.LiveSashForm;
+import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
-import com.papao.books.controller.ApplicationReportController;
-import com.papao.books.controller.UserController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.Exporter;
 import com.papao.books.model.AbstractMongoDB;
@@ -46,23 +45,18 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
     private LiveSashForm sash;
     private Composite compRight;
     protected BorgSearchSystem searchSystem;
-    private UserController controller;
-    private ApplicationReportController applicationReportController;
 
     private static final String TABLE_KEY = "usersViewer";
 
-    public UsersView(final Shell parent, UserController controller,
-                     ApplicationReportController applicationReportController) {
+    public UsersView(final Shell parent) {
         super(parent, AbstractView.MODE_NONE);
-        this.controller = controller;
-        this.applicationReportController = applicationReportController;
 
         getShell().setText("Utilizatori aplicatie");
         getShell().setImage(AppImages.getImage16(AppImages.IMG_CONFIG));
 
         addComponents();
 
-        this.tableViewer.setInput(controller.findAll());
+        this.tableViewer.setInput(ApplicationService.getUserController().findAll());
         this.tableViewer.getTable().setFocus();
     }
 
@@ -72,7 +66,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new UserView(this.tableViewer.getTable().getShell(), new User(), controller, AbstractView.MODE_ADD);
+        view = new UserView(this.tableViewer.getTable().getShell(), new User(), AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -95,11 +89,11 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return false;
         }
-        if (controller.findOne(usr.getId()) == null) {
+        if (ApplicationService.getUserController().findOne(usr.getId()) == null) {
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return false;
         }
-        view = new UserView(this.tableViewer.getTable().getShell(), usr, controller, AbstractView.MODE_MODIFY);
+        view = new UserView(this.tableViewer.getTable().getShell(), usr, AbstractView.MODE_MODIFY);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -123,12 +117,12 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti utilizatorul selectat?", "Confirmare stergere utilizator") == SWT.NO) {
                 return true;
             }
-            usr = controller.findOne(usr.getId());
+            usr = ApplicationService.getUserController().findOne(usr.getId());
             if (usr == null) {
                 SWTeXtension.displayMessageW("Utilizatorul nu mai exista!");
                 return false;
             }
-            controller.delete(usr);
+            ApplicationService.getUserController().delete(usr);
             refresh();
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {
@@ -147,16 +141,16 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return;
         }
-        if (controller.findOne(usr.getId()) == null) {
+        if (ApplicationService.getUserController().findOne(usr.getId()) == null) {
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return;
         }
-        new UserView(this.tableViewer.getTable().getShell(), usr, controller, AbstractView.MODE_VIEW).open();
+        new UserView(this.tableViewer.getTable().getShell(), usr, AbstractView.MODE_VIEW).open();
     }
 
     @Override
     public void refresh() {
-        this.tableViewer.setInput(controller.findAll());
+        this.tableViewer.setInput(ApplicationService.getUserController().findAll());
     }
 
     @Override
@@ -471,26 +465,26 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
 
     @Override
     public void exportTxt() {
-        Exporter.export(ExportType.TXT, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
+        Exporter.export(ExportType.TXT, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY);
     }
 
     @Override
     public void exportPDF() {
-        Exporter.export(ExportType.PDF, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
+        Exporter.export(ExportType.PDF, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY);
     }
 
     @Override
     public void exportExcel() {
-        Exporter.export(ExportType.XLS, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
+        Exporter.export(ExportType.XLS, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY);
     }
 
     @Override
     public void exportRTF() {
-        Exporter.export(ExportType.RTF, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
+        Exporter.export(ExportType.RTF, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY);
     }
 
     @Override
     public void exportHTML() {
-        Exporter.export(ExportType.HTML, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY, applicationReportController);
+        Exporter.export(ExportType.HTML, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY);
     }
 }

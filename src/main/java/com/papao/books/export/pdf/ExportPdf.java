@@ -2,8 +2,8 @@ package com.papao.books.export.pdf;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
-import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.ApplicationReport;
@@ -42,8 +42,7 @@ public final class ExportPdf {
     public static void exportPDF(final Table swtTable,
                                  final String reportName,
                                  final Class<?> clazz,
-                                 final String tableKey,
-                                 final ApplicationReportController controller) {
+                                 final String tableKey) {
         Document document;
         PdfPTable pdfTable;
         Paragraph p;
@@ -346,9 +345,9 @@ public final class ExportPdf {
             dbRap.setIdUser(EncodeLive.getIdUser());
             dbRap.setNume(titleName);
             dbRap.setType(ExportType.PDF);
-            controller.save(dbRap);
+            ApplicationService.getApplicationReportController().save(dbRap);
 
-            VizualizareRapoarte.showRaport(dbRap, controller);
+            VizualizareRapoarte.showRaport(dbRap);
         } catch (OutOfMemoryError exc) {
             if (wait != null) {
                 wait.close();

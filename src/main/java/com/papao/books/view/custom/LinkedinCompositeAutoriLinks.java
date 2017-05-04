@@ -1,6 +1,6 @@
 package com.papao.books.view.custom;
 
-import com.papao.books.controller.AutorController;
+import com.papao.books.ApplicationService;
 import com.papao.books.model.Autor;
 import com.papao.books.view.carte.AutorView;
 import com.papao.books.view.view.AbstractView;
@@ -16,14 +16,12 @@ import java.util.List;
 public class LinkedinCompositeAutoriLinks extends Composite {
 
     private List<Autor> autori = Collections.emptyList();
-    private final AutorController autorController;
 
-    public LinkedinCompositeAutoriLinks(Composite parent, final List<ObjectId> autori, final AutorController autorController) {
+    public LinkedinCompositeAutoriLinks(Composite parent, final List<ObjectId> autori) {
         super(parent, SWT.NONE);
-        this.autorController = autorController;
 
         if (autori != null) {
-            this.autori = autorController.findByIds(autori);
+            this.autori = ApplicationService.getAutorController().findByIds(autori);
         }
 
         GridDataFactory.fillDefaults().grab(false, false).hint(parent.getSize().x, SWT.DEFAULT).applyTo(this);
@@ -55,8 +53,8 @@ public class LinkedinCompositeAutoriLinks extends Composite {
             @Override
             public void handleEvent(Event event) {
                 Autor autor = (Autor) event.widget.getData();
-                autor = autorController.findOne(autor.getId()); //reload from db
-                new AutorView(getShell(), autor, autorController, AbstractView.MODE_MODIFY).open();
+                autor = ApplicationService.getAutorController().findOne(autor.getId()); //reload from db
+                new AutorView(getShell(), autor, AbstractView.MODE_MODIFY).open();
             }
         });
     }
@@ -64,7 +62,7 @@ public class LinkedinCompositeAutoriLinks extends Composite {
     public void setAutori(List<ObjectId> ids) {
         this.autori.clear();
         if (ids != null && !ids.isEmpty()) {
-            this.autori = autorController.findByIds(ids);
+            this.autori = ApplicationService.getAutorController().findByIds(ids);
         }
         for (Control control : getChildren()) {
             control.dispose();

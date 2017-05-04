@@ -1,20 +1,16 @@
 package com.papao.books.view;
 
 import com.novocode.naf.swt.custom.LiveSashForm;
+import com.papao.books.ApplicationService;
 import com.papao.books.BooksApplication;
 import com.papao.books.BooleanSetting;
-import com.papao.books.controller.ApplicationReportController;
-import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
-import com.papao.books.controller.UserController;
-import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.imports.AutoriImportView;
 import com.papao.books.imports.BookImportView;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.auth.EncodeLive;
-import com.papao.books.view.auth.LoggerMyWay;
 import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.config.AppConfigView;
@@ -56,7 +52,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -67,14 +62,11 @@ import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
-@org.springframework.stereotype.Component
 public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer {
 
     private static Logger logger = Logger.getLogger(EncodePlatform.class);
     private ToolTip appToolTip;
     private Tray appTray;
-    private UserController userController;
-    private AutorController autorController;
     private static ToolBar barDocking;
     private static EncodePlatform instance;
     private CBanner mainCBanner;
@@ -108,8 +100,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     private PaginationComposite paginationComposite;
     private BookSearchType searchType = BookSearchType.AUTOR;
-    private BookController bookController;
-    private ApplicationReportController applicationReportController;
     private Combo comboModAfisare;
     private DragAndDropTableComposite dragAndDropTableComposite;
     private LiveSashForm rightVerticalSash;
@@ -121,18 +111,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
 
-    @Autowired
-    public EncodePlatform(UserController userController,
-                          AutorController autorController,
-                          BookController bookController,
-                          ApplicationReportController applicationReportController) {
+    public EncodePlatform() {
         super(null, AbstractView.MODE_NONE);
-        this.userController = userController;
-        this.autorController = autorController;
-        this.bookController = bookController;
-        this.applicationReportController = applicationReportController;
-        this.bookController.addObserver(this);
-        /**
+        ApplicationService.getBookController().addObserver(this);
+        /*
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
          * din AbstractView,
          * de pe shell. Avem nevoie de acest listener, pt a nu repeta codul care salveaza
@@ -189,7 +171,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
-            closeApplication(true);
+            BooksApplication.closeApplication(true);
         }
     }
 
@@ -264,7 +246,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        galleryComposite = new ImageGalleryComposite(mainRightTabFolder, bookController, userController, autorController, progressBarComposite);
+        galleryComposite = new ImageGalleryComposite(mainRightTabFolder, progressBarComposite);
         tabGallery.setControl(galleryComposite.getContent());
 
         this.verticalSash.setWeights(new int[]{2, 8});
@@ -347,7 +329,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
 
-        readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash, autorController, bookController, userController);
+        readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash);
         //table viewer is notified when rating changes on the details composite
         readOnlyDetailsComposite.addObserver(this);
         galleryComposite.addObserver(this);
@@ -359,7 +341,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         rightSash.setWeights(new int[]{3, 9});
         rightSash.setMaximizedControl(rightInnerSash);
 
-        paginationComposite = new PaginationComposite(compRight, bookController);
+        paginationComposite = new PaginationComposite(compRight);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(paginationComposite);
 
         WidgetCursorUtil.addHandCursorListener(this.tableViewer.getTable());
@@ -374,7 +356,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
 
         dragAndDropTableComposite = new DragAndDropTableComposite(comp, bottomInnerTabFolderRight,
-                bookController, new Carte(), true);
+                new Carte(), true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(dragAndDropTableComposite);
         bottomInnerTabFolderRight.setTopRight(dragAndDropTableComposite.getBarOps());
 
@@ -545,46 +527,46 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         switch (searchType) {
             case EDITURA: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "editura");
+                IntValuePairsWrapper wrapper = ApplicationService.getBookController().getDistinctStringPropertyValues(ApplicationService.getBookController().getBooksCollectionName(), "editura");
                 createTreeNodes(wrapper, "Edituri");
                 break;
             }
             case AUTOR: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctValuesForReferenceCollection(bookController.getBooksCollectionName(),
+                IntValuePairsWrapper wrapper = ApplicationService.getBookController().getDistinctValuesForReferenceCollection(ApplicationService.getBookController().getBooksCollectionName(),
                         "idAutori",
-                        bookController.getAutoriCollectionName(),
+                        ApplicationService.getBookController().getAutoriCollectionName(),
                         "_id",
                         "numeComplet");
                 createTreeNodes(wrapper, "Autori");
                 break;
             }
             case TRADUCATOR: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctArrayPropertyValues(bookController.getBooksCollectionName(), "traducere.traducatori");
+                IntValuePairsWrapper wrapper = ApplicationService.getBookController().getDistinctArrayPropertyValues(ApplicationService.getBookController().getBooksCollectionName(), "traducere.traducatori");
                 createTreeNodes(wrapper, "Traducatori");
                 break;
             }
             case AN_APARITIE: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "anAparitie");
+                IntValuePairsWrapper wrapper = ApplicationService.getBookController().getDistinctStringPropertyValues(ApplicationService.getBookController().getBooksCollectionName(), "anAparitie");
                 createTreeNodes(wrapper, "Ani aparitie");
                 break;
             }
             case LIMBA: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "limba");
+                IntValuePairsWrapper wrapper = ApplicationService.getBookController().getDistinctStringPropertyValues(ApplicationService.getBookController().getBooksCollectionName(), "limba");
                 createTreeNodes(wrapper, "Limba textului");
                 break;
             }
             case LIMBA_ORIGINALA: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "editiaOriginala.limba");
+                IntValuePairsWrapper wrapper = ApplicationService.getBookController().getDistinctStringPropertyValues(ApplicationService.getBookController().getBooksCollectionName(), "editiaOriginala.limba");
                 createTreeNodes(wrapper, "Limba originala");
                 break;
             }
             case TIP_COPERTA: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "tipCoperta");
+                IntValuePairsWrapper wrapper = ApplicationService.getBookController().getDistinctStringPropertyValues(ApplicationService.getBookController().getBooksCollectionName(), "tipCoperta");
                 createTreeNodes(wrapper, " Tipuri coperta");
                 break;
             }
             case TITLU: {
-                IntValuePairsWrapper wrapper = bookController.getDistinctStringPropertyValues(bookController.getBooksCollectionName(), "titlu", true);
+                IntValuePairsWrapper wrapper = ApplicationService.getBookController().getDistinctStringPropertyValues(ApplicationService.getBookController().getBooksCollectionName(), "titlu", true);
                 createTreeNodes(wrapper, "Toate titlurile");
                 break;
             }
@@ -822,7 +804,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                new BookImportView(getShell(), bookController, autorController, applicationReportController).open();
+                new BookImportView(getShell()).open();
             }
         });
 
@@ -831,7 +813,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                new AutoriImportView(getShell(), applicationReportController, autorController).open();
+                new AutoriImportView(getShell()).open();
             }
         });
 
@@ -878,7 +860,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-                VizualizareRapoarte.show(applicationReportController);
+//                VizualizareRapoarte.show();
             }
         });
 
@@ -989,7 +971,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return bookController.getBookAuthorNames(carte);
+                            return ApplicationService.getBookController().getBookAuthorNames(carte);
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
@@ -997,7 +979,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return StringUtil.romanianCompare(bookController.getBookAuthorNames(a), bookController.getBookAuthorNames(b));
+                            return StringUtil.romanianCompare(ApplicationService.getBookController().getBookAuthorNames(a), ApplicationService.getBookController().getBookAuthorNames(b));
                         }
 
                     };
@@ -1049,7 +1031,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return userController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()) + "";
+                            return ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), carte.getId()) + "";
                         }
 
                         @Override
@@ -1062,8 +1044,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return userController.getPersonalRating(EncodeLive.getIdUser(), a.getId())
-                                    - userController.getPersonalRating(EncodeLive.getIdUser(), b.getId());
+                            return ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), a.getId())
+                                    - ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), b.getId());
                         }
 
                     };
@@ -1208,29 +1190,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return menu;
     }
 
-    public void closeApplication(boolean forced) {
-        try {
-            if (appTray != null) {
-                appTray.dispose();
-            }
-            if (forced) {
-                logger.error("forced shutdown sequence initiated..");
-                logger.info("**********APPLICATION TERMINATED WITH ERROR**********");
-                Display.getDefault().dispose();
-                Runtime.getRuntime().exit(-1);
-            } else {
-                logger.info("normal shutdown sequence initiated..");
-            }
-            LoggerMyWay.shutDown();
-        } catch (Exception exc) {
-            logger.error(exc.getMessage(), exc);
-        } finally {
-            Display.getDefault().readAndDispatch();// nu sunt sigur daca trebuie sau nu.
-            Display.getDefault().dispose();
-            Runtime.getRuntime().exit(0);
-        }
-    }
-
     private final void createTraySystem() {
         TrayItem item;
         MenuItem menuItem;
@@ -1251,6 +1210,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 logger.warn("System tray is not available...");
                 return;
             }
+            getShell().addListener(SWT.Dispose, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    if (appTray != null && !appTray.isDisposed()) {
+                        appTray.dispose();
+                    }
+                }
+            });
 
             item = new TrayItem(getAppTray(), SWT.NONE);
             item.setToolTipText(getShellText());
@@ -1332,7 +1299,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             } else {
                 getShell().removeListener(SWT.Close, this);
                 getShell().notifyListeners(SWT.Close, e);
-                closeApplication(false);
+                BooksApplication.closeApplication(false);
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -1340,11 +1307,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     public final void configAutori() {
-        new AutoriView(new Shell(), autorController).open();
+        new AutoriView(new Shell()).open();
     }
 
     public final void configUsers() {
-        new UsersView(getShell(), userController, applicationReportController).open();
+        new UsersView(getShell()).open();
     }
 
     @Override
@@ -1392,7 +1359,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), bookController, userController, autorController, AbstractView.MODE_ADD);
+        view = new CarteView(this.tableViewer.getTable().getShell(), new Carte(), AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -1420,12 +1387,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cartea selectata?", "Confirmare stergere carte") == SWT.NO) {
                 return true;
             }
-            Carte carteDb = bookController.findOne(carte.getId());
+            Carte carteDb = ApplicationService.getBookController().findOne(carte.getId());
             if (carteDb == null) {
                 SWTeXtension.displayMessageW("Cartea nu mai exista in baza de date!");
                 return false;
             }
-            bookController.delete(carteDb);
+            ApplicationService.getBookController().delete(carteDb);
             tableViewer.remove(carte);
             displayBookData();
         } catch (Exception exc) {
@@ -1445,7 +1412,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             SWTeXtension.displayMessageI("Cartea selectata este invalida!");
             return false;
         }
-        if (bookController.findOne(carte.getId()) == null) {
+        if (ApplicationService.getBookController().findOne(carte.getId()) == null) {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return false;
         }
@@ -1455,7 +1422,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             carte.initCopy();
             viewMode = MODE_CLONE;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, userController, autorController, viewMode);
+        view = new CarteView(this.tableViewer.getTable().getShell(), carte, viewMode);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -1486,7 +1453,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                             Carte carte = (Carte) element;
-                            return searchType.compareValues(bookController.getBookAuthorNames(carte));
+                            return searchType.compareValues(ApplicationService.getBookController().getBookAuthorNames(carte));
                         }
                     };
                     break;
@@ -1516,7 +1483,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                             Carte carte = (Carte) element;
-                            return searchType.compareValues(userController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
+                            return searchType.compareValues(ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
                         }
                     };
                     break;
@@ -1561,11 +1528,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             SWTeXtension.displayMessageI("Cartea selectata este invalida!");
             return;
         }
-        if (bookController.findOne(carte.getId()) == null) {
+        if (ApplicationService.getBookController().findOne(carte.getId()) == null) {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return;
         }
-        new CarteView(this.tableViewer.getTable().getShell(), carte, bookController, userController, autorController, AbstractView.MODE_VIEW).open();
+        new CarteView(this.tableViewer.getTable().getShell(), carte, AbstractView.MODE_VIEW).open();
     }
 
     public void fullRefresh(boolean resetPage) {
@@ -1587,7 +1554,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (resetPage) {
             pageable = new PageRequest(0, pageable.getPageSize());
         }
-        bookController.requestSearch(this.searchType, value, pageable, all);
+        ApplicationService.getBookController().requestSearch(this.searchType, value, pageable, all);
     }
 
     private Pageable getPageable() {
@@ -1663,10 +1630,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         return menu;
-    }
-
-    public UserController getUserController() {
-        return this.userController;
     }
 
     public static EncodePlatform getInstance() {

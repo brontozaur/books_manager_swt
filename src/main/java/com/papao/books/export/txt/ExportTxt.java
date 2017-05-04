@@ -2,8 +2,8 @@ package com.papao.books.export.txt;
 
 import com.inamik.utils.SimpleTableFormatter;
 import com.inamik.utils.TableFormatter;
+import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
-import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.ApplicationReport;
@@ -36,8 +36,7 @@ public final class ExportTxt {
     public static void exportTxt(final Table table,
                                  final String numeRaport,
                                  final Class<?> clazz,
-                                 final String tableKey,
-                                 ApplicationReportController controller) {
+                                 final String tableKey) {
         TableFormatter tf;
         File output;
         PrintStream ps = null;
@@ -239,9 +238,9 @@ public final class ExportTxt {
             dbRap.setNume(titleName);
             dbRap.setType(ExportType.TXT);
 
-            controller.save(dbRap);
+            ApplicationService.getApplicationReportController().save(dbRap);
 
-            VizualizareRapoarte.showRaport(dbRap, controller);
+            VizualizareRapoarte.showRaport(dbRap);
         } catch (IOException exc) {
             wait.close();
             SWTeXtension.displayMessageE("A intervenit o eroare la generarea fisierului.", exc);

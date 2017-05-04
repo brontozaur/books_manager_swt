@@ -1,6 +1,5 @@
 package com.papao.books.export;
 
-import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.html.ExportHtml;
 import com.papao.books.export.pdf.ExportPdf;
 import com.papao.books.export.rtf.ExportRtf;
@@ -15,27 +14,26 @@ public class Exporter {
                                     final Table table,
                                     final String reportName,
                                     final Class<?> clazz,
-                                    final String sufix,
-                                    ApplicationReportController controller) {
+                                    final String sufix) {
         switch (type) {
             case PDF: {
-                ExportPdf.exportPDF(table, reportName, clazz, sufix, controller);
+                ExportPdf.exportPDF(table, reportName, clazz, sufix);
                 break;
             }
             case XLS: {
-                ExportXls.exportExcel(table, reportName, clazz, sufix, controller);
+                ExportXls.exportExcel(table, reportName, clazz, sufix);
                 break;
             }
             case RTF: {
-                ExportRtf.exportRTF(table, reportName, clazz, sufix, controller);
+                ExportRtf.exportRTF(table, reportName, clazz, sufix);
                 break;
             }
             case HTML: {
-                ExportHtml.exportHTML(table, reportName, clazz, sufix, controller);
+                ExportHtml.exportHTML(table, reportName, clazz, sufix);
                 break;
             }
             case TXT: {
-                ExportTxt.exportTxt(table, reportName, clazz, sufix, controller);
+                ExportTxt.exportTxt(table, reportName, clazz, sufix);
                 break;
             }
             default:

@@ -1,7 +1,7 @@
 package com.papao.books.export;
 
+import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
-import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.model.ApplicationReport;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
@@ -38,7 +38,6 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
     private static Logger logger = Logger.getLogger(VizualizareRapoarte.class);
 
     private static VizualizareRapoarte instance;
-    private ApplicationReportController controller;
     private TreeViewer leftViewer;
     private TableViewer rightViewer;
     private CTabFolder folder;
@@ -55,9 +54,8 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
     private final static int IDX_CALE = 2;
     private final static int IDX_DATA_SERVER = 3;
 
-    private VizualizareRapoarte(ApplicationReportController controller) {
+    private VizualizareRapoarte() {
         super(null, AbstractView.MODE_VIEW);
-        this.controller = controller;
 
         getShell().addListener(SWT.Dispose, this);
         getShell().setImages(new Image[]{AppImages.getImage16(AppImages.IMG_INFO), AppImages.getImage24(AppImages.IMG_INFO), AppImages.getImage32(AppImages.IMG_INFO)});
@@ -369,7 +367,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         this.leftViewer.getTree().setSortColumn(null);
         this.rightViewer.getTable().setSortColumn(null);
 
-        IntValuePairsWrapper wrapper = controller.getDistinctStringPropertyValues(controller.getReportsCollectionName(), "type");
+        IntValuePairsWrapper wrapper = ApplicationService.getApplicationReportController().getDistinctStringPropertyValues(ApplicationService.getApplicationReportController().getReportsCollectionName(), "type");
         createTreeNodes(wrapper, "Rapoarte");
     }
 
@@ -457,7 +455,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
                         value = selectedNode.getQueryValue();
                     }
                     rightViewer.setInput(null);
-                    rightViewer.setInput(controller.getReports(all, value));
+                    rightViewer.setInput(ApplicationService.getApplicationReportController().getReports(all, value));
 
                 } else if (e.widget == this.rightViewer.getTable()) {
                     enableButtons();
@@ -472,7 +470,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
                         return;
                     }
                     ApplicationReport rp = (ApplicationReport) this.rightViewer.getTable().getSelection()[0].getData();
-                    VizualizareRapoarte.showRaport(rp, controller);
+                    VizualizareRapoarte.showRaport(rp);
                 } else if (e.widget == this.itemRefresh) {
                     populateFields();
                 }
@@ -496,12 +494,12 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         setObjectName("rapoarte");
     }
 
-    public static void show(ApplicationReportController controller) {
-        showRaport(null, controller);
+    public static void show() {
+        showRaport(null);
     }
 
-    public static void showRaport(final ApplicationReport raport, ApplicationReportController controller) {
-        VizualizareRapoarte.getInstance(controller);
+    public static void showRaport(final ApplicationReport raport) {
+        VizualizareRapoarte.getInstance();
 
         if (raport == null) {
             if (VizualizareRapoarte.instance.getShell().getMinimized() && !VizualizareRapoarte.instance.getShell().getMaximized()) {
@@ -548,9 +546,9 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         return new Browser(item.getParent(), SWT.NONE);
     }
 
-    private static VizualizareRapoarte getInstance(ApplicationReportController controller) {
+    private static VizualizareRapoarte getInstance() {
         if (VizualizareRapoarte.instance == null) {
-            VizualizareRapoarte.instance = new VizualizareRapoarte(controller);
+            VizualizareRapoarte.instance = new VizualizareRapoarte();
         }
         return VizualizareRapoarte.instance;
     }

@@ -1,5 +1,6 @@
 package com.papao.books.view.custom;
 
+import com.papao.books.ApplicationService;
 import com.papao.books.controller.BookController;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
@@ -31,12 +32,10 @@ public class PaginationComposite extends Composite implements Observer {
     private long totalPages = 0;
     private long currentPage = 1;
     private int pageSize = 0;
-    private BookController paginationController;
 
-    public PaginationComposite(Composite parent, BookController paginationController) {
+    public PaginationComposite(Composite parent) {
         super(parent, SWT.NONE);
-        this.paginationController = paginationController;
-        paginationController.addObserver(this);
+        ApplicationService.getBookController().addObserver(this);
 
         GridLayoutFactory.fillDefaults().numColumns(6).margins(0, 0).spacing(5, 0).extendedMargins(0, 0, 5, 0).equalWidth(false).applyTo(this);
 
@@ -174,7 +173,7 @@ public class PaginationComposite extends Composite implements Observer {
     }
 
     private void search() {
-        paginationController.requestSearch(getPageable());
+        ApplicationService.getBookController().requestSearch(getPageable());
         itemNext.setEnabled(currentPage < totalPages && totalCount > 0);
         itemPrevious.setEnabled(currentPage - 1 > 0 && totalCount > 0);
 
@@ -182,6 +181,9 @@ public class PaginationComposite extends Composite implements Observer {
     }
 
     private void updateUI() {
+        if (this.isDisposed()) {
+            return;
+        }
         itemNext.setEnabled(currentPage - 1 < totalPages - 1 && totalCount > 0);
         itemLastPage.setEnabled(totalPages > 1 && itemNext.getEnabled());
 

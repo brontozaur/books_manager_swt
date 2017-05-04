@@ -1,8 +1,7 @@
 package com.papao.books.view.custom;
 
-import com.papao.books.controller.AutorController;
+import com.papao.books.ApplicationService;
 import com.papao.books.controller.BookController;
-import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
 import com.papao.books.view.util.ColorUtil;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -22,24 +21,15 @@ import java.util.Observer;
 
 public class ImageGalleryComposite extends Observable implements Observer {
 
-    private BookController bookController;
-    private UserController userController;
-    private AutorController autorController;
     private ScrolledComposite scrolledComposite;
     private Composite mainComp;
     private ProgressBarComposite progressBarComposite;
     private ImageViewComposite selected;
 
     public ImageGalleryComposite(Composite parent,
-                                 BookController bookController,
-                                 UserController userController,
-                                 AutorController autorController,
                                  ProgressBarComposite progressBarComposite) {
-        this.bookController = bookController;
-        this.userController = userController;
-        this.autorController = autorController;
         this.progressBarComposite = progressBarComposite;
-        this.bookController.addObserver(this);
+        ApplicationService.getBookController().addObserver(this);
 
         scrolledComposite = new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL);
         scrolledComposite.setLayout(new GridLayout());
@@ -98,11 +88,17 @@ public class ImageGalleryComposite extends Observable implements Observer {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                if (progressBarComposite.isDisposed()) {
+                    return;
+                }
                 progressBarComposite.setMax(carti.size());
                 clearAll();
                 for (Carte carte : carti) {
+                    if (progressBarComposite.isDisposed()) {
+                        return;
+                    }
                     progressBarComposite.advance();
-                    ImageViewComposite view = new ImageViewComposite(mainComp, bookController, userController, autorController, carte);
+                    ImageViewComposite view = new ImageViewComposite(mainComp, carte);
                     view.addObserver(ImageGalleryComposite.this);
                     mainComp.layout();
                     scrolledComposite.notifyListeners(SWT.Resize, new Event());

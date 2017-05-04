@@ -32,7 +32,7 @@ public class SettingsController {
 
     @Autowired
     public SettingsController(SettingsRepository settingRepository) {
-        this.settingRepository = settingRepository;
+        SettingsController.settingRepository = settingRepository;
     }
 
     public static WindowSetting getWindowSetting(String windowKey) {

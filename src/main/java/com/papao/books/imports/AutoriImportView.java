@@ -1,8 +1,6 @@
 package com.papao.books.imports;
 
-import com.papao.books.controller.AbstractController;
-import com.papao.books.controller.ApplicationReportController;
-import com.papao.books.controller.AutorController;
+import com.papao.books.ApplicationService;
 import com.papao.books.model.Autor;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.preluari.AbstractPreluareDateM2View;
@@ -20,11 +18,9 @@ import java.util.List;
 public class AutoriImportView extends AbstractPreluareDateM2View {
 
     private static final Logger logger = Logger.getLogger(AutoriImportView.class);
-    private AutorController autorController;
 
-    public AutoriImportView(Shell parent, ApplicationReportController reportController, AbstractController controller) {
-        super(parent, new String[]{"Nume"}, new String[]{"Numele complet al autorului"}, reportController);
-        this.autorController = (AutorController) controller;
+    public AutoriImportView(Shell parent) {
+        super(parent, new String[]{"Nume"}, new String[]{"Numele complet al autorului"});
     }
 
     @Override
@@ -55,11 +51,11 @@ public class AutoriImportView extends AbstractPreluareDateM2View {
         List<Integer> succesfullyImportedIndices = new ArrayList<>();
         for (int i = 0; i < items.length; i++) {
             String autorName = items[i].getText(0);
-            Autor autor = autorController.getByNumeComplet(autorName);
+            Autor autor = ApplicationService.getAutorController().getByNumeComplet(autorName);
             if (autor == null) {
                 autor = new Autor();
                 autor.setNumeComplet(autorName);
-                autorController.save(autor);
+                ApplicationService.getAutorController().save(autor);
                 succesfullyImportedIndices.add(i);
             } else {
                 items[i].setText(tableDocumente.getColumnCount() - 1, "Exista deja");

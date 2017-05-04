@@ -1,15 +1,15 @@
 
 package com.papao.books;
 
-import com.papao.books.controller.UserController;
 import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.auth.EncodeLive;
+import com.papao.books.view.auth.LoggerMyWay;
 import com.papao.books.view.auth.LoginShell;
-import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.mihalis.opal.notify.Notifier;
 import org.mihalis.opal.notify.NotifierColorsFactory;
 import org.mihalis.opal.notify.NotifierSettings;
@@ -37,14 +37,14 @@ public class BooksApplication {
 
     private static BooksApplication app;
 
-    @Autowired
-    private SettingsController settingsController;
-
-    @Autowired
-    private UserController userController;
-
-    @Autowired
     private EncodePlatform encodePlatform;
+
+    /*
+        This is the central point that autowires all controllers and repositories as singletons
+        Do not remove this line.
+     */
+    @Autowired
+    private ApplicationService applicationService;
 
     @Value("${app.notification.style}")
     String notificationStyle;
@@ -52,20 +52,30 @@ public class BooksApplication {
     @PostConstruct
     public void open() {
         try {
-            encodePlatform.getShell().setVisible(false);
+            if (encodePlatform != null) {
+                Listener[] closeListeners = encodePlatform.getShell().getListeners(SWT.Close);
+                for (Listener listener : closeListeners) {
+                    encodePlatform.getShell().removeListener(SWT.Close, listener);
+                }
+                encodePlatform.getShell().close();
+                encodePlatform = null;
+            }
             app = this;
             EncodeLive.setNotificationUsingNotifier("default".equals(notificationStyle));
             initNotifierSettings();
-            LoginShell loginShell = new LoginShell(userController);
+            LoginShell loginShell = new LoginShell();
             Notifier.setParent(loginShell.getShell());
             loginShell.open(true, false);
             if (loginShell.getUserAction() == SWT.OK) {
+                if (encodePlatform == null) {
+                    encodePlatform = new EncodePlatform();
+                }
                 encodePlatform.getShell().setText("Books Manager [utilizator: $$$]");
                 encodePlatform.getShell().setText(encodePlatform.getShell().getText().replace("$$$", EncodeLive.getCurrentUserName()));
                 Notifier.setParent(encodePlatform.getShell());
                 encodePlatform.open();
             } else {
-                closeApp(false);
+                closeApplication(false);
             }
 
             /*
@@ -77,12 +87,12 @@ public class BooksApplication {
                 }
             }
             logger.info("normal shutdown is in progress...");
-            closeApp(false);
+            closeApplication(false);
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             SWTeXtension.showErrorBoxSWTInternal("A intervenit o eroare fatala la lansarea/inchiderea aplicatiei - " + exc.getMessage() + "."
                     + "\nAceasta se va inchide acum. Sugestie : contactati producatorul.");
-            closeApp(true);
+            closeApplication(true);
         }
     }
 
@@ -90,8 +100,24 @@ public class BooksApplication {
         return app;
     }
 
-    private void closeApp(final boolean forced) {
-        encodePlatform.closeApplication(forced);
+    public static void closeApplication(boolean forced) {
+        try {
+            if (forced) {
+                logger.error("forced shutdown sequence initiated..");
+                logger.info("**********APPLICATION TERMINATED WITH ERROR**********");
+                Display.getDefault().dispose();
+                Runtime.getRuntime().exit(-1);
+            } else {
+                logger.info("normal shutdown sequence initiated..");
+            }
+            LoggerMyWay.shutDown();
+        } catch (Exception exc) {
+            logger.error(exc.getMessage(), exc);
+        } finally {
+            Display.getDefault().readAndDispatch();// nu sunt sigur daca trebuie sau nu.
+            Display.getDefault().dispose();
+            Runtime.getRuntime().exit(0);
+        }
     }
 
     @Value("${app.notifier.shellWidth}")

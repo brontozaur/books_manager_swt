@@ -1,9 +1,7 @@
 package com.papao.books.view.custom;
 
 import com.github.haixing_hu.swt.starrating.StarRating;
-import com.papao.books.controller.AutorController;
-import com.papao.books.controller.BookController;
-import com.papao.books.controller.UserController;
+import com.papao.books.ApplicationService;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.carte.CarteView;
@@ -27,9 +25,6 @@ public class ImageViewComposite extends Observable {
     private ImageViewer previewShell;
     private final int WIDTH = 150;
     private final int HEIGHT = 180;
-    private BookController bookController;
-    private UserController userController;
-    private AutorController autorController;
     private StarRating starRating;
     private CLabel labelName;
     private Composite mainComposite;
@@ -40,13 +35,7 @@ public class ImageViewComposite extends Observable {
     private static final Logger logger = Logger.getLogger(ImageViewComposite.class);
 
     public ImageViewComposite(Composite parent,
-                              final BookController carteController,
-                              final UserController userController,
-                              final AutorController autorController,
                               final Carte carte) {
-        this.bookController = carteController;
-        this.userController = userController;
-        this.autorController = autorController;
         this.carte = carte;
 
         mainComposite = new Composite(parent, SWT.NONE);
@@ -60,10 +49,10 @@ public class ImageViewComposite extends Observable {
         starRating.addListener(SWT.MouseUp, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (carte == null || userController.getPersonalRating(carte.getId()) == starRating.getCurrentNumberOfStars()) {
+                if (carte == null || ApplicationService.getUserController().getPersonalRating(carte.getId()) == starRating.getCurrentNumberOfStars()) {
                     return;
                 }
-                userController.saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
+                ApplicationService.getUserController().saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
                 SWTeXtension.displayMessageI("Nota a fost salvata cu succes!");
                 setChanged();
                 notifyObservers();
@@ -109,7 +98,7 @@ public class ImageViewComposite extends Observable {
             @Override
             public void handleEvent(final Event e) {
                 permanentSelection = true;
-                CarteView view = new CarteView(labelImage.getShell(), carte, carteController, userController, autorController, AbstractView.MODE_MODIFY);
+                CarteView view = new CarteView(labelImage.getShell(), carte, AbstractView.MODE_MODIFY);
                 view.open(true, true);
                 if (view.getUserAction() == SWT.OK) {
                     ImageViewComposite.this.carte = view.getCarte();
@@ -142,7 +131,7 @@ public class ImageViewComposite extends Observable {
     }
 
     public void populateFields(Carte carte) {
-        Image fullImage = bookController.getImage(carte.getCopertaFata());
+        Image fullImage = ApplicationService.getBookController().getImage(carte.getCopertaFata());
         if (fullImage != null) {
             labelImage.setData(SWT_FULL_IMAGE, fullImage);
             labelImage.setData(carte.getCopertaFata().getFileName());
@@ -152,9 +141,9 @@ public class ImageViewComposite extends Observable {
             labelImage.setText(" fara \n  imagine");
         }
 
-        starRating.setCurrentNumberOfStars(userController.getPersonalRating(carte.getId()));
+        starRating.setCurrentNumberOfStars(ApplicationService.getUserController().getPersonalRating(carte.getId()));
         labelName.setText(carte.getTitlu());
-        labelImage.setToolTipText(bookController.getBookAuthorNames(carte) + " - " + carte.getTitlu());
+        labelImage.setToolTipText(ApplicationService.getBookController().getBookAuthorNames(carte) + " - " + carte.getTitlu());
     }
 
     public Carte getCarte() {

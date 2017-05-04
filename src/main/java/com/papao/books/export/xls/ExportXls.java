@@ -1,7 +1,7 @@
 package com.papao.books.export.xls;
 
+import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
-import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.model.ApplicationReport;
 import com.papao.books.model.config.ExportXlsSetting;
@@ -48,8 +48,7 @@ public final class ExportXls {
     public static void exportExcel(final Table swtTable,
                                    final String reportName,
                                    final Class<?> clazz,
-                                   final String tableKey,
-                                   ApplicationReportController controller) {
+                                   final String tableKey) {
         Workbook workBook;
         Sheet sheet = null;
         int nrOfItems;
@@ -378,7 +377,7 @@ public final class ExportXls {
             dbRap.setIdUser(EncodeLive.getIdUser());
             dbRap.setNume(titleName);
             dbRap.setType(ExportType.XLS);
-            controller.save(dbRap);
+            ApplicationService.getApplicationReportController().save(dbRap);
 
             SWTeXtension.displayMessageI("Fisierul \n" + output.getCanonicalPath() + " a fost generat cu succes!",
                     "Export efectuat cu succes",

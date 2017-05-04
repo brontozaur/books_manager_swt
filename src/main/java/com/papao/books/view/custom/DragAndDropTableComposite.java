@@ -1,7 +1,7 @@
 package com.papao.books.view.custom;
 
 import com.mongodb.gridfs.GridFSDBFile;
-import com.papao.books.controller.BookController;
+import com.papao.books.ApplicationService;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
 import com.papao.books.view.AppImages;
@@ -41,7 +41,6 @@ public class DragAndDropTableComposite extends Composite {
     private List<DocumentData> deleted = new ArrayList<>();
     private ToolItem itemDel;
     private boolean changed;
-    private BookController controller;
     private ToolItem itemView;
     private Carte carte = null;
     private ToolItem itemAdd;
@@ -51,19 +50,16 @@ public class DragAndDropTableComposite extends Composite {
     private ToolBar barOps;
 
     public DragAndDropTableComposite(Composite parent,
-                                     BookController controller,
                                      Carte carte,
                                      boolean permanentChanges) {
-        this(parent, null, controller, carte, permanentChanges);
+        this(parent, null, carte, permanentChanges);
     }
 
     public DragAndDropTableComposite(Composite parent,
                                      Composite barOpsParent,
-                                     BookController controller,
                                      Carte carte,
                                      boolean permanentChanges) {
         super(parent, SWT.NONE);
-        this.controller = controller;
         this.carte = carte;
         this.permanentChanges = permanentChanges;
         if (barOpsParent == null) {
@@ -232,7 +228,7 @@ public class DragAndDropTableComposite extends Composite {
             if (permanentChanges) {
                 carte.getDocuments().remove(doc);
                 logger.info("Am sters un document atasat cartii " + carte.getId());
-                controller.removeDocument(doc.getId());
+                ApplicationService.getBookController().removeDocument(doc.getId());
             } else {
                 deleted.add(doc);
             }
@@ -240,7 +236,7 @@ public class DragAndDropTableComposite extends Composite {
             item.dispose();
         }
         if (permanentChanges) {
-            controller.getRepository().save(carte);
+            ApplicationService.getBookController().getRepository().save(carte);
             SWTeXtension.displayMessageI("Am sters " + selectionCount + " documente atasate cartii curente");
         }
     }
@@ -265,9 +261,9 @@ public class DragAndDropTableComposite extends Composite {
         dd.setLength(file.length());
         dd.setUploadDate(new Date());
         if (permanentChanges) {
-            dd = controller.saveDocument(file, null, dd.getContentType());
+            dd = ApplicationService.getBookController().saveDocument(file, null, dd.getContentType());
             this.carte.getDocuments().add(dd);
-            controller.save(this.carte);
+            ApplicationService.getBookController().save(this.carte);
         } else {
             changed = true;
         }
@@ -337,7 +333,7 @@ public class DragAndDropTableComposite extends Composite {
         OutputStream out = null;
         try {
             in = new FileInputStream(documentData.getFilePath());
-            filePath = controller.getAppOutFolder() + "/" + documentData.getFileName();
+            filePath = ApplicationService.getBookController().getAppOutFolder() + "/" + documentData.getFileName();
             out = new FileOutputStream(new File(filePath));
             StreamUtils.copy(in, out);
             item.setData("file", filePath);
@@ -380,7 +376,7 @@ public class DragAndDropTableComposite extends Composite {
         OutputStream out = null;
         try {
             in = fsdbFile.getInputStream();
-            filePath = controller.getAppOutFolder() + "/" + fsdbFile.getFilename();
+            filePath = ApplicationService.getBookController().getAppOutFolder() + "/" + fsdbFile.getFilename();
             out = new FileOutputStream(new File(filePath));
             StreamUtils.copy(in, out);
             item.setData("file", filePath);
@@ -429,7 +425,7 @@ public class DragAndDropTableComposite extends Composite {
         }
         GridFSDBFile gridFsFile = null;
         if (document.getId() != null) {
-            gridFsFile = controller.getDocumentData(document.getId());
+            gridFsFile = ApplicationService.getBookController().getDocumentData(document.getId());
             if (gridFsFile != null) {
                 document.setFilePath(gridFsFile.getMetaData().get("localFilePath") + "");
                 document.setContentType(gridFsFile.getContentType());

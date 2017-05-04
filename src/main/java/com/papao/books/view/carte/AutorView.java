@@ -1,7 +1,7 @@
 package com.papao.books.view.carte;
 
 import com.mongodb.gridfs.GridFSDBFile;
-import com.papao.books.controller.AutorController;
+import com.papao.books.ApplicationService;
 import com.papao.books.model.AnLunaZiData;
 import com.papao.books.model.Autor;
 import com.papao.books.model.GenLiterar;
@@ -44,12 +44,9 @@ public class AutorView extends AbstractCSaveView {
     private Text textDescriere;
     private String observableProperty;
 
-    private AutorController controller;
-
-    public AutorView(final Shell parent, final Autor autor, AutorController controller, final int viewMode) {
+    public AutorView(final Shell parent, final Autor autor, final int viewMode) {
         super(parent, viewMode, autor.getId());
         this.autor = autor;
-        this.controller = controller;
 
         addComponents();
         populateFields();
@@ -134,7 +131,7 @@ public class AutorView extends AbstractCSaveView {
         label(compLeft, "Tara");
         this.textTara = new Text(compLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(this.textTara);
-        ContentProposalProvider.addContentProposal(textTara, controller.getDistinctFieldAsContentProposal(controller.getAutoriCollectionName(), "tara"));
+        ContentProposalProvider.addContentProposal(textTara, ApplicationService.getAutorController().getDistinctFieldAsContentProposal(ApplicationService.getAutorController().getAutoriCollectionName(), "tara"));
 
         label(compLeft, "Descriere");
         this.textDescriere = new Text(compLeft, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
@@ -147,14 +144,14 @@ public class AutorView extends AbstractCSaveView {
         Image mainImage = null;
         String imageName = null;
         if (autor.getMainImage() != null) {
-            GridFSDBFile image = controller.getDocumentData(autor.getMainImage().getId());
+            GridFSDBFile image = ApplicationService.getAutorController().getDocumentData(autor.getMainImage().getId());
             if (image != null) {
                 imageName = image.getFilename();
                 mainImage = new Image(Display.getDefault(), image.getInputStream());
             }
         }
 
-        this.mainImageComposite = new ImageSelectorComposite(compImage, mainImage, imageName, controller.getAppImagesFolder());
+        this.mainImageComposite = new ImageSelectorComposite(compImage, mainImage, imageName, ApplicationService.getAutorController().getAppImagesFolder());
         this.addObserver(mainImageComposite);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
@@ -225,10 +222,10 @@ public class AutorView extends AbstractCSaveView {
         this.autor.setLoculNasterii(textLocNastere.getText());
         this.autor.setTara(textTara.getText());
         if (mainImageComposite.getSelectedFile() != null) {
-            this.autor.setMainImage(controller.saveDocument(mainImageComposite));
+            this.autor.setMainImage(ApplicationService.getAutorController().saveDocument(mainImageComposite));
         }
 
-        controller.save(autor);
+        ApplicationService.getAutorController().save(autor);
     }
 
     private void markAsChanged() {

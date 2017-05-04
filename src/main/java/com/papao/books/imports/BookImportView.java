@@ -1,8 +1,6 @@
 package com.papao.books.imports;
 
-import com.papao.books.controller.ApplicationReportController;
-import com.papao.books.controller.AutorController;
-import com.papao.books.controller.BookController;
+import com.papao.books.ApplicationService;
 import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
@@ -27,16 +25,11 @@ import java.util.List;
 public class BookImportView extends AbstractPreluareDateM2View {
 
     private static final Logger logger = Logger.getLogger(BookImportView.class);
-    private AutorController autorController;
-    private BookController bookController;
-    private ApplicationReportController reportController;
     private final static int IDX_AUTOR = 0;
     private final static int IDX_BOOK_TITLE = 1;
 
-    public BookImportView(Shell parent, BookController bookController, AutorController autorController, ApplicationReportController reportController) {
-        super(parent, new String[]{"Autor", "Titlu"}, new String[]{"Numele complet al autorului", "Titlul cartii"}, reportController);
-        this.autorController = autorController;
-        this.bookController = bookController;
+    public BookImportView(Shell parent) {
+        super(parent, new String[]{"Autor", "Titlu"}, new String[]{"Numele complet al autorului", "Titlul cartii"});
     }
 
     @Override
@@ -63,11 +56,11 @@ public class BookImportView extends AbstractPreluareDateM2View {
             if (StringUtils.isEmpty(autorName)) {
                 continue;
             }
-            Autor autor = autorController.getByNumeComplet(autorName);
+            Autor autor = ApplicationService.getAutorController().getByNumeComplet(autorName);
             if (autor == null) {
                 autor = new Autor();
                 autor.setNumeComplet(autorName);
-                autor = autorController.save(autor);
+                autor = ApplicationService.getAutorController().save(autor);
             }
             idAutori.add(autor.getId());
         }
@@ -82,12 +75,12 @@ public class BookImportView extends AbstractPreluareDateM2View {
             String authorsName = items[i].getText(IDX_AUTOR);
             String bookTitle = items[i].getText(IDX_BOOK_TITLE).trim();
             List<ObjectId> authorIds = getAuthorIds(authorsName);
-            Carte carte = bookController.getByTitluAndIdAutori(bookTitle, authorIds);
+            Carte carte = ApplicationService.getBookController().getByTitluAndIdAutori(bookTitle, authorIds);
             if (carte == null) {
                 carte = new Carte();
                 carte.setTitlu(bookTitle);
                 carte.setIdAutori(authorIds);
-                bookController.save(carte);
+                ApplicationService.getBookController().save(carte);
                 succesfullyImportedIndices.add(i);
             } else {
                 items[i].setText(tableDocumente.getColumnCount() - 1, "Exista deja");

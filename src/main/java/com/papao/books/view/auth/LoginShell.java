@@ -2,7 +2,7 @@ package com.papao.books.view.auth;
 
 import com.github.haixing_hu.swt.panel.BlurredPanel;
 import com.novocode.naf.swt.custom.BalloonNotification;
-import com.papao.books.controller.UserController;
+import com.papao.books.ApplicationService;
 import com.papao.books.model.AMongodbComparator;
 import com.papao.books.model.User;
 import com.papao.books.model.config.GeneralSetting;
@@ -35,12 +35,10 @@ public class LoginShell extends AbstractCView implements Listener {
     private ComboImage comboUsers;
     private XButton buttonLogin;
     private XButton buttonExit;
-    private UserController userController;
     private BlurredPanel bp;
 
-    public LoginShell(UserController userController) throws Exception {
+    public LoginShell() throws Exception {
         super(null, AbstractView.MODE_NONE);
-        this.userController = userController;
 
         bp = new BlurredPanel(getShell());
 
@@ -141,7 +139,7 @@ public class LoginShell extends AbstractCView implements Listener {
         this.comboUsers.getItemAdd().addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                UserView view = new UserView(getShell(), new User(), userController, AbstractView.MODE_ADD);
+                UserView view = new UserView(getShell(), new User(), AbstractView.MODE_ADD);
                 view.open();
                 if (view.getUserAction() == SWT.CANCEL) {
                     return;
@@ -170,9 +168,9 @@ public class LoginShell extends AbstractCView implements Listener {
     }
 
     private void populateFields() throws Exception {
-        List<User> users = userController.findAll();
+        List<User> users = ApplicationService.getUserController().findAll();
         Collections.sort(users, AMongodbComparator.getComparator(User.class, "getNumeComplet"));
-        comboUsers.setInput(userController.findAll());
+        comboUsers.setInput(users);
     }
 
     @Override

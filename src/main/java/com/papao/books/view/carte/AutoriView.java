@@ -1,8 +1,8 @@
 package com.papao.books.view.carte;
 
 import com.novocode.naf.swt.custom.LiveSashForm;
+import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
-import com.papao.books.controller.AutorController;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
 import com.papao.books.model.config.TableSetting;
@@ -42,20 +42,18 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
     private LiveSashForm sash;
     private Composite compRight;
     protected BorgSearchSystem searchSystem;
-    private AutorController autorController;
 
     private static final String TABLE_KEY = "usersTable";
 
-    public AutoriView(final Shell parent, AutorController autorController) {
+    public AutoriView(final Shell parent) {
         super(parent, AbstractView.MODE_NONE);
-        this.autorController = autorController;
 
         getShell().setText("Autori");
         getShell().setImage(AppImages.getImage16(AppImages.IMG_CONFIG));
 
         addComponents();
 
-        this.tableViewer.setInput(this.autorController.findAll());
+        this.tableViewer.setInput(ApplicationService.getAutorController().findAll());
         this.tableViewer.getTable().setFocus();
     }
 
@@ -65,7 +63,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new AutorView(this.tableViewer.getTable().getShell(), new Autor(), autorController, AbstractView.MODE_ADD);
+        view = new AutorView(this.tableViewer.getTable().getShell(), new Autor(), AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -88,11 +86,11 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
             SWTeXtension.displayMessageI("Autorul selectat este invalid!");
             return false;
         }
-        if (autorController.findOne(autor.getId()) == null) {
+        if (ApplicationService.getAutorController().findOne(autor.getId()) == null) {
             SWTeXtension.displayMessageI("Autorul selectat este invalid!");
             return false;
         }
-        view = new AutorView(this.tableViewer.getTable().getShell(), autor, autorController, AbstractView.MODE_MODIFY);
+        view = new AutorView(this.tableViewer.getTable().getShell(), autor, AbstractView.MODE_MODIFY);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -116,13 +114,13 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
             if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti autorul selectat?", "Confirmare stergere autor") == SWT.NO) {
                 return true;
             }
-            autor = autorController.findOne(autor.getId());
+            autor = ApplicationService.getAutorController().findOne(autor.getId());
             if (autor == null) {
                 SWTeXtension.displayMessageW("Autorul nu mai exista!");
                 return false;
             }
             //TODO foreign key checks!!
-            autorController.delete(autor);
+            ApplicationService.getAutorController().delete(autor);
             refresh();
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {
@@ -141,16 +139,16 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
             SWTeXtension.displayMessageI("Autor selectat este invalid!");
             return;
         }
-        if (autorController.findOne(autor.getId()) == null) {
+        if (ApplicationService.getAutorController().findOne(autor.getId()) == null) {
             SWTeXtension.displayMessageI("Autor selectat este invalid!");
             return;
         }
-        new AutorView(this.tableViewer.getTable().getShell(), autor, autorController, AbstractView.MODE_VIEW).open();
+        new AutorView(this.tableViewer.getTable().getShell(), autor, AbstractView.MODE_VIEW).open();
     }
 
     @Override
     public void refresh() {
-        this.tableViewer.setInput(autorController.findAll());
+        this.tableViewer.setInput(ApplicationService.getAutorController().findAll());
     }
 
     @Override

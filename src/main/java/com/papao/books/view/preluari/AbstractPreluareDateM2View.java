@@ -1,6 +1,5 @@
 package com.papao.books.view.preluari;
 
-import com.papao.books.controller.ApplicationReportController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.Exporter;
 import com.papao.books.view.AppImages;
@@ -51,16 +50,13 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
     public String[] columnLabels;
     public String[] columnDescriptions;
     protected Table tableDocumente;
-    private ApplicationReportController controller;
     private Text textDelimitator;
     private String delimitator;
 
     public AbstractPreluareDateM2View(final Shell parent,
                                       final String[] columnLabels,
-                                      final String[] columnDescriptions,
-                                      ApplicationReportController controller) {
+                                      final String[] columnDescriptions) {
         super(parent, AbstractView.MODE_NONE);
-        this.controller = controller;
 
         if (columnLabels == null) {
             this.columnLabels = new String[0];
@@ -562,27 +558,27 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
 
     @Override
     public final void exportTxt() {
-        Exporter.export(ExportType.TXT, tableDocumente, getShell().getText(), getClass(), "", controller);
+        Exporter.export(ExportType.TXT, tableDocumente, getShell().getText(), getClass(), "");
     }
 
     @Override
     public final void exportPDF() {
-        Exporter.export(ExportType.PDF, tableDocumente, getShell().getText(), getClass(), "", controller);
+        Exporter.export(ExportType.PDF, tableDocumente, getShell().getText(), getClass(), "");
     }
 
     @Override
     public final void exportExcel() {
-        Exporter.export(ExportType.XLS, tableDocumente, getShell().getText(), getClass(), "", controller);
+        Exporter.export(ExportType.XLS, tableDocumente, getShell().getText(), getClass(), "");
     }
 
     @Override
     public final void exportRTF() {
-        Exporter.export(ExportType.RTF, tableDocumente, getShell().getText(), getClass(), "", controller);
+        Exporter.export(ExportType.RTF, tableDocumente, getShell().getText(), getClass(), "");
     }
 
     @Override
     public final void exportHTML() {
-        Exporter.export(ExportType.HTML, tableDocumente, getShell().getText(), getClass(), "", controller);
+        Exporter.export(ExportType.HTML, tableDocumente, getShell().getText(), getClass(), "");
     }
 
 }

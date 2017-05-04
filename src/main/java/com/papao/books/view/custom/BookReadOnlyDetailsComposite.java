@@ -2,9 +2,7 @@ package com.papao.books.view.custom;
 
 import com.github.haixing_hu.swt.starrating.StarRating;
 import com.mongodb.gridfs.GridFSDBFile;
-import com.papao.books.controller.AutorController;
-import com.papao.books.controller.BookController;
-import com.papao.books.controller.UserController;
+import com.papao.books.ApplicationService;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
 import com.papao.books.view.auth.EncodeLive;
@@ -31,9 +29,6 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
 
     private Composite mainComp;
     private ScrolledComposite scrolledComposite;
-    private AutorController autorController;
-    private UserController userController;
-    private BookController bookController;
 
     private CLabel rightLabelTitle;
     private ImageSelectorComposite rightFrontCoverImageComposite;
@@ -45,13 +40,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private int ratingValue = 0;
     private Carte carte;
 
-    public BookReadOnlyDetailsComposite(Composite parent,
-                                        AutorController autorController,
-                                        BookController bookController,
-                                        UserController userController) {
-        this.autorController = autorController;
-        this.userController = userController;
-        this.bookController = bookController;
+    public BookReadOnlyDetailsComposite(Composite parent) {
 
         scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL);
         mainComp = new Composite(scrolledComposite, SWT.NONE);
@@ -98,23 +87,23 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
                     return;
                 }
                 ratingValue = bookRating.getCurrentNumberOfStars();
-                userController.saveBookRatingForCurrentUser(carte.getId(), ratingValue);
+                ApplicationService.getUserController().saveBookRatingForCurrentUser(carte.getId(), ratingValue);
                 SWTeXtension.displayMessageI("Nota a fost salvata cu succes!");
                 setChanged();
                 notifyObservers();
             }
         });
 
-        rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null, autorController.getAppImagesFolder());
+        rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null, ApplicationService.getAutorController().getAppImagesFolder());
         rightFrontCoverImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 if (rightFrontCoverImageComposite.imageChanged() && carte != null) {
-                    autorController.removeDocument(carte.getCopertaFata().getId());
+                    ApplicationService.getAutorController().removeDocument(carte.getCopertaFata().getId());
                     carte.setCopertaFata(null);
                     try {
-                        carte.setCopertaFata(autorController.saveDocument(rightFrontCoverImageComposite));
-                        carte = bookController.save(carte);
+                        carte.setCopertaFata(ApplicationService.getAutorController().saveDocument(rightFrontCoverImageComposite));
+                        carte = ApplicationService.getBookController().save(carte);
                         setChanged();
                         notifyObservers();
 
@@ -134,7 +123,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         rightWebResourcesComposite = new LinkedInUrlsComposite(temp, null);
 
         label(" Autori", temp);
-        rightAutoriComposite = new LinkedinCompositeAutoriLinks(temp, null, autorController);
+        rightAutoriComposite = new LinkedinCompositeAutoriLinks(temp, null);
 
         label("Gen", temp);
         genLiterarComposite = new LinkedInSimpleValuesComposite(temp);
@@ -163,7 +152,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         Rectangle r = scrolledComposite.getClientArea();
         scrolledComposite.setMinSize(mainComp.computeSize(r.width, SWT.DEFAULT));
 
-        bookRating.setCurrentNumberOfStars(userController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
+        bookRating.setCurrentNumberOfStars(ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
         ratingValue = bookRating.getCurrentNumberOfStars();
     }
 
@@ -171,7 +160,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         Image image = null;
         String imageName = null;
         if (coverDescriptor != null && coverDescriptor.getId() != null) {
-            GridFSDBFile dbFile = bookController.getDocumentData(coverDescriptor.getId());
+            GridFSDBFile dbFile = ApplicationService.getBookController().getDocumentData(coverDescriptor.getId());
             if (dbFile != null) {
                 image = new Image(Display.getDefault(), dbFile.getInputStream());
                 imageName = dbFile.getFilename();
