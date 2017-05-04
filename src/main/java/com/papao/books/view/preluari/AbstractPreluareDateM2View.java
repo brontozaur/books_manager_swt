@@ -181,7 +181,7 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
                             pasteFromClipboard();
                         }
                     }
-                    if (e.character == SWT.DEL) {
+                    if (SWTeXtension.getDeleteTrigger(e)) {
                         del();
                         if (!tableDocumente.isDisposed()) {
                             updateDetailMessage("Aveti " + tableDocumente.getItemCount()

@@ -57,7 +57,7 @@ public class AnLunaZiComposite extends Composite {
             new Label(this, SWT.NONE).setText("zi");
         }
         comboZi = new Combo(this, SWT.BORDER);
-        GridDataFactory.fillDefaults().hint(30, SWT.DEFAULT).applyTo(comboZi);
+        GridDataFactory.fillDefaults().hint(50, SWT.DEFAULT).applyTo(comboZi);
         comboZi.addListener(SWT.KeyUp, new Listener() {
             @Override
             public void handleEvent(Event event) {

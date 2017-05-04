@@ -661,4 +661,17 @@ public final class SWTeXtension {
             items[i].setText(str);
         }
     }
+
+    public static boolean getDeleteTrigger(Event e) {
+        boolean deleteTrigger = false;
+        if (EncodeLive.IS_MAC) {
+            deleteTrigger = (e.stateMask & SWT.COMMAND) != 0;
+            if (deleteTrigger) {
+                deleteTrigger = e.character == SWT.BS;
+            }
+        } else {
+            deleteTrigger = e.character == SWT.DEL;
+        }
+        return deleteTrigger;
+    }
 }

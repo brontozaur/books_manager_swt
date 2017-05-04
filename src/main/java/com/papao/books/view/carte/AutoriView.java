@@ -323,7 +323,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
                 if (e.keyCode == SWT.F3) {
                     handleSearchDisplay(true);
                 }
-                if (e.character == SWT.DEL) {
+                if (SWTeXtension.getDeleteTrigger(e)) {
                     delete();
                 }
                 if (e.keyCode == SWT.F5) {

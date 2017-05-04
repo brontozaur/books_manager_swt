@@ -259,7 +259,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         rightInnerSash.setLayout(new GridLayout(2, false));
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightInnerSash);
 
-        int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE;
+        int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI;
         this.tableViewer = new TableViewer(rightInnerSash, style);
         this.tableViewer.setUseHashlookup(true);
         this.tableViewer.getTable().setHeaderVisible(true);
@@ -278,7 +278,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 if (e.keyCode == SWT.F3) {
                     handleSearchDisplay();
                 }
-                if (e.character == SWT.DEL) {
+                if (SWTeXtension.getDeleteTrigger(e)) {
                     delete();
                 }
                 if (e.keyCode == SWT.F5) {
@@ -1379,21 +1379,32 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
                 return false;
             }
-            Carte carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
-            if (carte == null) {
-                SWTeXtension.displayMessageI("Cartea selectata este invalida!");
-                return false;
+            TableItem[] selected = tableViewer.getTable().getSelection();
+            final int selectedCount = selected.length;
+            if (selected.length > 1) {
+                if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cele " + selectedCount + " carti selectate?", "Confirmare stergere") == SWT.NO) {
+                    return true;
+                }
+            } else {
+                if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cartea selectata?", "Confirmare stergere") == SWT.NO) {
+                    return true;
+                }
             }
-            if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cartea selectata?", "Confirmare stergere carte") == SWT.NO) {
-                return true;
+            for (TableItem item : selected) {
+                Carte carte = (Carte) item.getData();
+                Carte carteDb = ApplicationService.getBookController().findOne(carte.getId());
+                if (carteDb == null) {
+                    SWTeXtension.displayMessageW("Cartea nu mai exista in baza de date!");
+                    return false;
+                }
+                ApplicationService.getBookController().delete(carteDb);
+                tableViewer.remove(carte);
             }
-            Carte carteDb = ApplicationService.getBookController().findOne(carte.getId());
-            if (carteDb == null) {
-                SWTeXtension.displayMessageW("Cartea nu mai exista in baza de date!");
-                return false;
+            if (selectedCount == 1) {
+                SWTeXtension.displayMessageI("Cartea selectata a fost stearsa cu succes!");
+            } else {
+                SWTeXtension.displayMessageI("Cartile selectate au fost sterse cu succes (" + selectedCount + " carti)!");
             }
-            ApplicationService.getBookController().delete(carteDb);
-            tableViewer.remove(carte);
             displayBookData();
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);

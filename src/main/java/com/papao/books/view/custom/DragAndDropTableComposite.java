@@ -159,7 +159,7 @@ public class DragAndDropTableComposite extends Composite {
         table.addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (event.keyCode == SWT.DEL) {
+                if (SWTeXtension.getDeleteTrigger(event)) {
                     removeSelected();
                 }
             }

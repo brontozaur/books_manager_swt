@@ -99,7 +99,7 @@ public abstract class AbstractPreluareDateM1View extends AbstractCViewAdapter im
             @Override
             public final void handleEvent(final Event e) {
                 if (e.widget == getTableDocumente()) {
-                    if (e.character == SWT.DEL) {
+                    if (SWTeXtension.getDeleteTrigger(e)) {
                         del();
                     }
                 }
