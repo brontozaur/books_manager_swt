@@ -2,7 +2,6 @@ package com.papao.books.view.providers;
 
 import com.papao.books.model.AbstractDB;
 import com.papao.books.view.providers.tree.ITreeNode;
-import com.papao.books.view.util.FontUtil;
 import com.papao.books.view.util.SettingsController;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.*;
@@ -63,7 +62,7 @@ public class UnifiedStyledLabelProvider extends StyledCellLabelProvider implemen
 				StyleRange myStyleRange = new StyleRange(0, 0, null, null);
 				myStyleRange.start = intRangesCorrectSize[i];
 				myStyleRange.length = intRangesCorrectSize[++i];
-					myStyleRange.font = FontUtil.TAHOMA12_NORMAL;
+//					myStyleRange.font = FontUtil.TAHOMA12_NORMAL;
 					myStyleRange.background = SettingsController.getHighlightColor();
 				styleRange.add(myStyleRange);
 			}

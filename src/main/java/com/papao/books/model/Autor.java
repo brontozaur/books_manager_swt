@@ -1,5 +1,6 @@
 package com.papao.books.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -53,12 +54,12 @@ public class Autor extends AuditObject implements Serializable {
 
     public String getNumeSiTitlu() {
         StringBuilder stringBuilder = new StringBuilder();
-        if (numeComplet != null) {
+        if (StringUtils.isNotBlank(numeComplet)) {
             stringBuilder.append(numeComplet);
         } else {
             stringBuilder.append("???");
         }
-        if (titlu != null) {
+        if (StringUtils.isNotBlank(titlu)) {
             stringBuilder.append(", ").append(titlu);
         }
         return stringBuilder.toString();

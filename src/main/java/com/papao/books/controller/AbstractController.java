@@ -190,7 +190,13 @@ public class AbstractController extends Observable {
                     for (int i = 1; i < referenceField.length; i++) {
                         Object ref = distinctValue.get(referenceField[i]);
                         if (ref != null) {
-                            displayName.append(", ").append(ref.toString());
+                            if (ref instanceof String) {
+                                if (StringUtils.isNotBlank((String)ref)) {
+                                    displayName.append(", ").append(ref.toString());
+                                }
+                            } else {
+                                displayName.append(", ").append(ref.toString());
+                            }
                         }
                     }
                     occurrences.add(new IntValuePair(displayName.toString(), objectId.toString(), count));
