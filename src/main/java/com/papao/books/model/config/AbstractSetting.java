@@ -1,15 +1,16 @@
 package com.papao.books.model.config;
 
+import com.papao.books.model.AuditObject;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "config")
-public abstract class AbstractSetting implements ISetting {
+public abstract class AbstractSetting extends AuditObject implements ISetting {
 
     @Id
     private ObjectId id;
-    
+
     private ObjectId idUser;
     private String numeUser;
     private SettingType type;

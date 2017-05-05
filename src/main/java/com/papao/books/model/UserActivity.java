@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "userActivity")
-public class UserActivity {
+public class UserActivity extends AuditObject {
 
     @Id
     private ObjectId id;

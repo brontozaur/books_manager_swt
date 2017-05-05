@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "user")
-public class User extends AbstractMongoDB {
+public class User extends AuditObject {
 
     @Id
     private ObjectId id;

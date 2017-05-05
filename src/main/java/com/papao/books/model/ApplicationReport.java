@@ -2,15 +2,13 @@ package com.papao.books.model;
 
 import com.papao.books.export.ExportType;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.UUID;
 
 @Document(collection = "reports")
-public class ApplicationReport extends AbstractMongoDB {
+public class ApplicationReport extends AuditObject {
 
     private static String SESSION_ID = UUID.randomUUID().toString();
 
@@ -22,12 +20,6 @@ public class ApplicationReport extends AbstractMongoDB {
     private String cale;
     private String sesiune = SESSION_ID;
     private String nume;
-
-    @CreatedBy
-    private String createdBy;
-
-    @CreatedDate
-    private String createdAt;
 
     public ExportType getType() {
         if (type == null) {
@@ -75,21 +67,5 @@ public class ApplicationReport extends AbstractMongoDB {
 
     public void setIdUser(ObjectId idUser) {
         this.idUser = idUser;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
     }
 }

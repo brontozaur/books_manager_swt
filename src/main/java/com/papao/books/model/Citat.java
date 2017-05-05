@@ -2,7 +2,7 @@ package com.papao.books.model;
 
 import java.io.Serializable;
 
-public class Citat implements Serializable{
+public class Citat implements Serializable {
 
     private String content;
     private String createdBy;
