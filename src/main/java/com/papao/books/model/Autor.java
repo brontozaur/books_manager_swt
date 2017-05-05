@@ -33,6 +33,7 @@ public class Autor extends AuditObject implements Serializable {
     private String descriere;
     private String loculNasterii;
     private String tara;
+    private String titlu;
 
     @Override
     public ObjectId getId() {
@@ -48,6 +49,19 @@ public class Autor extends AuditObject implements Serializable {
             return "";
         }
         return numeComplet;
+    }
+
+    public String getNumeSiTitlu() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (numeComplet != null) {
+            stringBuilder.append(numeComplet);
+        } else {
+            stringBuilder.append("???");
+        }
+        if (titlu != null) {
+            stringBuilder.append(", ").append(titlu);
+        }
+        return stringBuilder.toString();
     }
 
     public void setNumeComplet(String numeComplet) {
@@ -212,5 +226,16 @@ public class Autor extends AuditObject implements Serializable {
 
     public void setTara(String tara) {
         this.tara = tara;
+    }
+
+    public String getTitlu() {
+        if (this.titlu == null) {
+            return "";
+        }
+        return titlu;
+    }
+
+    public void setTitlu(String titlu) {
+        this.titlu = titlu;
     }
 }

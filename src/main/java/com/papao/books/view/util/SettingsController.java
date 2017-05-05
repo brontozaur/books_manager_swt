@@ -65,13 +65,19 @@ public class SettingsController {
 
     public static TableSetting getTableSetting(int nrOfColumns, Class clazz, String tableKey) {
         TableSetting setting = settingRepository.getTableSetting(clazz.getCanonicalName(), tableKey, EncodeLive.getIdUser());
-        if (setting == null || setting.getNrOfColumns() == 0) {
+        if (setting == null) {
             setting = new TableSetting(nrOfColumns, clazz.getCanonicalName(), tableKey);
             if (setting.isValid()) {
                 setting = settingRepository.save(setting);
             } else {
                 SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
             }
+            return setting;
+        }
+        setting.setNrOfColumns(nrOfColumns);
+        if (!setting.isValid()) {
+            settingRepository.delete(setting);
+            return getTableSetting(nrOfColumns, clazz, tableKey);
         }
         return setting;
     }

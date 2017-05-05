@@ -116,7 +116,7 @@ public class LinkedinCompositeAutori extends Composite {
                 ClosableCanvas canvas = (ClosableCanvas) control;
                 AbstractMongoDB dataObject = canvas.getDataObject();
                 if (dataObject.getId().equals(autor.getId())) {
-                    canvas.setText(autor.getNumeComplet());
+                    canvas.setText(autor.getNumeSiTitlu());
                     canvas.setDataObject(autor);
                     layoutEverything(true);
                     return;
@@ -138,7 +138,7 @@ public class LinkedinCompositeAutori extends Composite {
     //todo check why some records can be duplicated
     private void createClosableCanvas(Autor autor, boolean layoutParent) {
         if (autor != null && (!autori.contains(autor) || !layoutParent)) {
-            final ClosableCanvas canvas = new ClosableCanvas(compSelections, autor.getNumeComplet());
+            final ClosableCanvas canvas = new ClosableCanvas(compSelections, autor.getNumeSiTitlu());
             canvas.setDataObject(autor);
             if (layoutParent) {
                 autori.add(autor);
@@ -182,7 +182,7 @@ public class LinkedinCompositeAutori extends Composite {
             if (searchTerm.length() > 0) {
                 searchTerm.append(",");
             }
-            searchTerm.append(autor.getNumeComplet());
+            searchTerm.append(autor.getNumeSiTitlu());
         }
         return searchTerm.toString();
     }

@@ -35,9 +35,10 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
 
     private static Logger logger = Logger.getLogger(AutoriView.class);
 
-    private static final String[] COLS = new String[]{"Nume"};
+    private static final String[] COLS = new String[]{"Nume", "Titlu"};
 
     private final static int IDX_NUME = 0;
+    private final static int IDX_TITLU = 1;
 
     protected TableViewer tableViewer;
     private LiveSashForm sash;
@@ -288,6 +289,16 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
                     };
                     break;
                 }
+                case IDX_TITLU: {
+                    filter = new ViewerFilter() {
+                        @Override
+                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                            Autor autor = (Autor) element;
+                            return searchType.compareValues(autor.getTitlu());
+                        }
+                    };
+                    break;
+                }
                 default:
             }
             if (filter != null) {
@@ -378,6 +389,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
 
     public final void createViewerFilters() {
         this.searchSystem.createTextSearch(IDX_NUME);
+        this.searchSystem.createTextSearch(IDX_TITLU);
     }
 
     public final void initViewerCols() {
@@ -412,6 +424,26 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
                             Autor a = (Autor) e1;
                             Autor b = (Autor) e2;
                             return StringUtil.romanianCompare(a.getNumeComplet(), b.getNumeComplet());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                case IDX_TITLU: {
+                    col.setLabelProvider(new ColumnLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Autor autor = (Autor) element;
+                            return autor.getTitlu();
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Autor a = (Autor) e1;
+                            Autor b = (Autor) e2;
+                            return StringUtil.romanianCompare(a.getTitlu(), b.getTitlu());
                         }
 
                     };

@@ -19,15 +19,11 @@ public class AnLunaZiComposite extends Composite {
         super(parent, SWT.NONE);
         this.data = data;
 
-        GridLayoutFactory.fillDefaults().numColumns(data.isShowLabels() ? 6 : 3).margins(0, 0).spacing(5, SWT.DEFAULT).equalWidth(false).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(data.isShowLabels() ? 5 : 3).margins(0, 0).spacing(5, SWT.DEFAULT).equalWidth(false).applyTo(this);
         GridDataFactory.fillDefaults().grab(false, false).applyTo(this);
 
-        if (data.isShowLabels()) {
-            Label tmp = new Label(this, SWT.NONE);
-            tmp.setText("an");
-            GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).applyTo(tmp);
-        }
         textAn = new Text(this, SWT.BORDER);
+        textAn.setMessage("an");
         GridDataFactory.fillDefaults().hint(30, SWT.DEFAULT).applyTo(textAn);
         textAn.addListener(SWT.KeyUp, new Listener() {
             @Override

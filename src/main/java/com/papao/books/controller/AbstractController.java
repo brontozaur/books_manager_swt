@@ -164,7 +164,7 @@ public class AbstractController extends Observable {
                                                                         String localField,
                                                                         String referenceCollection,
                                                                         String refPropertyName,
-                                                                        String referenceField) {
+                                                                        String... referenceField) {
         LookupOperation lookupAuthor = Aggregation.lookup(referenceCollection, localField, refPropertyName, "ref");
         UnwindOperation unwindRefs = Aggregation.unwind("ref", true);
         GroupOperation groupByAuthor = Aggregation.group("ref").count().as("count");
@@ -181,9 +181,20 @@ public class AbstractController extends Observable {
                 emptyOrNullCount += count;
                 continue;
             }
-            String itemName = (String) distinctValue.get(referenceField);
+            String itemName = (String) distinctValue.get(referenceField[0]);
             if (StringUtils.isNotEmpty(itemName)) {
-                occurrences.add(new IntValuePair(itemName, objectId.toString(), count));
+                if (referenceField.length == 1) {
+                    occurrences.add(new IntValuePair(itemName, objectId.toString(), count));
+                } else {
+                    StringBuilder displayName = new StringBuilder(itemName);
+                    for (int i = 1; i < referenceField.length; i++) {
+                        Object ref = distinctValue.get(referenceField[i]);
+                        if (ref != null) {
+                            displayName.append(", ").append(ref.toString());
+                        }
+                    }
+                    occurrences.add(new IntValuePair(displayName.toString(), objectId.toString(), count));
+                }
             } else {
                 //authors with name not set
                 emptyOrNullCount += count;

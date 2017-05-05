@@ -12,6 +12,7 @@ import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.auth.EncodeLive;
+import com.papao.books.view.carte.AutorView;
 import com.papao.books.view.carte.AutoriView;
 import com.papao.books.view.carte.CarteView;
 import com.papao.books.view.config.AppConfigView;
@@ -36,6 +37,7 @@ import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
@@ -553,7 +555,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         "idAutori",
                         ApplicationService.getBookController().getAutoriCollectionName(),
                         "_id",
-                        "numeComplet");
+                        "numeComplet",
+                        "titlu");
                 createTreeNodes(wrapper, "Autori");
                 break;
             }
@@ -641,6 +644,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 final boolean flagItemCount = (leftTreeViewer.getTree().getItemCount() > 0);
                 menu.getItem(idx++).setEnabled(flagItemCount); // expand all
                 menu.getItem(idx++).setEnabled(flagItemCount); // colapse all
+                menu.getItem(idx++).setEnabled(true); // aliniere
+                boolean autorEnabled = false;
+                if (flagItemCount) {
+                    SimpleTextNode selectedNode = (SimpleTextNode) leftTreeViewer.getTree().getSelection()[0].getData();
+                    autorEnabled = !selectedNode.isAllNode() && searchType == BookSearchType.AUTOR;
+                }
+                menu.getItem(idx++).setEnabled(autorEnabled); // edit autor
             }
         });
 
@@ -674,6 +684,19 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Edit autor");
+        menuItem.setImage(AppImages.getImage16(AppImages.IMG_USER));
+        menuItem.setEnabled(searchType == BookSearchType.AUTOR);
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                SimpleTextNode selectedNode = (SimpleTextNode) leftTreeViewer.getTree().getSelection()[0].getData();
+                String idAutor = selectedNode.getQueryValue();
+                new AutorView(getShell(), ApplicationService.getAutorController().findOne(new ObjectId(idAutor)), AbstractView.MODE_MODIFY).open();
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
         menuItem.setText("Aliniere la dreapta");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -685,7 +708,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         new MenuItem(menu, SWT.SEPARATOR);
 
         MenuItem itemViewMode = new MenuItem(menu, SWT.CASCADE);
-        itemViewMode.setText("Vizualizare dupa..");
+        itemViewMode.setText("Grupare");
         itemViewMode.setMenu(createViewModeMenu(itemViewMode));
         return menu;
     }

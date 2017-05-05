@@ -31,6 +31,7 @@ public class AutorView extends AbstractCSaveView {
     private Autor autor;
 
     private Text textNume;
+    private Text textTitlu;
     private AnLunaZiComposite dataNasteriiComposite;
     private AnLunaZiComposite dataMortiiComposite;
     private Text textLocNastere;
@@ -69,6 +70,11 @@ public class AutorView extends AbstractCSaveView {
                 markAsChanged();
             }
         });
+
+        label(compLeft, "Titlu");
+        this.textTitlu = new Text(compLeft, SWT.BORDER);
+        ContentProposalProvider.addContentProposal(this.textTitlu, ApplicationService.getAutorController().getDistinctFieldAsContentProposal(ApplicationService.getAutorController().getAutoriCollectionName(), "titlu"));
+        GridDataFactory.fillDefaults().grab(true, false).span(3, 1).minSize(350, SWT.DEFAULT).applyTo(this.textTitlu);
 
         label(compLeft, "Data nasterii", true);
         this.dataNasteriiComposite = new AnLunaZiComposite(compLeft, autor.getDataNasterii(true));
@@ -174,6 +180,7 @@ public class AutorView extends AbstractCSaveView {
 
     private void populateFields() {
         this.textNume.setText(this.autor.getNumeComplet());
+        this.textTitlu.setText(this.autor.getTitlu());
         this.textWebsite.setText(this.autor.getWebsite());
         this.textFacebook.setText(this.autor.getFacebook());
         this.textTwitter.setText(this.autor.getTwitter());
@@ -201,6 +208,7 @@ public class AutorView extends AbstractCSaveView {
     @Override
     protected void saveData() throws IOException {
         this.autor.setNumeComplet(this.textNume.getText());
+        this.autor.setTitlu(this.textTitlu.getText());
         AnLunaZiData dataNasterii = dataNasteriiComposite.getValues();
         this.autor.setAnNastere(dataNasterii.getAn());
         this.autor.setLunaNastere(dataNasterii.getLuna());

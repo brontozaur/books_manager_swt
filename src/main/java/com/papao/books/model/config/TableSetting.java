@@ -101,7 +101,8 @@ public class TableSetting extends AbstractSetting {
     @Override
     public boolean isValid() {
         return StringUtils.isNotBlank(tableKey) &&
-                StringUtils.isNotBlank(clazz) && nrOfColumns > 0 && getIdUser() != null;
+                StringUtils.isNotBlank(clazz) && nrOfColumns > 0 && getIdUser() != null
+                && nrOfColumns == widths.length;
     }
 
     public int[] getCorrectDims() {

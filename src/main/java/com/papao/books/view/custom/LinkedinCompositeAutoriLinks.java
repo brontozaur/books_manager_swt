@@ -47,7 +47,7 @@ public class LinkedinCompositeAutoriLinks extends Composite {
 
     private void createLink(Autor autor, boolean last) {
         final Link link = new Link(this, SWT.NONE);
-        link.setText("<a>" + autor.getNumeComplet() + (last ? "</a>" : "</a>, "));
+        link.setText("<a>" + autor.getNumeSiTitlu() + (last ? "</a>" : "</a>, "));
         link.setData(autor);
         link.addListener(SWT.Selection, new Listener() {
             @Override
@@ -76,7 +76,7 @@ public class LinkedinCompositeAutoriLinks extends Composite {
             if (searchTerm.length() > 0) {
                 searchTerm.append(",");
             }
-            searchTerm.append(autor.getNumeComplet());
+            searchTerm.append(autor.getNumeSiTitlu());
         }
         return searchTerm.toString();
     }

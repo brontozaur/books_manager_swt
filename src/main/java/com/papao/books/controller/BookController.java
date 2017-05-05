@@ -51,7 +51,7 @@ public class BookController extends AbstractController {
             if (autoriNames.length() > 0) {
                 autoriNames.append(", ");
             }
-            autoriNames.append(autor.getNumeComplet());
+            autoriNames.append(autor.getNumeSiTitlu());
         }
         return autoriNames.toString();
     }
