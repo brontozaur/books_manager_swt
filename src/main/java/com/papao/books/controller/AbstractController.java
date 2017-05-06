@@ -33,8 +33,8 @@ import java.util.Observable;
 
 public class AbstractController extends Observable {
 
-    protected final MongoTemplate mongoTemplate;
-    protected GridFS gridFS;
+    private final MongoTemplate mongoTemplate;
+    private GridFS gridFS;
 
     @Value("${app.mongo.books.collection}")
     private String booksCollectionName;
@@ -121,7 +121,6 @@ public class AbstractController extends Observable {
         if (contentType != null) {
             gfsFile.setContentType(contentType);
         }
-//        gfsFile.setContentType(Files.probeContentType(Paths.get(localFile.getAbsolutePath())));
         gfsFile.setContentType(new FileTypeDetector().probeContentType(Paths.get(localFile.getAbsolutePath())));
         DBObject meta = new BasicDBObject();
         meta.put("localFilePath", localFile.getAbsolutePath());

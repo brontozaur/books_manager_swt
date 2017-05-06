@@ -1,12 +1,12 @@
 package com.papao.books.view.view;
 
+import com.papao.books.controller.SettingsController;
 import com.papao.books.model.AbstractDB;
 import com.papao.books.model.AbstractDBDummy;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.interfaces.IEncodeReset;
 import com.papao.books.view.providers.AdbStringContentProvider;
-import com.papao.books.view.util.SettingsController;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;

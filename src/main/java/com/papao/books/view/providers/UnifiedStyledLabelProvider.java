@@ -1,8 +1,8 @@
 package com.papao.books.view.providers;
 
+import com.papao.books.controller.SettingsController;
 import com.papao.books.model.AbstractDB;
 import com.papao.books.view.providers.tree.ITreeNode;
-import com.papao.books.view.util.SettingsController;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.StyleRange;

@@ -2,6 +2,7 @@ package com.papao.books.export;
 
 import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
+import com.papao.books.controller.SettingsController;
 import com.papao.books.model.ApplicationReport;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;

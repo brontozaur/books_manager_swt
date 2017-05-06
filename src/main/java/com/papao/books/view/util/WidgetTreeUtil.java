@@ -1,5 +1,6 @@
 package com.papao.books.view.util;
 
+import com.papao.books.controller.SettingsController;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.view.ColumnsChooserView;

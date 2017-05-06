@@ -5,6 +5,7 @@ import com.papao.books.ApplicationService;
 import com.papao.books.BooksApplication;
 import com.papao.books.BooleanSetting;
 import com.papao.books.controller.BookController;
+import com.papao.books.controller.SettingsController;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.imports.AutoriImportView;
 import com.papao.books.imports.BookImportView;

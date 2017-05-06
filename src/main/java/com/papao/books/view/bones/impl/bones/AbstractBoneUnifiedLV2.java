@@ -1,6 +1,7 @@
 package com.papao.books.view.bones.impl.bones;
 
 import com.papao.books.BooleanSetting;
+import com.papao.books.controller.SettingsController;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.bones.AbstractBone;
 import com.papao.books.view.bones.AbstractBoneDescriptor;
@@ -9,7 +10,10 @@ import com.papao.books.view.bones.impl.filters.AbstractFilterViewMode;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
 import com.papao.books.view.providers.tree.SimpleTextNode;
 import com.papao.books.view.providers.tree.TreeContentProvider;
-import com.papao.books.view.util.*;
+import com.papao.books.view.util.BorgDateUtil;
+import com.papao.books.view.util.ColorUtil;
+import com.papao.books.view.util.WidgetCursorUtil;
+import com.papao.books.view.util.WidgetTreeUtil;
 import com.papao.books.view.util.sorter.AbstractColumnViewerSorter;
 import com.papao.books.view.util.sorter.AbstractTreeColumnViewerSorter;
 import com.papao.books.view.view.SWTeXtension;

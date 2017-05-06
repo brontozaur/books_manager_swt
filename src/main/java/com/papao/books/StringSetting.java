@@ -1,6 +1,6 @@
 package com.papao.books;
 
-import com.papao.books.view.util.SettingsController;
+import com.papao.books.controller.SettingsController;
 
 public enum StringSetting {
 

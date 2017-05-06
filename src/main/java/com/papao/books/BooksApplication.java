@@ -1,11 +1,11 @@
 
 package com.papao.books;
 
+import com.papao.books.controller.SettingsController;
 import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.auth.LoggerMyWay;
 import com.papao.books.view.auth.LoginShell;
-import com.papao.books.view.util.SettingsController;
 import com.papao.books.view.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;

@@ -1,10 +1,6 @@
 package com.papao.books;
 
-import com.papao.books.controller.ApplicationReportController;
-import com.papao.books.controller.AutorController;
-import com.papao.books.controller.BookController;
-import com.papao.books.controller.UserController;
-import com.papao.books.view.util.SettingsController;
+import com.papao.books.controller.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

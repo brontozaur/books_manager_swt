@@ -1,10 +1,11 @@
-package com.papao.books.view.util;
+package com.papao.books.controller;
 
 import com.papao.books.BooleanSetting;
 import com.papao.books.StringSetting;
 import com.papao.books.model.config.*;
 import com.papao.books.repository.SettingsRepository;
 import com.papao.books.view.auth.EncodeLive;
+import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.view.SWTeXtension;
 import org.bson.types.ObjectId;
 import org.eclipse.swt.graphics.Color;

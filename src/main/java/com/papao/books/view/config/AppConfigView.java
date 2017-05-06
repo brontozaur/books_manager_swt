@@ -1,6 +1,7 @@
 package com.papao.books.view.config;
 
 import com.papao.books.StringSetting;
+import com.papao.books.controller.SettingsController;
 import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.interfaces.AbstractIConfigAdapter;

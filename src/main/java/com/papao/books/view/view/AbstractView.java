@@ -1,6 +1,7 @@
 package com.papao.books.view.view;
 
 import com.papao.books.BooleanSetting;
+import com.papao.books.controller.SettingsController;
 import com.papao.books.model.config.WindowSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.EncodePlatform;

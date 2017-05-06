@@ -1,6 +1,7 @@
 package com.papao.books.export.html;
 
 import com.lowagie.text.FontFactory;
+import com.papao.books.controller.SettingsController;
 import com.papao.books.export.AbstractExportView;
 import com.papao.books.model.config.ExportHtmlSetting;
 import com.papao.books.view.AppImages;
@@ -9,7 +10,10 @@ import com.papao.books.view.custom.DirectorySelectorComposite;
 import com.papao.books.view.custom.FontSelectorComposite;
 import com.papao.books.view.interfaces.AbstractIConfigAdapter;
 import com.papao.books.view.interfaces.IConfig;
-import com.papao.books.view.util.*;
+import com.papao.books.view.util.ColorUtil;
+import com.papao.books.view.util.FontUtil;
+import com.papao.books.view.util.WidgetCompositeUtil;
+import com.papao.books.view.util.WidgetCursorUtil;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.ColumnsChooserComposite;
 import com.papao.books.view.view.SWTeXtension;

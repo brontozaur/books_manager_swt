@@ -1,7 +1,7 @@
 package com.papao.books.view.searcheable;
 
 import com.papao.books.StringSetting;
-import com.papao.books.view.util.SettingsController;
+import com.papao.books.controller.SettingsController;
 import org.aspencloud.widgets.ACW;
 import org.aspencloud.widgets.cdatepicker.CDatepickerCombo;
 import org.eclipse.jface.layout.GridDataFactory;
