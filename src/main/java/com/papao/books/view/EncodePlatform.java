@@ -6,6 +6,7 @@ import com.papao.books.BooksApplication;
 import com.papao.books.BooleanSetting;
 import com.papao.books.controller.BookController;
 import com.papao.books.controller.SettingsController;
+import com.papao.books.controller.UserController;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.imports.AutoriImportView;
 import com.papao.books.imports.BookImportView;
@@ -1072,7 +1073,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), carte.getId()) + "";
+                            return UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()) + "";
                         }
 
                         @Override
@@ -1085,8 +1086,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), a.getId())
-                                    - ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), b.getId());
+                            return UserController.getPersonalRating(EncodeLive.getIdUser(), a.getId())
+                                    - UserController.getPersonalRating(EncodeLive.getIdUser(), b.getId());
                         }
 
                     };
@@ -1535,7 +1536,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                             Carte carte = (Carte) element;
-                            return searchType.compareValues(ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
+                            return searchType.compareValues(UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
                         }
                     };
                     break;

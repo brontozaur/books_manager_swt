@@ -15,8 +15,8 @@ import java.util.List;
 @Controller
 public class UserController extends AbstractController {
 
-    private final UserRepository repository;
-    private final UserActivityRepository userActivityRepository;
+    private static UserRepository repository;
+    private static UserActivityRepository userActivityRepository;
 
     @Autowired
     public UserController(MongoTemplate mongoTemplate,
@@ -27,38 +27,38 @@ public class UserController extends AbstractController {
         this.userActivityRepository = userActivityRepository;
     }
 
-    public User save(User user) {
+    public static User save(User user) {
         return repository.save(user);
     }
 
-    public User findOne(ObjectId id) {
+    public static User findOne(ObjectId id) {
         if (id == null) {
             return null;
         }
         return repository.findOne(id.toString());
     }
 
-    public void delete(User user) {
-        this.repository.delete(user);
+    public static void delete(User user) {
+        repository.delete(user);
     }
 
-    public List<User> findAll() {
+    public static List<User> findAll() {
         return repository.findAll();
     }
 
-    public UserActivity saveUserActivity(UserActivity userActivity) {
+    public static UserActivity saveUserActivity(UserActivity userActivity) {
         return userActivityRepository.save(userActivity);
     }
 
-    public UserActivity getUserRatingObject(ObjectId userId, ObjectId bookId) {
+    public static UserActivity getUserRatingObject(ObjectId userId, ObjectId bookId) {
         return userActivityRepository.getByUserIdAndBookId(userId, bookId);
     }
 
-    public int getPersonalRating(ObjectId bookId) {
+    public static int getPersonalRating(ObjectId bookId) {
         return getPersonalRating(EncodeLive.getIdUser(), bookId);
     }
 
-    public int getPersonalRating(ObjectId userId, ObjectId bookId) {
+    public static int getPersonalRating(ObjectId userId, ObjectId bookId) {
         UserActivity activity = getUserRatingObject(userId, bookId);
         if (activity != null) {
             return activity.getRatingForBook(bookId);
@@ -66,7 +66,7 @@ public class UserController extends AbstractController {
         return 0;
     }
 
-    public UserActivity saveBookRatingForCurrentUser(ObjectId bookId, int rating) {
+    public static UserActivity saveBookRatingForCurrentUser(ObjectId bookId, int rating) {
         UserActivity userActivity = getUserRatingObject(EncodeLive.getIdUser(), bookId);
         if (userActivity == null) {
             userActivity = new UserActivity();
@@ -77,7 +77,7 @@ public class UserController extends AbstractController {
         return saveUserActivity(userActivity);
     }
 
-    public List<UserActivity> removeAllUserActivities(ObjectId userId) {
+    public static List<UserActivity> removeAllUserActivities(ObjectId userId) {
         return userActivityRepository.removeByUserId(userId);
     }
 }

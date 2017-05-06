@@ -2,6 +2,7 @@
 package com.papao.books;
 
 import com.papao.books.controller.SettingsController;
+import com.papao.books.controller.UserController;
 import com.papao.books.view.EncodePlatform;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.auth.LoggerMyWay;
@@ -40,12 +41,14 @@ public class BooksApplication {
 
     private EncodePlatform encodePlatform;
 
-    /*
-        This is the central point that autowires all controllers and repositories as singletons
-        Do not remove this line.
-     */
     @Autowired
     private ApplicationService applicationService;
+
+    @Autowired
+    SettingsController settingsController;
+
+    @Autowired
+    UserController userController;
 
     @Value("${app.notification.style}")
     String notificationStyle;

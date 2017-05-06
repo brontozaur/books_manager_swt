@@ -2,6 +2,7 @@ package com.papao.books.view.carte;
 
 import com.github.haixing_hu.swt.starrating.StarRating;
 import com.papao.books.ApplicationService;
+import com.papao.books.controller.UserController;
 import com.papao.books.model.*;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.auth.EncodeLive;
@@ -589,7 +590,7 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private void populateFields() {
-        this.starRating.setCurrentNumberOfStars(ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), this.carte.getId()));
+        this.starRating.setCurrentNumberOfStars(UserController.getPersonalRating(EncodeLive.getIdUser(), this.carte.getId()));
         this.textTitlu.setText(this.carte.getTitlu());
         this.textSubtitlu.setText(this.carte.getSubtitlu());
         this.textEditura.setText(this.carte.getEditura());
@@ -706,7 +707,7 @@ public class CarteView extends AbstractCSaveView {
 
         carte = ApplicationService.getBookController().save(carte);
 
-        ApplicationService.getUserController().saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
+        UserController.saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
     }
 
     @Override

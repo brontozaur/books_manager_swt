@@ -1,9 +1,9 @@
 package com.papao.books.view.user;
 
 import com.novocode.naf.swt.custom.LiveSashForm;
-import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
 import com.papao.books.controller.SettingsController;
+import com.papao.books.controller.UserController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.Exporter;
 import com.papao.books.model.AbstractMongoDB;
@@ -57,7 +57,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
 
         addComponents();
 
-        this.tableViewer.setInput(ApplicationService.getUserController().findAll());
+        this.tableViewer.setInput(UserController.findAll());
         this.tableViewer.getTable().setFocus();
     }
 
@@ -90,7 +90,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return false;
         }
-        if (ApplicationService.getUserController().findOne(usr.getId()) == null) {
+        if (UserController.findOne(usr.getId()) == null) {
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return false;
         }
@@ -115,7 +115,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
                 SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
                 return false;
             }
-            usr = ApplicationService.getUserController().findOne(usr.getId());
+            usr = UserController.findOne(usr.getId());
             if (usr == null) {
                 SWTeXtension.displayMessageW("Utilizatorul nu mai exista!");
                 return false;
@@ -127,9 +127,9 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti utilizatorul selectat si toate informatiile asociate (rating-uri, review-uri, etc)?", "Confirmare stergere utilizator") == SWT.NO) {
                 return false;
             }
-            ApplicationService.getUserController().delete(usr);
+            UserController.delete(usr);
             SettingsController.removeAllUserSettings(usr.getId());
-            ApplicationService.getUserController().removeAllUserActivities(usr.getId());
+            UserController.removeAllUserActivities(usr.getId());
             refresh();
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {
@@ -148,7 +148,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return;
         }
-        if (ApplicationService.getUserController().findOne(usr.getId()) == null) {
+        if (UserController.findOne(usr.getId()) == null) {
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return;
         }
@@ -157,7 +157,7 @@ public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IM
 
     @Override
     public void refresh() {
-        this.tableViewer.setInput(ApplicationService.getUserController().findAll());
+        this.tableViewer.setInput(UserController.findAll());
     }
 
     @Override

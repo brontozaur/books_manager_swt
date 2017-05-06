@@ -3,6 +3,7 @@ package com.papao.books.view.custom;
 import com.github.haixing_hu.swt.starrating.StarRating;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.ApplicationService;
+import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
 import com.papao.books.view.auth.EncodeLive;
@@ -88,7 +89,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
                     return;
                 }
                 ratingValue = bookRating.getCurrentNumberOfStars();
-                ApplicationService.getUserController().saveBookRatingForCurrentUser(carte.getId(), ratingValue);
+                UserController.saveBookRatingForCurrentUser(carte.getId(), ratingValue);
                 SWTeXtension.displayMessageI("Nota a fost salvata cu succes!");
                 setChanged();
                 notifyObservers();
@@ -154,7 +155,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         Rectangle r = scrolledComposite.getClientArea();
         scrolledComposite.setMinSize(mainComp.computeSize(r.width, SWT.DEFAULT));
 
-        bookRating.setCurrentNumberOfStars(ApplicationService.getUserController().getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
+        bookRating.setCurrentNumberOfStars(UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
         ratingValue = bookRating.getCurrentNumberOfStars();
         observableProperty = rightAutoriComposite.getGoogleSearchTerm() + " - " + carte.getTitlu();
 

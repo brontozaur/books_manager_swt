@@ -2,6 +2,7 @@ package com.papao.books.view.custom;
 
 import com.github.haixing_hu.swt.starrating.StarRating;
 import com.papao.books.ApplicationService;
+import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.carte.CarteView;
@@ -49,10 +50,10 @@ public class ImageViewComposite extends Observable {
         starRating.addListener(SWT.MouseUp, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (carte == null || ApplicationService.getUserController().getPersonalRating(carte.getId()) == starRating.getCurrentNumberOfStars()) {
+                if (carte == null || UserController.getPersonalRating(carte.getId()) == starRating.getCurrentNumberOfStars()) {
                     return;
                 }
-                ApplicationService.getUserController().saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
+                UserController.saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
                 SWTeXtension.displayMessageI("Nota a fost salvata cu succes!");
                 setChanged();
                 notifyObservers();
@@ -141,7 +142,7 @@ public class ImageViewComposite extends Observable {
             labelImage.setText(" fara \n  imagine");
         }
 
-        starRating.setCurrentNumberOfStars(ApplicationService.getUserController().getPersonalRating(carte.getId()));
+        starRating.setCurrentNumberOfStars(UserController.getPersonalRating(carte.getId()));
         labelName.setText(carte.getTitlu());
         labelImage.setToolTipText(ApplicationService.getBookController().getBookAuthorNames(carte) + " - " + carte.getTitlu());
     }

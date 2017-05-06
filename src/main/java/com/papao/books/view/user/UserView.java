@@ -1,7 +1,7 @@
 package com.papao.books.view.user;
 
 import com.novocode.naf.swt.custom.BalloonNotification;
-import com.papao.books.ApplicationService;
+import com.papao.books.controller.UserController;
 import com.papao.books.model.User;
 import com.papao.books.view.bones.impl.view.AbstractCSaveView;
 import com.papao.books.view.util.WidgetCompositeUtil;
@@ -66,7 +66,7 @@ public class UserView extends AbstractCSaveView {
     protected void saveData() {
         this.user.setNume(this.textNume.getText());
         this.user.setPrenume(this.textPrenume.getText());
-        ApplicationService.getUserController().save(user);
+        UserController.save(user);
     }
 
     @Override

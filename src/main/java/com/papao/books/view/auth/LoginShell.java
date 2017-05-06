@@ -2,8 +2,8 @@ package com.papao.books.view.auth;
 
 import com.github.haixing_hu.swt.panel.BlurredPanel;
 import com.novocode.naf.swt.custom.BalloonNotification;
-import com.papao.books.ApplicationService;
 import com.papao.books.controller.SettingsController;
+import com.papao.books.controller.UserController;
 import com.papao.books.model.AMongodbComparator;
 import com.papao.books.model.User;
 import com.papao.books.model.config.GeneralSetting;
@@ -172,7 +172,7 @@ public class LoginShell extends AbstractCView implements Listener {
     }
 
     private void populateFields() throws Exception {
-        List<User> users = ApplicationService.getUserController().findAll();
+        List<User> users = UserController.findAll();
         Collections.sort(users, AMongodbComparator.getComparator(User.class, "getNumeComplet"));
         comboUsers.setInput(users);
     }
