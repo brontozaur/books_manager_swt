@@ -1,10 +1,7 @@
 package com.papao.books;
 
 import com.papao.books.config.ApplicationConfig;
-import com.papao.books.controller.ApplicationController;
-import com.papao.books.controller.AutorController;
-import com.papao.books.controller.BookController;
-import com.papao.books.controller.ReportController;
+import com.papao.books.controller.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +14,8 @@ public class ApplicationService {
     @Autowired
     public ApplicationService(BookController bookController,
                               ApplicationConfig applicationConfig,
+                              UserController userController,
+                              SettingsController settingsController,
                               AutorController autorController,
                               ReportController reportController,
                               ApplicationController applicationController) {

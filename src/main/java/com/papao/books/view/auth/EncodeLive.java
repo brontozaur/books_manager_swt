@@ -18,10 +18,7 @@ public final class EncodeLive {
     public static final String APP_REPORTS_DIR = "reports";
     public static final String APP_LOGS_ROOT = "logs";
     public static final String APP_XML_CURS_VALUTAR = "updateCurs";
-    public static final String APP_STARTUP_ROOT = "startup";
     public static final String APP_ACCOUNTS_ROOT = "accounts";
-    public static final String APP_LIBS_ROOT = "libs";
-    public static final String APP_EXECUTABLE_DIR = "app";
     public static final String APP_TEMP_DIR = "temp";
     public final static String ERROR_CREATING_DIR = "Nu s-a putut crea directorul ";
 
@@ -40,8 +37,6 @@ public final class EncodeLive {
 
     private static ObjectId idUser;
     private static String currentUserName;
-    private static String currentDb;
-    private static long idValutaDefault;
 
     public static final Locale ROMANIAN_LOCALE = new Locale("ro", "RO");
 
@@ -315,22 +310,6 @@ public final class EncodeLive {
 
     public static void setCurrentUserName(final String currentUserName) {
         EncodeLive.currentUserName = currentUserName;
-    }
-
-    public static String getCurrentDb() {
-        return EncodeLive.currentDb;
-    }
-
-    public static void setCurrentDb(final String currentDb) {
-        EncodeLive.currentDb = currentDb;
-    }
-
-    public static long getIdValutaDefault() {
-        return idValutaDefault;
-    }
-
-    public static void setIdValutaDefault(long idValutaDefault) {
-        EncodeLive.idValutaDefault = idValutaDefault;
     }
 
     public static boolean isNotificationUsingOpalStyle() {
