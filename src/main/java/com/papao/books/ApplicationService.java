@@ -1,8 +1,10 @@
 package com.papao.books;
 
-import com.papao.books.controller.ApplicationReportController;
+import com.papao.books.config.ApplicationConfig;
+import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
+import com.papao.books.controller.ReportController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,27 +12,23 @@ import org.springframework.stereotype.Service;
 public class ApplicationService {
 
     private static BookController bookController;
-    private static ApplicationReportController applicationReportController;
-    private static AutorController autorController;
+    private static ApplicationConfig applicationConfig;
 
     @Autowired
-    public ApplicationService(AutorController autorController,
-                              BookController bookController,
-                              ApplicationReportController applicationReportController) {
-        ApplicationService.autorController = autorController;
+    public ApplicationService(BookController bookController,
+                              ApplicationConfig applicationConfig,
+                              AutorController autorController,
+                              ReportController reportController,
+                              ApplicationController applicationController) {
         ApplicationService.bookController = bookController;
-        ApplicationService.applicationReportController = applicationReportController;
+        ApplicationService.applicationConfig = applicationConfig;
     }
 
     public static BookController getBookController() {
         return bookController;
     }
 
-    public static ApplicationReportController getApplicationReportController() {
-        return applicationReportController;
-    }
-
-    public static AutorController getAutorController() {
-        return autorController;
+    public static ApplicationConfig getApplicationConfig() {
+        return applicationConfig;
     }
 }

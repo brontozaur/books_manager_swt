@@ -15,13 +15,13 @@ import org.eclipse.swt.widgets.Display;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Observable;
 
 @Controller
-public class BookController extends AbstractController {
+public class BookController extends Observable{
 
     private final CarteRepository repository;
     private final CacheableAutorRepository cacheableAutorRepository;
@@ -33,9 +33,7 @@ public class BookController extends AbstractController {
 
     @Autowired
     public BookController(CarteRepository repository,
-                          CacheableAutorRepository cacheableAutorRepository,
-                          MongoTemplate mongoTemplate) {
-        super(mongoTemplate);
+                          CacheableAutorRepository cacheableAutorRepository) {
         this.repository = repository;
         this.cacheableAutorRepository = cacheableAutorRepository;
     }
@@ -164,7 +162,7 @@ public class BookController extends AbstractController {
     }
 
     public Image getImage(DocumentData data) {
-        GridFSDBFile frontCover = getDocumentData(data.getId());
+        GridFSDBFile frontCover = ApplicationController.getDocumentData(data.getId());
         Image image = null;
         if (frontCover != null) {
             image = new Image(Display.getDefault(), frontCover.getInputStream());

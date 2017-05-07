@@ -4,8 +4,8 @@ import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.html.HtmlWriter;
-import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
+import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
@@ -292,7 +292,7 @@ public final class ExportHtml {
             dbRap.setNume(titleName);
             dbRap.setType(ExportType.HTML);
 
-            ApplicationService.getApplicationReportController().save(dbRap);
+            ReportController.save(dbRap);
             VizualizareRapoarte.showRaport(dbRap);
 
         } catch (OutOfMemoryError exc) {

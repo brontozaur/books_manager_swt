@@ -1,6 +1,7 @@
 package com.papao.books.imports;
 
 import com.papao.books.ApplicationService;
+import com.papao.books.controller.AutorController;
 import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
@@ -56,11 +57,11 @@ public class BookImportView extends AbstractPreluareDateM2View {
             if (StringUtils.isEmpty(autorName)) {
                 continue;
             }
-            Autor autor = ApplicationService.getAutorController().getByNumeComplet(autorName);
+            Autor autor = AutorController.getByNumeComplet(autorName);
             if (autor == null) {
                 autor = new Autor();
                 autor.setNumeComplet(autorName);
-                autor = ApplicationService.getAutorController().save(autor);
+                autor = AutorController.save(autor);
             }
             idAutori.add(autor.getId());
         }

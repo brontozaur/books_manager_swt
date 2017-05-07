@@ -1,6 +1,6 @@
 package com.papao.books.view.custom;
 
-import com.papao.books.ApplicationService;
+import com.papao.books.controller.AutorController;
 import com.papao.books.model.Autor;
 import com.papao.books.view.carte.AutorView;
 import com.papao.books.view.view.AbstractView;
@@ -21,7 +21,7 @@ public class LinkedinCompositeAutoriLinks extends Composite {
         super(parent, SWT.NONE);
 
         if (autori != null) {
-            this.autori = ApplicationService.getAutorController().findByIds(autori);
+            this.autori = AutorController.findByIds(autori);
         }
 
         GridDataFactory.fillDefaults().grab(false, false).hint(parent.getSize().x, SWT.DEFAULT).applyTo(this);
@@ -53,7 +53,7 @@ public class LinkedinCompositeAutoriLinks extends Composite {
             @Override
             public void handleEvent(Event event) {
                 Autor autor = (Autor) event.widget.getData();
-                autor = ApplicationService.getAutorController().findOne(autor.getId()); //reload from db
+                autor = AutorController.findOne(autor.getId()); //reload from db
                 new AutorView(getShell(), autor, AbstractView.MODE_MODIFY).open();
             }
         });
@@ -62,7 +62,7 @@ public class LinkedinCompositeAutoriLinks extends Composite {
     public void setAutori(List<ObjectId> ids) {
         this.autori.clear();
         if (ids != null && !ids.isEmpty()) {
-            this.autori = ApplicationService.getAutorController().findByIds(ids);
+            this.autori = AutorController.findByIds(ids);
         }
         for (Control control : getChildren()) {
             control.dispose();

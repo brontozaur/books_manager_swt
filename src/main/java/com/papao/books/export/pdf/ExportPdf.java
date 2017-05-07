@@ -2,8 +2,8 @@ package com.papao.books.export.pdf;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
-import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
+import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
@@ -345,7 +345,7 @@ public final class ExportPdf {
             dbRap.setIdUser(EncodeLive.getIdUser());
             dbRap.setNume(titleName);
             dbRap.setType(ExportType.PDF);
-            ApplicationService.getApplicationReportController().save(dbRap);
+            ReportController.save(dbRap);
 
             VizualizareRapoarte.showRaport(dbRap);
         } catch (OutOfMemoryError exc) {

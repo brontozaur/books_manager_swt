@@ -2,8 +2,8 @@ package com.papao.books.export.txt;
 
 import com.inamik.utils.SimpleTableFormatter;
 import com.inamik.utils.TableFormatter;
-import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
+import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.VizualizareRapoarte;
@@ -238,7 +238,7 @@ public final class ExportTxt {
             dbRap.setNume(titleName);
             dbRap.setType(ExportType.TXT);
 
-            ApplicationService.getApplicationReportController().save(dbRap);
+            ReportController.save(dbRap);
 
             VizualizareRapoarte.showRaport(dbRap);
         } catch (IOException exc) {

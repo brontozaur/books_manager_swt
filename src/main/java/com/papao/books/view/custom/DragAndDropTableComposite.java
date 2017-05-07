@@ -2,6 +2,7 @@ package com.papao.books.view.custom;
 
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.ApplicationService;
+import com.papao.books.controller.ApplicationController;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
 import com.papao.books.view.AppImages;
@@ -228,7 +229,7 @@ public class DragAndDropTableComposite extends Composite {
             if (permanentChanges) {
                 carte.getDocuments().remove(doc);
                 logger.info("Am sters un document atasat cartii " + carte.getId());
-                ApplicationService.getBookController().removeDocument(doc.getId());
+                ApplicationController.removeDocument(doc.getId());
             } else {
                 deleted.add(doc);
             }
@@ -261,7 +262,7 @@ public class DragAndDropTableComposite extends Composite {
         dd.setLength(file.length());
         dd.setUploadDate(new Date());
         if (permanentChanges) {
-            dd = ApplicationService.getBookController().saveDocument(file, null, dd.getContentType());
+            dd = ApplicationController.saveDocument(file, null, dd.getContentType());
             this.carte.getDocuments().add(dd);
             ApplicationService.getBookController().save(this.carte);
         } else {
@@ -333,7 +334,7 @@ public class DragAndDropTableComposite extends Composite {
         OutputStream out = null;
         try {
             in = new FileInputStream(documentData.getFilePath());
-            filePath = ApplicationService.getBookController().getAppOutFolder() + "/" + documentData.getFileName();
+            filePath = ApplicationService.getApplicationConfig().getAppOutFolder() + "/" + documentData.getFileName();
             out = new FileOutputStream(new File(filePath));
             StreamUtils.copy(in, out);
             item.setData("file", filePath);
@@ -376,7 +377,7 @@ public class DragAndDropTableComposite extends Composite {
         OutputStream out = null;
         try {
             in = fsdbFile.getInputStream();
-            filePath = ApplicationService.getBookController().getAppOutFolder() + "/" + fsdbFile.getFilename();
+            filePath = ApplicationService.getApplicationConfig().getAppOutFolder() + "/" + fsdbFile.getFilename();
             out = new FileOutputStream(new File(filePath));
             StreamUtils.copy(in, out);
             item.setData("file", filePath);
@@ -425,7 +426,7 @@ public class DragAndDropTableComposite extends Composite {
         }
         GridFSDBFile gridFsFile = null;
         if (document.getId() != null) {
-            gridFsFile = ApplicationService.getBookController().getDocumentData(document.getId());
+            gridFsFile = ApplicationController.getDocumentData(document.getId());
             if (gridFsFile != null) {
                 document.setFilePath(gridFsFile.getMetaData().get("localFilePath") + "");
                 document.setContentType(gridFsFile.getContentType());

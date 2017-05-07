@@ -1,6 +1,6 @@
 package com.papao.books.imports;
 
-import com.papao.books.ApplicationService;
+import com.papao.books.controller.AutorController;
 import com.papao.books.model.Autor;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.preluari.AbstractPreluareDateM2View;
@@ -51,11 +51,11 @@ public class AutoriImportView extends AbstractPreluareDateM2View {
         List<Integer> succesfullyImportedIndices = new ArrayList<>();
         for (int i = 0; i < items.length; i++) {
             String autorName = items[i].getText(0);
-            Autor autor = ApplicationService.getAutorController().getByNumeComplet(autorName);
+            Autor autor = AutorController.getByNumeComplet(autorName);
             if (autor == null) {
                 autor = new Autor();
                 autor.setNumeComplet(autorName);
-                ApplicationService.getAutorController().save(autor);
+                AutorController.save(autor);
                 succesfullyImportedIndices.add(i);
             } else {
                 items[i].setText(tableDocumente.getColumnCount() - 1, "Exista deja");

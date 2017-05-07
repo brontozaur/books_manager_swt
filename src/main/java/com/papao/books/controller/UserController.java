@@ -7,24 +7,21 @@ import com.papao.books.repository.UserRepository;
 import com.papao.books.view.auth.EncodeLive;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
 @Controller
-public class UserController extends AbstractController {
+public class UserController {
 
     private static UserRepository repository;
     private static UserActivityRepository userActivityRepository;
 
     @Autowired
-    public UserController(MongoTemplate mongoTemplate,
-                          UserRepository userRepository,
+    public UserController(UserRepository userRepository,
                           UserActivityRepository userActivityRepository) {
-        super(mongoTemplate);
-        this.repository = userRepository;
-        this.userActivityRepository = userActivityRepository;
+        UserController.repository = userRepository;
+        UserController.userActivityRepository = userActivityRepository;
     }
 
     public static User save(User user) {

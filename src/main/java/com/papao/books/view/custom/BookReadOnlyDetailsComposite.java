@@ -3,6 +3,7 @@ package com.papao.books.view.custom;
 import com.github.haixing_hu.swt.starrating.StarRating;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.ApplicationService;
+import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
@@ -96,16 +97,16 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
             }
         });
 
-        rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null, ApplicationService.getAutorController().getAppImagesFolder());
+        rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null, ApplicationService.getApplicationConfig().getAppImagesFolder());
         this.addObserver(rightFrontCoverImageComposite);
         rightFrontCoverImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 if (rightFrontCoverImageComposite.imageChanged() && carte != null) {
-                    ApplicationService.getAutorController().removeDocument(carte.getCopertaFata().getId());
+                    ApplicationController.removeDocument(carte.getCopertaFata().getId());
                     carte.setCopertaFata(null);
                     try {
-                        carte.setCopertaFata(ApplicationService.getAutorController().saveDocument(rightFrontCoverImageComposite));
+                        carte.setCopertaFata(ApplicationController.saveDocument(rightFrontCoverImageComposite));
                         carte = ApplicationService.getBookController().save(carte);
                         setChanged();
                         notifyObservers();
@@ -167,7 +168,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         Image image = null;
         String imageName = null;
         if (coverDescriptor != null && coverDescriptor.getId() != null) {
-            GridFSDBFile dbFile = ApplicationService.getBookController().getDocumentData(coverDescriptor.getId());
+            GridFSDBFile dbFile = ApplicationController.getDocumentData(coverDescriptor.getId());
             if (dbFile != null) {
                 image = new Image(Display.getDefault(), dbFile.getInputStream());
                 imageName = dbFile.getFilename();

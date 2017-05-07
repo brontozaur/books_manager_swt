@@ -3,6 +3,7 @@ package com.papao.books.view.carte;
 import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
+import com.papao.books.controller.AutorController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
@@ -55,7 +56,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
 
         addComponents();
 
-        this.tableViewer.setInput(ApplicationService.getAutorController().findAll());
+        this.tableViewer.setInput(AutorController.findAll());
         this.tableViewer.getTable().setFocus();
     }
 
@@ -88,7 +89,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
             SWTeXtension.displayMessageI("Autorul selectat este invalid!");
             return false;
         }
-        if (ApplicationService.getAutorController().findOne(autor.getId()) == null) {
+        if (AutorController.findOne(autor.getId()) == null) {
             SWTeXtension.displayMessageI("Autorul selectat este invalid!");
             return false;
         }
@@ -113,7 +114,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
                 SWTeXtension.displayMessageI("Autorul selectat este invalid!");
                 return false;
             }
-            autor = ApplicationService.getAutorController().findOne(autor.getId());
+            autor = AutorController.findOne(autor.getId());
             if (autor == null) {
                 SWTeXtension.displayMessageW("Autorul nu mai exista!");
                 return false;
@@ -127,7 +128,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
             if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti autorul selectat?", "Confirmare stergere autor") == SWT.NO) {
                 return true;
             }
-            ApplicationService.getAutorController().delete(autor);
+            AutorController.delete(autor);
             refresh();
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {
@@ -146,7 +147,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
             SWTeXtension.displayMessageI("Autor selectat este invalid!");
             return;
         }
-        if (ApplicationService.getAutorController().findOne(autor.getId()) == null) {
+        if (AutorController.findOne(autor.getId()) == null) {
             SWTeXtension.displayMessageI("Autor selectat este invalid!");
             return;
         }
@@ -155,7 +156,7 @@ public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, I
 
     @Override
     public void refresh() {
-        this.tableViewer.setInput(ApplicationService.getAutorController().findAll());
+        this.tableViewer.setInput(AutorController.findAll());
     }
 
     @Override

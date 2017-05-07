@@ -5,8 +5,8 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.rtf.RtfWriter2;
 import com.lowagie.text.rtf.document.output.RtfDataCache;
-import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
+import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.export.ExportType;
 import com.papao.books.model.ApplicationReport;
@@ -297,7 +297,7 @@ public final class ExportRtf {
             dbRap.setNume(titleName);
             dbRap.setType(ExportType.RTF);
 
-            ApplicationService.getApplicationReportController().save(dbRap);
+            ReportController.save(dbRap);
 
             SWTeXtension.displayMessageI("Fisierul \n" + output.getCanonicalPath() + " a fost generat cu succes!",
                     "Export efectuat cu succes",

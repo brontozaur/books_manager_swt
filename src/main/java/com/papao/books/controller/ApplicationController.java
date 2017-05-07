@@ -14,7 +14,7 @@ import com.papao.books.view.providers.tree.IntValuePairsWrapper;
 import com.papao.books.view.util.FileTypeDetector;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
@@ -22,6 +22,7 @@ import org.springframework.data.mongodb.core.aggregation.LookupOperation;
 import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,85 +30,43 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Observable;
 
-public class AbstractController extends Observable {
+@Controller
+public class ApplicationController {
 
-    private final MongoTemplate mongoTemplate;
-    private GridFS gridFS;
+    private static MongoTemplate mongoTemplate;
+    private static GridFS gridFS;
 
-    @Value("${app.mongo.books.collection}")
-    private String booksCollectionName;
-
-    @Value("${app.mongo.autori.collection}")
-    private String autoriCollectionName;
-
-    @Value("${app.mongo.reports.collection}")
-    private String reportsCollectionName;
-
-    @Value("${app.images.folder}")
-    private String appImagesFolder;
-
-    @Value("${app.out.folder}")
-    private String appOutFolder;
-
-    public AbstractController(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-        this.gridFS = new GridFS(mongoTemplate.getDb());
+    @Autowired
+    public ApplicationController(MongoTemplate mongoTemplate) {
+        ApplicationController.mongoTemplate = mongoTemplate;
+        ApplicationController.gridFS = new GridFS(mongoTemplate.getDb());
     }
 
-    public String getAutoriCollectionName() {
-        return autoriCollectionName;
-    }
-
-    public String getBooksCollectionName() {
-        return booksCollectionName;
-    }
-
-    public String getReportsCollectionName() {
-        return reportsCollectionName;
-    }
-
-    public String getAppImagesFolder() {
-        File imageFolder = new File(System.getProperties().getProperty("user.dir") + appImagesFolder);
-        if (!imageFolder.exists() || !imageFolder.isDirectory()) {
-            imageFolder.mkdirs();
-        }
-        return imageFolder.getAbsolutePath();
-    }
-
-    public String getAppOutFolder() {
-        File outFolder = new File(System.getProperties().getProperty("user.dir") + appOutFolder);
-        if (!outFolder.exists() || !outFolder.isDirectory()) {
-            outFolder.mkdirs();
-        }
-        return outFolder.getAbsolutePath();
-    }
-
-    public List<String> getDistinctFieldAsContentProposal(String collectionName, String databaseField) {
+    public static List<String> getDistinctFieldAsContentProposal(String collectionName, String databaseField) {
         return mongoTemplate.getCollection(collectionName).distinct(databaseField);
     }
 
-    public GridFSDBFile getDocumentData(ObjectId documentId) {
+    public static GridFSDBFile getDocumentData(ObjectId documentId) {
         return gridFS.findOne(documentId);
     }
 
-    public void removeDocument(ObjectId documentId) {
+    public static void removeDocument(ObjectId documentId) {
         gridFS.remove(documentId);
     }
 
-    public DocumentData saveDocument(ImageSelectorComposite selectorComposite) throws IOException {
+    public static DocumentData saveDocument(ImageSelectorComposite selectorComposite) throws IOException {
         if (selectorComposite.getSelectedFile() == null) {
             return null;
         }
         return saveDocument(selectorComposite.getSelectedFile(), selectorComposite.getWebPath());
     }
 
-    public DocumentData saveDocument(File localFile, String urlPath) throws IOException {
+    public static DocumentData saveDocument(File localFile, String urlPath) throws IOException {
         return saveDocument(localFile, urlPath, null);
     }
 
-    public DocumentData saveDocument(String localFile, String contentType) throws IOException {
+    public static DocumentData saveDocument(String localFile, String contentType) throws IOException {
         File file = new File(localFile);
         if (!file.exists() || !file.isFile()) {
             throw new IOException("File " + localFile + " is invalid!");
@@ -115,7 +74,7 @@ public class AbstractController extends Observable {
         return saveDocument(file, null, contentType);
     }
 
-    public DocumentData saveDocument(File localFile, String urlPath, String contentType) throws IOException {
+    public static DocumentData saveDocument(File localFile, String urlPath, String contentType) throws IOException {
         GridFSInputFile gfsFile = gridFS.createFile(localFile);
         gfsFile.setFilename(localFile.getName());
         if (contentType != null) {
@@ -159,11 +118,11 @@ public class AbstractController extends Observable {
         ])
 
     */
-    public IntValuePairsWrapper getDistinctValuesForReferenceCollection(String localCollection,
-                                                                        String localField,
-                                                                        String referenceCollection,
-                                                                        String refPropertyName,
-                                                                        String... referenceField) {
+    public static IntValuePairsWrapper getDistinctValuesForReferenceCollection(String localCollection,
+                                                                               String localField,
+                                                                               String referenceCollection,
+                                                                               String refPropertyName,
+                                                                               String... referenceField) {
         LookupOperation lookupAuthor = Aggregation.lookup(referenceCollection, localField, refPropertyName, "ref");
         UnwindOperation unwindRefs = Aggregation.unwind("ref", true);
         GroupOperation groupByAuthor = Aggregation.group("ref").count().as("count");
@@ -190,7 +149,7 @@ public class AbstractController extends Observable {
                         Object ref = distinctValue.get(referenceField[i]);
                         if (ref != null) {
                             if (ref instanceof String) {
-                                if (StringUtils.isNotBlank((String)ref)) {
+                                if (StringUtils.isNotBlank((String) ref)) {
                                     displayName.append(", ").append(ref.toString());
                                 }
                             } else {
@@ -212,7 +171,7 @@ public class AbstractController extends Observable {
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
     }
 
-    public IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName, String propName) {
+    public static IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName, String propName) {
         return getDistinctStringPropertyValues(collectionName, propName, false);
     }
 
@@ -228,7 +187,7 @@ public class AbstractController extends Observable {
     })
 
      */
-    public IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName, String propName, boolean useFirstLetter) {
+    public static IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName, String propName, boolean useFirstLetter) {
         DBCollection collection = mongoTemplate.getCollection(collectionName);
 
         /*
@@ -285,7 +244,7 @@ public class AbstractController extends Observable {
         }}
         )
      */
-    public IntValuePairsWrapper getDistinctArrayPropertyValues(String collectionName, String propertyName) {
+    public static IntValuePairsWrapper getDistinctArrayPropertyValues(String collectionName, String propertyName) {
         DBCollection collection = mongoTemplate.getCollection(collectionName);
         final String mongoProperty = "$" + propertyName;
 

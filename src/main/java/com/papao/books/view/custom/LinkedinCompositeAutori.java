@@ -1,6 +1,6 @@
 package com.papao.books.view.custom;
 
-import com.papao.books.ApplicationService;
+import com.papao.books.controller.AutorController;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
 import com.papao.books.view.carte.AutorView;
@@ -31,7 +31,7 @@ public class LinkedinCompositeAutori extends Composite {
         super(parent, SWT.BORDER);
 
         if (autori != null) {
-            this.autori = ApplicationService.getAutorController().findByIds(autori);
+            this.autori = AutorController.findByIds(autori);
         }
 
         this.setBackground(ColorUtil.COLOR_WHITE);
@@ -44,7 +44,7 @@ public class LinkedinCompositeAutori extends Composite {
         descriptor.setClazz(Autor.class);
         descriptor.setTextMethodName("getNumeComplet");
         descriptor.setToolItemStyle(ComboImage.ADD_ADD | ComboImage.ADD_MOD);
-        descriptor.setInput(ApplicationService.getAutorController().findAll());
+        descriptor.setInput(AutorController.findAll());
 
         comboAutor = new ComboImage(this, descriptor);
         comboAutor.setBackground(ColorUtil.COLOR_WHITE);
@@ -63,7 +63,7 @@ public class LinkedinCompositeAutori extends Composite {
                     return;
                 }
                 Autor newAutor = view.getAutor();
-                comboAutor.setInput(ApplicationService.getAutorController().findAll());
+                comboAutor.setInput(AutorController.findAll());
                 createClosableCanvas(newAutor, true);
             }
         });
@@ -79,7 +79,7 @@ public class LinkedinCompositeAutori extends Composite {
                 if (view.getUserAction() == SWT.CANCEL) {
                     return;
                 }
-                comboAutor.setInput(ApplicationService.getAutorController().findAll());
+                comboAutor.setInput(AutorController.findAll());
                 createOrModifyClosableCanvas(autor);
             }
         });
@@ -150,7 +150,7 @@ public class LinkedinCompositeAutori extends Composite {
                 public void handleEvent(Event event) {
                     if (!comboAutor.isDisposed()) {
                         autori.remove((Autor) canvas.getDataObject());
-                        comboAutor.setInput(ApplicationService.getAutorController().findAll());
+                        comboAutor.setInput(AutorController.findAll());
                     }
                     layoutEverything(true);
                 }
@@ -190,7 +190,7 @@ public class LinkedinCompositeAutori extends Composite {
     public void setAutori(List<ObjectId> ids) {
         this.autori.clear();
         if (ids != null && !ids.isEmpty()) {
-            this.autori = ApplicationService.getAutorController().findByIds(ids);
+            this.autori = AutorController.findByIds(ids);
         }
         populateFields();
     }

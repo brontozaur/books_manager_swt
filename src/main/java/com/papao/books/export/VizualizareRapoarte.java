@@ -2,6 +2,8 @@ package com.papao.books.export;
 
 import com.papao.books.ApplicationService;
 import com.papao.books.BooleanSetting;
+import com.papao.books.controller.ApplicationController;
+import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.model.ApplicationReport;
 import com.papao.books.model.config.TableSetting;
@@ -368,7 +370,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         this.leftViewer.getTree().setSortColumn(null);
         this.rightViewer.getTable().setSortColumn(null);
 
-        IntValuePairsWrapper wrapper = ApplicationService.getApplicationReportController().getDistinctStringPropertyValues(ApplicationService.getApplicationReportController().getReportsCollectionName(), "type");
+        IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getReportsCollectionName(), "type");
         createTreeNodes(wrapper, "Rapoarte");
     }
 
@@ -456,7 +458,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
                         value = selectedNode.getQueryValue();
                     }
                     rightViewer.setInput(null);
-                    rightViewer.setInput(ApplicationService.getApplicationReportController().getReports(all, value));
+                    rightViewer.setInput(ReportController.getReports(all, ExportType.valueOf(value)));
 
                 } else if (e.widget == this.rightViewer.getTable()) {
                     enableButtons();
