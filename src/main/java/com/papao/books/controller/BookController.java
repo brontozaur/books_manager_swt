@@ -174,4 +174,9 @@ public class BookController extends Observable{
     public Carte getByTitluAndIdAutori(String titlu, List<ObjectId> idAutori) {
         return repository.getByTitluAndIdAutori(titlu, idAutori);
     }
+
+    public Page<Carte> getByTitluLikeOrIdAutoriContains(String titlu, List<ObjectId> idAutori, Pageable pageable) {
+        carti = repository.getByTitluLikeIgnoreCaseOrIdAutoriContains(titlu, idAutori, pageable);
+        return carti;
+    }
 }

@@ -173,6 +173,7 @@ public class PaginationComposite extends Composite implements Observer {
     }
 
     private void search() {
+        //TODO search from db directly
         ApplicationService.getBookController().requestSearch(getPageable());
         itemNext.setEnabled(currentPage < totalPages && totalCount > 0);
         itemPrevious.setEnabled(currentPage - 1 > 0 && totalCount > 0);

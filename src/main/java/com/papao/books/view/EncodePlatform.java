@@ -1,5 +1,6 @@
 package com.papao.books.view;
 
+import com.novocode.naf.swt.custom.BalloonNotification;
 import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.ApplicationService;
 import com.papao.books.BooksApplication;
@@ -60,10 +61,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
+import java.util.List;
 
 public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer {
 
@@ -113,6 +112,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ToolItem itemConfig;
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
+    private Text searchText;
 
     public EncodePlatform() {
         super(null, AbstractView.MODE_NONE);
@@ -244,9 +244,67 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         tabGrid.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
         this.mainRightTabFolder.setSelection(tabGrid);
 
-        progressBarComposite = new ProgressBarComposite(mainRightTabFolder, SWT.SMOOTH);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(progressBarComposite);
-        mainRightTabFolder.setTopRight(progressBarComposite);
+        Composite mainCompRightTab = new Composite(mainRightTabFolder, SWT.NONE);
+        mainCompRightTab.setLayout(new GridLayout(4, false));
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(mainCompRightTab);
+
+        final Combo comboSearch = new Combo(mainCompRightTab, SWT.READ_ONLY);
+        comboSearch.setItems(new String[]{"tabela", "baza de date"});
+        comboSearch.select(0);
+
+        searchText = new Text(mainCompRightTab, SWT.SEARCH);
+        searchText.setMessage("cautare dupa...");
+        GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).applyTo(searchText);
+        searchText.addListener(SWT.Modify, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if ("tabela".equals(comboSearch.getText())) {
+                    if (searchText.getText().length() < 3) {
+                        return;
+                    }
+                    searchInTable(searchText.getText());
+                }
+            }
+        });
+        searchText.addListener(SWT.KeyDown, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.character == SWT.CR) {
+                    if (searchText.getText().length() < 2) {
+                        BalloonNotification.showNotification(searchText, "Notificare", "Introduceti minim 2 caractere!", 1500);
+                        return;
+                    }
+                    if ("tabela".equals(comboSearch.getText())) {
+                        searchInTable(searchText.getText());
+                    } else if ("baza de date".equals(comboSearch.getText())) {
+                        searchInDatabase(searchText.getText());
+                    }
+                }
+            }
+        });
+
+        ToolItem itemSearch = new ToolItem(new ToolBar(mainCompRightTab, SWT.FLAT | SWT.RIGHT), SWT.RIGHT);
+        itemSearch.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
+        itemSearch.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
+        itemSearch.setText("Cautare");
+        itemSearch.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (searchText.getText().length() < 2) {
+                    BalloonNotification.showNotification(searchText, "Notificare", "Introduceti minim 2 caractere!", 1500);
+                    return;
+                }
+                if ("tabela".equals(comboSearch.getText())) {
+                    searchInTable(searchText.getText());
+                } else if ("baza de date".equals(comboSearch.getText())) {
+                    searchInDatabase(searchText.getText());
+                }
+            }
+        });
+
+        progressBarComposite = new ProgressBarComposite(mainCompRightTab, SWT.SMOOTH);
+        GridDataFactory.fillDefaults().grab(true, false).align(SWT.END, SWT.CENTER).applyTo(progressBarComposite);
+        mainRightTabFolder.setTopRight(mainCompRightTab);
 
         rightSash = new LiveSashForm(mainRightTabFolder, SWT.SMOOTH | SWT.HORIZONTAL);
         rightSash.sashWidth = 4;
@@ -367,6 +425,37 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
 
         getContainer().layout();
+    }
+
+    private void searchInDatabase(String text) {
+        List<ObjectId> autori = AutorController.getByNumeCompletLike(text);
+        Pageable pageable = paginationComposite.getPageable();
+        Page<Carte> books = ApplicationService.getBookController().getByTitluLikeOrIdAutoriContains(text, autori, pageable);
+        tableViewer.setInput(books.getContent());
+        searchInTable(text);
+    }
+
+    private void searchInTable(final String text) {
+        Display.getDefault().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                tableViewer.resetFilters();
+                java.util.List<ViewerFilter> listFilters = new ArrayList<>();
+                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText(text);
+                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText(text);
+                listFilters.add(new ViewerFilter() {
+                    @Override
+                    public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                        Carte carte = (Carte) element;
+                        return StringUtil.compareStrings(text.toLowerCase(),
+                                ApplicationService.getBookController().getBookAuthorNames(carte).toLowerCase())
+                                || StringUtil.compareStrings(text.toLowerCase(), carte.getTitlu().toLowerCase());
+                    }
+                });
+                tableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
+                Display.getDefault().readAndDispatch();
+            }
+        });
     }
 
     private Composite createTabDocuments(CTabFolder bottomInnerTabFolderRight) {
@@ -1007,7 +1096,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             col.getColumn().setMoveable(true);
             switch (i) {
                 case IDX_AUTOR: {
-                    col.setLabelProvider(new ColumnLabelProvider() {
+                    col.setLabelProvider(new UnifiedStyledLabelProvider() {
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
@@ -1027,7 +1116,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     break;
                 }
                 case IDX_TITLU: {
-                    col.setLabelProvider(new ColumnLabelProvider() {
+                    col.setLabelProvider(new UnifiedStyledLabelProvider() {
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
@@ -1491,6 +1580,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     public void search() {
         this.tableViewer.resetFilters();
+        searchText.setText("");
         java.util.List<ViewerFilter> listFilters = new ArrayList<>();
         for (Iterator<AbstractSearchType> it = this.searchSystem.getVisibleFilters().values().iterator(); it.hasNext(); ) {
             ViewerFilter filter = null;
@@ -1567,7 +1657,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         }
         this.tableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
-        populateLeftTree();
     }
 
     public void view() {
@@ -1594,6 +1683,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     public void refreshTableViewer(boolean resetPage) {
         String value = null;
         boolean all = true;
+        this.tableViewer.resetFilters();
+        searchText.setText("");
         if (!leftTreeViewer.getSelection().isEmpty()) {
             TreeItem item = leftTreeViewer.getTree().getSelection()[0];
             SimpleTextNode selectedNode = (SimpleTextNode) item.getData();

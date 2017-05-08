@@ -51,4 +51,8 @@ public class AutorController {
     public static Autor getByNumeComplet(String numeComplet) {
         return cacheableAutorRepository.getByNumeComplet(numeComplet);
     }
+
+    public static List<ObjectId> getByNumeCompletLike(String numeComplet) {
+        return cacheableAutorRepository.getByNumeCompletLike(numeComplet);
+    }
 }

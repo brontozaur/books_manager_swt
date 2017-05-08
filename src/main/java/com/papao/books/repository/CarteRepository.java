@@ -14,6 +14,8 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Carte getByTitluAndIdAutori(String titlu, List<ObjectId> idAutori);
 
+    Page<Carte> getByTitluLikeIgnoreCaseOrIdAutoriContains(String titlu, List<ObjectId> idAutori, Pageable pageable);
+
     List<Carte> getByIdAutoriContains(ObjectId idAutor);
 
     //string values - contains
