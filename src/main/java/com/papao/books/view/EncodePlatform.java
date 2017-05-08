@@ -428,7 +428,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     private void searchInDatabase(String text) {
-        List<ObjectId> autori = AutorController.getByNumeCompletLike(text);
+        List<ObjectId> autori = AutorController.getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(text);
         Pageable pageable = paginationComposite.getPageable();
         Page<Carte> books = ApplicationService.getBookController().getByTitluLikeOrIdAutoriContains(text, autori, pageable);
         tableViewer.setInput(books.getContent());

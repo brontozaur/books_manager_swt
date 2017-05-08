@@ -11,5 +11,5 @@ public interface AutorRepository extends MongoRepository<Autor, String> {
 
     Autor getByNumeComplet(String numeComplet);
 
-    List<Autor> getByNumeCompletLikeIgnoreCase(String numeComplet);
+    List<Autor> getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(String numeComplet, String titlu);
 }

@@ -52,7 +52,7 @@ public class AutorController {
         return cacheableAutorRepository.getByNumeComplet(numeComplet);
     }
 
-    public static List<ObjectId> getByNumeCompletLike(String numeComplet) {
-        return cacheableAutorRepository.getByNumeCompletLike(numeComplet);
+    public static List<ObjectId> getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(String numeComplet) {
+        return cacheableAutorRepository.getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(numeComplet);
     }
 }

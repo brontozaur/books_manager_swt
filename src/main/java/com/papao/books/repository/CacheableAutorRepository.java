@@ -44,8 +44,8 @@ public class CacheableAutorRepository {
         return autorRepository.getByNumeComplet(numeComplet);
     }
 
-    public List<ObjectId> getByNumeCompletLike(String numeComplet) {
-        List<Autor> autori = autorRepository.getByNumeCompletLikeIgnoreCase(numeComplet);
+    public List<ObjectId> getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(String numeComplet) {
+        List<Autor> autori = autorRepository.getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(numeComplet, numeComplet);
         List<ObjectId> idAutori = new ArrayList<>();
         for (Autor autor: autori) {
             idAutori.add(autor.getId());
