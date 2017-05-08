@@ -1,11 +1,10 @@
-package com.papao.books.imports;
+package com.papao.books.view.preluari;
 
 import com.papao.books.ApplicationService;
 import com.papao.books.controller.AutorController;
 import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
-import com.papao.books.view.preluari.AbstractPreluareDateM2View;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.view.AbstractView;
 import com.papao.books.view.view.SWTeXtension;

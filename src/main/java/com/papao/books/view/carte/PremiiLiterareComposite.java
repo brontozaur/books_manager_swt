@@ -1,8 +1,7 @@
-package com.papao.books.view.custom;
+package com.papao.books.view.carte;
 
 import com.papao.books.model.PremiuLiterar;
 import com.papao.books.view.AppImages;
-import com.papao.books.view.carte.PremiuLiterarView;
 import com.papao.books.view.view.AbstractView;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
