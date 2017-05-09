@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.text.Collator;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -54,16 +53,16 @@ public final class StringUtil {
                 String next = t.nextToken();
                 buff.append(next);
                 if (buff.length() > blockSize) {
-                    mapStr.put(Integer.valueOf(k++), buff.toString());
+                    mapStr.put(k++, buff.toString());
                     buff = new StringBuffer();
                 } else if (strParam.endsWith(next)) {
-                    mapStr.put(Integer.valueOf(k++), buff.toString());
+                    mapStr.put(k++, buff.toString());
                     buff = new StringBuffer();
                 }
                 result = new String[mapStr.size()];
                 int i = 0;
-                for (Iterator<String> iter = mapStr.values().iterator(); iter.hasNext(); ) {
-                    result[i++] = iter.next();
+                for (String s : mapStr.values()) {
+                    result[i++] = s;
                 }
             }
         } catch (Exception exc) {
@@ -91,10 +90,10 @@ public final class StringUtil {
         } else if (endsWith) {
             return str2.endsWith(str1);
         } else if (contains) {
-            return str2.indexOf(str1) != -1;
+            return str2.contains(str1);
         }
         // comportamentul default, daca nu s-a bifat nimic
-        return str2.indexOf(str1) != -1;
+        return str2.contains(str1);
     }
 
     public static boolean compareStrings(final String sirCautat, final String domeniuCautare) {
@@ -105,8 +104,8 @@ public final class StringUtil {
         if (sirCautat == null) {
             return false;
         }
-        for (int i = 0; i < sirCautat.length; i++) {
-            if (StringUtil.compareStrings(sirCautat[i], domeniuCautare, false, false, false)) {
+        for (String aSirCautat : sirCautat) {
+            if (StringUtil.compareStrings(aSirCautat, domeniuCautare, false, false, false)) {
                 return true;
             }
         }

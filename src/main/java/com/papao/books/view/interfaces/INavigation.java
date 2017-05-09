@@ -9,7 +9,7 @@ package com.papao.books.view.interfaces;
  * items..after the GUI has drawed.Also, the caller must include showNavigation =
  * true, so the buttons are actually drawed on the view.
  */
-public interface IEncodeNavigation {
+public interface INavigation {
 
     void goBack();
 

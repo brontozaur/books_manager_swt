@@ -2,7 +2,7 @@ package com.papao.books.export;
 
 import com.papao.books.view.interfaces.ConfigurationException;
 import com.papao.books.view.interfaces.IConfig;
-import com.papao.books.view.interfaces.IEncodeReset;
+import com.papao.books.view.interfaces.IReset;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import com.papao.books.view.util.WidgetCursorUtil;
 import com.papao.books.view.view.AbstractCView;
@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.*;
 import java.util.Map;
 import java.util.TreeMap;
 
-public abstract class AbstractExportView extends AbstractCView implements IEncodeReset, Listener {
+public abstract class AbstractExportView extends AbstractCView implements IReset, Listener {
 
     private final static Logger logger = Logger.getLogger(AbstractExportView.class);
 

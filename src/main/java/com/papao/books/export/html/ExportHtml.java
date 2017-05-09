@@ -4,7 +4,7 @@ import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.html.HtmlWriter;
-import com.papao.books.BooleanSetting;
+import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.export.ExportType;
@@ -23,10 +23,7 @@ import org.eclipse.swt.widgets.TableItem;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public final class ExportHtml {
 
@@ -313,7 +310,7 @@ public final class ExportHtml {
         document.addCreationDate();
         document.addCreator("Books Manager \u00A9 brontozaur");
         document.addProducer();
-        document.addSubject("Application time: " + EncodeLive.getUtilDateLogin().toString());
+        document.addSubject("Application time: " + new Date());
         document.addTitle(numeFisier);
         document.addKeywords(numeFisier + ",raport" + "," + EncodeLive.getCurrentUserName());
     }

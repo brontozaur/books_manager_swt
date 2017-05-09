@@ -1,6 +1,6 @@
 package com.papao.books.view.user;
 
-import com.papao.books.BooleanSetting;
+import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.controller.UserController;
 import com.papao.books.export.ExportType;
@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
-public class UsersView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete, IEncodeExport {
+public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify, IDelete, IExport {
 
     private static Logger logger = Logger.getLogger(UsersView.class);
 

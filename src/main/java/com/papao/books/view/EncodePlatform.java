@@ -4,7 +4,7 @@ import com.novocode.naf.swt.custom.BalloonNotification;
 import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.ApplicationService;
 import com.papao.books.BooksApplication;
-import com.papao.books.BooleanSetting;
+import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.*;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.AbstractMongoDB;

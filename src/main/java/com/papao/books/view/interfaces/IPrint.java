@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Control;
  * Callers should
  * include the Encode[C]View.ADD_TI_PRINT option, so, the print tool item will be displayed.
  */
-public interface IEncodePrint {
+public interface IPrint {
 
     void printPDF();
 

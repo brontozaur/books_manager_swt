@@ -1,7 +1,7 @@
 package com.papao.books.view.interfaces;
 
 
-public interface IEncodeSearchWithHighlight {
+public interface ISearchWithHighlight {
 
     void searchWithHighlight();
 }

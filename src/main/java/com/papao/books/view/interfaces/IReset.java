@@ -1,6 +1,6 @@
 package com.papao.books.view.interfaces;
 
-public interface IEncodeReset {
+public interface IReset {
 
     void reset();
 }

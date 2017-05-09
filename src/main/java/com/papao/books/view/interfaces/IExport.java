@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Control;
  * Callers should include the Encode[C]View.ADD_TI_EXPORT option, so, the print tool item will be
  * displayed.
  */
-public interface IEncodeExport {
+public interface IExport {
 
     void exportTxt();
 

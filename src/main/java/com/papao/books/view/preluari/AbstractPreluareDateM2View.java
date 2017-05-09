@@ -6,9 +6,9 @@ import com.papao.books.view.AppImages;
 import com.papao.books.view.auth.EncodeLive;
 import com.papao.books.view.custom.CWaitDlgClassic;
 import com.papao.books.view.custom.ProgressBarComposite;
-import com.papao.books.view.interfaces.IEncodeExport;
-import com.papao.books.view.interfaces.IEncodeHelp;
-import com.papao.books.view.interfaces.IEncodeReset;
+import com.papao.books.view.interfaces.IExport;
+import com.papao.books.view.interfaces.IHelp;
+import com.papao.books.view.interfaces.IReset;
 import com.papao.books.view.util.ColorUtil;
 import com.papao.books.view.util.WidgetTableUtil;
 import com.papao.books.view.util.importers.ReadExcelFileWithJXL;
@@ -31,8 +31,8 @@ import java.util.List;
  * {@link AbstractPreluareDateM2View#save2Db()} si {@link com.papao.books.view.view.AbstractView#validate()} pentru a avea
  * implementata o noua metoda de preluare. </p>
  */
-public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter implements IEncodeReset,
-        IEncodeHelp, IEncodeExport {
+public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter implements IReset,
+        IHelp, IExport {
 
     private static final Logger logger = Logger.getLogger(AbstractPreluareDateM2View.class);
 

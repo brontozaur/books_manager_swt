@@ -1,5 +1,7 @@
 package com.papao.books.view.util;
 
+import com.papao.books.export.ExportType;
+import com.papao.books.export.Exporter;
 import com.papao.books.view.AppImages;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
@@ -28,7 +30,7 @@ public final class WidgetMenuUtil {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-//                    Exporter.export(ExportType.PDF, table, reportName, clazz, sufix);
+                    Exporter.export(ExportType.PDF, table, reportName, clazz, sufix);
                 }
             });
 
@@ -38,7 +40,7 @@ public final class WidgetMenuUtil {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-//                    Exporter.export(Exporter.XLS, table, reportName, clazz, sufix);
+                    Exporter.export(ExportType.XLS, table, reportName, clazz, sufix);
                 }
             });
 
@@ -48,7 +50,7 @@ public final class WidgetMenuUtil {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-//                    Exporter.export(Exporter.TXT, table, reportName, clazz, sufix);
+                    Exporter.export(ExportType.TXT, table, reportName, clazz, sufix);
                 }
             });
 
@@ -58,7 +60,7 @@ public final class WidgetMenuUtil {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-//                    Exporter.export(Exporter.RTF, table, reportName, clazz, sufix);
+                    Exporter.export(ExportType.RTF, table, reportName, clazz, sufix);
                 }
             });
 
@@ -68,7 +70,7 @@ public final class WidgetMenuUtil {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-//                    Exporter.export(Exporter.HTML, table, reportName, clazz, sufix);
+                    Exporter.export(ExportType.HTML, table, reportName, clazz, sufix);
                 }
             });
 

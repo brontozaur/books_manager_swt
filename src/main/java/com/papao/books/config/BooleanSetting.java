@@ -1,4 +1,4 @@
-package com.papao.books;
+package com.papao.books.config;
 
 public enum BooleanSetting {
 

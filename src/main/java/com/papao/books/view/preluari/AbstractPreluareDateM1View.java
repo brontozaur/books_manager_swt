@@ -2,7 +2,7 @@ package com.papao.books.view.preluari;
 
 import com.papao.books.view.AppImages;
 import com.papao.books.view.custom.ProgressBarComposite;
-import com.papao.books.view.interfaces.IEncodeReset;
+import com.papao.books.view.interfaces.IReset;
 import com.papao.books.view.util.WidgetTableUtil;
 import com.papao.books.view.view.AbstractCViewAdapter;
 import com.papao.books.view.view.AbstractView;
@@ -13,7 +13,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
-public abstract class AbstractPreluareDateM1View extends AbstractCViewAdapter implements IEncodeReset {
+public abstract class AbstractPreluareDateM1View extends AbstractCViewAdapter implements IReset {
 
     private static final Logger logger = Logger.getLogger(AbstractPreluareDateM1View.class);
 

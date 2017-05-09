@@ -3,7 +3,7 @@ package com.papao.books.view.view;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
-import com.papao.books.view.interfaces.IEncodeReset;
+import com.papao.books.view.interfaces.IReset;
 import com.papao.books.view.providers.AdbStringContentProvider;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
-public class ColumnsChooserComposite extends Composite implements Listener, IEncodeReset {
+public class ColumnsChooserComposite extends Composite implements Listener, IReset {
 
     private static Logger logger = Logger.getLogger(ColumnsChooserComposite.class);
 

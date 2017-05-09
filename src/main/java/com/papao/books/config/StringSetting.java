@@ -1,4 +1,4 @@
-package com.papao.books;
+package com.papao.books.config;
 
 import com.papao.books.controller.SettingsController;
 

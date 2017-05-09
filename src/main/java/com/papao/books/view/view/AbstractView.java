@@ -1,6 +1,6 @@
 package com.papao.books.view.view;
 
-import com.papao.books.BooleanSetting;
+import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.model.config.WindowSetting;
 import com.papao.books.view.AppImages;
@@ -73,7 +73,7 @@ public abstract class AbstractView extends Observable {
     public final static int ADD_DETAILS = 1 << 3;
 
     /**
-     * if specified, will trigger the human-friendly names for Add, Mod, Del and Search to be drawn. Ofc, this flag should be used with or {@link IEncodeSearch} interface
+     * if specified, will trigger the human-friendly names for Add, Mod, Del to be drawn.
      * implementation by the caller, or will do exactly nothing.
      */
     public final static int SHOW_OPS_LABELS = 1 << 4;
@@ -99,7 +99,6 @@ public abstract class AbstractView extends Observable {
     private ToolItem toolItemMod;
     private ToolItem toolItemDel;
     private ToolItem toolItemRefresh;
-    private ToolItem toolItemSearch;
 
     private ToolItem toolItemHelp;
     private ToolItem toolItemBack;
@@ -155,7 +154,6 @@ public abstract class AbstractView extends Observable {
     private final boolean addReset;
     private final boolean addRefresh;
     private final boolean addNavigation;
-    private final boolean addSearch;
     private final boolean addSearchWithHighlight;
     private boolean showOpsLabels;
     private final boolean addAdd;
@@ -181,14 +179,13 @@ public abstract class AbstractView extends Observable {
 
     public AbstractView(final Shell parent, final Class<? extends Widget> widgetClass, final Rectangle parentPos, final int viewMode) {
         super();
-        this.addHelp = this instanceof IEncodeHelp;
-        this.addExport = this instanceof IEncodeExport;
-        this.addReset = this instanceof IEncodeReset;
-        this.addPrint = this instanceof IEncodePrint;
-        this.addNavigation = this instanceof IEncodeNavigation;
-        this.addRefresh = this instanceof IEncodeRefresh;
-        this.addSearch = this instanceof IEncodeSearch;
-        this.addSearchWithHighlight = this instanceof IEncodeSearchWithHighlight;
+        this.addHelp = this instanceof IHelp;
+        this.addExport = this instanceof IExport;
+        this.addReset = this instanceof IReset;
+        this.addPrint = this instanceof IPrint;
+        this.addNavigation = this instanceof INavigation;
+        this.addRefresh = this instanceof IRefresh;
+        this.addSearchWithHighlight = this instanceof ISearchWithHighlight;
         this.addAdd = this instanceof IAdd;
         this.addMod = this instanceof IModify;
         this.addDel = this instanceof IDelete;
@@ -388,10 +385,6 @@ public abstract class AbstractView extends Observable {
             if (this.addDel) {
                 numColsCompAMD++;
             }
-            if (this.addSearch) {
-                numColsCompAMD++;
-                numColsCompAMD++;
-            }
 
             if (this.addSearchWithHighlight) {
                 numColsUpperComp++;
@@ -434,7 +427,7 @@ public abstract class AbstractView extends Observable {
                     lay.marginHeight = 2;
                     this.compButtonsAMD.setLayout(lay);
 
-                    if (this.addAdd || this.addMod || this.addDel || this.addSearch) {
+                    if (this.addAdd || this.addMod || this.addDel) {
                         this.barAMD = new ToolBar(this.compButtonsAMD, SWT.FLAT);
                     }
 
@@ -467,19 +460,6 @@ public abstract class AbstractView extends Observable {
                             this.toolItemDel.setText("Stergere");
                         }
                         this.toolItemDel.addListener(SWT.Selection, this.viewListener);
-                    }
-                    if (this.addSearch) {
-                        if (numColsCompAMD > 2) {
-                            new ToolItem(this.barAMD, SWT.SEPARATOR);
-                        }
-                        this.toolItemSearch = new ToolItem(this.barAMD, SWT.CHECK);
-                        this.toolItemSearch.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
-                        this.toolItemSearch.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
-                        this.toolItemSearch.setToolTipText("Cautare");
-                        if (this.showOpsLabels) {
-                            this.toolItemSearch.setText("Cautare");
-                        }
-                        this.toolItemSearch.addListener(SWT.Selection, this.viewListener);
                     }
                     if (this.addRefresh) {
                         new ToolItem(this.barAMD, SWT.SEPARATOR);
@@ -528,7 +508,7 @@ public abstract class AbstractView extends Observable {
 
             getWidgetGridData().horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
 
-            if (getWidgetClass().getName().intern() == Composite.class.getName().intern()) {
+            if (getWidgetClass().getName().equals(Composite.class.getName())) {
                 setWidget(new Composite(this.shell, SWT.DOUBLE_BUFFERED));
                 ((Composite) getWidget()).setLayout(getWidgetLayout());
                 ((Composite) getWidget()).setLayoutData(getWidgetGridData());
@@ -538,7 +518,7 @@ public abstract class AbstractView extends Observable {
                     data.horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
                     separator.setLayoutData(data);
                 }
-            } else if (getWidgetClass().getName().intern() == Group.class.getName().intern()) {
+            } else if (getWidgetClass().getName().equals(Group.class.getName())) {
                 Composite compTemp = new Composite(this.shell, SWT.DOUBLE_BUFFERED);
                 compTemp.setLayout(new GridLayout(1, true));
                 ((GridLayout) this.shell.getLayout()).marginTop = 0;
@@ -546,7 +526,7 @@ public abstract class AbstractView extends Observable {
                 setWidget(new Group(compTemp, SWT.NONE));
                 ((Group) getWidget()).setLayout(getWidgetLayout());
                 ((Group) getWidget()).setLayoutData(getWidgetGridData());
-            } else if (getWidgetClass().getName().intern() == Canvas.class.getName().intern()) {
+            } else if (getWidgetClass().getName().equals(Canvas.class.getName().intern())) {
                 Composite compTemp = new Composite(this.shell, SWT.DOUBLE_BUFFERED);
                 compTemp.setLayout(new GridLayout(1, true));
                 ((GridLayout) this.shell.getLayout()).marginTop = 0;
@@ -563,7 +543,7 @@ public abstract class AbstractView extends Observable {
                         gc.drawRectangle(rect.x, rect.y, rect.width - 1, rect.height - 1);
                     }
                 });
-            } else if (getWidgetClass().getName().intern() == SashForm.class.getName().intern()) {
+            } else if (getWidgetClass().getName().equals(SashForm.class.getName())) {
                 Composite compTemp = new Composite(this.shell, SWT.DOUBLE_BUFFERED);
                 compTemp.setLayout(new GridLayout(1, true));
                 ((GridLayout) this.shell.getLayout()).marginTop = 0;
@@ -949,7 +929,7 @@ public abstract class AbstractView extends Observable {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-                    ((IEncodeExport) AbstractView.this).exportPDF();
+                    ((IExport) AbstractView.this).exportPDF();
                 }
             });
 
@@ -959,7 +939,7 @@ public abstract class AbstractView extends Observable {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-                    ((IEncodeExport) AbstractView.this).exportExcel();
+                    ((IExport) AbstractView.this).exportExcel();
                 }
             });
 
@@ -969,7 +949,7 @@ public abstract class AbstractView extends Observable {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-                    ((IEncodeExport) AbstractView.this).exportTxt();
+                    ((IExport) AbstractView.this).exportTxt();
                 }
             });
 
@@ -979,7 +959,7 @@ public abstract class AbstractView extends Observable {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-                    ((IEncodeExport) AbstractView.this).exportRTF();
+                    ((IExport) AbstractView.this).exportRTF();
                 }
             });
 
@@ -989,7 +969,7 @@ public abstract class AbstractView extends Observable {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-                    ((IEncodeExport) AbstractView.this).exportHTML();
+                    ((IExport) AbstractView.this).exportHTML();
                 }
             });
 
@@ -1014,7 +994,7 @@ public abstract class AbstractView extends Observable {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-                    ((IEncodePrint) AbstractView.this).printPDF();
+                    ((IPrint) AbstractView.this).printPDF();
                 }
             });
 
@@ -1024,7 +1004,7 @@ public abstract class AbstractView extends Observable {
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {
-                    ((IEncodePrint) AbstractView.this).printPrinter();
+                    ((IPrint) AbstractView.this).printPrinter();
                 }
             });
         } catch (Exception exc) {
@@ -1122,7 +1102,7 @@ public abstract class AbstractView extends Observable {
                         }
                         case SWT.Modify: {
                             if (e.widget == AbstractView.this.textSearchWithHighlight) {
-                                ((IEncodeSearchWithHighlight) AbstractView.this).searchWithHighlight();
+                                ((ISearchWithHighlight) AbstractView.this).searchWithHighlight();
                             }
                             break;
                         }
@@ -1137,7 +1117,7 @@ public abstract class AbstractView extends Observable {
 
     private void handleSWTSelection(final Event e) {
         if (e.widget == this.toolItemHelp) {
-            ((IEncodeHelp) AbstractView.this).showHelp();
+            ((IHelp) AbstractView.this).showHelp();
         } else if (e.widget == this.toolItemPrint) {
             WidgetMenuUtil.customizeMenuLocation(this.toolItemPrint.getParent().getMenu(), this.toolItemPrint);
             this.toolItemPrint.getParent().getMenu().setVisible(true);
@@ -1145,7 +1125,7 @@ public abstract class AbstractView extends Observable {
             WidgetMenuUtil.customizeMenuLocation(this.toolItemExport.getParent().getMenu(), this.toolItemExport);
             this.toolItemExport.getParent().getMenu().setVisible(true);
         } else if (e.widget == this.toolItemReset) {
-            ((IEncodeReset) AbstractView.this).reset();
+            ((IReset) AbstractView.this).reset();
         } else if (e.widget == this.buttonOk) {
             saveAndClose(true);
         } else if (e.widget == this.buttonCancel) {
@@ -1158,16 +1138,14 @@ public abstract class AbstractView extends Observable {
             ((IModify) AbstractView.this).modify();
         } else if (e.widget == this.toolItemDel) {
             ((IDelete) AbstractView.this).delete();
-        } else if (e.widget == this.toolItemSearch) {
-            ((IEncodeSearch) AbstractView.this).handleSearchDisplay(false);
         } else if (e.widget == this.toolItemNext) {
-            ((IEncodeNavigation) AbstractView.this).goForward();
+            ((INavigation) AbstractView.this).goForward();
         } else if (e.widget == this.toolItemBack) {
-            ((IEncodeNavigation) AbstractView.this).goBack();
+            ((INavigation) AbstractView.this).goBack();
         } else if (e.widget == this.toolItemRefresh) {
-            ((IEncodeRefresh) AbstractView.this).refresh();
+            ((IRefresh) AbstractView.this).refresh();
         } else if (e.widget == this.toolItemPrint) {
-            ((IEncodePrint) AbstractView.this).printPDF();
+            ((IPrint) AbstractView.this).printPDF();
         }
     }
 
@@ -1440,14 +1418,6 @@ public abstract class AbstractView extends Observable {
 
     protected final void setToolItemDel(final ToolItem toolItemDel) {
         this.toolItemDel = toolItemDel;
-    }
-
-    protected final ToolItem getToolItemSearch() {
-        return this.toolItemSearch;
-    }
-
-    protected final void setToolItemSearch(final ToolItem toolItemSearch) {
-        this.toolItemSearch = toolItemSearch;
     }
 
     protected final ToolItem getToolItemRefresh() {

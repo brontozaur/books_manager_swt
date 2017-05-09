@@ -1,6 +1,6 @@
 package com.papao.books.view.interfaces;
 
-public interface IEncodeHelp {
+public interface IHelp {
 
     void showHelp();
 

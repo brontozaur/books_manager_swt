@@ -1,6 +1,6 @@
 package com.papao.books.export.xls;
 
-import com.papao.books.BooleanSetting;
+import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.export.ExportType;

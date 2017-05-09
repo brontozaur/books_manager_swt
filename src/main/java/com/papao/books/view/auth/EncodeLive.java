@@ -7,7 +7,6 @@ import org.eclipse.swt.SWT;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -17,18 +16,11 @@ public final class EncodeLive {
 
     public static final String APP_REPORTS_DIR = "reports";
     public static final String APP_LOGS_ROOT = "logs";
-    public static final String APP_XML_CURS_VALUTAR = "updateCurs";
     public static final String APP_ACCOUNTS_ROOT = "accounts";
     public static final String APP_TEMP_DIR = "temp";
     public final static String ERROR_CREATING_DIR = "Nu s-a putut crea directorul ";
 
     public static final boolean IS_MAC = "carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform());
-
-    /**
-     * numele directorului din logs, care va retine fisiere generate de un printStream, pentru cazul
-     * in care log4J este indisponibil.
-     */
-    public static final String APP_LOGS_FATAL = "fatal_errors";
 
     private static Calendar calendar = Calendar.getInstance();
     private static int zi = EncodeLive.calendar.get(Calendar.DAY_OF_MONTH);
@@ -48,17 +40,17 @@ public final class EncodeLive {
     public static void init() {
         StringBuilder dataLogare = new StringBuilder();
         StringBuilder oraLogare = new StringBuilder();
-        dataLogare.append(EncodeLive.getAppYear());
+        dataLogare.append(EncodeLive.an);
         dataLogare.append('_');
-        if (EncodeLive.getAppMonth() < 10) {
+        if (EncodeLive.luna < 10) {
             dataLogare.append(0);
         }
-        dataLogare.append(EncodeLive.getAppMonth());
+        dataLogare.append(EncodeLive.luna);
         dataLogare.append('_');
-        if (EncodeLive.getAppDay() < 10) {
+        if (EncodeLive.zi < 10) {
             dataLogare.append(0);
         }
-        dataLogare.append(EncodeLive.getAppDay());
+        dataLogare.append(EncodeLive.zi);
 
         Calendar appCalendar = Calendar.getInstance();
 
@@ -98,27 +90,27 @@ public final class EncodeLive {
                 throw new IOException(EncodeLive.ERROR_CREATING_DIR + maker.getCanonicalPath());
             }
 
-            filePath.append(EncodeLive.getAppYear());
+            filePath.append(EncodeLive.an);
             filePath.append(File.separator);
             maker = new File(filePath.toString());
             if (!maker.exists() && !maker.mkdir()) {
                 throw new IOException(EncodeLive.ERROR_CREATING_DIR + maker.getCanonicalPath());
             }
 
-            if (EncodeLive.getAppMonth() < 10) {
+            if (EncodeLive.luna < 10) {
                 filePath.append('0');
             }
-            filePath.append(EncodeLive.getAppMonth());
+            filePath.append(EncodeLive.luna);
             filePath.append(File.separator);
             maker = new File(filePath.toString());
             if (!maker.exists() && !maker.mkdir()) {
                 throw new IOException(EncodeLive.ERROR_CREATING_DIR + maker.getCanonicalPath());
             }
 
-            if (EncodeLive.getAppDay() < 10) {
+            if (EncodeLive.zi < 10) {
                 filePath.append('0');
             }
-            filePath.append(EncodeLive.getAppDay());
+            filePath.append(EncodeLive.zi);
             filePath.append(File.separator);
             maker = new File(filePath.toString());
             if (!maker.exists() && !maker.mkdir()) {
@@ -147,28 +139,6 @@ public final class EncodeLive {
                 throw new IOException(EncodeLive.ERROR_CREATING_DIR + maker.getCanonicalPath());
             }
             return maker.getCanonicalPath().concat(File.separator);
-        } catch (Exception exc) {
-            logger.error(exc.getMessage(), exc);
-            return System.getProperty("user.dir");
-        }
-    }
-
-    public static String getXMLCursValutarDir() {
-        StringBuilder filePath;
-        File maker;
-        try {
-            filePath = new StringBuilder();
-
-            filePath.append(EncodeLive.getUserDir());
-
-            filePath.append(EncodeLive.APP_XML_CURS_VALUTAR);
-            filePath.append(File.separator);
-
-            maker = new File(filePath.toString());
-            if (!maker.exists() && !maker.mkdir()) {
-                throw new IOException(EncodeLive.ERROR_CREATING_DIR + maker.getCanonicalPath());
-            }
-            return maker.getCanonicalPath();
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             return System.getProperty("user.dir");
@@ -224,76 +194,6 @@ public final class EncodeLive {
 
     public static String getAppDir() {
         return System.getProperties().getProperty("user.dir") + File.separator;
-    }
-
-    public static int getAppDay() {
-        return EncodeLive.zi;
-    }
-
-    public static void setAppDay(final int zi) {
-        EncodeLive.zi = zi;
-        EncodeLive.calendar.set(Calendar.DAY_OF_MONTH, zi);
-    }
-
-    public static int getAppMonth() {
-        return EncodeLive.luna;
-    }
-
-    public static void setAppMonth(final int luna) {
-        EncodeLive.luna = luna;
-        EncodeLive.calendar.set(Calendar.MONTH, luna - 1);
-    }
-
-    public static int getAppYear() {
-        return EncodeLive.an;
-    }
-
-    public static void setAppYear(final int an) {
-        EncodeLive.an = an;
-        EncodeLive.calendar.set(Calendar.YEAR, an);
-    }
-
-    public static boolean isLeapYear() {
-        return ((EncodeLive.getAppYear() % 4) == 0);
-    }
-
-    public static Date getSQLDateLogin() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(EncodeLive.getAppYear());
-        sb.append("-");
-        if (EncodeLive.getAppMonth() < 10) {
-            sb.append(0);
-        }
-        sb.append(EncodeLive.getAppMonth());
-        sb.append("-");
-        if (EncodeLive.getAppDay() < 10) {
-            sb.append(0);
-        }
-        sb.append(EncodeLive.getAppDay());
-        return Date.valueOf(sb.toString());
-    }
-
-    public static Date getSQLDateLoginMinusX(final int nrOfDaysToSubtract) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(EncodeLive.getSQLDateLogin());
-        cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - nrOfDaysToSubtract);
-        return new Date(cal.getTime().getTime());
-    }
-
-    public static Date getSQLDateLoginDayOne() {
-        return Date.valueOf(EncodeLive.getAppYear() + "-"
-                + (EncodeLive.getAppMonth() < 10 ? "0" : "") + EncodeLive.getAppMonth() + "-"
-                + "01");
-    }
-
-    public static java.util.Date getUtilDateLogin() {
-        return EncodeLive.calendar.getTime();
-    }
-
-    public static java.util.Date getUtilDateLoginDayOne() {
-        Calendar cal = (Calendar) EncodeLive.calendar.clone();
-        cal.set(Calendar.DAY_OF_MONTH, 1);
-        return cal.getTime();
     }
 
     public static ObjectId getIdUser() {

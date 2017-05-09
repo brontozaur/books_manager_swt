@@ -1,6 +1,6 @@
 package com.papao.books.view.interfaces;
 
-public interface IEncodeRefresh {
+public interface IRefresh {
 
     void refresh();
 

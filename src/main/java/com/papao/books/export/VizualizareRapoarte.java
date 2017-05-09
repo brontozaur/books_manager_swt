@@ -1,7 +1,7 @@
 package com.papao.books.export;
 
 import com.papao.books.ApplicationService;
-import com.papao.books.BooleanSetting;
+import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;

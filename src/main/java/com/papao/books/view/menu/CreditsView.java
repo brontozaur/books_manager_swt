@@ -33,7 +33,7 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 	private final List<String> arrayCredits = new ArrayList<String>();
 	private final static String ENCODE = "\r\n\tENCODE SYSTEMS  ";
 	public final static String SEPARATOR = "\r\n\t";
-	private final static String credits = "Popa Dorin Octavian \r\n\t lead programmer\r\n\t"
+	private final static String credits = "Octavian Popa \r\n\t lead programmer\r\n\t"
 			+ "Soft dezvoltat in \r\n\t Java 1.6\r\n\t"
 			+ "Copyright \r\n\t\u00A9Sun Microsystems\r\n\t"
 			+ "Soft dezvoltat utilizand \r\n\t SWT 3.4\u00A9 IBM\r\n\t"

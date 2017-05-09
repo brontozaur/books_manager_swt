@@ -1,7 +1,7 @@
 package com.papao.books.controller;
 
-import com.papao.books.BooleanSetting;
-import com.papao.books.StringSetting;
+import com.papao.books.config.BooleanSetting;
+import com.papao.books.config.StringSetting;
 import com.papao.books.model.config.*;
 import com.papao.books.repository.SettingsRepository;
 import com.papao.books.view.auth.EncodeLive;

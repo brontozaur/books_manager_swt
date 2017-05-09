@@ -1,12 +1,12 @@
 package com.papao.books.view.config;
 
-import com.papao.books.StringSetting;
+import com.papao.books.config.StringSetting;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.interfaces.AbstractIConfigAdapter;
 import com.papao.books.view.interfaces.IConfig;
-import com.papao.books.view.interfaces.IEncodeReset;
+import com.papao.books.view.interfaces.IReset;
 import com.papao.books.view.providers.UnifiedStyledLabelProvider;
 import com.papao.books.view.providers.tree.ITreeNode;
 import com.papao.books.view.providers.tree.SimpleTextNode;
@@ -34,9 +34,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.papao.books.BooleanSetting.*;
+import static com.papao.books.config.BooleanSetting.*;
 
-public class AppConfigView extends AbstractCView implements Listener, IEncodeReset {
+public class AppConfigView extends AbstractCView implements Listener, IReset {
 
     private static final Logger logger = Logger.getLogger(AppConfigView.class);
 

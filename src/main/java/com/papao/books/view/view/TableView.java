@@ -1,16 +1,16 @@
 package com.papao.books.view.view;
 
-import com.papao.books.view.interfaces.IEncodeHelp;
-import com.papao.books.view.interfaces.IEncodeNavigation;
-import com.papao.books.view.interfaces.IEncodeReset;
+import com.papao.books.view.interfaces.IHelp;
+import com.papao.books.view.interfaces.INavigation;
+import com.papao.books.view.interfaces.IReset;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class TableView extends AbstractCView implements IEncodeReset, IEncodeHelp,
-        IEncodeNavigation {
+public class TableView extends AbstractCView implements IReset, IHelp,
+        INavigation {
 
     private String[] value;
     private final Table table;

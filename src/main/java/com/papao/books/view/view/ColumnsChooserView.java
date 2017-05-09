@@ -1,13 +1,13 @@
 package com.papao.books.view.view;
 
 import com.papao.books.view.AppImages;
-import com.papao.books.view.interfaces.IEncodeReset;
+import com.papao.books.view.interfaces.IReset;
 import com.papao.books.view.util.WidgetCompositeUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 
-public class ColumnsChooserView extends AbstractCView implements IEncodeReset {
+public class ColumnsChooserView extends AbstractCView implements IReset {
 
 	private final ColumnsChooserComposite chooser;
 

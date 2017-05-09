@@ -1,7 +1,7 @@
 package com.papao.books.view.carte;
 
 import com.papao.books.ApplicationService;
-import com.papao.books.BooleanSetting;
+import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.model.AbstractMongoDB;
@@ -11,8 +11,8 @@ import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.interfaces.IAdd;
 import com.papao.books.view.interfaces.IDelete;
-import com.papao.books.view.interfaces.IEncodeRefresh;
 import com.papao.books.view.interfaces.IModify;
+import com.papao.books.view.interfaces.IRefresh;
 import com.papao.books.view.providers.AdbMongoContentProvider;
 import com.papao.books.view.util.StringUtil;
 import com.papao.books.view.util.WidgetCursorUtil;
@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
-public class AutoriView extends AbstractCView implements IEncodeRefresh, IAdd, IModify, IDelete {
+public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify, IDelete {
 
     private static Logger logger = Logger.getLogger(AutoriView.class);
 

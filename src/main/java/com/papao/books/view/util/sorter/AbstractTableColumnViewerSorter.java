@@ -1,6 +1,5 @@
 package com.papao.books.view.util.sorter;
 
-import com.papao.books.view.interfaces.ITableBone;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -11,10 +10,6 @@ import org.eclipse.swt.widgets.TableColumn;
 public abstract class AbstractTableColumnViewerSorter extends AbstractColumnViewerSorter {
 
     private final TableColumn column;
-
-    public AbstractTableColumnViewerSorter(final ITableBone bone, final TableViewerColumn column) {
-        this(bone.getViewer(), column, bone);
-    }
 
     public AbstractTableColumnViewerSorter(final ColumnViewer viewer, final TableViewerColumn column) {
         this(viewer, column, null);

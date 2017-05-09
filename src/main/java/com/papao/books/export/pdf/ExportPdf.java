@@ -2,7 +2,7 @@ package com.papao.books.export.pdf;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
-import com.papao.books.BooleanSetting;
+import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.export.ExportType;
@@ -410,7 +410,7 @@ public final class ExportPdf {
         document.addCreationDate();
         document.addCreator("Books manager \u00A9 brontozaur");
         document.addProducer();
-        document.addSubject("Application time: " + EncodeLive.getUtilDateLogin().toString());
+        document.addSubject("Application time: " + new java.util.Date());
         document.addTitle(numeFisier);
         document.addKeywords(numeFisier + ",raport" + "," + EncodeLive.getCurrentUserName());
     }
