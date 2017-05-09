@@ -12,6 +12,7 @@ import com.papao.books.ui.AppImages;
 import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.interfaces.*;
 import com.papao.books.ui.providers.AdbMongoContentProvider;
+import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
 import com.papao.books.ui.util.StringUtil;
 import com.papao.books.ui.util.WidgetCursorUtil;
 import com.papao.books.ui.util.WidgetTableUtil;
@@ -22,12 +23,13 @@ import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
-public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify, IDelete, IExport {
+import java.util.ArrayList;
+
+public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify, IDelete, IExport, ISearchWithHighlight {
 
     private static Logger logger = Logger.getLogger(UsersView.class);
 
@@ -258,11 +260,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
     }
 
     private void addComponents() {
-        Composite compRight = new Composite(getContainer(), SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(compRight);
-        GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).margins(0, 0).applyTo(compRight);
-
-        this.tableViewer = new TableViewer(compRight, SWT.FULL_SELECTION | SWT.VIRTUAL | SWT.BORDER | SWT.SINGLE);
+        this.tableViewer = new TableViewer(getContainer(), SWT.FULL_SELECTION | SWT.VIRTUAL | SWT.BORDER | SWT.SINGLE);
         this.tableViewer.setUseHashlookup(true);
         this.tableViewer.getTable().setHeaderVisible(true);
         this.tableViewer.getTable().setLinesVisible(true);
@@ -318,7 +316,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
             col.getColumn().setMoveable(true);
             switch (i) {
                 case IDX_NUME: {
-                    col.setLabelProvider(new ColumnLabelProvider() {
+                    col.setLabelProvider(new UnifiedStyledLabelProvider() {
                         @Override
                         public String getText(final Object element) {
                             User usr = (User) element;
@@ -338,7 +336,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
                     break;
                 }
                 case IDX_PRENUME: {
-                    col.setLabelProvider(new ColumnLabelProvider() {
+                    col.setLabelProvider(new UnifiedStyledLabelProvider() {
                         @Override
                         public String getText(final Object element) {
                             User usr = (User) element;
@@ -386,5 +384,35 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
     @Override
     public void exportHTML() {
         Exporter.export(ExportType.HTML, tableViewer.getTable(), "Utilizatori", getClass(), TABLE_KEY);
+    }
+
+    @Override
+    public void searchWithHighlight() {
+        Display.getDefault().asyncExec(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (getTextSearchWithHighlight().isDisposed()) {
+                    return;
+                }
+                tableViewer.resetFilters();
+                final String filtersStr = getTextSearchWithHighlight().getText();
+                java.util.List<ViewerFilter> listFilters = new ArrayList<>();
+                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_NUME)).setSearchText(filtersStr);
+                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_PRENUME)).setSearchText(filtersStr);
+                listFilters.add(new ViewerFilter() {
+                    @Override
+                    public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                        User user = (User) element;
+                        return StringUtil.compareStrings(filtersStr.toLowerCase(), user.getNume().toLowerCase())
+                                || StringUtil.compareStrings(filtersStr.toLowerCase(), user.getPrenume().toLowerCase());
+                    }
+                });
+                tableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
+                Display.getDefault().readAndDispatch();
+
+            }
+        });
     }
 }

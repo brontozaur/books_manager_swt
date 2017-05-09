@@ -4,16 +4,16 @@ import com.papao.books.ApplicationService;
 import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.SettingsController;
+import com.papao.books.export.ExportType;
+import com.papao.books.export.Exporter;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.ui.AppImages;
-import com.papao.books.ui.interfaces.IAdd;
-import com.papao.books.ui.interfaces.IDelete;
-import com.papao.books.ui.interfaces.IModify;
-import com.papao.books.ui.interfaces.IRefresh;
+import com.papao.books.ui.interfaces.*;
 import com.papao.books.ui.providers.AdbMongoContentProvider;
+import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
 import com.papao.books.ui.util.StringUtil;
 import com.papao.books.ui.util.WidgetCursorUtil;
 import com.papao.books.ui.util.WidgetTableUtil;
@@ -24,12 +24,13 @@ import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
-public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify, IDelete {
+import java.util.ArrayList;
+
+public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify, IDelete, IExport, ISearchWithHighlight {
 
     private static Logger logger = Logger.getLogger(AutoriView.class);
 
@@ -260,11 +261,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
     }
 
     private void addComponents() {
-        Composite compRight = new Composite(getContainer(), SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(compRight);
-        GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).margins(0, 0).applyTo(compRight);
-
-        this.tableViewer = new TableViewer(compRight, SWT.FULL_SELECTION | SWT.VIRTUAL | SWT.BORDER | SWT.SINGLE);
+        this.tableViewer = new TableViewer(getContainer(), SWT.FULL_SELECTION | SWT.VIRTUAL | SWT.BORDER | SWT.SINGLE);
         this.tableViewer.setUseHashlookup(true);
         this.tableViewer.getTable().setHeaderVisible(true);
         this.tableViewer.getTable().setLinesVisible(true);
@@ -320,7 +317,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
             col.getColumn().setMoveable(true);
             switch (i) {
                 case IDX_NUME: {
-                    col.setLabelProvider(new ColumnLabelProvider() {
+                    col.setLabelProvider(new UnifiedStyledLabelProvider() {
                         @Override
                         public String getText(final Object element) {
                             Autor autor = (Autor) element;
@@ -340,7 +337,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                     break;
                 }
                 case IDX_TITLU: {
-                    col.setLabelProvider(new ColumnLabelProvider() {
+                    col.setLabelProvider(new UnifiedStyledLabelProvider() {
                         @Override
                         public String getText(final Object element) {
                             Autor autor = (Autor) element;
@@ -363,5 +360,60 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
             }
         }
         this.tableViewer.getTable().setSortColumn(null);
+    }
+
+    @Override
+    public void exportTxt() {
+        Exporter.export(ExportType.TXT, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+    }
+
+    @Override
+    public void exportPDF() {
+        Exporter.export(ExportType.PDF, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+    }
+
+    @Override
+    public void exportExcel() {
+        Exporter.export(ExportType.XLS, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+    }
+
+    @Override
+    public void exportRTF() {
+        Exporter.export(ExportType.RTF, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+    }
+
+    @Override
+    public void exportHTML() {
+        Exporter.export(ExportType.HTML, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+    }
+
+    @Override
+    public void searchWithHighlight() {
+        Display.getDefault().asyncExec(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (getTextSearchWithHighlight().isDisposed()) {
+                    return;
+                }
+                tableViewer.resetFilters();
+                final String filtersStr = getTextSearchWithHighlight().getText();
+                java.util.List<ViewerFilter> listFilters = new ArrayList<>();
+                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_NUME)).setSearchText(filtersStr);
+                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText(filtersStr);
+                listFilters.add(new ViewerFilter() {
+                    @Override
+                    public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+                        Autor autor = (Autor) element;
+                        return StringUtil.compareStrings(filtersStr.toLowerCase(), autor.getNumeComplet().toLowerCase())
+                                || StringUtil.compareStrings(filtersStr.toLowerCase(), autor.getTitlu().toLowerCase());
+                    }
+                });
+                tableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
+                Display.getDefault().readAndDispatch();
+
+            }
+        });
     }
 }

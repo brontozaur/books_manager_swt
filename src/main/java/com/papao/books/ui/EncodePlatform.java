@@ -256,7 +256,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         final Combo comboSearch = new Combo(mainCompRightTab, SWT.READ_ONLY);
         comboSearch.setItems(new String[]{"tabela", "baza de date"});
-        comboSearch.select(0);
+        comboSearch.select(1);
 
         searchText = new Text(mainCompRightTab, SWT.SEARCH);
         searchText.setMessage("cautare dupa...");

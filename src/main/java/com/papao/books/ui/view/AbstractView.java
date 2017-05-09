@@ -499,7 +499,7 @@ public abstract class AbstractView extends Observable {
                     GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(0, 4, 0, 4).equalWidth(false).applyTo(this.compSearchWithHighlight);
                     new Label(this.compSearchWithHighlight, SWT.NONE).setText("Cautare");
                     this.textSearchWithHighlight = new Text(this.compSearchWithHighlight, SWT.BORDER);
-                    GridDataFactory.fillDefaults().hint(100, SWT.DEFAULT).grab(true, false).applyTo(this.textSearchWithHighlight);
+                    GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).grab(true, false).applyTo(this.textSearchWithHighlight);
                     this.textSearchWithHighlight.addListener(SWT.Modify, this.viewListener);
                     SWTeXtension.addColoredFocusListener(this.textSearchWithHighlight, ColorUtil.COLOR_FOCUS_YELLOW);
                 }
