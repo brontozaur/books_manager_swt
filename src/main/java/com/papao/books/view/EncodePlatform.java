@@ -260,7 +260,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             @Override
             public void handleEvent(Event event) {
                 if ("tabela".equals(comboSearch.getText())) {
-                    if (searchText.getText().length() < 3) {
+                    if (searchText.getText().isEmpty()) {
+                        resetSearchFilters();
                         return;
                     }
                     searchInTable(searchText.getText());
@@ -412,12 +413,16 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         getContainer().layout();
     }
 
+    private void resetSearchFilters() {
+        tableViewer.resetFilters();
+        ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText("");
+        ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText("");
+        refreshTableViewer();
+    }
+
     private void handleTableSearch(Combo comboSearch) {
         if (searchText.getText().isEmpty()) {
-            tableViewer.resetFilters();
-            ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText("");
-            ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText("");
-            refreshTableViewer();
+            resetSearchFilters();
             return;
         }
         if (searchText.getText().length() == 1) {
@@ -1685,7 +1690,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         String value = null;
         boolean all = true;
         this.tableViewer.resetFilters();
-        searchText.setText("");
         if (!leftTreeViewer.getSelection().isEmpty()) {
             TreeItem item = leftTreeViewer.getTree().getSelection()[0];
             SimpleTextNode selectedNode = (SimpleTextNode) item.getData();

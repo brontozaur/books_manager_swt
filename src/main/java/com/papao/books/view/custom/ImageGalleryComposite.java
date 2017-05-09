@@ -25,6 +25,7 @@ public class ImageGalleryComposite extends Observable implements Observer {
     private Composite mainComp;
     private ProgressBarComposite progressBarComposite;
     private ImageViewComposite selected;
+    private volatile boolean stop;
 
     public ImageGalleryComposite(Composite parent,
                                  ProgressBarComposite progressBarComposite) {
@@ -64,6 +65,7 @@ public class ImageGalleryComposite extends Observable implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        stop = true;
         if (o instanceof BookController) {
             BookController controller = (BookController) o;
             populateFields(controller.getSearchResult().getContent());
@@ -93,8 +95,9 @@ public class ImageGalleryComposite extends Observable implements Observer {
                 }
                 progressBarComposite.setMax(carti.size());
                 clearAll();
+                stop = false;
                 for (Carte carte : carti) {
-                    if (progressBarComposite.isDisposed()) {
+                    if (stop || progressBarComposite.isDisposed()) {
                         return;
                     }
                     progressBarComposite.advance();
@@ -104,6 +107,7 @@ public class ImageGalleryComposite extends Observable implements Observer {
                     scrolledComposite.notifyListeners(SWT.Resize, new Event());
                     Display.getDefault().readAndDispatch();
                 }
+                stop = true;
                 progressBarComposite.setMax(0);
             }
         };
