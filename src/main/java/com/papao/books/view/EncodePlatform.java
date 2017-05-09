@@ -271,22 +271,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             @Override
             public void handleEvent(Event event) {
                 if (event.character == SWT.CR) {
-                    if (searchText.getText().isEmpty()) {
-                        tableViewer.resetFilters();
-                        ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText("");
-                        ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText("");
-                        refreshTableViewer();
-                        return;
-                    }
-                    if (searchText.getText().length() == 1) {
-                        BalloonNotification.showNotification(searchText, "Notificare", "Introduceti minim 2 caractere!", 1500);
-                        return;
-                    }
-                    if ("tabela".equals(comboSearch.getText())) {
-                        searchInTable(searchText.getText());
-                    } else if ("baza de date".equals(comboSearch.getText())) {
-                        searchInDatabase(searchText.getText());
-                    }
+                    handleTableSearch(comboSearch);
                 }
             }
         });
@@ -298,22 +283,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         itemSearch.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (searchText.getText().isEmpty()) {
-                    tableViewer.resetFilters();
-                    ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText("");
-                    ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText("");
-                    refreshTableViewer();
-                    return;
-                }
-                if (searchText.getText().length() == 1) {
-                    BalloonNotification.showNotification(searchText, "Notificare", "Introduceti minim 2 caractere!", 1500);
-                    return;
-                }
-                if ("tabela".equals(comboSearch.getText())) {
-                    searchInTable(searchText.getText());
-                } else if ("baza de date".equals(comboSearch.getText())) {
-                    searchInDatabase(searchText.getText());
-                }
+                handleTableSearch(comboSearch);
             }
         });
 
@@ -440,6 +410,25 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
 
         getContainer().layout();
+    }
+
+    private void handleTableSearch(Combo comboSearch) {
+        if (searchText.getText().isEmpty()) {
+            tableViewer.resetFilters();
+            ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText("");
+            ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText("");
+            refreshTableViewer();
+            return;
+        }
+        if (searchText.getText().length() == 1) {
+            BalloonNotification.showNotification(searchText, "Notificare", "Introduceti minim 2 caractere!", 1500);
+            return;
+        }
+        if ("tabela".equals(comboSearch.getText())) {
+            searchInTable(searchText.getText());
+        } else if ("baza de date".equals(comboSearch.getText())) {
+            searchInDatabase(searchText.getText());
+        }
     }
 
     private void searchInDatabase(String text) {
