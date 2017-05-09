@@ -1,8 +1,6 @@
 package com.papao.books.view.view;
 
 import com.papao.books.controller.SettingsController;
-import com.papao.books.model.AbstractDB;
-import com.papao.books.model.AbstractDBDummy;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.interfaces.IEncodeReset;
@@ -205,11 +203,11 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
         SWTeXtension.processToolBarItems(bar);
     }
 
-    private AbstractDB[] getInputFromTable() {
-        AbstractDB[] input;
+    private TableRow[] getInputFromTable() {
+        TableRow[] input;
         final int length = this.table == null ? this.tree.getColumnCount()
                 : this.table.getColumnCount();
-        input = new AbstractDB[length];
+        input = new TableRow[length];
         TableSetting tableSetting = SettingsController.getTableSetting(length, this.clazz, this.tableKey);
         int[] order = tableSetting.getOrder();
         int[] dims = tableSetting.getCorrectDims();
@@ -230,10 +228,9 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
 
     public boolean validate() {
         try {
-            AbstractDB[] elements = (AbstractDB[]) this.viewer.getInput();
+            TableRow[] elements = (TableRow[]) this.viewer.getInput();
             boolean hasSelection = false;
-            for (int i = 0; i < elements.length; i++) {
-                TableRow row = (TableRow) elements[i];
+            for (TableRow row : elements) {
                 if (row.isChecked()) {
                     hasSelection = true;
                 }
@@ -261,14 +258,14 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
 
     public boolean save(final boolean makeitPermanent) {
         try {
-            AbstractDB[] elements = (AbstractDB[]) this.viewer.getInput();
+            TableRow[] elements = (TableRow[]) this.viewer.getInput();
             this.gridDims = new int[elements.length];
             this.gridAligns = new int[elements.length];
             this.gridOrder = new int[elements.length];
             this.gridVisibility = new boolean[elements.length];
             if (this.table != null) {
                 for (int i = 0; i < elements.length; i++) {
-                    TableRow row = (TableRow) elements[i];
+                    TableRow row = elements[i];
                     if (makeitPermanent) {
                         this.table.getColumn(row.getOrder()).setAlignment(row.getAlign());
                         this.table.getColumn(row.getOrder()).setWidth(row.isChecked() ? row.getDim()
@@ -285,7 +282,7 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
                 }
             } else {
                 for (int i = 0; i < elements.length; i++) {
-                    TableRow row = (TableRow) elements[i];
+                    TableRow row = elements[i];
                     if (makeitPermanent) {
                         this.tree.getColumn(row.getOrder()).setAlignment(row.getAlign());
                         this.tree.getColumn(row.getOrder()).setWidth(row.isChecked() ? row.getDim()
@@ -334,7 +331,7 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
         return this.gridVisibility;
     }
 
-    public final class TableRow extends AbstractDBDummy {
+    public final class TableRow {
 
         private String colName;
         private boolean checked;
@@ -533,9 +530,9 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
                 || (this.viewer.getInput() == null)) {
             return;
         }
-        AbstractDB[] input = (AbstractDB[]) this.viewer.getInput();
+        TableRow[] input = (TableRow[]) this.viewer.getInput();
         for (int i = 0; i < input.length; i++) {
-            TableRow row = (TableRow) input[i];
+            TableRow row = input[i];
             row.setChecked(select);
             input[i] = row;
         }
@@ -547,7 +544,7 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
                 || (this.viewer.getTable().getSelectionCount() == 0)) {
             return;
         }
-        AbstractDB[] input = (AbstractDB[]) this.viewer.getInput();
+        TableRow[] input = (TableRow[]) this.viewer.getInput();
         if ((this.viewer.getTable().getSelectionIndex() == 0) && (direction == SWT.UP)) {
             SWTeXtension.displayMessageW("Coloana selectata va fi afisata pe prima pozitie.");
             return;
@@ -558,9 +555,9 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
             return;
         }
         final int selectedIndex = this.viewer.getTable().getSelectionIndex();
-        TableRow row = (TableRow) input[selectedIndex];
+        TableRow row = input[selectedIndex];
         final int swappedIndex = direction == SWT.UP ? selectedIndex - 1 : selectedIndex + 1;
-        TableRow swappedRow = (TableRow) input[swappedIndex];
+        TableRow swappedRow = input[swappedIndex];
         input[selectedIndex] = swappedRow;
         input[swappedIndex] = row;
         this.viewer.refresh();
@@ -585,10 +582,9 @@ public class ColumnsChooserComposite extends Composite implements Listener, IEnc
 
     @Override
     public void reset() {
-        AbstractDB[] input = (AbstractDB[]) this.viewer.getInput();
-        AbstractDB[] inputNou = new AbstractDB[input.length];
-        for (int i = 0; i < input.length; i++) {
-            TableRow element = (TableRow) input[i];
+        TableRow[] input = (TableRow[]) this.viewer.getInput();
+        TableRow[] inputNou = new TableRow[input.length];
+        for (TableRow element : input) {
             element.setAlign(SWT.LEFT);
             element.setChecked(true);
             element.setDim(100);

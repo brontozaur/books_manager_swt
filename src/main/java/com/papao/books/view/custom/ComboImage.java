@@ -1,7 +1,6 @@
 package com.papao.books.view.custom;
 
 import com.papao.books.model.AbstractMongoDB;
-import com.papao.books.model.BlankDbObject;
 import com.papao.books.model.BlankMongoDbObject;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.providers.AdbMongoContentProvider;
@@ -401,13 +400,13 @@ public class ComboImage extends Composite implements Listener {
         return this.itemDel;
     }
 
-    private final static BlankDbObject[] getBlankObjectsInput(final String[] str) {
+    private final static BlankMongoDbObject[] getBlankObjectsInput(final String[] str) {
         if (str == null) {
-            return new BlankDbObject[0];
+            return new BlankMongoDbObject[0];
         }
-        BlankDbObject[] bdo = new BlankDbObject[str.length];
+        BlankMongoDbObject[] bdo = new BlankMongoDbObject[str.length];
         for (int i = 0; i < str.length; i++) {
-            bdo[i] = new BlankDbObject(str[i]);
+            bdo[i] = new BlankMongoDbObject(str[i]);
         }
         return bdo;
     }

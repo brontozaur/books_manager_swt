@@ -1,6 +1,5 @@
 package com.papao.books.view.view;
 
-import com.papao.books.model.AbstractDB;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
@@ -10,41 +9,17 @@ public abstract class AbstractGSaveView extends AbstractGView {
 
     private static final Logger logger = Logger.getLogger(AbstractGSaveView.class);
 
-    private long objectId;
-    private AbstractDB editedObject;
-
-    protected abstract Class<? extends AbstractDB> getClazz();
-
-    public AbstractGSaveView(Shell parent, int viewMode, long objectId) {
-        this(parent, SWT.MIN | SWT.CLOSE | SWT.MAX, viewMode, objectId);
+    public AbstractGSaveView(Shell parent, int viewMode) {
+        this(parent, SWT.MIN | SWT.CLOSE | SWT.MAX, viewMode);
     }
 
-    public AbstractGSaveView(Shell parent, int shellStyle, int viewMode, long objectId) {
-        this(parent, shellStyle, objectId, null, viewMode);
+    public AbstractGSaveView(Shell parent, int shellStyle, int viewMode) {
+        this(parent, shellStyle, null, viewMode);
 
     }
 
-    public AbstractGSaveView(Shell parent, int shellStyle, long objectId, Rectangle parentPos, int viewMode) {
+    public AbstractGSaveView(Shell parent, int shellStyle, Rectangle parentPos, int viewMode) {
         super(parent, shellStyle, parentPos, viewMode);
-        this.objectId = objectId;
-
-        extractEditedObject();
-    }
-
-    private void extractEditedObject() {
-    }
-
-    protected long getIdObject() {
-        return this.objectId;
-    }
-
-    protected void setIdObject(long idObject) {
-        this.objectId = idObject;
-        extractEditedObject();
-    }
-
-    protected AbstractDB getEditedObject() {
-        return editedObject;
     }
 
 }

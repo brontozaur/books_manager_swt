@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.*;
 
 public final class WidgetCompositeUtil {
 
-    private static Logger logger = Logger.getLogger(WidgetComboUtil.class);
+    private static Logger logger = Logger.getLogger(WidgetCompositeUtil.class);
 
     private WidgetCompositeUtil() {
     }

@@ -1,7 +1,6 @@
 package com.papao.books.view.util;
 
 import com.papao.books.controller.SettingsController;
-import com.papao.books.model.AbstractDB;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.view.view.ColumnsChooserView;
 import com.papao.books.view.view.SWTeXtension;
@@ -368,13 +367,13 @@ public final class WidgetTableUtil {
     }
 
     /**
-     * @param table  some real non-null, non-disposed table. If null or disposed, method will return
-     *               quietely
-     * @param clazz  some class
+     * @param table    some real non-null, non-disposed table. If null or disposed, method will return
+     *                 quietely
+     * @param clazz    some class
      * @param tableKey a string delimiter to create unique que on the specified class. May be ignored if
-     *               class has
-     *               a single grid
-     * @param flags  at least one options, or this method will be a dummy call
+     *                 class has
+     *                 a single grid
+     * @param flags    at least one options, or this method will be a dummy call
      */
     public static void customizeTable(final Table table, final Class<?> clazz, final String tableKey, final int flags) {
         if ((table == null) || table.isDisposed() || (clazz == null)) {
@@ -432,12 +431,5 @@ public final class WidgetTableUtil {
             TableSetting setting = SettingsController.getTableSetting(table.getColumnCount(), clazz, tableKey);
             table.setColumnOrder(setting.getOrder());
         }
-    }
-
-    public static boolean checkTableSelection(Table table) {
-        if ((table == null) || table.isDisposed() || (table.getSelectionIndex() == -1)) {
-            return false;
-        }
-        return table.getSelection()[0].getData() instanceof AbstractDB;
     }
 }

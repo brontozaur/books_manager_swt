@@ -1,6 +1,6 @@
 package com.papao.books.view.util;
 
-import com.papao.books.model.AbstractDB;
+import com.papao.books.model.AbstractMongoDB;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;
@@ -47,8 +47,8 @@ public final class ObjectUtil {
         return meth;
     }
 
-    public static List<AbstractDB> sort(final Map<Long, ? extends AbstractDB> input, final Comparator<AbstractDB> comparator) {
-        ArrayList<AbstractDB> result = new ArrayList<AbstractDB>();
+    public static List<AbstractMongoDB> sort(final Map<Long, ? extends AbstractMongoDB> input, final Comparator<AbstractMongoDB> comparator) {
+        ArrayList<AbstractMongoDB> result = new ArrayList<AbstractMongoDB>();
         if (input == null) {
             return result;
         }
