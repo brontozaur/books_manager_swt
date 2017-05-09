@@ -1,6 +1,6 @@
 package org.mihalis.opal.notify;
 
-import com.papao.books.view.AppImages;
+import com.papao.books.ui.AppImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;

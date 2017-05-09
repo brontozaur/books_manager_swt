@@ -1,6 +1,6 @@
 package com.papao.books.model;
 
-import com.papao.books.view.util.NumberUtil;
+import com.papao.books.ui.util.NumberUtil;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Transient;
 

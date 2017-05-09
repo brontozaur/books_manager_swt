@@ -1,7 +1,7 @@
 package com.papao.books.export.rtf;
 
 import com.lowagie.text.Rectangle;
-import com.papao.books.view.view.SWTeXtension;
+import com.papao.books.ui.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Table;
 

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package com.github.haixing_hu.swt.starrating;
 
-import com.papao.books.view.AppImages;
+import com.papao.books.ui.AppImages;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;

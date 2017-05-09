@@ -1,6 +1,6 @@
 package com.papao.books.model.config;
 
-import com.papao.books.view.auth.EncodeLive;
+import com.papao.books.ui.auth.EncodeLive;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.swt.SWT;

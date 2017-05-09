@@ -1,12 +1,12 @@
 package com.papao.books.export;
 
-import com.papao.books.view.interfaces.ConfigurationException;
-import com.papao.books.view.interfaces.IConfig;
-import com.papao.books.view.interfaces.IReset;
-import com.papao.books.view.util.WidgetCompositeUtil;
-import com.papao.books.view.util.WidgetCursorUtil;
-import com.papao.books.view.view.AbstractCView;
-import com.papao.books.view.view.AbstractView;
+import com.papao.books.ui.interfaces.ConfigurationException;
+import com.papao.books.ui.interfaces.IConfig;
+import com.papao.books.ui.interfaces.IReset;
+import com.papao.books.ui.util.WidgetCompositeUtil;
+import com.papao.books.ui.util.WidgetCursorUtil;
+import com.papao.books.ui.view.AbstractCView;
+import com.papao.books.ui.view.AbstractView;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;

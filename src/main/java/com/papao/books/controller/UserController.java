@@ -4,7 +4,7 @@ import com.papao.books.model.User;
 import com.papao.books.model.UserActivity;
 import com.papao.books.repository.UserActivityRepository;
 import com.papao.books.repository.UserRepository;
-import com.papao.books.view.auth.EncodeLive;
+import com.papao.books.ui.auth.EncodeLive;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

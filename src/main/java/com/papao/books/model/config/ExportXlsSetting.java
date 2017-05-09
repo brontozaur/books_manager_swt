@@ -1,7 +1,7 @@
 package com.papao.books.model.config;
 
 import com.papao.books.export.xls.ExportXls;
-import com.papao.books.view.auth.EncodeLive;
+import com.papao.books.ui.auth.EncodeLive;
 import org.bson.types.ObjectId;
 
 public class ExportXlsSetting extends AbstractSetting {

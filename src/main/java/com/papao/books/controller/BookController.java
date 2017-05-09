@@ -7,7 +7,7 @@ import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
 import com.papao.books.repository.CacheableAutorRepository;
 import com.papao.books.repository.CarteRepository;
-import com.papao.books.view.searcheable.BookSearchType;
+import com.papao.books.ui.searcheable.BookSearchType;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.swt.graphics.Image;

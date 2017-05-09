@@ -1,6 +1,6 @@
 package com.papao.books.model;
 
-import com.papao.books.view.AppImages;
+import com.papao.books.ui.AppImages;
 import org.bson.types.ObjectId;
 import org.eclipse.swt.graphics.Image;
 

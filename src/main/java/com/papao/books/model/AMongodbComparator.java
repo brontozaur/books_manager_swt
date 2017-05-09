@@ -1,6 +1,6 @@
 package com.papao.books.model;
 
-import com.papao.books.view.util.ObjectUtil;
+import com.papao.books.ui.util.ObjectUtil;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;

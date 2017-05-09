@@ -12,7 +12,7 @@
 package com.github.haixing_hu.swt.panel;
 
 import com.github.haixing_hu.swt.window.SWTUtils;
-import com.papao.books.view.view.SWTeXtension;
+import com.papao.books.ui.view.SWTeXtension;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
