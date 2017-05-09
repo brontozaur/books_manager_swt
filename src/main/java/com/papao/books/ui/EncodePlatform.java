@@ -297,10 +297,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.END, SWT.CENTER).applyTo(progressBarComposite);
         mainRightTabFolder.setTopRight(mainCompRightTab);
 
-        CTabItem tabGallery = createTabGallery(mainRightTabFolder);
-
         galleryComposite = new ImageGalleryComposite(mainRightTabFolder, progressBarComposite);
-        tabGallery.setControl(galleryComposite.getContent());
+
+        if (SettingsController.getBoolean(BooleanSetting.PERSPECTIVE_SHOW_GALLERY)) {
+            CTabItem tabGallery = createTabGallery(mainRightTabFolder);
+            tabGallery.setControl(galleryComposite.getContent());
+        } else {
+            ApplicationService.getBookController().deleteObserver(galleryComposite);
+        }
 
         this.verticalSash.setWeights(new int[]{2, 8});
 //        this.verticalSash.setMaximizedControl(rightSash);

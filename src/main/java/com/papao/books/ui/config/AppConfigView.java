@@ -47,12 +47,16 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
     private final static String ITEM_PREFERINTE_VIZUALE = "Preferinte vizuale";
     private final static String ITEM_SYSTEM_TRAY = "System Tray";
     private final static String ITEM_APPLICATIE = "Aplicatie";
+    private final static String ITEM_MAIN_PERSPECTIVE = "Perspectiva";
     private final static String ITEM_RAPOARTE = "Rapoarte";
-    private final static String ITEM_DATE_FORMAT = "Format data/ora";
     private final static String ITEM_ROOT = "Categorii setari";
 
-    private final static String[] ITEMS = new String[]{AppConfigView.ITEM_APPLICATIE, AppConfigView.ITEM_PREFERINTE_VIZUALE, AppConfigView.ITEM_SYSTEM_TRAY, AppConfigView.ITEM_RAPOARTE,
-            ITEM_DATE_FORMAT};
+    private final static String[] ITEMS = new String[]{
+            AppConfigView.ITEM_APPLICATIE,
+            AppConfigView.ITEM_PREFERINTE_VIZUALE,
+            AppConfigView.ITEM_SYSTEM_TRAY,
+            AppConfigView.ITEM_MAIN_PERSPECTIVE,
+            AppConfigView.ITEM_RAPOARTE};
 
     private ViewForm rightForm;
     private Text textSearch;
@@ -143,48 +147,48 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
         if (StringUtils.isEmpty(catName)) {
             return;
         }
-        if (catName.intern() == AppConfigView.ITEM_APPLICATIE.intern()) {
+        if (catName.equals(AppConfigView.ITEM_APPLICATIE)) {
             if (this.mapSettings.get(AppConfigView.ITEM_APPLICATIE) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_APPLICATIE));
             } else {
                 this.rightForm.setContent(new ConfigApp());
             }
             updateDetailMessage("Setari aplicatie");
-        } else if (catName.intern() == AppConfigView.ITEM_PREFERINTE_VIZUALE.intern()) {
+        } else if (catName.equals(AppConfigView.ITEM_PREFERINTE_VIZUALE)) {
             if (this.mapSettings.get(AppConfigView.ITEM_PREFERINTE_VIZUALE) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_PREFERINTE_VIZUALE));
             } else {
                 this.rightForm.setContent(new ConfigPreferinteVizuale());
             }
             updateDetailMessage("Configurare aspect aplicatie");
-        } else if (catName.intern() == AppConfigView.ITEM_SYSTEM_TRAY.intern()) {
+        } else if (catName.equals(AppConfigView.ITEM_MAIN_PERSPECTIVE)) {
+            if (this.mapSettings.get(AppConfigView.ITEM_MAIN_PERSPECTIVE) != null) {
+                this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_MAIN_PERSPECTIVE));
+            } else {
+                this.rightForm.setContent(new MainPerspective());
+            }
+            updateDetailMessage("Configurare aspect aplicatie");
+        }else if (catName.equals(AppConfigView.ITEM_SYSTEM_TRAY)) {
             if (this.mapSettings.get(AppConfigView.ITEM_SYSTEM_TRAY) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_SYSTEM_TRAY));
             } else {
                 this.rightForm.setContent(new ConfigSystemTray());
             }
             updateDetailMessage("Setari componenta System Tray");
-        } else if (catName.intern() == AppConfigView.ITEM_RAPOARTE.intern()) {
+        } else if (catName.equals(AppConfigView.ITEM_RAPOARTE)) {
             if (this.mapSettings.get(AppConfigView.ITEM_RAPOARTE) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_RAPOARTE));
             } else {
                 this.rightForm.setContent(new ConfigReports());
             }
             updateDetailMessage("Setari generare rapoarte");
-        } else if (catName.intern() == AppConfigView.ITEM_ROOT.intern()) {
+        } else if (catName.equals(AppConfigView.ITEM_ROOT)) {
             if (this.mapSettings.get(AppConfigView.ITEM_ROOT) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_ROOT));
             } else {
                 this.rightForm.setContent(new Overview());
             }
             updateDetailMessage("Index categorii setari");
-        } else if (catName.intern() == AppConfigView.ITEM_DATE_FORMAT.intern()) {
-            if (this.mapSettings.get(AppConfigView.ITEM_DATE_FORMAT) != null) {
-                this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_DATE_FORMAT));
-            } else {
-                this.rightForm.setContent(new AppDateFormat());
-            }
-            updateDetailMessage("Format data/ora");
         } else {
             return;
         }
@@ -631,6 +635,11 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
         private Button buttonAutopopulateTabs;
         private Button buttonShowNumbers;
 
+        private Combo comboDateFormat;
+        private Combo comboTimeFormat;
+        private Label labelDatePreview;
+        private Label labelTimePreview;
+
         public ConfigApp() {
             super(AppConfigView.this.rightForm);
             GridLayoutFactory.fillDefaults().numColumns(1).applyTo(this);
@@ -642,8 +651,6 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
         @Override
         public final void createContents() {
             Group group;
-            Label tmp;
-
             CLabel labelName;
 
             labelName = new CLabel(this, SWT.BORDER);
@@ -677,51 +684,6 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             this.buttonAutopopulateTabs.setText("afisare inregistrari la deschiderea unei componente");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonAutopopulateTabs);
             WidgetCursorUtil.addHandCursorListener(this.buttonAutopopulateTabs);
-
-            WidgetCompositeUtil.addColoredFocusListener2Childrens(this);
-        }
-
-        @Override
-        public final void populateFields() {
-            this.buttonShowAll.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_ALL));
-            this.buttonShowRecentActivity.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_RECENT));
-            this.buttonShowNumbers.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_NUMBERS));
-            this.buttonAutopopulateTabs.setSelection(SettingsController.getBoolean(AUTOPOPULATE_TABS));
-        }
-
-        @Override
-        public void save() {
-            SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_ALL, buttonShowAll.getSelection());
-            SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_RECENT, buttonShowRecentActivity.getSelection());
-            SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_NUMBERS, buttonShowNumbers.getSelection());
-            SettingsController.saveBooleanSetting(AUTOPOPULATE_TABS, buttonAutopopulateTabs.getSelection());
-        }
-
-        @Override
-        public String getCatName() {
-            return AppConfigView.ITEM_APPLICATIE;
-        }
-    }
-
-    private class AppDateFormat extends AbstractIConfigAdapter {
-        private Combo comboDateFormat;
-        private Combo comboTimeFormat;
-        private Label labelDatePreview;
-        private Label labelTimePreview;
-
-        public AppDateFormat() {
-            super(AppConfigView.this.rightForm);
-            GridLayoutFactory.fillDefaults().numColumns(1).applyTo(this);
-            GridDataFactory.fillDefaults().grab(true, true).applyTo(this);
-            createContents();
-            populateFields();
-            previewDate();
-            previewTime();
-        }
-
-        @Override
-        public final void createContents() {
-            Group group;
 
             group = new Group(this, SWT.NONE);
             group.setText("Format data/ora");
@@ -759,23 +721,64 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
 
             this.labelTimePreview = new Label(group, SWT.NONE);
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.labelTimePreview);
+
+            WidgetCompositeUtil.addColoredFocusListener2Childrens(this);
         }
 
         @Override
         public final void populateFields() {
+            this.buttonShowAll.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_ALL));
+            this.buttonShowRecentActivity.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_RECENT));
+            this.buttonShowNumbers.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_NUMBERS));
+            this.buttonAutopopulateTabs.setSelection(SettingsController.getBoolean(AUTOPOPULATE_TABS));
+
             this.comboDateFormat.select(this.comboDateFormat.indexOf(SettingsController.getString(StringSetting.APP_DATE_FORMAT)));
-            this.comboDateFormat.select(this.comboTimeFormat.indexOf(SettingsController.getString(StringSetting.APP_TIME_FORMAT)));
+            this.comboTimeFormat.select(this.comboTimeFormat.indexOf(SettingsController.getString(StringSetting.APP_TIME_FORMAT)));
+
+            previewDate();
+            previewTime();
         }
 
         @Override
         public void save() {
+            SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_ALL, buttonShowAll.getSelection());
+            SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_RECENT, buttonShowRecentActivity.getSelection());
+            SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_NUMBERS, buttonShowNumbers.getSelection());
+            SettingsController.saveBooleanSetting(AUTOPOPULATE_TABS, buttonAutopopulateTabs.getSelection());
+
             SettingsController.saveStringSetting(StringSetting.APP_DATE_FORMAT, comboDateFormat.getText());
             SettingsController.saveStringSetting(StringSetting.APP_TIME_FORMAT, comboTimeFormat.getText());
         }
 
+        private void previewDate() {
+            if (StringUtils.isEmpty(this.comboDateFormat.getText())) {
+                return;
+            }
+            final Date today = Calendar.getInstance().getTime();
+            DateFormat df = new SimpleDateFormat(this.comboDateFormat.getText());
+            this.labelDatePreview.setText(df.format(today));
+        }
+
+        private void previewTime() {
+            if (StringUtils.isEmpty(this.comboTimeFormat.getText())) {
+                return;
+            }
+            final Date today = Calendar.getInstance().getTime();
+            final DateFormat df = new SimpleDateFormat(comboTimeFormat.getText());
+            Display.getDefault().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    while (!comboTimeFormat.isDisposed()) {
+                        labelTimePreview.setText(df.format(today));
+                        Display.getDefault().readAndDispatch();
+                    }
+                }
+            });
+        }
+
         @Override
         public String getCatName() {
-            return AppConfigView.ITEM_DATE_FORMAT;
+            return AppConfigView.ITEM_APPLICATIE;
         }
 
         @Override
@@ -788,18 +791,46 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
                 }
             }
         }
-
-        private void previewDate() {
-            final Date today = Calendar.getInstance().getTime();
-            DateFormat df = new SimpleDateFormat(this.comboDateFormat.getText());
-            this.labelDatePreview.setText(df.format(today));
-        }
-
-        private void previewTime() {
-            final Date today = Calendar.getInstance().getTime();
-            DateFormat df = new SimpleDateFormat(this.comboTimeFormat.getText());
-            this.labelTimePreview.setText(df.format(today));
-        }
     }
 
+    private class MainPerspective extends AbstractIConfigAdapter {
+
+        private Button buttonShowGallery;
+
+        public MainPerspective() {
+            super(AppConfigView.this.rightForm);
+            GridLayoutFactory.fillDefaults().numColumns(1).applyTo(this);
+            GridDataFactory.fillDefaults().grab(true, true).applyTo(this);
+            createContents();
+            populateFields();
+        }
+
+        @Override
+        public void createContents() {
+            Group group = new Group(this, SWT.NONE);
+            group.setText("Perspectiva principala");
+            GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(group);
+            group.setLayout(new GridLayout(2, true));
+
+            this.buttonShowGallery = new Button(group, SWT.CHECK);
+            this.buttonShowGallery.setText("afisare galerie carti");
+            GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowGallery);
+            WidgetCursorUtil.addHandCursorListener(this.buttonShowGallery);
+        }
+
+        @Override
+        public void populateFields() {
+            this.buttonShowGallery.setSelection(SettingsController.getBoolean(PERSPECTIVE_SHOW_GALLERY));
+        }
+
+        @Override
+        public void save() {
+            SettingsController.saveBooleanSetting(PERSPECTIVE_SHOW_GALLERY, buttonShowGallery.getSelection());
+        }
+
+        @Override
+        public String getCatName() {
+            return ITEM_MAIN_PERSPECTIVE;
+        }
+    }
 }
