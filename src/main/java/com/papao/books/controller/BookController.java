@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Observable;
 
 @Controller
-public class BookController extends Observable{
+public class BookController extends Observable {
 
     private final CarteRepository repository;
     private final CacheableAutorRepository cacheableAutorRepository;
@@ -175,8 +175,9 @@ public class BookController extends Observable{
         return repository.getByTitluAndIdAutori(titlu, idAutori);
     }
 
-    public Page<Carte> getByTitluLikeOrIdAutoriContains(String titlu, List<ObjectId> idAutori, Pageable pageable) {
+    public void getByTitluLikeOrIdAutoriContains(String titlu, List<ObjectId> idAutori, Pageable pageable) {
         carti = repository.getByTitluLikeIgnoreCaseOrIdAutoriContains(titlu, idAutori, pageable);
-        return carti;
+        setChanged();
+        notifyObservers();
     }
 }

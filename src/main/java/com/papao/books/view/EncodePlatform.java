@@ -57,12 +57,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.awt.*;
-import java.util.*;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 
 public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer {
 
@@ -186,7 +187,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
      */
     @Override
     public void open() {
-        fullRefresh(true);
+        fullRefresh();
         super.open();
     }
 
@@ -270,7 +271,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             @Override
             public void handleEvent(Event event) {
                 if (event.character == SWT.CR) {
-                    if (searchText.getText().length() < 2) {
+                    if (searchText.getText().isEmpty()) {
+                        tableViewer.resetFilters();
+                        ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText("");
+                        ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText("");
+                        refreshTableViewer();
+                        return;
+                    }
+                    if (searchText.getText().length() == 1) {
                         BalloonNotification.showNotification(searchText, "Notificare", "Introduceti minim 2 caractere!", 1500);
                         return;
                     }
@@ -290,7 +298,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         itemSearch.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (searchText.getText().length() < 2) {
+                if (searchText.getText().isEmpty()) {
+                    tableViewer.resetFilters();
+                    ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText("");
+                    ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText("");
+                    refreshTableViewer();
+                    return;
+                }
+                if (searchText.getText().length() == 1) {
                     BalloonNotification.showNotification(searchText, "Notificare", "Introduceti minim 2 caractere!", 1500);
                     return;
                 }
@@ -359,7 +374,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     delete();
                 }
                 if (e.keyCode == SWT.F5) {
-                    refreshTableViewer(false);
+                    refreshTableViewer();
                 }
             }
         });
@@ -428,10 +443,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     private void searchInDatabase(String text) {
-        List<ObjectId> autori = AutorController.getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(text);
-        Pageable pageable = paginationComposite.getPageable();
-        Page<Carte> books = ApplicationService.getBookController().getByTitluLikeOrIdAutoriContains(text, autori, pageable);
-        tableViewer.setInput(books.getContent());
+        paginationComposite.setSearchQuery(text);
         searchInTable(text);
     }
 
@@ -626,7 +638,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
             return;
         }
-        refreshTableViewer(true);
+        refreshTableViewer();
     }
 
     private void populateLeftTree() {
@@ -909,7 +921,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.toolItemRefresh.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                refreshTableViewer(false);
+                refreshTableViewer();
             }
         });
 
@@ -1256,7 +1268,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                refreshTableViewer(false);
+                refreshTableViewer();
             }
         });
 
@@ -1675,12 +1687,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         new CarteView(this.tableViewer.getTable().getShell(), carte, AbstractView.MODE_VIEW).open();
     }
 
-    public void fullRefresh(boolean resetPage) {
+    public void fullRefresh() {
         populateLeftTree();
-        refreshTableViewer(resetPage);
+        refreshTableViewer();
     }
 
-    public void refreshTableViewer(boolean resetPage) {
+    public void refreshTableViewer() {
         String value = null;
         boolean all = true;
         this.tableViewer.resetFilters();
@@ -1692,15 +1704,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             value = selectedNode.getQueryValue();
         }
         tableViewer.setInput(null);
-        Pageable pageable = getPageable();
-        if (resetPage) {
-            pageable = new PageRequest(0, pageable.getPageSize());
-        }
+        Pageable pageable = paginationComposite.getPageable(true);
         ApplicationService.getBookController().requestSearch(this.searchType, value, pageable, all);
-    }
-
-    private Pageable getPageable() {
-        return paginationComposite.getPageable();
     }
 
     public void handleSearchDisplay() {

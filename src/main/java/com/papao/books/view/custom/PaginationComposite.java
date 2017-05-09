@@ -1,10 +1,12 @@
 package com.papao.books.view.custom;
 
 import com.papao.books.ApplicationService;
+import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
 import com.papao.books.model.Carte;
 import com.papao.books.view.AppImages;
 import com.papao.books.view.view.SWTeXtension;
+import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
@@ -27,6 +29,7 @@ public class PaginationComposite extends Composite implements Observer {
     private ToolItem itemFirstPage;
     private ToolItem itemNext;
     private ToolItem itemLastPage;
+    private String searchQuery;
 
     private long totalCount = 0;
     private long totalPages = 0;
@@ -156,7 +159,10 @@ public class PaginationComposite extends Composite implements Observer {
         return min + "-" + max + " din " + totalCount;
     }
 
-    public Pageable getPageable() {
+    public Pageable getPageable(boolean reset) {
+        if (reset) {
+            setSearchQuery(null);
+        }
         pageSize = Integer.parseInt(comboItemsPerPage.getText());
         return new PageRequest((int) currentPage - 1, pageSize);
     }
@@ -173,12 +179,28 @@ public class PaginationComposite extends Composite implements Observer {
     }
 
     private void search() {
-        //TODO search from db directly
-        ApplicationService.getBookController().requestSearch(getPageable());
+        if (searchQuery != null) {
+            java.util.List<ObjectId> autori = AutorController.getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(searchQuery);
+            ApplicationService.getBookController().getByTitluLikeOrIdAutoriContains(searchQuery, autori, getPageable(false));
+        } else {
+            ApplicationService.getBookController().requestSearch(getPageable(false));
+        }
         itemNext.setEnabled(currentPage < totalPages && totalCount > 0);
         itemPrevious.setEnabled(currentPage - 1 > 0 && totalCount > 0);
 
         updateUI();
+    }
+
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
+        totalCount = 0;
+        totalPages = 0;
+        currentPage = 1;
+
+        updateUI();
+        if (this.searchQuery != null) {
+            search();
+        }
     }
 
     private void updateUI() {
