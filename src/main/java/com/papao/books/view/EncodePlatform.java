@@ -25,9 +25,7 @@ import com.papao.books.view.providers.tree.IntValuePair;
 import com.papao.books.view.providers.tree.IntValuePairsWrapper;
 import com.papao.books.view.providers.tree.SimpleTextNode;
 import com.papao.books.view.providers.tree.TreeContentProvider;
-import com.papao.books.view.searcheable.AbstractSearchType;
 import com.papao.books.view.searcheable.BookSearchType;
-import com.papao.books.view.searcheable.BorgSearchSystem;
 import com.papao.books.view.user.UsersView;
 import com.papao.books.view.util.*;
 import com.papao.books.view.util.sorter.AbstractColumnViewerSorter;
@@ -43,9 +41,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CBanner;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -61,7 +57,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -75,8 +70,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private CBanner mainCBanner;
     private LiveSashForm verticalSash;
     private Composite compLeftTree;
-    private LiveSashForm rightSash;
-    private BorgSearchSystem searchSystem;
     private LiveSashForm rightInnerSash;
     private CTabFolder bottomInnerTabFolderRight;
     private TableViewer tableViewer;
@@ -95,7 +88,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ToolItem toolItemClone;
     private ToolItem toolItemDel;
     private ToolItem toolItemRefresh;
-    private ToolItem toolItemSearch;
     private ToolItem toolItemGrupare;
     private Composite compRight;
     private UnifiedStyledLabelProvider leftTreeColumnProvider;
@@ -195,13 +187,26 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         final Menu tabFolderMenu = new Menu(mainRightTabFolder.getShell(), SWT.POP_UP);
         MenuItem item = new MenuItem(tabFolderMenu, SWT.PUSH);
         item.setText("Afiseaza galerie");
+        tabFolderMenu.addListener(SWT.Show, new Listener() {
+            @Override
+            public void handleEvent(final Event e) {
+                tabFolderMenu.getItem(0).setEnabled(mainRightTabFolder.getItemCount() == 1);
+            }
+        });
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                SWTeXtension.displayMessageI("Galerie!");
+                recreateGalleryTab();
             }
         });
         return tabFolderMenu;
+    }
+
+    private void recreateGalleryTab() {
+        CTabItem galleryTab = createTabGallery(mainRightTabFolder);
+        galleryTab.setControl(galleryComposite.getContent());
+        ApplicationService.getBookController().addObserver(galleryComposite);
+        galleryComposite.update(ApplicationService.getBookController(), null);
     }
 
     private void createComponents(Composite parent) {
@@ -232,7 +237,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.mainRightTabFolder);
         this.mainRightTabFolder.setSimple(true);
         this.mainRightTabFolder.setUnselectedImageVisible(true);
-        this.mainRightTabFolder.setUnselectedCloseVisible(false);
+        this.mainRightTabFolder.setUnselectedCloseVisible(true);
         this.mainRightTabFolder.setMRUVisible(true);
         this.mainRightTabFolder.setMinimizeVisible(false);
         this.mainRightTabFolder.setMaximizeVisible(false);
@@ -292,22 +297,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.END, SWT.CENTER).applyTo(progressBarComposite);
         mainRightTabFolder.setTopRight(mainCompRightTab);
 
-        rightSash = new LiveSashForm(mainRightTabFolder, SWT.SMOOTH | SWT.HORIZONTAL);
-        rightSash.sashWidth = 4;
-        GridDataFactory.fillDefaults().grab(true, true).applyTo(rightSash);
-        tabGrid.setControl(rightSash);
-
-        CTabItem tabGallery = new CTabItem(this.mainRightTabFolder, SWT.CLOSE);
-        tabGallery.setText("Galerie");
-        tabGallery.setShowClose(true);
-        tabGallery.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
-        mainRightTabFolder.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                event.doit = true;
-                displayBookData();
-            }
-        });
+        CTabItem tabGallery = createTabGallery(mainRightTabFolder);
 
         galleryComposite = new ImageGalleryComposite(mainRightTabFolder, progressBarComposite);
         tabGallery.setControl(galleryComposite.getContent());
@@ -315,9 +305,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.verticalSash.setWeights(new int[]{2, 8});
 //        this.verticalSash.setMaximizedControl(rightSash);
 
-        searchSystem = new BorgSearchSystem(rightSash);
-
-        rightInnerSash = new LiveSashForm(rightSash, SWT.VERTICAL | SWT.SMOOTH);
+        rightInnerSash = new LiveSashForm(mainRightTabFolder, SWT.VERTICAL | SWT.SMOOTH);
         rightInnerSash.sashWidth = 4;
         rightInnerSash.setLayout(new GridLayout(2, false));
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightInnerSash);
@@ -338,9 +326,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.tableViewer.getTable().addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event e) {
-                if (e.keyCode == SWT.F3) {
-                    handleSearchDisplay();
-                }
                 if (SWTeXtension.getDeleteTrigger(e)) {
                     delete();
                 }
@@ -360,19 +345,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         initViewerCols();
         WidgetTableUtil.customizeTable(this.tableViewer.getTable(), getClass(), TABLE_KEY);
 
-        this.searchSystem.setViewer(this.tableViewer);
-        this.searchSystem.indexColumns(COLS);
-        createViewerFilters();
-        this.searchSystem.initCacheMap();
-
-        this.searchSystem.getSearchButton().registerListeners(SWT.MouseUp, new Listener() {
-            @Override
-            public final void handleEvent(final Event e) {
-                search();
-                enableOps();
-            }
-        });
-
         this.bottomInnerTabFolderRight = new CTabFolder(rightInnerSash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.bottomInnerTabFolderRight);
         this.bottomInnerTabFolderRight.setSimple(true);
@@ -391,6 +363,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         tabItemDetaliiCarte.setControl(createTabDocuments(bottomInnerTabFolderRight));
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
+        tabGrid.setControl(rightInnerSash);
 
         readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash);
         //table viewer is notified when rating changes on the details composite
@@ -401,9 +374,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         rightVerticalSash.setWeights(new int[]{9, 3});
         rightVerticalSash.setMaximizedControl(null);
 
-        rightSash.setWeights(new int[]{3, 9});
-        rightSash.setMaximizedControl(rightInnerSash);
-
         paginationComposite = new PaginationComposite(compRight);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(paginationComposite);
 
@@ -411,6 +381,28 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
 
         getContainer().layout();
+    }
+
+    private CTabItem createTabGallery(CTabFolder parent) {
+        final CTabItem tabGallery = new CTabItem(parent, SWT.CLOSE);
+        tabGallery.setText("Galerie");
+        tabGallery.setShowClose(true);
+        tabGallery.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
+        parent.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                event.doit = true;
+                displayBookData();
+            }
+        });
+        parent.addCTabFolder2Listener(new CTabFolder2Adapter() {
+            public void close(CTabFolderEvent event) {
+                if (event.item.equals(tabGallery)) {
+                    ApplicationService.getBookController().deleteObserver(galleryComposite);
+                }
+            }
+        });
+        return tabGallery;
     }
 
     private void resetSearchFilters() {
@@ -490,16 +482,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         readOnlyDetailsComposite.populateFields(carte);
     }
 
-    protected final void enableOps() {
-        boolean enable = true;
+    private void enableOps() {
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return;
         }
-        if (this.tableViewer.getTable().getSelectionCount() == 0) {
-            enable = false;
-        } else {
-            enable = this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractMongoDB;
-        }
+        boolean enable = this.tableViewer.getTable().getSelectionCount() != 0
+                && this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractMongoDB;
         toolItemAdd.setEnabled(true); // add
         toolItemMod.setEnabled(enable); // mod
         toolItemDel.setEnabled(enable); // del
@@ -739,7 +727,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 final boolean flagItemCount = (leftTreeViewer.getTree().getItemCount() > 0);
                 menu.getItem(idx++).setEnabled(flagItemCount); // expand all
                 menu.getItem(idx++).setEnabled(flagItemCount); // colapse all
-                menu.getItem(idx++).setEnabled(true); // aliniere
+                idx++; //separator
+                menu.getItem(idx++).setEnabled(true); // aliniere stanga
+                menu.getItem(idx++).setEnabled(true); // aliniere dreapta
+                idx++; //separator
+                menu.getItem(idx++).setEnabled(mainRightTabFolder.getItemCount() == 1); // afisare galerie
                 boolean autorEnabled = false;
                 if (flagItemCount) {
                     SimpleTextNode selectedNode = (SimpleTextNode) leftTreeViewer.getTree().getSelection()[0].getData();
@@ -769,12 +761,35 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
+        new MenuItem(menu, SWT.SEPARATOR);
+
         menuItem = new MenuItem(menu, SWT.NONE);
         menuItem.setText("Aliniere la stanga");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
                 swap();
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Aliniere la dreapta");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                swap();
+            }
+        });
+
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Afiseaza galerie");
+        menuItem.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                recreateGalleryTab();
             }
         });
 
@@ -788,15 +803,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 SimpleTextNode selectedNode = (SimpleTextNode) leftTreeViewer.getTree().getSelection()[0].getData();
                 String idAutor = selectedNode.getQueryValue();
                 new AutorView(getShell(), AutorController.findOne(new ObjectId(idAutor)), AbstractView.MODE_MODIFY).open();
-            }
-        });
-
-        menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Aliniere la dreapta");
-        menuItem.addListener(SWT.Selection, new Listener() {
-            @Override
-            public final void handleEvent(final Event e) {
-                swap();
             }
         });
 
@@ -825,10 +831,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return menu;
     }
 
-    ;
-
-
-    public void swap() {
+    private void swap() {
         if (compLeftTree.getLocation().x < compRight.getLocation().x) {
             compLeftTree.moveBelow(compRight);
             verticalSash.setWeights(new int[]{
@@ -880,18 +883,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         new ToolItem(barOps, SWT.SEPARATOR);
-
-        this.toolItemSearch = new ToolItem(barOps, SWT.CHECK);
-        this.toolItemSearch.setImage(AppImages.getImage24(AppImages.IMG_SEARCH));
-        this.toolItemSearch.setHotImage(AppImages.getImage24Focus(AppImages.IMG_SEARCH));
-        this.toolItemSearch.setToolTipText("Cautare");
-        this.toolItemSearch.setText("Cautare");
-        this.toolItemSearch.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                handleSearchDisplay();
-            }
-        });
 
         this.toolItemGrupare = new ToolItem(barOps, SWT.CHECK);
         this.toolItemGrupare.setImage(AppImages.getImage24(AppImages.IMG_SHOW));
@@ -971,7 +962,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return barOps;
     }
 
-    public void handleLeftTreeDisplay() {
+    private void handleLeftTreeDisplay() {
         if (this.toolItemGrupare.getSelection()) {
             verticalSash.setMaximizedControl(compRight);
         } else {
@@ -1074,16 +1065,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return bar;
     }
 
-    public final void createViewerFilters() {
-        this.searchSystem.createTextSearch(IDX_AUTOR);
-        this.searchSystem.createTextSearch(IDX_TITLU);
-        this.searchSystem.createRatingSearch(IDX_RATING);
-        this.searchSystem.createTextSearch(IDX_EDITURA);
-        this.searchSystem.createTextSearch(IDX_AN_APARITIE);
-        this.searchSystem.createTextSearch(IDX_LIMBA);
-    }
-
-    public final void initViewerCols() {
+    private final void initViewerCols() {
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return;
         }
@@ -1233,7 +1215,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.tableViewer.getTable().setSortColumn(null);
     }
 
-    protected Menu createTableMenu() {
+    private Menu createTableMenu() {
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return null;
         }
@@ -1325,7 +1307,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return menu;
     }
 
-    private final void createTraySystem() {
+    private void createTraySystem() {
         TrayItem item;
         MenuItem menuItem;
 
@@ -1441,11 +1423,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
     }
 
-    public final void configAutori() {
+    private void configAutori() {
         new AutoriView(new Shell()).open();
     }
 
-    public final void configUsers() {
+    private void configUsers() {
         new UsersView(getShell()).open();
     }
 
@@ -1584,87 +1566,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return true;
     }
 
-    public void search() {
-        this.tableViewer.resetFilters();
-        searchText.setText("");
-        java.util.List<ViewerFilter> listFilters = new ArrayList<>();
-        for (Iterator<AbstractSearchType> it = this.searchSystem.getVisibleFilters().values().iterator(); it.hasNext(); ) {
-            ViewerFilter filter = null;
-            final AbstractSearchType searchType = it.next();
-            if (!searchType.isModified()) {
-                continue;
-            }
-            switch (this.searchSystem.getColumnIndex(searchType.getColName())) {
-                case IDX_AUTOR: {
-                    filter = new ViewerFilter() {
-                        @Override
-                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-                            Carte carte = (Carte) element;
-                            return searchType.compareValues(ApplicationService.getBookController().getBookAuthorNames(carte));
-                        }
-                    };
-                    break;
-                }
-                case IDX_TITLU: {
-                    filter = new ViewerFilter() {
-                        @Override
-                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-                            Carte carte = (Carte) element;
-                            return searchType.compareValues(carte.getTitlu());
-                        }
-                    };
-                    break;
-                }
-                case IDX_EDITURA: {
-                    filter = new ViewerFilter() {
-                        @Override
-                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-                            Carte carte = (Carte) element;
-                            return searchType.compareValues(carte.getEditura());
-                        }
-                    };
-                    break;
-                }
-                case IDX_RATING: {
-                    filter = new ViewerFilter() {
-                        @Override
-                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-                            Carte carte = (Carte) element;
-                            return searchType.compareValues(UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
-                        }
-                    };
-                    break;
-                }
-                case IDX_AN_APARITIE: {
-                    filter = new ViewerFilter() {
-                        @Override
-                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-                            Carte carte = (Carte) element;
-                            return searchType.compareValues(carte.getAnAparitie());
-                        }
-                    };
-                    break;
-                }
-                case IDX_LIMBA: {
-                    filter = new ViewerFilter() {
-                        @Override
-                        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-                            Carte carte = (Carte) element;
-                            return searchType.compareValues(carte.getLimba().name());
-                        }
-                    };
-                    break;
-                }
-                default:
-            }
-            if (filter != null) {
-                listFilters.add(filter);
-                searchType.filter = filter;
-            }
-        }
-        this.tableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
-    }
-
     public void view() {
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
             return;
@@ -1681,12 +1582,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         new CarteView(this.tableViewer.getTable().getShell(), carte, AbstractView.MODE_VIEW).open();
     }
 
-    public void fullRefresh() {
+    private void fullRefresh() {
         populateLeftTree();
         refreshTableViewer();
     }
 
-    public void refreshTableViewer() {
+    private void refreshTableViewer() {
         String value = null;
         boolean all = true;
         this.tableViewer.resetFilters();
@@ -1701,20 +1602,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         ApplicationService.getBookController().requestSearch(this.searchType, value, pageable, all);
     }
 
-    public void handleSearchDisplay() {
-        if (toolItemSearch.getSelection()) {
-            this.rightSash.setMaximizedControl(null);
-        } else {
-            this.rightSash.setMaximizedControl(rightInnerSash);
-        }
-    }
-
     public static ToolBar getBarDocking() {
         return barDocking;
     }
 
     private Menu createBarDockingMenu() {
-        final Menu menu = new Menu(this.barDocking);
+        final Menu menu = new Menu(barDocking);
         menu.addListener(SWT.Show, new Listener() {
             @Override
             public void handleEvent(final Event e) {
