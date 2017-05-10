@@ -180,6 +180,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.SHOW_OPS_LABELS);
         setBigViewMessage("Configurare autori");
         setBigViewImage(AppImages.getImage24(AppImages.IMG_USER));
+        setTextSearchWithHighlightWidth(175);
     }
 
     @Override
