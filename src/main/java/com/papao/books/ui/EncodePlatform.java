@@ -314,8 +314,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         rightInnerSash.setLayout(new GridLayout(2, false));
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightInnerSash);
 
-        int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI;
-        this.tableViewer = new TableViewer(rightInnerSash, style);
+        this.tableViewer = new TableViewer(rightInnerSash, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
         this.tableViewer.setUseHashlookup(true);
         this.tableViewer.getTable().setHeaderVisible(true);
         this.tableViewer.getTable().setLinesVisible(true);

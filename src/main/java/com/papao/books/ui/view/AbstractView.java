@@ -173,6 +173,8 @@ public abstract class AbstractView extends Observable {
 
     private Scrollable notificationParent;
 
+    private String observableProperty;
+
     public AbstractView(final Shell parent, final Class<? extends Widget> widgetClass, final int viewMode) {
         this(parent, widgetClass, null, viewMode);
     }
@@ -499,7 +501,7 @@ public abstract class AbstractView extends Observable {
                     GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(0, 4, 0, 4).equalWidth(false).applyTo(this.compSearchWithHighlight);
                     new Label(this.compSearchWithHighlight, SWT.NONE).setText("Cautare");
                     this.textSearchWithHighlight = new Text(this.compSearchWithHighlight, SWT.BORDER);
-                    GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).grab(true, false).applyTo(this.textSearchWithHighlight);
+                    GridDataFactory.fillDefaults().hint(175, SWT.DEFAULT).grab(true, false).applyTo(this.textSearchWithHighlight);
                     this.textSearchWithHighlight.addListener(SWT.Modify, this.viewListener);
                     SWTeXtension.addColoredFocusListener(this.textSearchWithHighlight, ColorUtil.COLOR_FOCUS_YELLOW);
                 }
@@ -1552,7 +1554,11 @@ public abstract class AbstractView extends Observable {
     }
 
     public String getObservableProperty() {
-        return "";
+        return observableProperty;
+    }
+
+    public void setObservableProperty(String observableProperty) {
+        this.observableProperty = observableProperty;
     }
 
     protected void encodeUrl(Text widget) {

@@ -1,9 +1,13 @@
 package com.papao.books.ui.carte;
 
+import com.mongodb.gridfs.GridFSDBFile;
+import com.novocode.naf.swt.custom.LiveSashForm;
 import com.papao.books.ApplicationService;
 import com.papao.books.config.BooleanSetting;
+import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.AutorController;
 import com.papao.books.controller.SettingsController;
+import com.papao.books.controller.UserController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.Exporter;
 import com.papao.books.model.AbstractMongoDB;
@@ -11,6 +15,8 @@ import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.ui.AppImages;
+import com.papao.books.ui.auth.EncodeLive;
+import com.papao.books.ui.custom.ImageSelectorComposite;
 import com.papao.books.ui.interfaces.*;
 import com.papao.books.ui.providers.AdbMongoContentProvider;
 import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
@@ -24,10 +30,15 @@ import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify, IDelete, IExport, ISearchWithHighlight {
@@ -39,9 +50,18 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
     private final static int IDX_NUME = 0;
     private final static int IDX_TITLU = 1;
 
-    private TableViewer tableViewer;
+    private static final String[] BOOK_COLS = new String[]{"Titlu", "Rating", "Editura"};
+    private final static int IDX_BOOK_TITLE = 0;
+    private final static int IDX_BOOK_RATING = 1;
+    private final static int IDX_BOOK_EDITURA = 2;
 
-    private static final String TABLE_KEY = "usersTable";
+    private TableViewer autoriTableViewer;
+    private TableViewer booksTableViewer;
+    private ImageSelectorComposite autorImageComposite;
+    private ImageSelectorComposite booksImageComposite;
+
+    private static final String AUTORI_TABLE_KEY = "autoriTable";
+    private static final String BOOKS_TABLE_KEY = "booksTable";
 
     public AutoriView(final Shell parent) {
         super(parent, AbstractView.MODE_NONE);
@@ -51,17 +71,17 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
 
         addComponents();
 
-        this.tableViewer.setInput(AutorController.findAll());
-        this.tableViewer.getTable().setFocus();
+        this.autoriTableViewer.setInput(AutorController.findAll());
+        this.autoriTableViewer.getTable().setFocus();
     }
 
     @Override
     public final boolean add() {
         AutorView view;
-        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
+        if ((this.autoriTableViewer == null) || this.autoriTableViewer.getControl().isDisposed()) {
             return false;
         }
-        view = new AutorView(this.tableViewer.getTable().getShell(), new Autor(), AbstractView.MODE_ADD);
+        view = new AutorView(this.autoriTableViewer.getTable().getShell(), new Autor(), AbstractView.MODE_ADD);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -76,10 +96,10 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
     @Override
     public final boolean modify() {
         AutorView view;
-        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
+        if ((this.autoriTableViewer == null) || this.autoriTableViewer.getControl().isDisposed() || (this.autoriTableViewer.getTable().getSelectionCount() <= 0)) {
             return false;
         }
-        Autor autor = (Autor) this.tableViewer.getTable().getSelection()[0].getData();
+        Autor autor = (Autor) this.autoriTableViewer.getTable().getSelection()[0].getData();
         if (autor == null) {
             SWTeXtension.displayMessageI("Autorul selectat este invalid!");
             return false;
@@ -88,23 +108,23 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
             SWTeXtension.displayMessageI("Autorul selectat este invalid!");
             return false;
         }
-        view = new AutorView(this.tableViewer.getTable().getShell(), autor, AbstractView.MODE_MODIFY);
+        view = new AutorView(this.autoriTableViewer.getTable().getShell(), autor, AbstractView.MODE_MODIFY);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        tableViewer.refresh(view.getAutor(), true, true);
-        tableViewer.setSelection(new StructuredSelection(view.getAutor()));
+        autoriTableViewer.refresh(view.getAutor(), true, true);
+        autoriTableViewer.setSelection(new StructuredSelection(view.getAutor()));
         return true;
     }
 
     @Override
     public final boolean delete() {
         try {
-            if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
+            if ((this.autoriTableViewer == null) || this.autoriTableViewer.getControl().isDisposed() || (this.autoriTableViewer.getTable().getSelectionCount() <= 0)) {
                 return false;
             }
-            Autor autor = (Autor) this.tableViewer.getTable().getSelection()[0].getData();
+            Autor autor = (Autor) this.autoriTableViewer.getTable().getSelection()[0].getData();
             if (autor == null) {
                 SWTeXtension.displayMessageI("Autorul selectat este invalid!");
                 return false;
@@ -134,10 +154,10 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
     }
 
     public final void view() {
-        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
+        if ((this.autoriTableViewer == null) || this.autoriTableViewer.getControl().isDisposed() || (this.autoriTableViewer.getTable().getSelectionCount() <= 0)) {
             return;
         }
-        Autor autor = (Autor) this.tableViewer.getTable().getSelection()[0].getData();
+        Autor autor = (Autor) this.autoriTableViewer.getTable().getSelection()[0].getData();
         if (autor == null) {
             SWTeXtension.displayMessageI("Autor selectat este invalid!");
             return;
@@ -146,12 +166,12 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
             SWTeXtension.displayMessageI("Autor selectat este invalid!");
             return;
         }
-        new AutorView(this.tableViewer.getTable().getShell(), autor, AbstractView.MODE_VIEW).open();
+        new AutorView(this.autoriTableViewer.getTable().getShell(), autor, AbstractView.MODE_VIEW).open();
     }
 
     @Override
     public void refresh() {
-        this.tableViewer.setInput(AutorController.findAll());
+        this.autoriTableViewer.setInput(AutorController.findAll());
     }
 
     @Override
@@ -173,27 +193,27 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
     }
 
     private void enableOps() {
-        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
+        if ((this.autoriTableViewer == null) || this.autoriTableViewer.getControl().isDisposed()) {
             return;
         }
-        boolean enable = this.tableViewer.getTable().getSelectionCount() != 0
-                && this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractMongoDB;
+        boolean enable = this.autoriTableViewer.getTable().getSelectionCount() != 0
+                && this.autoriTableViewer.getTable().getSelection()[0].getData() instanceof AbstractMongoDB;
         getToolItemAdd().setEnabled(true); // add
         getToolItemMod().setEnabled(enable); // mod
         getToolItemDel().setEnabled(enable); // del
     }
 
     private Menu createTableMenu() {
-        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
+        if ((this.autoriTableViewer == null) || this.autoriTableViewer.getControl().isDisposed()) {
             return null;
         }
-        final Menu menu = new Menu(this.tableViewer.getTable());
+        final Menu menu = new Menu(this.autoriTableViewer.getTable());
         MenuItem menuItem;
         menu.addListener(SWT.Show, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
                 int idx = 0;
-                final int selIdx = tableViewer.getTable().getSelectionIndex();
+                final int selIdx = autoriTableViewer.getTable().getSelectionIndex();
                 idx++; // refresh
                 idx++; // separator
                 idx++; // add
@@ -261,18 +281,52 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
     }
 
     private void addComponents() {
-        this.tableViewer = new TableViewer(getContainer(), SWT.FULL_SELECTION | SWT.VIRTUAL | SWT.BORDER | SWT.SINGLE);
-        this.tableViewer.setUseHashlookup(true);
-        this.tableViewer.getTable().setHeaderVisible(true);
-        this.tableViewer.getTable().setLinesVisible(true);
-        GridDataFactory.fillDefaults().grab(true, true).hint(600, 400).applyTo(this.tableViewer.getControl());
-        this.tableViewer.getTable().addListener(SWT.Selection, new Listener() {
+        LiveSashForm mainSash = new LiveSashForm(getContainer(), SWT.VERTICAL | SWT.SMOOTH);
+        mainSash.sashWidth = 4;
+        mainSash.setLayout(new GridLayout(2, false));
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(mainSash);
+
+        Composite upperComp = new Composite(mainSash, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(upperComp);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(upperComp);
+
+        this.autoriTableViewer = new TableViewer(upperComp, SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE);
+        this.autoriTableViewer.getTable().setHeaderVisible(true);
+        this.autoriTableViewer.getTable().setLinesVisible(true);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(this.autoriTableViewer.getControl());
+        this.autoriTableViewer.getTable().addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 enableOps();
+
+                Autor autor = (Autor) autoriTableViewer.getTable().getSelection()[0].getData();
+                setObservableProperty(autor.getNumeComplet());
+                deleteObserver(booksImageComposite);
+                setChanged();
+                notifyObservers();
+                addObserver(booksImageComposite);
+
+                Image mainImage;
+                String imageName;
+                autorImageComposite.setImage(null, null);
+                if (autor.getMainImage() != null) {
+                    GridFSDBFile image = ApplicationController.getDocumentData(autor.getMainImage().getId());
+                    if (image != null) {
+                        imageName = image.getFilename();
+                        mainImage = new Image(Display.getDefault(), image.getInputStream());
+                        autorImageComposite.setImage(mainImage, imageName);
+                    }
+                }
+
+                booksTableViewer.setInput(ApplicationService.getBookController().getByIdAutoriContains(autor.getId()));
+                booksImageComposite.setImage(null, null);
+                if (booksTableViewer.getTable().getItemCount() >0) {
+                    booksTableViewer.getTable().select(0);
+                    booksTableViewer.getTable().notifyListeners(SWT.Selection, new Event());
+                }
             }
         });
-        this.tableViewer.getTable().addListener(SWT.KeyDown, new Listener() {
+        this.autoriTableViewer.getTable().addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event e) {
                 if (SWTeXtension.getDeleteTrigger(e)) {
@@ -283,33 +337,135 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                 }
             }
         });
-        this.tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
+        this.autoriTableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 modify();
             }
         });
-        this.tableViewer.getTable().setMenu(createTableMenu());
+        this.autoriTableViewer.getTable().setMenu(createTableMenu());
 
         initViewerCols();
-        WidgetTableUtil.customizeTable(this.tableViewer.getTable(), getClass(), TABLE_KEY);
+        WidgetTableUtil.customizeTable(this.autoriTableViewer.getTable(), getClass(), AUTORI_TABLE_KEY);
+        WidgetCursorUtil.addHandCursorListener(this.autoriTableViewer.getTable());
+        SWTeXtension.addColoredFocusListener(this.autoriTableViewer.getTable(), null);
 
-        WidgetCursorUtil.addHandCursorListener(this.tableViewer.getTable());
-        SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
+        autorImageComposite = new ImageSelectorComposite(upperComp, null, null);
+        this.addObserver(autorImageComposite);
+        GridData mainImageData = (GridData) autorImageComposite.getLayoutData();
+        mainImageData.grabExcessHorizontalSpace = false;
+        mainImageData.grabExcessVerticalSpace = false;
+        mainImageData.verticalAlignment = SWT.BEGINNING;
+        mainImageData.horizontalAlignment = SWT.BEGINNING;
+        autorImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (autorImageComposite.imageChanged() && autoriTableViewer.getTable().getSelectionCount() == 1) {
+                    Autor autor = (Autor) autoriTableViewer.getTable().getSelection()[0].getData();
+                    ApplicationController.removeDocument(autor.getMainImage().getId());
+                    autor.setMainImage(null);
+                    try {
+                        autor.setMainImage(ApplicationController.saveDocument(autorImageComposite));
+                        AutorController.save(autor);
+                        SWTeXtension.displayMessageI("Imaginea a fost salvata cu succes!", "Modificare autor");
+
+                        autorImageComposite.setImageChanged(false);
+                    } catch (IOException e) {
+                        SWTeXtension.displayMessageE(e.getMessage(), e);
+                    }
+                }
+            }
+        });
+
+        Composite lowerComp = new Composite(mainSash, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(lowerComp);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(lowerComp);
+
+        this.booksTableViewer = new TableViewer(lowerComp, SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE);
+        this.booksTableViewer.getTable().setHeaderVisible(true);
+        this.booksTableViewer.getTable().setLinesVisible(true);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(this.booksTableViewer.getControl());
+
+        booksImageComposite = new ImageSelectorComposite(lowerComp, null, null);
+        this.addObserver(booksImageComposite);
+        GridData data = (GridData) booksImageComposite.getLayoutData();
+        data.grabExcessHorizontalSpace = false;
+        data.grabExcessVerticalSpace = false;
+        data.verticalAlignment = SWT.BEGINNING;
+        data.horizontalAlignment = SWT.BEGINNING;
+        booksImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (booksImageComposite.imageChanged() && booksTableViewer.getTable().getSelectionCount() == 1) {
+                    Carte carte = (Carte) booksTableViewer.getTable().getSelection()[0].getData();
+                    ApplicationController.removeDocument(carte.getCopertaFata().getId());
+                    carte.setCopertaFata(null);
+                    try {
+                        carte.setCopertaFata(ApplicationController.saveDocument(booksImageComposite));
+                        ApplicationService.getBookController().save(carte);
+                        SWTeXtension.displayMessageI("Imaginea a fost salvata cu succes!", "Modificare carte");
+
+                        booksImageComposite.setImageChanged(false);
+                    } catch (IOException e) {
+                        SWTeXtension.displayMessageE(e.getMessage(), e);
+                    }
+                }
+            }
+        });
+
+        this.booksTableViewer.getTable().addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (booksTableViewer.getTable().isDisposed() || booksTableViewer.getTable().getSelectionCount() != 1) {
+                    return;
+                }
+                Carte carte = (Carte) booksTableViewer.getTable().getSelection()[0].getData();
+                Image mainImage;
+                String imageName;
+                booksImageComposite.setImage(null, null);
+                if (carte.getCopertaFata() != null) {
+                    GridFSDBFile image = ApplicationController.getDocumentData(carte.getCopertaFata().getId());
+                    if (image != null) {
+                        imageName = image.getFilename();
+                        mainImage = new Image(Display.getDefault(), image.getInputStream());
+                        booksImageComposite.setImage(mainImage, imageName);
+                    }
+                }
+
+                String observableProperty = "";
+                if (autoriTableViewer.getTable().getSelectionCount() == 1) {
+                    Autor autor = (Autor) autoriTableViewer.getTable().getSelection()[0].getData();
+                    observableProperty += autor.getNumeComplet() + " - ";
+                }
+                observableProperty += carte.getTitlu();
+                setObservableProperty(observableProperty);
+                deleteObserver(autorImageComposite);
+                setChanged();
+                notifyObservers();
+                addObserver(autorImageComposite);
+            }
+        });
+
+        initBooksTableCols();
+        WidgetTableUtil.customizeTable(this.booksTableViewer.getTable(), getClass(), BOOKS_TABLE_KEY);
+        WidgetCursorUtil.addHandCursorListener(this.booksTableViewer.getTable());
+        SWTeXtension.addColoredFocusListener(this.booksTableViewer.getTable(), null);
+
+        mainSash.setWeights(new int[]{5, 5});
     }
 
     private void initViewerCols() {
-        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
+        if ((this.autoriTableViewer == null) || this.autoriTableViewer.getControl().isDisposed()) {
             return;
         }
 
-        this.tableViewer.setContentProvider(new AdbMongoContentProvider());
-        TableSetting setting = SettingsController.getTableSetting(COLS.length, getClass(), TABLE_KEY);
+        this.autoriTableViewer.setContentProvider(new AdbMongoContentProvider());
+        TableSetting setting = SettingsController.getTableSetting(COLS.length, getClass(), AUTORI_TABLE_KEY);
         int[] dims = setting.getWidths();
         int[] aligns = setting.getAligns();
         boolean[] visible = setting.getVisibility();
         for (int i = 0; i < COLS.length; i++) {
-            final TableViewerColumn col = new TableViewerColumn(this.tableViewer, SWT.NONE);
+            final TableViewerColumn col = new TableViewerColumn(this.autoriTableViewer, SWT.NONE);
             col.getColumn().setText(COLS[i]);
             col.getColumn().setWidth(visible[i] ? dims[i] : 0);
             col.getColumn().setAlignment(aligns[i]);
@@ -324,7 +480,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                             return autor.getNumeComplet();
                         }
                     });
-                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.autoriTableViewer, col) {
                         @Override
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Autor a = (Autor) e1;
@@ -344,7 +500,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                             return autor.getTitlu();
                         }
                     });
-                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.autoriTableViewer, col) {
                         @Override
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Autor a = (Autor) e1;
@@ -359,32 +515,32 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                 default:
             }
         }
-        this.tableViewer.getTable().setSortColumn(null);
+        this.autoriTableViewer.getTable().setSortColumn(null);
     }
 
     @Override
     public void exportTxt() {
-        Exporter.export(ExportType.TXT, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+        Exporter.export(ExportType.TXT, autoriTableViewer.getTable(), "Autori", getClass(), AUTORI_TABLE_KEY);
     }
 
     @Override
     public void exportPDF() {
-        Exporter.export(ExportType.PDF, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+        Exporter.export(ExportType.PDF, autoriTableViewer.getTable(), "Autori", getClass(), AUTORI_TABLE_KEY);
     }
 
     @Override
     public void exportExcel() {
-        Exporter.export(ExportType.XLS, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+        Exporter.export(ExportType.XLS, autoriTableViewer.getTable(), "Autori", getClass(), AUTORI_TABLE_KEY);
     }
 
     @Override
     public void exportRTF() {
-        Exporter.export(ExportType.RTF, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+        Exporter.export(ExportType.RTF, autoriTableViewer.getTable(), "Autori", getClass(), AUTORI_TABLE_KEY);
     }
 
     @Override
     public void exportHTML() {
-        Exporter.export(ExportType.HTML, tableViewer.getTable(), "Autori", getClass(), TABLE_KEY);
+        Exporter.export(ExportType.HTML, autoriTableViewer.getTable(), "Autori", getClass(), AUTORI_TABLE_KEY);
     }
 
     @Override
@@ -397,11 +553,13 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                 if (getTextSearchWithHighlight().isDisposed()) {
                     return;
                 }
-                tableViewer.resetFilters();
+                autoriTableViewer.resetFilters();
+                booksImageComposite.setImage(null, null);
+                autorImageComposite.setImage(null, null);
                 final String filtersStr = getTextSearchWithHighlight().getText();
                 java.util.List<ViewerFilter> listFilters = new ArrayList<>();
-                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_NUME)).setSearchText(filtersStr);
-                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText(filtersStr);
+                ((UnifiedStyledLabelProvider) autoriTableViewer.getLabelProvider(IDX_NUME)).setSearchText(filtersStr);
+                ((UnifiedStyledLabelProvider) autoriTableViewer.getLabelProvider(IDX_TITLU)).setSearchText(filtersStr);
                 listFilters.add(new ViewerFilter() {
                     @Override
                     public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
@@ -410,10 +568,100 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                                 || StringUtil.compareStrings(filtersStr.toLowerCase(), autor.getTitlu().toLowerCase());
                     }
                 });
-                tableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
+                autoriTableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
                 Display.getDefault().readAndDispatch();
 
             }
         });
+    }
+
+    private void initBooksTableCols() {
+        if ((this.booksTableViewer == null) || this.booksTableViewer.getControl().isDisposed()) {
+            return;
+        }
+
+        this.booksTableViewer.setContentProvider(new AdbMongoContentProvider());
+        TableSetting setting = SettingsController.getTableSetting(BOOK_COLS.length, getClass(), BOOKS_TABLE_KEY);
+        int[] dims = setting.getWidths();
+        int[] aligns = setting.getAligns();
+        boolean[] visible = setting.getVisibility();
+        for (int i = 0; i < BOOK_COLS.length; i++) {
+            final TableViewerColumn col = new TableViewerColumn(this.booksTableViewer, SWT.NONE);
+            col.getColumn().setText(BOOK_COLS[i]);
+            col.getColumn().setWidth(visible[i] ? dims[i] : 0);
+            col.getColumn().setAlignment(aligns[i]);
+            col.getColumn().setResizable(visible[i]);
+            col.getColumn().setMoveable(true);
+            switch (i) {
+                case IDX_BOOK_TITLE: {
+                    col.setLabelProvider(new UnifiedStyledLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Carte carte = (Carte) element;
+                            return carte.getTitlu();
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.booksTableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Carte a = (Carte) e1;
+                            Carte b = (Carte) e2;
+                            return StringUtil.romanianCompare(a.getTitlu(), b.getTitlu());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                case IDX_BOOK_EDITURA: {
+                    col.setLabelProvider(new ColumnLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Carte carte = (Carte) element;
+                            return carte.getEditura();
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.booksTableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Carte a = (Carte) e1;
+                            Carte b = (Carte) e2;
+                            return StringUtil.romanianCompare(a.getEditura(), b.getEditura());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                case IDX_BOOK_RATING: {
+                    col.setLabelProvider(new ColumnLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Carte carte = (Carte) element;
+                            return UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()) + "";
+                        }
+
+                        @Override
+                        public Image getImage(Object element) {
+                            return AppImages.getImage16(AppImages.IMG_FULL_STAR);
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.booksTableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Carte a = (Carte) e1;
+                            Carte b = (Carte) e2;
+                            return UserController.getPersonalRating(EncodeLive.getIdUser(), a.getId())
+                                    - UserController.getPersonalRating(EncodeLive.getIdUser(), b.getId());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                default:
+            }
+        }
+        this.booksTableViewer.getTable().setSortColumn(null);
     }
 }

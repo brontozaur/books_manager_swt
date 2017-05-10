@@ -97,7 +97,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
             }
         });
 
-        rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null, ApplicationService.getApplicationConfig().getAppImagesFolder());
+        rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null);
         this.addObserver(rightFrontCoverImageComposite);
         rightFrontCoverImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
             @Override

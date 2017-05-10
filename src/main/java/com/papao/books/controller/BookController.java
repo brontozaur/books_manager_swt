@@ -180,4 +180,8 @@ public class BookController extends Observable {
         setChanged();
         notifyObservers();
     }
+
+    public List<Carte> getByIdAutoriContains(ObjectId idAutor) {
+        return repository.getByIdAutoriContains(idAutor);
+    }
 }

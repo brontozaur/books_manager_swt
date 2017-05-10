@@ -25,7 +25,7 @@ public class Autor extends AuditObject implements Serializable {
     private int lunaDeces;
     private int ziDeces;
     private DocumentData mainImage;
-    private DocumentData[] documents;
+    private List<DocumentData> documents;
     private List<GenLiterar> genLiterar;
     private String website;
     private String twitter;
@@ -118,6 +118,9 @@ public class Autor extends AuditObject implements Serializable {
     }
 
     public DocumentData getMainImage() {
+        if (mainImage == null) {
+            return new DocumentData();
+        }
         return mainImage;
     }
 
@@ -125,11 +128,11 @@ public class Autor extends AuditObject implements Serializable {
         this.mainImage = mainImage;
     }
 
-    public DocumentData[] getDocuments() {
+    public List<DocumentData> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(DocumentData[] documents) {
+    public void setDocuments(List<DocumentData> documents) {
         this.documents = documents;
     }
 

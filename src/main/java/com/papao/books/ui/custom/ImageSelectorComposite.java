@@ -1,5 +1,6 @@
 package com.papao.books.ui.custom;
 
+import com.papao.books.ApplicationService;
 import com.papao.books.model.ImagePath;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.menu.WebBrowser;
@@ -26,7 +27,6 @@ public class ImageSelectorComposite extends Composite implements Observer {
     private Label labelImage;
     private ImageViewer previewShell;
     private boolean imageChanged;
-    private String imagesFolder;
     private String fileName;
     private final int WIDTH = 160;
     private final int HEIGHT = 180;
@@ -39,9 +39,8 @@ public class ImageSelectorComposite extends Composite implements Observer {
     private static String WEB_FILE = "WEB_FILE";
     private static final Logger logger = Logger.getLogger(ImageSelectorComposite.class);
 
-    public ImageSelectorComposite(Composite parent, Image fullImage, String fileName, final String imagesFolder) {
+    public ImageSelectorComposite(Composite parent, Image fullImage, String fileName) {
         super(parent, SWT.NONE);
-        this.imagesFolder = imagesFolder;
         this.fileName = fileName;
 
         GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(5, 5, 5, 5).applyTo(this);
@@ -160,9 +159,9 @@ public class ImageSelectorComposite extends Composite implements Observer {
                         String localFilePath = serializeWebImage(result);
                         loadLocalImage(localFilePath);
                         labelImage.setData(WEB_FILE, result.getFilePath());
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         logger.error(e.getMessage(), e);
-                        SWTeXtension.displayMessageW("Imaginea selectata este invalida sau nu a putut fi incarcata!");
+                        SWTeXtension.displayMessageE("Imaginea selectata este invalida sau nu a putut fi incarcata!", e);
                     }
                 }
             }
@@ -274,7 +273,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
     private String serializeWebImage(ImagePath imagePath) throws IOException {
         URL url = new URL(imagePath.getFilePath());
         InputStream in = new BufferedInputStream(url.openStream());
-        final String localPath = imagesFolder + "/" + imagePath.getFileName();
+        final String localPath = ApplicationService.getApplicationConfig().getAppImagesFolder() + "/" + imagePath.getFileName();
         OutputStream out = new BufferedOutputStream(new FileOutputStream(localPath));
         for (int i; (i = in.read()) != -1; ) {
             out.write(i);

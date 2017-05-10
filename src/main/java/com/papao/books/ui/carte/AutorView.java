@@ -159,7 +159,7 @@ public class AutorView extends AbstractCSaveView {
             }
         }
 
-        this.mainImageComposite = new ImageSelectorComposite(compImage, mainImage, imageName, ApplicationService.getApplicationConfig().getAppImagesFolder());
+        this.mainImageComposite = new ImageSelectorComposite(compImage, mainImage, imageName);
         this.addObserver(mainImageComposite);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
