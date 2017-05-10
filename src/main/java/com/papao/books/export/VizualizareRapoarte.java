@@ -48,6 +48,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
     private ToolItem itemShowRaport;
     private ToolItem itemLaunchRaport;
     private ToolItem itemRefresh;
+    private ToolItem itemDelete;
     private static final String TREE_KEY = "leftTree";
     private static final String TABLE_KEY = "reportsViewer";
     private final static String[] COLS = new String[]{"Nume raport", "Tip raport", "Cale", "Data server"};
@@ -65,7 +66,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
 
         try {
             addComponents();
-            populateFields();
+            refresh();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             SWTeXtension.displayMessageEGeneric(e);
@@ -165,7 +166,14 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         this.itemLaunchRaport.setEnabled(false);
         this.itemLaunchRaport.setText("&Lansare aplicatie externa");
 
-        this.rightViewer = new TableViewer(comp, SWT.SINGLE | SWT.FULL_SELECTION | SWT.VIRTUAL | SWT.BORDER);
+        this.itemDelete = new ToolItem(bar, SWT.NONE);
+        this.itemDelete.setImage(AppImages.getImage24(AppImages.IMG_CANCEL));
+        this.itemDelete.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CANCEL));
+        this.itemDelete.addListener(SWT.Selection, this);
+        this.itemDelete.setEnabled(false);
+        this.itemDelete.setText("Sterge");
+
+        this.rightViewer = new TableViewer(comp, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
         this.rightViewer.setUseHashlookup(true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this.rightViewer.getControl());
         this.rightViewer.getTable().setHeaderVisible(true);
@@ -315,6 +323,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
                 menu.getItem(idx++).setEnabled(isSupported); // afisare aici
                 menu.getItem(idx++).setEnabled(hasSelection); // lansare app externa
                 menu.getItem(idx++).setEnabled(hasSelection); // deschide folder
+                menu.getItem(idx++).setEnabled(hasSelection); // delete
             }
         });
 
@@ -324,7 +333,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                populateFields();
+                refresh();
             }
         });
 
@@ -361,32 +370,41 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
             }
         });
 
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Stergere");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                VizualizareRapoarte.this.itemDelete.notifyListeners(SWT.Selection, new Event());
+            }
+        });
+
         return menu;
     }
 
-    private void populateFields() {
+    private void refresh() {
         this.leftViewer.setInput(null);
         this.rightViewer.setInput(null);
         this.leftViewer.getTree().setSortColumn(null);
         this.rightViewer.getTable().setSortColumn(null);
 
         IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getReportsCollectionName(), "type");
-        createTreeNodes(wrapper, "Rapoarte");
+        createTreeNodes(wrapper);
     }
 
-    private void createTreeNodes(IntValuePairsWrapper wrapper, String rootNodeName) {
+    private void createTreeNodes(IntValuePairsWrapper wrapper) {
         SimpleTextNode baseNode;
         boolean showAllNode = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_ALL);
         boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
         if (showAllNode) {
-            SimpleTextNode allNode = new SimpleTextNode(rootNodeName);
+            SimpleTextNode allNode = new SimpleTextNode("Rapoarte");
             allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
             allNode.setCount(wrapper.getValidDistinctValues());
             allNode.setAllNode(true);
             allNode.setQueryValue(null);
             if (showNumbers) {
-                allNode.setName(rootNodeName + " (" + allNode.getCount() + ")");
+                allNode.setName("Rapoarte" + " (" + allNode.getCount() + ")");
             }
             invisibleRoot.add(allNode);
             baseNode = allNode;
@@ -413,6 +431,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
     private void enableButtons() {
         boolean hasSelection = this.rightViewer.getTable().getSelectionCount() > 0;
         this.itemLaunchRaport.setEnabled(hasSelection);
+        this.itemDelete.setEnabled(hasSelection);
         boolean isSupported = false;
         if (hasSelection) {
             ApplicationReport rp = (ApplicationReport) this.rightViewer.getTable().getSelection()[0].getData();
@@ -458,7 +477,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
                         value = selectedNode.getQueryValue();
                     }
                     rightViewer.setInput(null);
-                    rightViewer.setInput(ReportController.getReports(all, ExportType.valueOf(value)));
+                    rightViewer.setInput(ReportController.getReports(all, all ? null : ExportType.valueOf(value)));
 
                 } else if (e.widget == this.rightViewer.getTable()) {
                     enableButtons();
@@ -466,21 +485,62 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
                     if (this.rightViewer.getTable().getSelectionIndex() == -1) {
                         return;
                     }
-                    ApplicationReport rp = (ApplicationReport) this.rightViewer.getTable().getSelection()[0].getData();
-                    Program.launch(rp.getCale());
+                    Display.getDefault().asyncExec(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (TableItem item : rightViewer.getTable().getSelection()) {
+                                if (item.isDisposed()) {
+                                    return;
+                                }
+                                ApplicationReport rp = (ApplicationReport) item.getData();
+                                Program.launch(rp.getCale());
+                                Display.getDefault().readAndDispatch();
+                            }
+                        }
+                    });
                 } else if (e.widget == this.itemShowRaport) {
                     if (this.rightViewer.getTable().getSelectionIndex() == -1) {
                         return;
                     }
-                    ApplicationReport rp = (ApplicationReport) this.rightViewer.getTable().getSelection()[0].getData();
-                    VizualizareRapoarte.showRaport(rp);
+                    Display.getDefault().asyncExec(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (TableItem item : rightViewer.getTable().getSelection()) {
+                                if (item.isDisposed()) {
+                                    return;
+                                }
+                                ApplicationReport rp = (ApplicationReport) item.getData();
+                                VizualizareRapoarte.showRaport(rp);
+                                Display.getDefault().readAndDispatch();
+                            }
+                        }
+                    });
                 } else if (e.widget == this.itemRefresh) {
-                    populateFields();
+                    refresh();
+                } else if (e.widget == this.itemDelete) {
+                    if (this.rightViewer.getTable().getSelectionIndex() == -1) {
+                        return;
+                    }
+                    Display.getDefault().asyncExec(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (TableItem item : rightViewer.getTable().getSelection()) {
+                                if (item.isDisposed()) {
+                                    return;
+                                }
+                                ApplicationReport rp = (ApplicationReport) item.getData();
+                                ReportController.delete(rp);
+                                item.dispose();
+                                Display.getDefault().readAndDispatch();
+                            }
+                            refresh();
+                        }
+                    });
                 }
             } else if (e.type == SWT.KeyDown) {
                 if (e.widget == this.rightViewer.getTable()) {
                     if (e.keyCode == SWT.F5) {
-                        populateFields();
+                        refresh();
                     }
                 }
             }

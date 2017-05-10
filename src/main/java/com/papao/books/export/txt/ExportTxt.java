@@ -16,6 +16,7 @@ import com.papao.books.ui.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 
 import java.io.File;
@@ -192,6 +193,7 @@ public final class ExportTxt {
 
             for (int j = 0; j < nrOfItems; j++) {
                 wait.advance(j);
+                Display.getDefault().readAndDispatch();
                 tf.nextRow();
                 if (showNrCrt) {
                     tf.nextCell();

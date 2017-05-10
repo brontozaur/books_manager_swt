@@ -18,6 +18,7 @@ import com.papao.books.ui.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TableItem;
 
 import java.awt.*;
@@ -230,6 +231,7 @@ public final class ExportRtf {
             final TableItem[] items = swtTable.getItems();
             for (int i = 0; i < items.length; i++) {
                 wait.advance(i);
+                Display.getDefault().readAndDispatch();
 
                 if (exportSetting.isShowNrCrt()) {
                     p = new Paragraph(String.valueOf(i + 1), font);

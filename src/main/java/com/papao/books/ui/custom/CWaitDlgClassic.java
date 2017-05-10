@@ -143,6 +143,7 @@ public final class CWaitDlgClassic {
 
     public void advance(final int idx) {
         this.cpbar.advance(idx);
+        Display.getDefault().readAndDispatch();
     }
 
     public String getMessage() {

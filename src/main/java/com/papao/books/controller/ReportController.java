@@ -28,4 +28,8 @@ public class ReportController {
     public static ApplicationReport save(ApplicationReport report) {
         return reportRepository.save(report);
     }
+
+    public static void delete(ApplicationReport report) {
+        reportRepository.delete(report);
+    }
 }

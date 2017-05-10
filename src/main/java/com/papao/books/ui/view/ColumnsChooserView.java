@@ -32,6 +32,7 @@ public class ColumnsChooserView extends AbstractCView implements IReset {
 		setBigViewImage(AppImages.getImage24(AppImages.IMG_SELECT));
 		setBigViewMessage("Selectati coloanele dorite");
 		setShowSaveOKMessage(false);
+		setIsUsingCoords(false);
 	}
 
 	@Override

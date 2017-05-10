@@ -16,6 +16,7 @@ import com.papao.books.ui.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -267,6 +268,7 @@ public final class ExportPdf {
             final TableItem[] items = swtTable.getItems();
             for (int i = 0; i < items.length; i++) {
                 wait.advance(i);
+                Display.getDefault().readAndDispatch();
 
                 if (showNrCrt) {
                     p = new Paragraph(String.valueOf(i + 1), font);

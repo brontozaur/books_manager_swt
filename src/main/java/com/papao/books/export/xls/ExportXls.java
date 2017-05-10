@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -334,6 +335,7 @@ public final class ExportXls {
 
                 for (int i = 0; (i < ExportXls.MAX_ROWS - (afisareHeader ? 3 : 0)) && (crtInputIndex < nrOfItems); i++) {
                     wait.advance(i);
+                    Display.getDefault().readAndDispatch();
                     row = sheet.createRow(afisareHeader ? (i + 3) : i);
                     sheetColumnIndex = 0;
                     final TableItem it = swtTable.getItem(crtInputIndex++);
@@ -357,6 +359,7 @@ public final class ExportXls {
                     for (int i = 0; i < sheetColumnIndex; i++) {
                         wait.advance(i);
                         sheet.autoSizeColumn(i);
+                        Display.getDefault().readAndDispatch();
                     }
                 }
 
