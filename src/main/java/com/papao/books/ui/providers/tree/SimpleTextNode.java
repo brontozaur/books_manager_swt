@@ -7,9 +7,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class SimpleTextNode implements ITreeNode {
 
@@ -27,8 +25,8 @@ public class SimpleTextNode implements ITreeNode {
     private ITreeNode parent;
     private List<ITreeNode> childrens;
     private int count;
-    private boolean isAllNode;
-    private String queryValue;
+    private Object queryValue;
+    private NodeType nodeType;
 
     public SimpleTextNode(final String node) {
         this(null, node);
@@ -42,7 +40,10 @@ public class SimpleTextNode implements ITreeNode {
             this.node = node;
         }
         setKey(this.node);
-        this.ancestors = new ArrayList<SimpleTextNode>();
+        this.ancestors = new ArrayList<>();
+        if (parent != null) {
+            parent.getChildrens().add(this);
+        }
     }
 
     @Override
@@ -220,39 +221,27 @@ public class SimpleTextNode implements ITreeNode {
     }
 
     public String getItemCountStr() {
-        return "(" + count + ")";
+        return " (" + count + ")";
     }
 
-    public static void decrementByOne(final SimpleTextNode node,
-                                      final boolean showItemCount,
-                                      final boolean processParents) {
-        if (node == null) {
-            return;
-        }
-        String numeNod = node.getName();
+    public void modifyCount(boolean showItemCount,
+                            boolean processParents) {
+        String numeNod = getName();
         if (showItemCount) {
-            if (numeNod.indexOf('(') != -1) {
-                numeNod = numeNod.substring(0, numeNod.lastIndexOf('('));
+            if (numeNod.contains(" (")) {
+                numeNod = numeNod.substring(0, numeNod.lastIndexOf(" ("));
             }
-            numeNod += node.getItemCountStr();
+            numeNod += getItemCountStr();
         }
         if (processParents) {
-            List<SimpleTextNode> parents = node.getAncestors();
+            List<SimpleTextNode> parents = getAncestors();
             if (parents != null) {
                 for (int i = 0; i < parents.size(); i++) {
-                    SimpleTextNode.decrementByOne(parents.get(i), showItemCount, true);
+                    parents.get(i).modifyCount(showItemCount, processParents);
                 }
             }
         }
-        List<ITreeNode> copii = node.getChildrens();
-        if (copii != null) {
-            for (int i = 0; i < copii.size(); i++) {
-                SimpleTextNode.decrementByOne((SimpleTextNode) copii.get(i),
-                        showItemCount,
-                        false);
-            }
-        }
-        node.setName(numeNod);
+        setName(numeNod);
     }
 
     public static SimpleTextNode getRecentNode(final Object invisibleRoot) {
@@ -269,6 +258,14 @@ public class SimpleTextNode implements ITreeNode {
             createChildrens();
         }
         return this.childrens;
+    }
+
+    public void increment() {
+        count++;
+    }
+
+    public void decrement() {
+        count--;
     }
 
     public void setCount(int count) {
@@ -303,18 +300,60 @@ public class SimpleTextNode implements ITreeNode {
     }
 
     public boolean isAllNode() {
-        return isAllNode;
+        return nodeType == NodeType.ALL;
     }
 
-    public void setAllNode(boolean allNode) {
-        isAllNode = allNode;
-    }
-
-    public String getQueryValue() {
+    public Object getQueryValue() {
         return queryValue;
     }
 
-    public void setQueryValue(String queryValue) {
+    public void setQueryValue(Object queryValue) {
         this.queryValue = queryValue;
+    }
+
+    public NodeType getNodeType() {
+        return nodeType;
+    }
+
+    public void setNodeType(NodeType nodeType) {
+        this.nodeType = nodeType;
+    }
+
+    public Date getMinDate() {
+        Calendar minDate = Calendar.getInstance();
+        minDate.setTime((Date) queryValue);
+        minDate.set(Calendar.AM_PM, Calendar.AM);
+        minDate.set(Calendar.HOUR, minDate.getMinimum(Calendar.HOUR));
+        minDate.set(Calendar.MINUTE, minDate.getMinimum(Calendar.MINUTE));
+        minDate.set(Calendar.SECOND, minDate.getMinimum(Calendar.SECOND));
+        if (nodeType == NodeType.DAY) {
+            return minDate.getTime();
+        } else if (nodeType == NodeType.MONTH) {
+            minDate.set(Calendar.DAY_OF_MONTH, minDate.getMinimum(Calendar.DAY_OF_MONTH));
+            return minDate.getTime();
+        } else {
+            minDate.set(Calendar.DAY_OF_MONTH, minDate.getMinimum(Calendar.DAY_OF_MONTH));
+            minDate.set(Calendar.MONTH, minDate.getMinimum(Calendar.MONTH));
+            return minDate.getTime();
+        }
+    }
+
+    public Date getMaxDate() {
+        Calendar maxDate = Calendar.getInstance();
+        maxDate.setTime((Date) queryValue);
+        maxDate.set(Calendar.AM_PM, Calendar.PM);
+        maxDate.set(Calendar.HOUR, maxDate.getMaximum(Calendar.HOUR));
+        maxDate.set(Calendar.MINUTE, maxDate.getMaximum(Calendar.MINUTE));
+        maxDate.set(Calendar.SECOND, maxDate.getMaximum(Calendar.SECOND));
+        if (nodeType == NodeType.DAY) {
+            return maxDate.getTime();
+        } else if (nodeType == NodeType.MONTH) {
+            maxDate.set(Calendar.DAY_OF_MONTH, maxDate.getMaximum(Calendar.DAY_OF_MONTH));
+            return maxDate.getTime();
+        } else {
+            maxDate.set(Calendar.DAY_OF_MONTH, maxDate.getMaximum(Calendar.DAY_OF_MONTH));
+            maxDate.set(Calendar.MONTH, maxDate.getMaximum(Calendar.MONTH));
+            return maxDate.getTime();
+        }
     }
 }

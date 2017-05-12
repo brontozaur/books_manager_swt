@@ -10,10 +10,7 @@ import com.papao.books.model.config.TableSetting;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.providers.AdbMongoContentProvider;
 import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
-import com.papao.books.ui.providers.tree.IntValuePair;
-import com.papao.books.ui.providers.tree.IntValuePairsWrapper;
-import com.papao.books.ui.providers.tree.SimpleTextNode;
-import com.papao.books.ui.providers.tree.TreeContentProvider;
+import com.papao.books.ui.providers.tree.*;
 import com.papao.books.ui.util.*;
 import com.papao.books.ui.util.sorter.AbstractColumnViewerSorter;
 import com.papao.books.ui.util.sorter.AbstractTableColumnViewerSorter;
@@ -401,7 +398,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
             SimpleTextNode allNode = new SimpleTextNode("Rapoarte");
             allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
             allNode.setCount(wrapper.getValidDistinctValues());
-            allNode.setAllNode(true);
+            allNode.setNodeType(NodeType.ALL);
             allNode.setQueryValue(null);
             if (showNumbers) {
                 allNode.setName("Rapoarte" + " (" + allNode.getCount() + ")");
@@ -469,15 +466,15 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
                     }
                 } else if (e.widget == this.leftViewer.getTree()) {
                     boolean all = true;
-                    String value = "";
+                    Object value = "";
                     if (!leftViewer.getSelection().isEmpty()) {
                         TreeItem item = leftViewer.getTree().getSelection()[0];
                         SimpleTextNode selectedNode = (SimpleTextNode) item.getData();
-                        all = selectedNode.isAllNode();
+                        all = selectedNode.getNodeType() == NodeType.ALL;
                         value = selectedNode.getQueryValue();
                     }
                     rightViewer.setInput(null);
-                    rightViewer.setInput(ReportController.getReports(all, all ? null : ExportType.valueOf(value)));
+                    rightViewer.setInput(ReportController.getReports(all, all ? null : ExportType.valueOf(value.toString())));
 
                 } else if (e.widget == this.rightViewer.getTable()) {
                     enableButtons();

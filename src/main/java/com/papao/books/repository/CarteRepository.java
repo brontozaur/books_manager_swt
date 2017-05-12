@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -43,6 +44,14 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
     Page<Carte> getByTitluIsNullOrTitluIsOrderByTitluAsc(String emptyString, Pageable pageable);
 
     Page<Carte> getByTitluStartingWithIgnoreCaseOrderByTitluAsc(String titluStartsWith, Pageable pageable);
+
+    Page<Carte> getByCreatedAtIsNullOrderByTitluAsc(Pageable pageable);
+
+    Page<Carte> getByCreatedAtBetweenOrderByTitluAsc(Date createdDateStart, Date createdDateEnd,  Pageable pageable);
+
+    Page<Carte> getByUpdatedAtIsNullOrderByTitluAsc(Pageable pageable);
+
+    Page<Carte> getByUpdatedAtBetweenOrderByTitluAsc(Date updatedDateStart, Date updatedDateEnd,  Pageable pageable);
 
     //string arrays
     Page<Carte> getByTraducatoriIsNullOrTraducatoriIsLessThanEqualOrderByTitluAsc(String[] emptyString, Pageable pageable);

@@ -21,10 +21,7 @@ import com.papao.books.ui.preluari.AutoriImportView;
 import com.papao.books.ui.preluari.BookImportView;
 import com.papao.books.ui.providers.AdbMongoContentProvider;
 import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
-import com.papao.books.ui.providers.tree.IntValuePair;
-import com.papao.books.ui.providers.tree.IntValuePairsWrapper;
-import com.papao.books.ui.providers.tree.SimpleTextNode;
-import com.papao.books.ui.providers.tree.TreeContentProvider;
+import com.papao.books.ui.providers.tree.*;
 import com.papao.books.ui.searcheable.BookSearchType;
 import com.papao.books.ui.user.UsersView;
 import com.papao.books.ui.util.*;
@@ -556,6 +553,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         leftTreeViewer.getTree().setHeaderVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(leftTreeViewer.getTree());
         leftTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+        WidgetTreeUtil.customizeTreeBehaviour(leftTreeViewer.getTree());
 
         TableSetting setting = SettingsController.getTableSetting(1, getClass(), TREE_KEY);
         int[] dims = setting.getWidths();
@@ -676,6 +674,20 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 createTreeNodes(wrapper, "Toate titlurile");
                 break;
             }
+            case CREATA: {
+                SimpleTextNode invisibleRoot = ApplicationController.getDateTreeStructure(ApplicationService.getApplicationConfig().getBooksCollectionName(),
+                        "createdAt",
+                        leftTreeViewer.getAutoExpandLevel() == AbstractTreeViewer.ALL_LEVELS);
+                leftTreeViewer.setInput(invisibleRoot);
+                break;
+            }
+            case ACTUALIZATA: {
+                SimpleTextNode invisibleRoot = ApplicationController.getDateTreeStructure(ApplicationService.getApplicationConfig().getBooksCollectionName(),
+                        "updatedAt",
+                        leftTreeViewer.getAutoExpandLevel() == AbstractTreeViewer.ALL_LEVELS);
+                leftTreeViewer.setInput(invisibleRoot);
+                break;
+            }
             default:
                 SWTeXtension.displayMessageI("Vizualizarea dupa " + searchType + " nu este implementata inca!");
         }
@@ -690,7 +702,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             SimpleTextNode allNode = new SimpleTextNode(rootNodeName);
             allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
             allNode.setCount(wrapper.getValidDistinctValues());
-            allNode.setAllNode(true);
+            allNode.setNodeType(NodeType.ALL);
             allNode.setQueryValue(null);
             if (showAll) {
                 allNode.setName(rootNodeName + " (" + allNode.getCount() + ")");
@@ -804,7 +816,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             @Override
             public final void handleEvent(final Event e) {
                 SimpleTextNode selectedNode = (SimpleTextNode) leftTreeViewer.getTree().getSelection()[0].getData();
-                String idAutor = selectedNode.getQueryValue();
+                String idAutor = (String) selectedNode.getQueryValue();
                 new AutorView(getShell(), AutorController.findOne(new ObjectId(idAutor)), AbstractView.MODE_MODIFY).open();
             }
         });
@@ -1591,18 +1603,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     private void refreshTableViewer() {
-        String value = null;
-        boolean all = true;
         this.tableViewer.resetFilters();
+        tableViewer.setInput(null);
         if (!leftTreeViewer.getSelection().isEmpty()) {
             TreeItem item = leftTreeViewer.getTree().getSelection()[0];
             SimpleTextNode selectedNode = (SimpleTextNode) item.getData();
-            all = selectedNode.isAllNode();
-            value = selectedNode.getQueryValue();
+            Pageable pageable = paginationComposite.getPageable(true);
+            ApplicationService.getBookController().requestSearch(this.searchType, selectedNode, pageable);
         }
-        tableViewer.setInput(null);
-        Pageable pageable = paginationComposite.getPageable(true);
-        ApplicationService.getBookController().requestSearch(this.searchType, value, pageable, all);
     }
 
     public static ToolBar getBarDocking() {

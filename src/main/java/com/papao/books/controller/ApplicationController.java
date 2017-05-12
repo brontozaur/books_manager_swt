@@ -7,10 +7,15 @@ import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
+import com.papao.books.config.BooleanSetting;
 import com.papao.books.model.DocumentData;
+import com.papao.books.ui.AppImages;
 import com.papao.books.ui.custom.ImageSelectorComposite;
 import com.papao.books.ui.providers.tree.IntValuePair;
 import com.papao.books.ui.providers.tree.IntValuePairsWrapper;
+import com.papao.books.ui.providers.tree.NodeType;
+import com.papao.books.ui.providers.tree.SimpleTextNode;
+import com.papao.books.ui.util.BorgDateUtil;
 import com.papao.books.ui.util.FileTypeDetector;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -27,9 +32,7 @@ import org.springframework.stereotype.Controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class ApplicationController {
@@ -228,6 +231,91 @@ public class ApplicationController {
             occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
+    }
+
+    public static SimpleTextNode getDateTreeStructure(String collectionName, String propName, boolean isAutoExpand) {
+        DBCollection collection = mongoTemplate.getCollection(collectionName);
+
+        Query query = new Query();
+        Criteria criteria = new Criteria().orOperator(Criteria.where(propName).is(null),
+                Criteria.where(propName).is(""));
+        query.addCriteria(criteria);
+        long documentsWithNoPropertySet = mongoTemplate.count(query, collectionName);
+
+        boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
+
+        SimpleTextNode invisibleRoot = new SimpleTextNode(null);
+        if (documentsWithNoPropertySet > 0) {
+            //empty node on root
+            SimpleTextNode emptyNode = invisibleRoot.getChildren("");
+            if (emptyNode == null) {
+                emptyNode = new SimpleTextNode(invisibleRoot, "");
+                emptyNode.setQueryValue(null);
+            }
+            emptyNode.setCount((int) documentsWithNoPropertySet);
+            emptyNode.modifyCount(showNumbers, true);
+        }
+
+        boolean afisareFull = true;
+        boolean afisareTipScurt = false;
+        //TODO introduce config and read from config
+
+        List<Date> list = collection.distinct(propName);
+        for (Date distinctValue : list) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(distinctValue);
+
+            //an
+            String an = String.valueOf(cal.get(Calendar.YEAR));
+            SimpleTextNode yearNode = invisibleRoot.getChildren(an);
+            if (yearNode == null) {
+                yearNode = new SimpleTextNode(invisibleRoot, an);
+                yearNode.setQueryValue(cal.getTime());
+                yearNode.setNodeType(NodeType.YEAR);
+            }
+            yearNode.setImage(AppImages.getImage16(isAutoExpand ? AppImages.IMG_EXPAND : AppImages.IMG_COLLAPSE));
+
+            //luna
+            int luna = cal.get(Calendar.MONTH);
+            StringBuilder numeLuna = new StringBuilder();
+            if (afisareFull) {
+                numeLuna.append(BorgDateUtil.LUNILE[luna]);
+            } else if (afisareTipScurt) {
+                numeLuna.append(BorgDateUtil.LUNILE_SCURT[luna]);
+            } else {
+                String nume = String.valueOf(luna);
+                if (luna < 10) {
+                    nume = "0" + nume;
+                }
+                numeLuna.append(nume);
+            }
+
+            SimpleTextNode lunaNode = yearNode.getChildren(numeLuna.toString());
+            if (lunaNode == null) {
+                lunaNode = new SimpleTextNode(yearNode, numeLuna.toString());
+                lunaNode.setQueryValue(cal.getTime());
+                lunaNode.setNodeType(NodeType.MONTH);
+            }
+            lunaNode.setImage(AppImages.getImage16(isAutoExpand ? AppImages.IMG_EXPAND : AppImages.IMG_COLLAPSE));
+
+            String ziua = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+            if (ziua.length() == 1) {
+                ziua = "0" + ziua;
+            }
+            SimpleTextNode ziuaNode = lunaNode.getChildren(ziua);
+            if (ziuaNode == null) {
+                ziuaNode = new SimpleTextNode(lunaNode, ziua);
+                ziuaNode.setQueryValue(cal.getTime());
+                ziuaNode.setNodeType(NodeType.DAY);
+            }
+            ziuaNode.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
+            ziuaNode.increment();
+            lunaNode.increment();
+            yearNode.increment();
+            ziuaNode.modifyCount(showNumbers, true);
+        }
+
+        return invisibleRoot;
     }
 
     /*

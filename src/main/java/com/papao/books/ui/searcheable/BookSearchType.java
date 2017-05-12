@@ -10,6 +10,8 @@ public enum BookSearchType {
     TRADUCATOR,
     TIP_COPERTA,
     LIMBA_ORIGINALA,
+    CREATA,
+    ACTUALIZATA,
 
     CITITORI
 }
