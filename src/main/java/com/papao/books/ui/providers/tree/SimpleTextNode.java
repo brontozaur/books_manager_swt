@@ -23,7 +23,7 @@ public class SimpleTextNode implements ITreeNode {
     private final List<SimpleTextNode> ancestors;
     private static final String INVISIBLE_ROOT = "invisibleRoot";
     private ITreeNode parent;
-    private List<ITreeNode> childrens;
+    private List<ITreeNode> childrens = new ArrayList<>();
     private int count;
     private Object queryValue;
     private NodeType nodeType;
@@ -288,13 +288,10 @@ public class SimpleTextNode implements ITreeNode {
 
     @Override
     public void createChildrens() {
-        if (this.childrens == null) {
-            this.childrens = new ArrayList<ITreeNode>();
-        }
         this.childrens.clear();
         if (this.nodes != null) {
             for (String tmp : this.nodes) {
-                add(new SimpleTextNode(this, tmp));
+                new SimpleTextNode(this, tmp);
             }
         }
     }
