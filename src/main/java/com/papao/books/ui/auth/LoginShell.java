@@ -2,6 +2,7 @@ package com.papao.books.ui.auth;
 
 import com.github.haixing_hu.swt.panel.BlurredPanel;
 import com.novocode.naf.swt.custom.BalloonNotification;
+import com.papao.books.ApplicationService;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.AMongodbComparator;
@@ -40,6 +41,7 @@ public class LoginShell extends AbstractCView implements Listener {
     private XButton buttonLogin;
     private XButton buttonExit;
     private BlurredPanel bp;
+    private Label easterEggLabel;
 
     public LoginShell() throws Exception {
         super(null, AbstractView.MODE_NONE);
@@ -53,7 +55,6 @@ public class LoginShell extends AbstractCView implements Listener {
     }
 
     private void addComponents() throws Exception {
-        Label tmpLabel;
 
         getShell().addListener(SWT.Close, this);
         getShell().setBackground(ColorUtil.COLOR_WHITE);
@@ -67,11 +68,10 @@ public class LoginShell extends AbstractCView implements Listener {
         upperComp.setBackground(ColorUtil.COLOR_ALBASTRU_FACEBOOK);
         upperComp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
-        tmpLabel = new Label(upperComp, SWT.NONE);
-        tmpLabel.setForeground(ColorUtil.COLOR_WHITE);
-        tmpLabel.setFont(FontUtil.TAHOMA14_NORMAL);
-        GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).applyTo(tmpLabel);
-        tmpLabel.setText("Follow the white rabbit...");
+        easterEggLabel = new Label(upperComp, SWT.NONE);
+        easterEggLabel.setForeground(ColorUtil.COLOR_WHITE);
+        easterEggLabel.setFont(FontUtil.TAHOMA14_NORMAL);
+        GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).applyTo(easterEggLabel);
 
         Composite compDown = new Composite(getContainer(), SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(compDown);
@@ -175,6 +175,7 @@ public class LoginShell extends AbstractCView implements Listener {
         List<User> users = UserController.findAll();
         Collections.sort(users, AMongodbComparator.getComparator(User.class, "getNumeComplet"));
         comboUsers.setInput(users);
+        easterEggLabel.setText(ApplicationService.getRandomWelcomeMessage());
     }
 
     @Override

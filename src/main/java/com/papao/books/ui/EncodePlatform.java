@@ -103,6 +103,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
     private Text searchText;
+    private CarteCitatComposite carteCitatComposite;
 
     public EncodePlatform() {
         super(null, AbstractView.MODE_NONE);
@@ -355,12 +356,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.bottomInnerTabFolderRight.setMaximizeVisible(false);
         bottomInnerTabFolderRight.setSelectionBackground(ColorUtil.COLOR_SYSTEM);
 
-        CTabItem tabItemDetaliiCarte = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
-        tabItemDetaliiCarte.setText("Documente");
-        tabItemDetaliiCarte.setImage(AppImages.getImage16(AppImages.IMG_DETAILS_NEW));
-        this.bottomInnerTabFolderRight.setSelection(tabItemDetaliiCarte);
+        CTabItem tabDocumente = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        tabDocumente.setText("Documente");
+        tabDocumente.setImage(AppImages.getImage16(AppImages.IMG_DETAILS_NEW));
+        this.bottomInnerTabFolderRight.setSelection(tabDocumente);
 
-        tabItemDetaliiCarte.setControl(createTabDocuments(bottomInnerTabFolderRight));
+        tabDocumente.setControl(createTabDocuments(bottomInnerTabFolderRight));
+
+        CTabItem tabCitate = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        tabCitate.setText("Citate");
+        tabCitate.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
+        carteCitatComposite = new CarteCitatComposite(bottomInnerTabFolderRight);
+        tabCitate.setControl(carteCitatComposite);
 
         this.rightInnerSash.setWeights(new int[]{8, 5});
         tabGrid.setControl(rightInnerSash);
@@ -458,13 +465,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     private Composite createTabDocuments(CTabFolder bottomInnerTabFolderRight) {
         final Composite comp = new Composite(bottomInnerTabFolderRight, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comp);
+        GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).applyTo(comp);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
 
-        dragAndDropTableComposite = new DragAndDropTableComposite(comp, bottomInnerTabFolderRight,
+        dragAndDropTableComposite = new DragAndDropTableComposite(comp, null,
                 new Carte(), true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(dragAndDropTableComposite);
-        bottomInnerTabFolderRight.setTopRight(dragAndDropTableComposite.getBarOps());
 
         return comp;
     }
@@ -478,6 +484,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         rightVerticalSash.setMaximizedControl(null);
         dragAndDropTableComposite.setCarte(carte);
+        carteCitatComposite.setCarte(carte);
 
         readOnlyDetailsComposite.populateFields(carte);
     }

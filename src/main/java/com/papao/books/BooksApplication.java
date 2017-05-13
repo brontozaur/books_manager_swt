@@ -87,7 +87,7 @@ public class BooksApplication {
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             SWTeXtension.showErrorBoxSWTInternal("A intervenit o eroare fatala la lansarea/inchiderea aplicatiei - " + exc.getMessage() + "."
-                    + "\nAceasta se va inchide acum. Sugestie : contactati producatorul.");
+                    + "\nAceasta se va inchide acum.");
             closeApplication(true);
         }
     }

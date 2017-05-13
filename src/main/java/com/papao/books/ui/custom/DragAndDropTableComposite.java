@@ -69,7 +69,7 @@ public class DragAndDropTableComposite extends Composite {
             this.barOpsParent = barOpsParent;
         }
 
-        GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).spacing(0,0).extendedMargins(2, 0, 3, 0).applyTo(this);
         GridDataFactory.fillDefaults().grab(true, true).hint(300, 150).applyTo(this);
 
         addComponents();
@@ -77,12 +77,8 @@ public class DragAndDropTableComposite extends Composite {
         enableOps();
     }
 
-    public ToolBar getBarOps() {
-        return this.barOps;
-    }
-
     private void addComponents() {
-        barOps = new ToolBar(barOpsParent, SWT.FLAT | SWT.NO_FOCUS | SWT.RIGHT);
+        barOps = new ToolBar(barOpsParent != null ? barOpsParent : this, SWT.FLAT | SWT.NO_FOCUS | SWT.RIGHT);
         itemAdd = new ToolItem(barOps, SWT.NONE);
         itemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
         itemAdd.setHotImage(AppImages.getImage16Focus(AppImages.IMG_PLUS));
@@ -240,6 +236,7 @@ public class DragAndDropTableComposite extends Composite {
             ApplicationService.getBookController().getRepository().save(carte);
             SWTeXtension.displayMessageI("Am sters " + selectionCount + " documente atasate cartii curente");
         }
+        enableOps();
     }
 
     private void loadFileIntoTable(String filePath) throws IOException {

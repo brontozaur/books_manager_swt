@@ -47,7 +47,7 @@ public class UserController {
         return userActivityRepository.save(userActivity);
     }
 
-    public static UserActivity getUserRatingObject(ObjectId userId, ObjectId bookId) {
+    public static UserActivity getUserActivity(ObjectId userId, ObjectId bookId) {
         return userActivityRepository.getByUserIdAndBookId(userId, bookId);
     }
 
@@ -56,7 +56,7 @@ public class UserController {
     }
 
     public static int getPersonalRating(ObjectId userId, ObjectId bookId) {
-        UserActivity activity = getUserRatingObject(userId, bookId);
+        UserActivity activity = getUserActivity(userId, bookId);
         if (activity != null) {
             return activity.getRatingForBook(bookId);
         }
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     public static UserActivity saveBookRatingForCurrentUser(ObjectId bookId, int rating) {
-        UserActivity userActivity = getUserRatingObject(EncodeLive.getIdUser(), bookId);
+        UserActivity userActivity = getUserActivity(EncodeLive.getIdUser(), bookId);
         if (userActivity == null) {
             userActivity = new UserActivity();
             userActivity.setBookId(bookId);

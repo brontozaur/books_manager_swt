@@ -663,7 +663,7 @@ public final class SWTeXtension {
     }
 
     public static boolean getDeleteTrigger(Event e) {
-        boolean deleteTrigger = false;
+        boolean deleteTrigger;
         if (EncodeLive.IS_MAC) {
             deleteTrigger = (e.stateMask & SWT.COMMAND) != 0;
             if (deleteTrigger) {
@@ -673,5 +673,33 @@ public final class SWTeXtension {
             deleteTrigger = e.character == SWT.DEL;
         }
         return deleteTrigger;
+    }
+
+    public static boolean getSaveTrigger(Event e) {
+        boolean saveTrigger;
+        if (EncodeLive.IS_MAC) {
+            saveTrigger = (e.stateMask & SWT.COMMAND) != 0;
+            if (saveTrigger) {
+                saveTrigger = (e.character == 'S' || e.character == 's');
+            }
+        } else {
+            saveTrigger = (e.character == 'S' || e.character == 's');
+        }
+        return saveTrigger;
+    }
+
+    public static boolean getNewTrigger(Event e) {
+        boolean newTrigger;
+        if (EncodeLive.IS_MAC) {
+            newTrigger = (e.stateMask & SWT.COMMAND) != 0;
+            if (newTrigger) {
+                newTrigger = (e.character == 'A' || e.character == 'a'
+                        || e.character == 'N' || e.character == 'n');
+            }
+        } else {
+            newTrigger = (e.character == 'A' || e.character == 'a'
+                    || e.character == 'N' || e.character == 'n');
+        }
+        return newTrigger;
     }
 }
