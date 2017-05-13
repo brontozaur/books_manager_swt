@@ -15,7 +15,6 @@ public enum BooleanSetting {
     LEFT_TREE_SHOW_ALL(true),
     LEFT_TREE_SHOW_NUMBERS(true),
     LEFT_TREE_SHOW_RECENT(true),
-    AUTOPOPULATE_TABS(true),
     PERSPECTIVE_SHOW_GALLERY(false);
 
     private boolean defaultValue;

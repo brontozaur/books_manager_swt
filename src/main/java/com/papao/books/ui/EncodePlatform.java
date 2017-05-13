@@ -1049,7 +1049,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
-                new AppConfigView(getShell()).open();
+                new AppConfigView(getShell()).open(true, true);
             }
         });
 

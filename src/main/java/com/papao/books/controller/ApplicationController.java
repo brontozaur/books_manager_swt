@@ -9,7 +9,9 @@ import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.papao.books.config.BooleanSetting;
 import com.papao.books.model.DocumentData;
+import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.ui.AppImages;
+import com.papao.books.ui.config.StilAfisareData;
 import com.papao.books.ui.custom.ImageSelectorComposite;
 import com.papao.books.ui.providers.tree.IntValuePair;
 import com.papao.books.ui.providers.tree.IntValuePairsWrapper;
@@ -256,9 +258,9 @@ public class ApplicationController {
             emptyNode.modifyCount(showNumbers, true);
         }
 
-        boolean afisareFull = true;
-        boolean afisareTipScurt = false;
-        //TODO introduce config and read from config
+        GeneralSetting stilAfisareDataInTree = SettingsController.getGeneralSetting("stilAfisareDataInTree");
+        boolean afisareFull = stilAfisareDataInTree != null && ((Integer) stilAfisareDataInTree.getValue()) == StilAfisareData.AFISARE_LUNI_IN_LITERE_FULL;
+        boolean afisareTipScurt = stilAfisareDataInTree != null && ((Integer) stilAfisareDataInTree.getValue()) == StilAfisareData.AFISARE_LUNI_IN_LITERE_SCURT;
 
         List<Date> list = collection.distinct(propName);
         for (Date distinctValue : list) {

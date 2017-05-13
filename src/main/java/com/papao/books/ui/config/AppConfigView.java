@@ -78,7 +78,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
 
         sash = new SashForm(getContainer(), SWT.HORIZONTAL | SWT.SMOOTH);
         sash.SASH_WIDTH = 4;
-        GridDataFactory.fillDefaults().grab(true, true).minSize(500, 400).applyTo(sash);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);
 
         compLeft = new Composite(sash, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(compLeft);
@@ -168,7 +168,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
                 this.rightForm.setContent(new MainPerspective());
             }
             updateDetailMessage("Configurare aspect aplicatie");
-        }else if (catName.equals(AppConfigView.ITEM_SYSTEM_TRAY)) {
+        } else if (catName.equals(AppConfigView.ITEM_SYSTEM_TRAY)) {
             if (this.mapSettings.get(AppConfigView.ITEM_SYSTEM_TRAY) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_SYSTEM_TRAY));
             } else {
@@ -336,7 +336,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             group.setText("Componenta System Tray");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             group.setLayoutData(gd);
-            group.setLayout(new GridLayout(2, true));
+            group.setLayout(new GridLayout(2, false));
 
             this.buttonFolosireSystemTray = new Button(group, SWT.CHECK);
             this.buttonFolosireSystemTray.setText("Folosire System Tray");
@@ -420,7 +420,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             group.setText("Setari rapoarte");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             group.setLayoutData(gd);
-            group.setLayout(new GridLayout(2, true));
+            group.setLayout(new GridLayout(2, false));
 
             this.buttonReportsShowOptions = new Button(group, SWT.CHECK);
             this.buttonReportsShowOptions.setText("Afisare optiuni");
@@ -483,7 +483,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             group = new Group(this, SWT.NONE);
             group.setText("Setari ferestre");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).grab(true, false).applyTo(group);
-            group.setLayout(new GridLayout(2, true));
+            group.setLayout(new GridLayout(2, false));
 
             this.buttonRichWindows = new Button(group, SWT.CHECK);
             this.buttonRichWindows.setText("Ferestre detaliate");
@@ -632,13 +632,15 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
 
         private Button buttonShowAll;
         private Button buttonShowRecentActivity;
-        private Button buttonAutopopulateTabs;
         private Button buttonShowNumbers;
 
         private Combo comboDateFormat;
         private Combo comboTimeFormat;
+        private Combo comboTreeDateFormat;
         private Label labelDatePreview;
         private Label labelTimePreview;
+
+        private GeneralSetting stilAfisareDataInTree = null;
 
         public ConfigApp() {
             super(AppConfigView.this.rightForm);
@@ -663,7 +665,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             group = new Group(this, SWT.NONE);
             group.setText("Setari in aplicatie");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(group);
-            group.setLayout(new GridLayout(2, true));
+            group.setLayout(new GridLayout(2, false));
 
             this.buttonShowAll = new Button(group, SWT.CHECK);
             this.buttonShowAll.setText("afisare nod 'toate' in cadrul grupajelor");
@@ -680,15 +682,15 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowNumbers);
             WidgetCursorUtil.addHandCursorListener(this.buttonShowNumbers);
 
-            this.buttonAutopopulateTabs = new Button(group, SWT.CHECK);
-            this.buttonAutopopulateTabs.setText("afisare inregistrari la deschiderea unei componente");
-            GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonAutopopulateTabs);
-            WidgetCursorUtil.addHandCursorListener(this.buttonAutopopulateTabs);
+            new Label(group, SWT.NONE).setText("Stil afisare data");
+            this.comboTreeDateFormat = new Combo(group, SWT.READ_ONLY);
+            this.comboTreeDateFormat.setItems(StilAfisareData.STIL_AFISARE_DATA);
+            WidgetCursorUtil.addHandCursorListener(this.comboTreeDateFormat);
 
             group = new Group(this, SWT.NONE);
             group.setText("Format data/ora");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(group);
-            group.setLayout(new GridLayout(2, true));
+            group.setLayout(new GridLayout(2, false));
 
             Label tmp = new Label(group, SWT.NONE);
             tmp.setText("Format afisare data");
@@ -730,7 +732,14 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             this.buttonShowAll.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_ALL));
             this.buttonShowRecentActivity.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_RECENT));
             this.buttonShowNumbers.setSelection(SettingsController.getBoolean(LEFT_TREE_SHOW_NUMBERS));
-            this.buttonAutopopulateTabs.setSelection(SettingsController.getBoolean(AUTOPOPULATE_TABS));
+
+            stilAfisareDataInTree = SettingsController.getGeneralSetting("stilAfisareDataInTree");
+            if (stilAfisareDataInTree == null) {
+                stilAfisareDataInTree = new GeneralSetting();
+                stilAfisareDataInTree.setKey("stilAfisareDataInTree");
+                stilAfisareDataInTree.setValue(StilAfisareData.AFISARE_LUNI_IN_CIFRE);
+            }
+            comboTreeDateFormat.select(Integer.valueOf(stilAfisareDataInTree.getValue().toString()));
 
             this.comboDateFormat.select(this.comboDateFormat.indexOf(SettingsController.getString(StringSetting.APP_DATE_FORMAT)));
             this.comboTimeFormat.select(this.comboTimeFormat.indexOf(SettingsController.getString(StringSetting.APP_TIME_FORMAT)));
@@ -744,10 +753,12 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_ALL, buttonShowAll.getSelection());
             SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_RECENT, buttonShowRecentActivity.getSelection());
             SettingsController.saveBooleanSetting(LEFT_TREE_SHOW_NUMBERS, buttonShowNumbers.getSelection());
-            SettingsController.saveBooleanSetting(AUTOPOPULATE_TABS, buttonAutopopulateTabs.getSelection());
 
             SettingsController.saveStringSetting(StringSetting.APP_DATE_FORMAT, comboDateFormat.getText());
             SettingsController.saveStringSetting(StringSetting.APP_TIME_FORMAT, comboTimeFormat.getText());
+
+            stilAfisareDataInTree.setValue(comboTreeDateFormat.getSelectionIndex());
+            SettingsController.saveGeneralSetting(stilAfisareDataInTree);
         }
 
         private void previewDate() {
@@ -810,7 +821,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             Group group = new Group(this, SWT.NONE);
             group.setText("Perspectiva principala");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(group);
-            group.setLayout(new GridLayout(2, true));
+            group.setLayout(new GridLayout(2, false));
 
             this.buttonShowGallery = new Button(group, SWT.CHECK);
             this.buttonShowGallery.setText("afisare galerie carti");
