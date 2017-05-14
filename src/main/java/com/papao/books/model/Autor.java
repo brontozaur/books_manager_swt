@@ -242,4 +242,12 @@ public class Autor extends AuditObject implements Serializable {
     public void setTitlu(String titlu) {
         this.titlu = titlu;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Autor) || ((Autor) obj).getId() == null) {
+            return false;
+        }
+        return ((Autor) obj).getId().equals(this.id);
+    }
 }
