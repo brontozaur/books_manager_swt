@@ -373,9 +373,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         tabGrid.setControl(rightInnerSash);
 
         readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash);
-        //table viewer is notified when rating changes on the details composite
+        // table viewer is notified when rating changes on the details composite
         readOnlyDetailsComposite.addObserver(this);
-        galleryComposite.addObserver(this);
+        // read only composite is notified when grid selection changes
+        readOnlyDetailsComposite.addObserver(galleryComposite);
+        // gallery composite is notified when a new image was selected in the image selector
         galleryComposite.addObserver(readOnlyDetailsComposite);
 
         rightVerticalSash.setWeights(new int[]{9, 3});

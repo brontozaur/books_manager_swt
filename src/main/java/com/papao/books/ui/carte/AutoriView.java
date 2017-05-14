@@ -353,7 +353,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
 
         autorImageComposite = new ImageSelectorComposite(upperComp, null, null);
         this.addObserver(autorImageComposite);
-        GridData mainImageData = (GridData) autorImageComposite.getLayoutData();
+        GridData mainImageData = autorImageComposite.getLayoutData();
         mainImageData.grabExcessHorizontalSpace = false;
         mainImageData.grabExcessVerticalSpace = false;
         mainImageData.verticalAlignment = SWT.BEGINNING;
@@ -389,7 +389,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
 
         booksImageComposite = new ImageSelectorComposite(lowerComp, null, null);
         this.addObserver(booksImageComposite);
-        GridData data = (GridData) booksImageComposite.getLayoutData();
+        GridData data = booksImageComposite.getLayoutData();
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = false;
         data.verticalAlignment = SWT.BEGINNING;

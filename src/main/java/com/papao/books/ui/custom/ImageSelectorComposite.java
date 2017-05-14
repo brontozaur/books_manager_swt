@@ -15,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 import java.io.*;
@@ -22,7 +23,13 @@ import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ImageSelectorComposite extends Composite implements Observer {
+public class ImageSelectorComposite extends Observable implements Observer {
+
+    private static final Logger logger = Logger.getLogger(ImageSelectorComposite.class);
+
+    private static String SWT_FULL_IMAGE = "SWT_FULL_IMAGE";
+    private static String OS_FILE = "OS_FILE";
+    private static String WEB_FILE = "WEB_FILE";
 
     private Label labelImage;
     private ImageViewer previewShell;
@@ -30,23 +37,19 @@ public class ImageSelectorComposite extends Composite implements Observer {
     private String fileName;
     private final int WIDTH = 160;
     private final int HEIGHT = 180;
+    private Composite mainComposite;
     private String startUrl = "https://www.google.ro/search?tbm=isch&biw=" +
             Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
             Display.getCurrent().getPrimaryMonitor().getBounds().height + "&q=&oq=";
 
-    private static String SWT_FULL_IMAGE = "SWT_FULL_IMAGE";
-    private static String OS_FILE = "OS_FILE";
-    private static String WEB_FILE = "WEB_FILE";
-    private static final Logger logger = Logger.getLogger(ImageSelectorComposite.class);
-
     public ImageSelectorComposite(Composite parent, Image fullImage, String fileName) {
-        super(parent, SWT.NONE);
         this.fileName = fileName;
 
-        GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(5, 5, 5, 5).applyTo(this);
-        GridDataFactory.fillDefaults().grab(false, false).hint(WIDTH + 15, HEIGHT + 40).applyTo(this);
+        this.mainComposite = new Composite(parent, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(5, 5, 5, 5).applyTo(this.mainComposite);
+        GridDataFactory.fillDefaults().grab(false, false).hint(WIDTH + 15, HEIGHT + 40).applyTo(this.mainComposite);
 
-        labelImage = new Label(this, SWT.NONE);
+        labelImage = new Label(this.mainComposite, SWT.NONE);
         GridDataFactory.fillDefaults().hint(WIDTH, HEIGHT).align(SWT.CENTER, SWT.FILL).applyTo(labelImage);
         labelImage.addListener(SWT.MouseDown, new Listener() {
             @Override
@@ -71,7 +74,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
             }
         });
 
-        final Menu menu = new Menu(getShell(), SWT.POP_UP);
+        final Menu menu = new Menu(this.mainComposite.getShell(), SWT.POP_UP);
         MenuItem item = new MenuItem(menu, SWT.PUSH);
         item.setText("Fisier local");
         item.addListener(SWT.Selection, new Listener() {
@@ -91,7 +94,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
             }
         });
 
-        final ToolBar bar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
+        final ToolBar bar = new ToolBar(this.mainComposite, SWT.FLAT | SWT.RIGHT);
         GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.END).grab(true, false).applyTo(bar);
 
         final ToolItem itemLocalSelection = new ToolItem(bar, SWT.PUSH);
@@ -130,16 +133,16 @@ public class ImageSelectorComposite extends Composite implements Observer {
         if (fullImage != null && !fullImage.isDisposed()) {
             populateFields(fullImage);
         }
-        this.setSize(this.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        this.mainComposite.setSize(this.mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-        this.addListener(SWT.Paint, new Listener() {
+        this.mainComposite.addListener(SWT.Paint, new Listener() {
             @Override
             public void handleEvent(final Event e) {
                 e.gc.setForeground(ColorUtil.COLOR_BLACK);
                 e.gc.drawRoundRectangle(0,
                         0,
-                        getClientArea().width - 1,
-                        getClientArea().height - 1,
+                        mainComposite.getClientArea().width - 1,
+                        mainComposite.getClientArea().height - 1,
                         3,
                         3);
 
@@ -148,7 +151,7 @@ public class ImageSelectorComposite extends Composite implements Observer {
     }
 
     private void webImageSearch() {
-        final WebBrowser hb = new WebBrowser(getShell(), startUrl, true);
+        final WebBrowser hb = new WebBrowser(this.mainComposite.getShell(), startUrl, true);
         hb.getShell().addListener(SWT.Close, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -212,13 +215,15 @@ public class ImageSelectorComposite extends Composite implements Observer {
             }
             labelImage.setImage(null);
             imageChanged = true;
+            setChanged();
+            notifyObservers();
         }
     }
 
     private void selectImage() {
         FileDialog dlg;
         try {
-            dlg = new FileDialog(getShell(), SWT.OPEN);
+            dlg = new FileDialog(this.mainComposite.getShell(), SWT.OPEN);
             dlg.setFilterExtensions(new String[]{"*.jpg;*.png;*.jpeg;*.bmp;*.gif"});
             dlg.setFilterNames(new String[]{"Imagini (*.*)"});
             String selectedFile = dlg.open();
@@ -245,7 +250,9 @@ public class ImageSelectorComposite extends Composite implements Observer {
         Image resizedImage = AppImages.getImage(fullImage, WIDTH, HEIGHT);
         labelImage.setImage(resizedImage);
         imageChanged = true;
-        this.setSize(this.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        this.mainComposite.setSize(this.mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        setChanged();
+        notifyObservers();
     }
 
     public boolean imageChanged() {
@@ -314,5 +321,9 @@ public class ImageSelectorComposite extends Composite implements Observer {
                     Display.getCurrent().getPrimaryMonitor().getBounds().height +
                     "&q=" + query + "&oq=" + query;
         }
+    }
+
+    public GridData getLayoutData() {
+        return (GridData) this.mainComposite.getLayoutData();
     }
 }

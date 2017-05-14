@@ -280,7 +280,7 @@ public class CarteView extends AbstractCSaveView {
         Image frontCover = ApplicationService.getBookController().getImage(carte.getCopertaFata());
 
         frontCoverComposite = new ImageSelectorComposite(compImages, frontCover, carte.getCopertaFata().getFileName());
-        GridData data = (GridData) frontCoverComposite.getLayoutData();
+        GridData data = frontCoverComposite.getLayoutData();
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = false;
         data.verticalAlignment = SWT.BEGINNING;
@@ -574,7 +574,7 @@ public class CarteView extends AbstractCSaveView {
         Image backCover = ApplicationService.getBookController().getImage(carte.getCopertaSpate());
 
         backCoverComposite = new ImageSelectorComposite(comp, backCover, carte.getCopertaSpate().getFileName());
-        GridData backCoverData = (GridData) backCoverComposite.getLayoutData();
+        GridData backCoverData = backCoverComposite.getLayoutData();
         backCoverData.grabExcessHorizontalSpace = false;
         backCoverData.grabExcessVerticalSpace = false;
         backCoverData.verticalAlignment = SWT.BEGINNING;
@@ -583,7 +583,7 @@ public class CarteView extends AbstractCSaveView {
         Image autograf = ApplicationService.getBookController().getImage(carte.getAutograf());
 
         autografComposite = new ImageSelectorComposite(comp, autograf, carte.getAutograf().getFileName());
-        GridData data = (GridData) autografComposite.getLayoutData();
+        GridData data = autografComposite.getLayoutData();
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = false;
         data.verticalAlignment = SWT.BEGINNING;

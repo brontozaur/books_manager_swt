@@ -76,6 +76,14 @@ public class ImageGalleryComposite extends Observable implements Observer {
             this.selected = (ImageViewComposite) o;
             setChanged();
             notifyObservers();
+        } else if (o instanceof BookReadOnlyDetailsComposite) {
+            if (this.selected != null) {
+                Carte carte = this.selected.getCarte();
+                if (carte != null) {
+                    carte = ApplicationService.getBookController().findOne(carte.getId());
+                    this.selected.populateFields(carte);
+                }
+            }
         }
     }
 

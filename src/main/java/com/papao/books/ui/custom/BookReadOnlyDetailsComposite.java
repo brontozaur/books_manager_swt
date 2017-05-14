@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-public class BookReadOnlyDetailsComposite extends Observable implements Observer{
+public class BookReadOnlyDetailsComposite extends Observable implements Observer {
 
     private Composite mainComp;
     private ScrolledComposite scrolledComposite;
@@ -70,7 +70,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     }
 
     private void addComponents() {
-        rightLabelTitle = new CLabel(mainComp, SWT.CENTER|SWT.BORDER);
+        rightLabelTitle = new CLabel(mainComp, SWT.CENTER | SWT.BORDER);
         rightLabelTitle.setFont(FontUtil.TAHOMA12_NORMAL);
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(rightLabelTitle);
         GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 25).span(2, 1).applyTo(rightLabelTitle);
@@ -99,6 +99,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
 
         rightFrontCoverImageComposite = new ImageSelectorComposite(temp, null, null);
         this.addObserver(rightFrontCoverImageComposite);
+        rightFrontCoverImageComposite.addObserver(this);
         rightFrontCoverImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -120,7 +121,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         });
 
         temp = new Composite(mainComp, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).margins(5,5).spacing(5, 2).applyTo(temp);
+        GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5).spacing(5, 2).applyTo(temp);
         GridDataFactory.fillDefaults().span(2, 1).grab(true, true).applyTo(temp);
 
         label("Web", temp);
@@ -189,8 +190,13 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
 
     @Override
     public void update(Observable observable, Object o) {
-        ImageGalleryComposite gallery = (ImageGalleryComposite)observable;
-        populateFields(gallery.getSelected());
+        if (observable instanceof ImageGalleryComposite) {
+            ImageGalleryComposite gallery = (ImageGalleryComposite) observable;
+            populateFields(gallery.getSelected());
+        } else if (observable instanceof ImageSelectorComposite) {
+            setChanged();
+            notifyObservers();
+        }
     }
 
     public String getObservableProperty() {

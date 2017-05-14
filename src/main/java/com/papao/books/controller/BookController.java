@@ -16,9 +16,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
@@ -28,7 +30,7 @@ public class BookController extends Observable {
     private final CarteRepository repository;
     private final CacheableAutorRepository cacheableAutorRepository;
 
-    private Page<Carte> carti;
+    private Page<Carte> carti = new PageImpl<>(new ArrayList<Carte>());
     private BookSearchType searchType;
     private SimpleTextNode node;
 
