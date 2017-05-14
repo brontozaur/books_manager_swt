@@ -1032,6 +1032,7 @@ public abstract class AbstractView extends Observable {
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
+            SWTeXtension.displayMessageE("A intervenit o eroare!", exc);
         }
     }
 
