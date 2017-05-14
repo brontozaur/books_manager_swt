@@ -26,6 +26,9 @@ public class ApplicationConfig {
     @Value("${app.mongo.reports.collection}")
     private String reportsCollectionName;
 
+    @Value("${app.mongo.useractivity.collection}")
+    private String userActivityCollectionName;
+
     @Value("${app.images.folder}")
     private String appImagesFolder;
 
@@ -52,6 +55,10 @@ public class ApplicationConfig {
 
     public String getReportsCollectionName() {
         return reportsCollectionName;
+    }
+
+    public String getUserActivityCollectionName() {
+        return userActivityCollectionName;
     }
 
     public String getAppImagesFolder() {

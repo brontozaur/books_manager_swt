@@ -23,10 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.GroupOperation;
-import org.springframework.data.mongodb.core.aggregation.LookupOperation;
-import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
@@ -174,6 +171,75 @@ public class ApplicationController {
             occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
+    }
+
+    /*
+        db.carte.aggregate([
+            {
+                $lookup: {
+                    from: "userActivity",
+                    localField: "_id",
+                    foreignField: "bookId",
+                    as: "ref"
+                }
+            },
+            {
+              $match: {"ref.userId": ObjectId("590b89c643744724bbc03581")}
+            },
+            {$group: {_id: "$ref.bookRating", count: {$sum: 1}}}
+        ])
+     */
+    public static SimpleTextNode buildRatingTreeForCurrentUser(String localCollection,
+                                                               String localField,
+                                                               String referenceCollection,
+                                                               String refPropertyName,
+                                                               String refUserIdPropName,
+                                                               ObjectId userId,
+                                                               String groupProperty,
+                                                               String rootNodeName) {
+
+        LookupOperation lookup = Aggregation.lookup(referenceCollection, localField, refPropertyName, "ref");
+        GroupOperation group = Aggregation.group("ref." + groupProperty).count().as("count");
+        MatchOperation matchOperation = Aggregation.match(Criteria.where("ref." + refUserIdPropName).is(userId));
+        Aggregation aggregation = Aggregation.newAggregation(lookup, matchOperation, group);
+        List<BasicDBObject> results = mongoTemplate.aggregate(aggregation, localCollection, BasicDBObject.class).getMappedResults();
+
+        Map<Integer, Integer> sortedResults = new TreeMap<>();
+
+        int ratedBooksCount = 0;
+        for (DBObject distinctValue : results) {
+            Integer ratingNumber = ((BasicDBObject) distinctValue.get("0")).getInt("rating");
+            int count = (int) distinctValue.get("count");
+            ratedBooksCount += count;
+            sortedResults.put(ratingNumber, count);
+        }
+
+        SimpleTextNode baseNode;
+        SimpleTextNode invisibleRoot = new SimpleTextNode(null);
+        boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
+        if (SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_ALL)) {
+            SimpleTextNode allNode = new SimpleTextNode(invisibleRoot, rootNodeName);
+            allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+            allNode.setNodeType(NodeType.ALL);
+            allNode.setQueryValue(null);
+            allNode.setCount(ratedBooksCount);
+            if (showNumbers) {
+                allNode.setName(allNode.getName() + allNode.getItemCountStr());
+            }
+            baseNode = allNode;
+        } else {
+            baseNode = invisibleRoot;
+        }
+
+        for (Map.Entry<Integer, Integer> entry : sortedResults.entrySet()) {
+            SimpleTextNode ratingNode = new SimpleTextNode(baseNode, "");
+            ratingNode.setQueryValue(entry.getKey());
+            ratingNode.setCount(entry.getValue());
+            ratingNode.setImage(AppImages.getRatingStars(entry.getKey()));
+            //spacing is needed to avoid overlapping of the node name with the 5 star image
+            ratingNode.setName("                " + ratingNode.getName() + ratingNode.getItemCountStr());
+        }
+        return invisibleRoot;
     }
 
     public static IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName, String propName) {

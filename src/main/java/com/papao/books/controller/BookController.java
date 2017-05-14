@@ -81,94 +81,117 @@ public class BookController extends Observable {
     public void requestSearch(BookSearchType searchType, SimpleTextNode node, Pageable pageable) {
         this.searchType = searchType;
         this.node = node;
-        if (node.getNodeType() == NodeType.ALL) {
-            carti = repository.findAll(pageable);
-        } else {
-            Object value = node.getQueryValue();
-            switch (searchType) {
-                case EDITURA: {
-                    if (StringUtils.isNotEmpty((String)value)) {
-                        carti = repository.getByEdituraContainsIgnoreCaseOrderByTitluAsc((String)value, pageable);
-                    } else {
-                        carti = repository.getByEdituraIsNullOrEdituraIsOrderByTitluAsc("", pageable);
-                    }
-                    break;
+        //TODO need to think about consistent handling for node type ALL
+        Object value = node.getQueryValue();
+        switch (searchType) {
+            case EDITURA: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByEdituraContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByEdituraIsNullOrEdituraIsOrderByTitluAsc("", pageable);
                 }
-                case AUTOR: {
-                    if (StringUtils.isNotEmpty((String)value)) {
-                        carti = repository.getByIdAutoriLikeOrderByTitluAsc(new ObjectId((String)value), pageable);
-                    } else {
-                        carti = repository.getByIdAutoriIsNullOrIdAutoriIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
-                    }
-                    break;
-                }
-                case TRADUCATOR: {
-                    if (StringUtils.isNotEmpty((String)value)) {
-                        carti = repository.getByTraducatoriContainsIgnoreCaseOrderByTitluAsc((String)value, pageable);
-                    } else {
-                        carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
-                    }
-                    break;
-                }
-                case AN_APARITIE: {
-                    if (StringUtils.isNotEmpty((String)value)) {
-                        carti = repository.getByAnAparitieContainsIgnoreCaseOrderByTitluAsc((String)value, pageable);
-                    } else {
-                        carti = repository.getByAnAparitieIsNullOrAnAparitieIsOrderByTitluAsc("", pageable);
-                    }
-                    break;
-                }
-                case LIMBA: {
-                    if (StringUtils.isNotEmpty((String)value)) {
-                        carti = repository.getByLimbaContainsIgnoreCaseOrderByTitluAsc((String)value, pageable);
-                    } else {
-                        carti = repository.getByLimbaIsNullOrLimbaIsOrderByTitluAsc("", pageable);
-                    }
-                    break;
-                }
-                case LIMBA_ORIGINALA: {
-                    if (StringUtils.isNotEmpty((String)value)) {
-                        carti = repository.getByEditiaOriginala_LimbaContainsIgnoreCaseOrderByTitluAsc((String)value, pageable);
-                    } else {
-                        carti = repository.getByEditiaOriginala_LimbaIsNullOrEditiaOriginala_LimbaIsOrderByTitluAsc("", pageable);
-                    }
-                    break;
-                }
-                case TIP_COPERTA: {
-                    if (StringUtils.isNotEmpty((String)value)) {
-                        carti = repository.getByTipCopertaContainsIgnoreCaseOrderByTitluAsc((String)value, pageable);
-                    } else {
-                        carti = repository.getByTipCopertaIsNullOrTipCopertaIsOrderByTitluAsc("", pageable);
-                    }
-                    break;
-                }
-                case TITLU: {
-                    if (StringUtils.isNotEmpty((String)value)) {
-                        carti = repository.getByTitluStartingWithIgnoreCaseOrderByTitluAsc((String)value, pageable);
-                    } else {
-                        carti = repository.getByTitluIsNullOrTitluIsOrderByTitluAsc("", pageable);
-                    }
-                    break;
-                }
-                case CREATA: {
-                    if (value != null) {
-                        carti = repository.getByCreatedAtBetweenOrderByTitluAsc(node.getMinDate(), node.getMaxDate(), pageable);
-                    } else {
-                        carti = repository.getByCreatedAtIsNullOrderByTitluAsc(pageable);
-                    }
-                    break;
-                }
-                case ACTUALIZATA: {
-                    if (value != null) {
-                        carti = repository.getByUpdatedAtBetweenOrderByTitluAsc(node.getMinDate(), node.getMaxDate(), pageable);
-                    } else {
-                        carti = repository.getByUpdatedAtIsNullOrderByTitluAsc(pageable);
-                    }
-                    break;
-                }
-                default:
-                    throw new UnsupportedSearchTypeException("The search type " + searchType + " is not (yet) implemented!");
+                break;
             }
+            case AUTOR: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByIdAutoriLikeOrderByTitluAsc(new ObjectId((String) value), pageable);
+                } else {
+                    carti = repository.getByIdAutoriIsNullOrIdAutoriIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
+                }
+                break;
+            }
+            case TRADUCATOR: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByTraducatoriContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
+                }
+                break;
+            }
+            case AN_APARITIE: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByAnAparitieContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByAnAparitieIsNullOrAnAparitieIsOrderByTitluAsc("", pageable);
+                }
+                break;
+            }
+            case LIMBA: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByLimbaContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByLimbaIsNullOrLimbaIsOrderByTitluAsc("", pageable);
+                }
+                break;
+            }
+            case LIMBA_ORIGINALA: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByEditiaOriginala_LimbaContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByEditiaOriginala_LimbaIsNullOrEditiaOriginala_LimbaIsOrderByTitluAsc("", pageable);
+                }
+                break;
+            }
+            case TIP_COPERTA: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByTipCopertaContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByTipCopertaIsNullOrTipCopertaIsOrderByTitluAsc("", pageable);
+                }
+                break;
+            }
+            case TITLU: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByTitluStartingWithIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByTitluIsNullOrTitluIsOrderByTitluAsc("", pageable);
+                }
+                break;
+            }
+            case CREATA: {
+                if (value != null) {
+                    carti = repository.getByCreatedAtBetweenOrderByTitluAsc(node.getMinDate(), node.getMaxDate(), pageable);
+                } else {
+                    carti = repository.getByCreatedAtIsNullOrderByTitluAsc(pageable);
+                }
+                break;
+            }
+            case ACTUALIZATA: {
+                if (value != null) {
+                    carti = repository.getByUpdatedAtBetweenOrderByTitluAsc(node.getMinDate(), node.getMaxDate(), pageable);
+                } else {
+                    carti = repository.getByUpdatedAtIsNullOrderByTitluAsc(pageable);
+                }
+                break;
+            }
+            case BOOK_RATING: {
+                List<ObjectId> bookIds;
+                if (value != null) {
+                    bookIds = UserController.getBookIdsWithSpecifiedRatingForCurrentUser((Integer) value);
+                } else {
+                    bookIds = UserController.getBookIdsWithSpecifiedRatingForCurrentUser(-1);
+                }
+                carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
+                break;
+            }
+            default:
+                throw new UnsupportedSearchTypeException("The search type " + searchType + " is not (yet) implemented!");
         }
         setChanged();
         notifyObservers();

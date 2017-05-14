@@ -2,12 +2,16 @@ package com.papao.books.model;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "userActivity")
+@CompoundIndexes({
+        @CompoundIndex(name = "uniqueUserActivityForBook", def = "{'bookId': 1, 'userId': 1}", unique = true)})
 public class UserActivity extends AuditObject {
 
     @Id

@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -76,5 +77,19 @@ public class UserController {
 
     public static List<UserActivity> removeAllUserActivities(ObjectId userId) {
         return userActivityRepository.removeByUserId(userId);
+    }
+
+    public static List<ObjectId> getBookIdsWithSpecifiedRatingForCurrentUser(int rating) {
+        List<ObjectId> ids = new ArrayList<>();
+        List<UserActivity> userActivities;
+        if (rating == -1) {
+            userActivities = userActivityRepository.findAll();
+        } else {
+            userActivities = userActivityRepository.getByBookRating_RatingAndUserId(rating, EncodeLive.getIdUser());
+        }
+        for (UserActivity userActivity : userActivities) {
+            ids.add(userActivity.getBookId());
+        }
+        return ids;
     }
 }

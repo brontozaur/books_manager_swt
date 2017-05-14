@@ -651,6 +651,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 createTreeNodes(wrapper, "Autori");
                 break;
             }
+            case BOOK_RATING: {
+                SimpleTextNode rootNode = ApplicationController.buildRatingTreeForCurrentUser(ApplicationService.getApplicationConfig().getBooksCollectionName(),
+                        "_id",
+                        ApplicationService.getApplicationConfig().getUserActivityCollectionName(),
+                        "bookId",
+                        "userId",
+                        EncodeLive.getIdUser(),
+                        "bookRating",
+                        "Rating");
+                leftTreeViewer.setInput(rootNode);
+                break;
+            }
             case TRADUCATOR: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctArrayPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "traducere.traducatori");
                 createTreeNodes(wrapper, "Traducatori");
@@ -704,14 +716,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         SimpleTextNode baseNode;
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
         boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
-        boolean showAll = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
         if (SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_ALL)) {
             SimpleTextNode allNode = new SimpleTextNode(rootNodeName);
             allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
             allNode.setCount(wrapper.getValidDistinctValues());
             allNode.setNodeType(NodeType.ALL);
             allNode.setQueryValue(null);
-            if (showAll) {
+            if (showNumbers) {
                 allNode.setName(rootNodeName + " (" + allNode.getCount() + ")");
             }
             invisibleRoot.add(allNode);
@@ -1177,7 +1188,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                             Carte carte = (Carte) element;
                             int rating = UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId());
                             if (rating > 0) {
-                                return AppImages.getStars(rating);
+                                return AppImages.getRatingStars(rating);
                             }
                             return null;
                         }

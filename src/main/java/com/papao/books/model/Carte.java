@@ -2,6 +2,8 @@ package com.papao.books.model;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,6 +13,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Document(collection = "carte")
+@CompoundIndexes({
+        @CompoundIndex(name = "uniqueAutoriAndTitle", def = "{'idAutori': 1, 'titlu': 1}", unique = true)})
 public class Carte extends AuditObject implements Serializable {
 
     public static String REPLACEMENT_FOR_NOT_SET = "";

@@ -16,7 +16,7 @@ public class Autor extends AuditObject implements Serializable {
     @Id
     private ObjectId id;
 
-    @Indexed
+    @Indexed(name = "uniqueNumeComplet", unique = true)
     private String numeComplet = "";
     private int anNastere;
     private int lunaNastere;

@@ -12,6 +12,7 @@ public enum BookSearchType {
     LIMBA_ORIGINALA,
     CREATA,
     ACTUALIZATA,
+    BOOK_RATING,
 
     CITITORI
 }

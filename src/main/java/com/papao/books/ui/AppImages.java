@@ -1,5 +1,6 @@
 package com.papao.books.ui;
 
+import com.github.haixing_hu.swt.starrating.StarRating;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
@@ -86,6 +87,8 @@ public final class AppImages {
 
     private final static Map<String, Image> FILE_TYPE_IMAGES = new HashMap<String, Image>();
 
+    private final static Map<Integer, Image> HASH_GRAY_STARS = new HashMap<>();
+    private final static Map<Integer, Image> HASH_MARKED_STARS = new HashMap<>();
     private final static Map<Integer, Image> HASH_STARS = new HashMap<>();
 
     /**
@@ -647,21 +650,57 @@ public final class AppImages {
         return image;
     }
 
-    public static Image getStars(int starCount) {
-        if (starCount == 1) {
-            return AppImages.getImage16(AppImages.STAR_MARK_16);
-        }
+    public static Image getRatingStars(int starCount) {
         Image starImage = HASH_STARS.get(starCount);
         if (starImage != null && !starImage.isDisposed()) {
             return starImage;
         }
-        Image star = getStars(1);
+        if (starCount == 0) {
+            return getGrayRatingStars(StarRating.DEFAULT_MAX_NUMBERS_OF_STARS);
+        }
+        if (starCount == StarRating.DEFAULT_MAX_NUMBERS_OF_STARS) {
+            return getMarkedRatingStars(StarRating.DEFAULT_MAX_NUMBERS_OF_STARS);
+        }
+        if (starCount > StarRating.DEFAULT_MAX_NUMBERS_OF_STARS || starCount < 0) {
+            throw new IllegalArgumentException("Invalid star count. Must be an integer between 0 to 5.");
+        }
+        Image temp = merge(getMarkedRatingStars(starCount).getImageData(), getGrayRatingStars(StarRating.DEFAULT_MAX_NUMBERS_OF_STARS - starCount).getImageData(), SWT.HORIZONTAL);
+        HASH_STARS.put(starCount, temp);
+        return temp;
+    }
+
+    public static Image getMarkedRatingStars(int starCount) {
+        if (starCount == 1) {
+            HASH_MARKED_STARS.put(1, AppImages.getImage16(AppImages.STAR_MARK_16));
+        }
+        Image starImage = HASH_MARKED_STARS.get(starCount);
+        if (starImage != null && !starImage.isDisposed()) {
+            return starImage;
+        }
+        Image star = getMarkedRatingStars(1);
         int i = 0;
         while (i++ < starCount) {
-            Image temp = merge(getStars(i).getImageData(), star.getImageData(), SWT.HORIZONTAL);
-            HASH_STARS.put(i + 1, temp);
+            Image temp = merge(getMarkedRatingStars(i).getImageData(), star.getImageData(), SWT.HORIZONTAL);
+            HASH_MARKED_STARS.put(i + 1, temp);
         }
-        return HASH_STARS.get(starCount);
+        return HASH_MARKED_STARS.get(starCount);
+    }
+
+    public static Image getGrayRatingStars(int starCount) {
+        if (starCount == 1) {
+            HASH_GRAY_STARS.put(1, AppImages.getImage16(AppImages.STAR_GRAY_16));
+        }
+        Image starImage = HASH_GRAY_STARS.get(starCount);
+        if (starImage != null && !starImage.isDisposed()) {
+            return starImage;
+        }
+        Image star = getGrayRatingStars(1);
+        int i = 0;
+        while (i++ < starCount) {
+            Image temp = merge(getGrayRatingStars(i).getImageData(), star.getImageData(), SWT.HORIZONTAL);
+            HASH_GRAY_STARS.put(i + 1, temp);
+        }
+        return HASH_GRAY_STARS.get(starCount);
     }
 
     public static Image merge(ImageData sourceData1, ImageData sourceData2, int alignment) {
@@ -698,5 +737,8 @@ public final class AppImages {
                 targetData.setPixel(startX + i, startY + j, sourceData.getPixel(i, j));
             }
         }
+        //transparent background for beautiful display
+        int whitePixel = targetData.palette.getPixel(new RGB(255, 255, 255));
+        targetData.transparentPixel = whitePixel;
     }
 }

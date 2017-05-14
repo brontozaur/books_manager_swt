@@ -63,4 +63,6 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
     Page<Carte> getByIdAutoriIsNullOrIdAutoriIsLessThanEqualOrderByTitluAsc(String[] emptyString, Pageable pageable);
 
     Page<Carte> getByIdAutoriLikeOrderByTitluAsc(ObjectId idAutor, Pageable pageable);
+
+    Page<Carte> getByIdInOrderByTitluAsc(List<ObjectId> bookIds, Pageable pageable);
 }
