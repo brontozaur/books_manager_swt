@@ -1169,13 +1169,17 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     col.setLabelProvider(new ColumnLabelProvider() {
                         @Override
                         public String getText(final Object element) {
-                            Carte carte = (Carte) element;
-                            return UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()) + "";
+                            return "";
                         }
 
                         @Override
                         public Image getImage(Object element) {
-                            return AppImages.getImage16(AppImages.IMG_FULL_STAR);
+                            Carte carte = (Carte) element;
+                            int rating = UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId());
+                            if (rating > 0) {
+                                return AppImages.getStars(rating);
+                            }
+                            return null;
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {

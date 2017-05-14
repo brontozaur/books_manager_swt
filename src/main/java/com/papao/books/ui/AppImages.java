@@ -18,7 +18,7 @@ import java.util.Map;
 
 public final class AppImages {
 
-	private static Logger logger = Logger.getLogger(AppImages.class);
+    private static Logger logger = Logger.getLogger(AppImages.class);
 
     /**
      * imagini statice default, pe diferite rezolutii, daca o imagine solicitata nu este disponibila
@@ -31,6 +31,8 @@ public final class AppImages {
     public final static Image IMAGE_BLANK_32x32 = AppImages.getBlankImage(32, 32);
     public final static Image IMAGE_BLANK_16x16 = AppImages.getBlankImage(16, 16);
     private static Image IMAGE_USER_UNKNOWN_128_128;
+
+    private static final String STAR_BASE64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABwElEQVR4Ab2WNbDVQBSGg0uLu+y5wUoqKrxHW0pK3B0q3N11N7hLg9e49A0VLrsXD/lmeK7RnVk95/+/3Mh5z0vafpyRoXSv6FY2spJeONga9YJeKPTHOX+w1Sqksy7wNpeWVYBZF3mbn1WAWRcC/R4M9iugFZ2zIt7mJbXBnOUOtlqe1AZzlu9tPqMEUH2dWG7gciCLGgITi2mmprmgtL2s1V5r5JAzcjzqgTPqfLS/arXcclruOK0eRvv3DYGJkUMuGrR44IUn3jBgwfTCq8M7RgKDuIgOC6ZX0aKDuc6o33kB8YbRwKfij7Va3mUNxRPvxp/5+SH9rJHHWUHxwtNrTgvPjOjgjJxIC8UDLy9uc1pmReJfCYC/0KYrGro0Pi4YTRa1eVRcMJrUYBeodXHBaDL5FycuGE0qqDOqT4qC0Sf5rw3U9IZLn+yiNxRHm+IXy6V6TD8440+syGHNWe08tImg4ZlhbSPx11oF/mF9t5AzYrXAX/GIDaa2VgP+sUatCc9MbdVQPjFyyK3Q4ZGkam36f+Vv4nyX5KJBi0eCz0he88c8vOp3jqtFgxaPeMLzQ3q4oDTTS9nwwKu+2D9N9rM09Bxb/wAAAABJRU5ErkJggg==";
 
     /**
      * aceasta este calea unde se afla resursele (imaginile)
@@ -83,6 +85,8 @@ public final class AppImages {
     private final static Map<String, Image> HASH_GRAY_IMAGES_MISC = new HashMap<String, Image>();
 
     private final static Map<String, Image> FILE_TYPE_IMAGES = new HashMap<String, Image>();
+
+    private final static Map<Integer, Image> HASH_STARS = new HashMap<>();
 
     /**
      * declararea unui nume unic de variabila, care se va regasi in fiecare folder SKIN, la aceeasi
@@ -170,7 +174,6 @@ public final class AppImages {
     public final static String STAR_MARK_FOCUS_32 = "star_mark_focus32.png";
 
 
-
     /**
      * declaram acum icoane suplimentare, diverse (misc)
      */
@@ -211,15 +214,15 @@ public final class AppImages {
 
     private static ImageRegistry imageRegistry;
 
-    private AppImages() {}
+    private AppImages() {
+    }
 
     /**
      * Clasa singletone pentru incarcarea imaginilor din arhiva jar/zip cu imagini. Valoarea
      * parametrului <b>CURRENT_SKIN</b> va fi citita dintr-o clasa, din Properties, etc, fiind
      * initializata din fisierul XML cu setari ale aplicatiei.
-     * 
-     * @param SKIN
-     *            una din constantele String definite in clasa
+     *
+     * @param SKIN una din constantele String definite in clasa
      */
 
     public static void setSkin(final String SKIN) {
@@ -227,15 +230,13 @@ public final class AppImages {
     }
 
     /**
-     * @param skin_name
-     *            one of the values SKIN_01, SKIN_02, SKIN_03, SKIN_04, SKIN_05
-     * @param lastDir
-     *            one of the values RES_16x16_STR, RES_24x24_STR, RES_32x32_STR, RES_VALUTE_STR,
-     *            RES_MISC_STR
+     * @param skin_name one of the values SKIN_01, SKIN_02, SKIN_03, SKIN_04, SKIN_05
+     * @param lastDir   one of the values RES_16x16_STR, RES_24x24_STR, RES_32x32_STR, RES_VALUTE_STR,
+     *                  RES_MISC_STR
      * @return the complete path of a picture belonging to the desired skin, and having the
-     *         indicated res. Ex : <i>/com/encode/borg/images/skin01/16x16/</i> for
-     *         <strong>skin_name</strong> =
-     *         SKIN_01 and <strong>lastDir</strong> = RES_16x16_STR
+     * indicated res. Ex : <i>/com/encode/borg/images/skin01/16x16/</i> for
+     * <strong>skin_name</strong> =
+     * SKIN_01 and <strong>lastDir</strong> = RES_16x16_STR
      */
     private static String composeImgPath(final String skin_name, final String lastDir) {
         return AppImages.IMAGES_ROOT + skin_name + lastDir;
@@ -254,15 +255,12 @@ public final class AppImages {
     }
 
     /**
-     * @param image
-     *            the original image
-     * @param width
-     *            desired with
-     * @param height
-     *            desired height
+     * @param image  the original image
+     * @param width  desired with
+     * @param height desired height
      * @return new image with desired (width, height) WARNING. A new Image is constructed EVERY time
-     *         this method is called. Dispose method cannot be done here since we actually need the
-     *         new Image, so it must be done by the caller.
+     * this method is called. Dispose method cannot be done here since we actually need the
+     * new Image, so it must be done by the caller.
      */
     public static Image resize(final Image image, final int width, final int height) {
         Image scaled;
@@ -283,7 +281,7 @@ public final class AppImages {
             gc.dispose();
         } catch (Exception exc) {
             scaled = AppImages.IMAGE_NOT_FOUND_16X16;
-			logger.error(exc.getMessage(), exc);
+            logger.error(exc.getMessage(), exc);
         }
         return scaled;
     }
@@ -302,7 +300,7 @@ public final class AppImages {
                  */
                 is = classLoader.getResourceAsStream(fileName);
                 if (is == null) {
-					logger.info(AppImages.STR_RESOURCE + fileName + AppImages.NOT_FOUND);
+                    logger.info(AppImages.STR_RESOURCE + fileName + AppImages.NOT_FOUND);
                     switch (size) {
                         case 16:
                             img = AppImages.IMAGE_NOT_FOUND_16X16;
@@ -329,11 +327,11 @@ public final class AppImages {
                         is.close();
                     }
                 } catch (IOException exc) {
-					logger.error(exc.getMessage(), exc);
+                    logger.error(exc.getMessage(), exc);
                 }
             }
         } catch (Exception exc) {
-			logger.info(AppImages.STR_RESOURCE + fileName + AppImages.NOT_FOUND);
+            logger.info(AppImages.STR_RESOURCE + fileName + AppImages.NOT_FOUND);
             img = AppImages.IMAGE_NOT_FOUND_16X16;
             logger.error(exc.getMessage(), exc);
         }
@@ -349,7 +347,7 @@ public final class AppImages {
             AppImages.HASH_IMAGES_MISC.put(NUME_IMG_MISC, result);
         }
         if ((result == null) || result.isDisposed()) {
-			logger.warn(AppImages.STR_RESOURCE + NUME_IMG_MISC + AppImages.NOT_FOUND);
+            logger.warn(AppImages.STR_RESOURCE + NUME_IMG_MISC + AppImages.NOT_FOUND);
             result = AppImages.IMAGE_NOT_FOUND_16X16;
             AppImages.HASH_IMAGES_MISC.put(NUME_IMG_MISC, result);
         }
@@ -384,7 +382,7 @@ public final class AppImages {
             AppImages.HASH_IMAGES_16.put(IMAGE_NAME, result);
         }
         if ((result == null) || result.isDisposed()) {
-			logger.warn(AppImages.STR_RESOURCE + IMAGE_NAME + AppImages.NOT_FOUND);
+            logger.warn(AppImages.STR_RESOURCE + IMAGE_NAME + AppImages.NOT_FOUND);
             result = AppImages.IMAGE_NOT_FOUND_16X16;
             AppImages.HASH_IMAGES_16.put(IMAGE_NAME, result);
         }
@@ -419,7 +417,7 @@ public final class AppImages {
             AppImages.HASH_IMAGES_24.put(IMAGE_NAME, result);
         }
         if ((result == null) || result.isDisposed()) {
-			logger.warn(AppImages.STR_RESOURCE + IMAGE_NAME + AppImages.NOT_FOUND);
+            logger.warn(AppImages.STR_RESOURCE + IMAGE_NAME + AppImages.NOT_FOUND);
             result = AppImages.IMAGE_NOT_FOUND_24X24;
             AppImages.HASH_IMAGES_24.put(IMAGE_NAME, result);
         }
@@ -454,7 +452,7 @@ public final class AppImages {
             AppImages.HASH_IMAGES_32.put(IMAGE_NAME, result);
         }
         if ((result == null) || result.isDisposed()) {
-			logger.warn(AppImages.STR_RESOURCE + IMAGE_NAME + AppImages.NOT_FOUND);
+            logger.warn(AppImages.STR_RESOURCE + IMAGE_NAME + AppImages.NOT_FOUND);
             result = AppImages.IMAGE_NOT_FOUND_32X32;
             AppImages.HASH_IMAGES_32.put(IMAGE_NAME, result);
         }
@@ -523,7 +521,7 @@ public final class AppImages {
 
     /**
      * Returns an icon representing the specified file.
-     * 
+     *
      * @param file
      * @return
      */
@@ -543,7 +541,7 @@ public final class AppImages {
 
     /**
      * Returns the icon for the file type with the specified extension.
-     * 
+     *
      * @param extension
      * @return
      */
@@ -647,5 +645,58 @@ public final class AppImages {
             FILE_TYPE_IMAGES.put(extension, image);
         }
         return image;
+    }
+
+    public static Image getStars(int starCount) {
+        if (starCount == 1) {
+            return AppImages.getImage16(AppImages.STAR_MARK_16);
+        }
+        Image starImage = HASH_STARS.get(starCount);
+        if (starImage != null && !starImage.isDisposed()) {
+            return starImage;
+        }
+        Image star = getStars(1);
+        int i = 0;
+        while (i++ < starCount) {
+            Image temp = merge(getStars(i).getImageData(), star.getImageData(), SWT.HORIZONTAL);
+            HASH_STARS.put(i + 1, temp);
+        }
+        return HASH_STARS.get(starCount);
+    }
+
+    public static Image merge(ImageData sourceData1, ImageData sourceData2, int alignment) {
+        ImageData targetData;
+
+        if (alignment == SWT.HORIZONTAL) {
+            targetData = new ImageData(sourceData1.width + sourceData2.width,
+                    sourceData1.height, sourceData1.depth, sourceData1.palette);
+            merge(sourceData1, sourceData2, targetData, sourceData1.width, sourceData1.y);
+        } else {
+            targetData = new ImageData(sourceData1.width, sourceData1.height
+                    + sourceData2.height, sourceData1.depth, sourceData1.palette);
+            merge(sourceData1, sourceData2, targetData, sourceData1.x, sourceData1.height);
+        }
+        return new Image(Display.getDefault(), targetData);
+    }
+
+    private static void merge(ImageData sourceData1, ImageData sourceData2,
+                              ImageData targetData, int startX, int startY) {
+        // Merge the 1st Image
+        merge(sourceData1, targetData, sourceData1.x, sourceData1.x);
+
+        // Merge the 2nd Image
+        merge(sourceData2, targetData, startX, startY);
+    }
+
+    private static void merge(ImageData sourceData, ImageData targetData, int startX, int startY) {
+        int i;
+        i = sourceData.x;
+
+        for (; i < sourceData.width; i++) {
+            int j = sourceData.y;
+            for (; j < sourceData.height; j++) {
+                targetData.setPixel(startX + i, startY + j, sourceData.getPixel(i, j));
+            }
+        }
     }
 }
