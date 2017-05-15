@@ -99,8 +99,8 @@ public class CarteCitatComposite extends Composite implements Observer {
         });
 
         this.buttonCancel = new Button(compButtons, SWT.PUSH);
-        this.buttonCancel.setText("&Salvare");
-        this.buttonCancel.setToolTipText("Salvare date/confirmare actiune");
+        this.buttonCancel.setText("Inchide");
+        this.buttonCancel.setToolTipText("Renuntare");
         this.buttonCancel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
         GridDataFactory.fillDefaults().grab(false, false).align(SWT.END, SWT.END).applyTo(this.buttonCancel);
         SWTeXtension.addImageChangeListener16(this.buttonCancel, AppImages.IMG_CANCEL);

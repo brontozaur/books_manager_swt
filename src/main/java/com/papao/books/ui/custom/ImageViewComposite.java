@@ -132,6 +132,9 @@ public class ImageViewComposite extends Observable {
     }
 
     public void populateFields(Carte carte) {
+        if (labelImage.isDisposed()) {
+            return;
+        }
         Image fullImage = ApplicationService.getBookController().getImage(carte.getCopertaFata());
         if (fullImage != null) {
             labelImage.setData(SWT_FULL_IMAGE, fullImage);

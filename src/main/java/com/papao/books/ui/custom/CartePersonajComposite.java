@@ -33,7 +33,7 @@ public class CartePersonajComposite extends Composite implements Observer {
         super(parent, SWT.NONE);
         this.handleSave = handleSave;
 
-        GridLayoutFactory.fillDefaults().numColumns(5).spacing(0, 2).extendedMargins(5, 5, 3, 0).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 2).extendedMargins(5, 5, 3, 0).applyTo(this);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this);
 
         addComponents();
@@ -43,6 +43,7 @@ public class CartePersonajComposite extends Composite implements Observer {
         personajeCombo = new ComboImage2(this, ADD_ADD | ADD_DEL | ADD_CONTENT_PROPOSAL, "Personaj");
         ((GridData) personajeCombo.getLayoutData()).horizontalAlignment = SWT.BEGINNING;
         ((GridData) personajeCombo.getLayoutData()).widthHint = 250;
+        ((GridData) personajeCombo.getLayoutData()).horizontalSpan = 2;
         personajeCombo.getCombo().addListener(SWT.KeyUp, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -64,16 +65,20 @@ public class CartePersonajComposite extends Composite implements Observer {
             }
         });
 
-        new Label(this, SWT.NONE).setText("Nume ");
+        Label tmp = new Label(this, SWT.NONE);
+        tmp.setText("Nume");
+        GridDataFactory.fillDefaults().hint(62, SWT.DEFAULT).applyTo(tmp);
         this.textNume = new Text(this, SWT.BORDER);
-        GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).applyTo(textNume);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(textNume);
 
-        new Label(this, SWT.NONE).setText("Rol ");
+        tmp = new Label(this, SWT.NONE);
+        tmp.setText("Rol");
+        GridDataFactory.fillDefaults().hint(62, SWT.DEFAULT).applyTo(tmp);
         this.textRol = new Text(this, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(textRol);
 
         this.textDescriere = new Text(this, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).span(5, 1).hint(300, SWT.DEFAULT).applyTo(this.textDescriere);
+        GridDataFactory.fillDefaults().grab(true, true).span(2, 1).hint(300, SWT.DEFAULT).applyTo(this.textDescriere);
         this.textDescriere.addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event e) {
@@ -93,7 +98,7 @@ public class CartePersonajComposite extends Composite implements Observer {
 
         Composite compButtons = new Composite(this, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).margins(0, 0).equalWidth(true).applyTo(compButtons);
-        GridDataFactory.fillDefaults().align(SWT.END, SWT.END).applyTo(compButtons);
+        GridDataFactory.fillDefaults().align(SWT.END, SWT.END).span(5, 1).applyTo(compButtons);
 
         this.buttonSave = new Button(compButtons, SWT.PUSH);
         this.buttonSave.setText("&Salvare");
@@ -109,8 +114,8 @@ public class CartePersonajComposite extends Composite implements Observer {
         });
 
         this.buttonCancel = new Button(compButtons, SWT.PUSH);
-        this.buttonCancel.setText("&Salvare");
-        this.buttonCancel.setToolTipText("Salvare date/confirmare actiune");
+        this.buttonCancel.setText("Inchide");
+        this.buttonCancel.setToolTipText("Renuntare");
         this.buttonCancel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
         GridDataFactory.fillDefaults().grab(false, false).align(SWT.END, SWT.END).applyTo(this.buttonCancel);
         SWTeXtension.addImageChangeListener16(this.buttonCancel, AppImages.IMG_CANCEL);
