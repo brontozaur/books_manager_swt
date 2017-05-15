@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Document(collection = "carte")
@@ -50,8 +49,8 @@ public class Carte extends AuditObject implements Serializable {
     private DocumentData copertaFata;
     private DocumentData copertaSpate;
     private DocumentData autograf;
-    private List<DocumentData> documents = new ArrayList<>();
-    private List<String> tags = new ArrayList<>();
+    private List<DocumentData> documents;
+    private List<String> tags;
     private String descriere;
     private String motto;
     private EditiaOriginala editiaOriginala;
@@ -156,7 +155,7 @@ public class Carte extends AuditObject implements Serializable {
 
     public List<String> getAutoriIlustratii() {
         if (autoriIlustratii == null) {
-            return Collections.emptyList();
+            autoriIlustratii = new ArrayList<>();
         }
         return autoriIlustratii;
     }
@@ -167,7 +166,7 @@ public class Carte extends AuditObject implements Serializable {
 
     public List<String> getTehnoredactori() {
         if (tehnoredactori == null) {
-            return Collections.emptyList();
+            tehnoredactori = new ArrayList<>();
         }
         return tehnoredactori;
     }
@@ -189,7 +188,7 @@ public class Carte extends AuditObject implements Serializable {
 
     public List<Personaj> getPersonaje() {
         if (personaje == null) {
-            return Collections.emptyList();
+            personaje = new ArrayList<>();
         }
         return personaje;
     }
@@ -222,7 +221,7 @@ public class Carte extends AuditObject implements Serializable {
 
     public List<PremiuLiterar> getPremii() {
         if (premii == null) {
-            return Collections.emptyList();
+            premii = new ArrayList<>();
         }
         return premii;
     }
@@ -288,14 +287,14 @@ public class Carte extends AuditObject implements Serializable {
 
     public List<GenLiterar> getGenLiterar() {
         if (genLiterar == null) {
-            return Collections.emptyList();
+            genLiterar = new ArrayList<>();
         }
         return genLiterar;
     }
 
     public List<ObjectId> getIdAutori() {
         if (idAutori == null) {
-            return Collections.emptyList();
+            idAutori = new ArrayList<>();
         }
         return idAutori;
     }
@@ -331,6 +330,9 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public List<DocumentData> getDocuments() {
+        if (documents == null) {
+            documents = new ArrayList<>();
+        }
         return documents;
     }
 
@@ -339,6 +341,9 @@ public class Carte extends AuditObject implements Serializable {
     }
 
     public List<String> getTags() {
+        if (tags == null) {
+            tags = new ArrayList<>();
+        }
         return tags;
     }
 
@@ -381,7 +386,7 @@ public class Carte extends AuditObject implements Serializable {
 
     public List<String> getTraducatori() {
         if (traducatori == null) {
-            return Collections.emptyList();
+            traducatori = new ArrayList<>();
         }
         return traducatori;
     }
@@ -418,5 +423,10 @@ public class Carte extends AuditObject implements Serializable {
         copertaSpate = null;
         autograf = null;
         documents = new ArrayList<>();
+        personaje = new ArrayList<>();
+        autoriIlustratii = new ArrayList<>();
+        tehnoredactori = new ArrayList<>();
+        premii = new ArrayList<>();
+        traducatori = new ArrayList<>();
     }
 }

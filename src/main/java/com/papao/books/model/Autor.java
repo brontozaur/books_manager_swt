@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "autor")
@@ -149,7 +149,7 @@ public class Autor extends AuditObject implements Serializable {
 
     public List<GenLiterar> getGenLiterar() {
         if (genLiterar == null) {
-            return Collections.emptyList();
+            genLiterar = new ArrayList<>();
         }
         return genLiterar;
     }

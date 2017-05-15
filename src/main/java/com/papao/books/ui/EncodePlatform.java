@@ -104,6 +104,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static final String TABLE_KEY = "booksViewer";
     private Text searchText;
     private CarteCitatComposite carteCitatComposite;
+    private CartePersonajComposite cartePersonajComposite;
 
     public EncodePlatform() {
         super(null, AbstractView.MODE_NONE);
@@ -369,6 +370,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         carteCitatComposite = new CarteCitatComposite(bottomInnerTabFolderRight);
         tabCitate.setControl(carteCitatComposite);
 
+        CTabItem tabPersonaje = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        tabPersonaje.setText("Personaje");
+        tabPersonaje.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
+        cartePersonajComposite = new CartePersonajComposite(bottomInnerTabFolderRight, true);
+        tabPersonaje.setControl(cartePersonajComposite);
+
         this.rightInnerSash.setWeights(new int[]{8, 5});
         tabGrid.setControl(rightInnerSash);
 
@@ -386,6 +393,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         //when a book is selected the citat composite should display it's quotes, if any
         this.addObserver(carteCitatComposite);
+
+        //when a book is selected the personaje composite should display it personages
+        this.addObserver(cartePersonajComposite);
 
         //when a book is selected the documents table should populate
         this.addObserver(dragAndDropTableComposite);

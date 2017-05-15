@@ -1,6 +1,8 @@
 package com.papao.books.model;
 
-public class Personaj {
+import com.papao.books.ui.custom.ComboElement;
+
+public class Personaj implements ComboElement{
 
     private String nume;
     private String rol;
@@ -28,5 +30,10 @@ public class Personaj {
 
     public void setDescriere(String descriere) {
         this.descriere = descriere;
+    }
+
+    @Override
+    public String getText() {
+        return this.nume;
     }
 }
