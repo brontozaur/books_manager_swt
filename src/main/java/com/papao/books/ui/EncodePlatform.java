@@ -373,12 +373,22 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         tabGrid.setControl(rightInnerSash);
 
         readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash);
+
         // table viewer is notified when rating changes on the details composite
         readOnlyDetailsComposite.addObserver(this);
         // read only composite is notified when grid selection changes
         readOnlyDetailsComposite.addObserver(galleryComposite);
         // gallery composite is notified when a new image was selected in the image selector
         galleryComposite.addObserver(readOnlyDetailsComposite);
+
+        //when a book is selected the readonly composite should display its details
+        this.addObserver(readOnlyDetailsComposite);
+
+        //when a book is selected the citat composite should display it's quotes, if any
+        this.addObserver(carteCitatComposite);
+
+        //when a book is selected the documents table should populate
+        this.addObserver(dragAndDropTableComposite);
 
         rightVerticalSash.setWeights(new int[]{9, 3});
         rightVerticalSash.setMaximizedControl(null);
@@ -485,10 +495,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         }
         rightVerticalSash.setMaximizedControl(null);
-        dragAndDropTableComposite.setCarte(carte);
-        carteCitatComposite.setCarte(carte);
+        setObservableObject(carte);
 
-        readOnlyDetailsComposite.populateFields(carte);
+        setChanged();
+        notifyObservers();
     }
 
     private void enableOps() {

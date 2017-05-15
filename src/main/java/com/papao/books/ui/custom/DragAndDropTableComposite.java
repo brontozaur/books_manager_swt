@@ -6,6 +6,7 @@ import com.papao.books.controller.ApplicationController;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
 import com.papao.books.ui.AppImages;
+import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.util.BorgDateUtil;
 import com.papao.books.ui.util.ColorUtil;
@@ -28,11 +29,10 @@ import org.springframework.util.StreamUtils;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
 
-public class DragAndDropTableComposite extends Composite {
+public class DragAndDropTableComposite extends Composite implements Observer {
 
     private static final Logger logger = Logger.getLogger(DragAndDropTableComposite.class);
     private static final String SWT_FULL_IMAGE = "swt_full_image";
@@ -69,7 +69,7 @@ public class DragAndDropTableComposite extends Composite {
             this.barOpsParent = barOpsParent;
         }
 
-        GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).spacing(0,0).extendedMargins(2, 0, 3, 0).applyTo(this);
+        GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).spacing(0, 0).extendedMargins(2, 0, 3, 0).applyTo(this);
         GridDataFactory.fillDefaults().grab(true, true).hint(300, 150).applyTo(this);
 
         addComponents();
@@ -473,18 +473,21 @@ public class DragAndDropTableComposite extends Composite {
         itemDel.setEnabled(table.getSelectionCount() > 0);
     }
 
-    public Table getTable() {
-        return this.table;
-    }
-
     public boolean isChanged() {
         return this.changed;
     }
 
-    public void setCarte(Carte carte) {
+    private void setCarte(Carte carte) {
         this.carte = carte;
         table.removeAll();
         populateFields();
         enableOps();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof EncodePlatform) {
+            setCarte((Carte) ((EncodePlatform) o).getObservableObject());
+        }
     }
 }

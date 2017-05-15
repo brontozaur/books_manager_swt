@@ -5,6 +5,7 @@ import com.papao.books.model.Carte;
 import com.papao.books.model.Citat;
 import com.papao.books.model.UserActivity;
 import com.papao.books.ui.AppImages;
+import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.view.SWTeXtension;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -14,10 +15,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 import java.util.Collection;
+import java.util.Observable;
+import java.util.Observer;
 
 import static com.papao.books.ui.custom.ComboImage2.*;
 
-public class CarteCitatComposite extends Composite {
+public class CarteCitatComposite extends Composite implements Observer {
 
     private ComboImage2 citateCombo;
     private Text textCitat;
@@ -177,11 +180,11 @@ public class CarteCitatComposite extends Composite {
         textCitat.setEnabled(false);
     }
 
-    public void setInput(Collection<ComboElement> input) {
+    private void setInput(Collection<ComboElement> input) {
         citateCombo.setInput(input);
     }
 
-    public void setCarte(Carte carte) {
+    private void setCarte(Carte carte) {
         this.carte = carte;
         populateFields(null);
     }
@@ -206,6 +209,13 @@ public class CarteCitatComposite extends Composite {
             textCitat.setText(citat.getText());
             textCitat.setFocus();
             textCitat.setSelection(textCitat.getText().length());
+        }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof EncodePlatform) {
+            setCarte((Carte) ((EncodePlatform) o).getObservableObject());
         }
     }
 }

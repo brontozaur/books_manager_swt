@@ -7,6 +7,7 @@ import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
+import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.util.ColorUtil;
 import com.papao.books.ui.util.FontUtil;
@@ -138,7 +139,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     }
 
     @Async
-    public void populateFields(Carte carte) {
+    private void populateFields(Carte carte) {
         this.carte = carte;
         if (carte.getTitlu().length() > 40) {
             rightLabelTitle.setText(carte.getTitlu().substring(0, 35) + "...");
@@ -196,6 +197,8 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         } else if (observable instanceof ImageSelectorComposite) {
             setChanged();
             notifyObservers();
+        } else if (observable instanceof EncodePlatform) {
+            populateFields((Carte) ((EncodePlatform) observable).getObservableObject());
         }
     }
 

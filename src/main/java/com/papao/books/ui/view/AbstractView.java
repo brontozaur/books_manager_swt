@@ -2,6 +2,7 @@ package com.papao.books.ui.view;
 
 import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.SettingsController;
+import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.config.WindowSetting;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.EncodePlatform;
@@ -174,6 +175,7 @@ public abstract class AbstractView extends Observable {
     private Scrollable notificationParent;
 
     private String observableProperty;
+    private AbstractMongoDB observableObject;
     private int textSearchWithHighlightWidth = 100;
 
     public AbstractView(final Shell parent, final Class<? extends Widget> widgetClass, final int viewMode) {
@@ -1573,5 +1575,13 @@ public abstract class AbstractView extends Observable {
         if (!initial.equals(decoded)) {
             widget.setText(decoded);
         }
+    }
+
+    public AbstractMongoDB getObservableObject() {
+        return observableObject;
+    }
+
+    public void setObservableObject(AbstractMongoDB observableObject) {
+        this.observableObject = observableObject;
     }
 }
