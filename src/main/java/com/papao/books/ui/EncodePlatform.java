@@ -306,7 +306,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
 
         this.verticalSash.setWeights(new int[]{2, 8});
-//        this.verticalSash.setMaximizedControl(rightSash);
 
         rightInnerSash = new LiveSashForm(mainRightTabFolder, SWT.VERTICAL | SWT.SMOOTH);
         rightInnerSash.sashWidth = 4;

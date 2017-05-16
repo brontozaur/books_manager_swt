@@ -41,7 +41,9 @@ public class DateChooserShell {
     private void show() {
         try {
             cal = new DateChooser(shell, SWT.NONE);
-            cal.setSelectedDate(selectedDate);
+            if (selectedDate != null) {
+                cal.setSelectedDate(selectedDate);
+            }
             cal.setTheme(this.theme != null ? this.theme : DateChooserTheme.GRAY);
             if (this.locale != null) {
                 cal.setLocale(this.locale);

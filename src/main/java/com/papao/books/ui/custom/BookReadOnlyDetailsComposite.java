@@ -157,7 +157,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         buttonCitita = new Button(temp, SWT.CHECK);
         buttonCitita.setText("citita");
         buttonCitita.setEnabled(false);
-        GridDataFactory.fillDefaults().span(2, 1).applyTo(buttonCitita);
+        GridDataFactory.fillDefaults().align(SWT.END, SWT.BEGINNING).applyTo(buttonCitita);
         buttonCitita.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -168,9 +168,10 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         });
 
         Composite comp = new Composite(temp, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).spacing(0, 0).applyTo(comp);
-        GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).span(2, 1).applyTo(comp);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).spacing(5, 1).applyTo(comp);
+        GridDataFactory.fillDefaults().grab(true, false).align(SWT.BEGINNING, SWT.CENTER).span(1, 1).applyTo(comp);
 
+        new Label(comp, SWT.NONE).setText("inceputa");
         readStartDate = new DateChooserCustom(comp);
         readStartDate.setEnabled(false);
         readStartDate.getFormattedText().addListener(SWT.Modify, new Listener() {
@@ -180,8 +181,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
             }
         });
 
-        new Label(comp, SWT.NONE).setText(" - ");
-
+        new Label(comp, SWT.NONE).setText("terminata");
         readEndDate = new DateChooserCustom(comp);
         readEndDate.setEnabled(false);
         readEndDate.getFormattedText().addListener(SWT.Modify, new Listener() {
@@ -234,12 +234,18 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         CarteCitita carteCitita = null;
         if (userActivity != null) {
             carteCitita = userActivity.getCarteCitita();
-            if (carteCitita.getDataStart() != null) {
-                readStartDate.setValue(carteCitita.getDataStart());
+            if (carteCitita != null) {
+                if (carteCitita.getDataStart() != null) {
+                    readStartDate.setValue(carteCitita.getDataStart());
+                }
+                if (carteCitita.getDataStop() != null) {
+                    readEndDate.setValue(carteCitita.getDataStop());
+                }
             }
-            if (carteCitita.getDataStop() != null) {
-                readEndDate.setValue(carteCitita.getDataStop());
-            }
+        }
+        if (carteCitita == null) {
+            readStartDate.setValue(null);
+            readEndDate.setValue(null);
         }
         buttonCitita.setEnabled(carte.getId() != null);
         buttonCitita.setSelection(carteCitita != null && carteCitita.isCitita());
