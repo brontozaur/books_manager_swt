@@ -668,6 +668,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 createTreeNodes(wrapper, "Edituri");
                 break;
             }
+            case LOCATIE: {
+                IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "locatie");
+                createTreeNodes(wrapper, "Locatii");
+                break;
+            }
             case AUTOR: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctValuesForReferenceCollection(ApplicationService.getApplicationConfig().getBooksCollectionName(),
                         "idAutori",

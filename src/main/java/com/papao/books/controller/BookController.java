@@ -96,6 +96,16 @@ public class BookController extends Observable {
                 }
                 break;
             }
+            case LOCATIE: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByLocatieContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByLocatieIsNullOrLocatieIsOrderByTitluAsc("", pageable);
+                }
+                break;
+            }
             case AUTOR: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);

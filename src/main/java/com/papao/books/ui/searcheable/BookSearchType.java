@@ -13,6 +13,7 @@ public enum BookSearchType {
     CREATA,
     ACTUALIZATA,
     BOOK_RATING,
+    LOCATIE,
 
     CITITORI
 }

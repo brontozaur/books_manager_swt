@@ -24,6 +24,10 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByEdituraContainsIgnoreCaseOrderByTitluAsc(String editura, Pageable pageable);
 
+    Page<Carte> getByLocatieIsNullOrLocatieIsOrderByTitluAsc(String emptyString, Pageable pageable);
+
+    Page<Carte> getByLocatieContainsIgnoreCaseOrderByTitluAsc(String locatie, Pageable pageable);
+
     Page<Carte> getByLimbaIsNullOrLimbaIsOrderByTitluAsc(String emptyString, Pageable pageable);
 
     Page<Carte> getByLimbaContainsIgnoreCaseOrderByTitluAsc(String limba, Pageable pageable);
