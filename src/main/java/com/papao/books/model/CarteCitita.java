@@ -4,8 +4,17 @@ import java.util.Date;
 
 public class CarteCitita {
 
+    private boolean citita;
     private Date dataStart;
     private Date dataStop;
+
+    public void setCitita(boolean citita) {
+        this.citita = citita;
+    }
+
+    public boolean isCitita() {
+        return citita;
+    }
 
     public Date getDataStart() {
         return dataStart;
@@ -21,10 +30,6 @@ public class CarteCitita {
 
     public void setDataStop(Date dataStop) {
         this.dataStop = dataStop;
-    }
-
-    public boolean isCitita() {
-        return dataStart != null && dataStop != null && dataStop.getTime() > dataStart.getTime();
     }
 
 }

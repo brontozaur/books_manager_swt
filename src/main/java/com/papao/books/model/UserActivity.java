@@ -20,7 +20,7 @@ public class UserActivity extends AuditObject {
     private ObjectId userId;
     private ObjectId bookId;
     private List<Citat> citate = new ArrayList<>();
-    private List<CarteCitita> cartiCitite = new ArrayList<>();
+    private CarteCitita carteCitita;
     private BookRating bookRating = new BookRating();
     private BookTranslationRating translationRating = new BookTranslationRating();
 
@@ -72,12 +72,12 @@ public class UserActivity extends AuditObject {
         this.citate = citate;
     }
 
-    public List<CarteCitita> getCartiCitite() {
-        return cartiCitite;
+    public CarteCitita getCarteCitita() {
+        return carteCitita;
     }
 
-    public void setCartiCitite(List<CarteCitita> cartiCitite) {
-        this.cartiCitite = cartiCitite;
+    public void setCarteCitita(CarteCitita carteCitita) {
+        this.carteCitita = carteCitita;
     }
 
     public int getRatingForBook(ObjectId bookId) {
