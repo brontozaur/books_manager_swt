@@ -399,7 +399,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         //when a book is selected the documents table should populate
         this.addObserver(dragAndDropTableComposite);
 
-        rightVerticalSash.setWeights(new int[]{9, 3});
+        rightVerticalSash.setWeights(new int[]{9, 4});
         rightVerticalSash.setMaximizedControl(null);
 
         paginationComposite = new PaginationComposite(compRight);

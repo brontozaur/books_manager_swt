@@ -47,6 +47,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private LinkedInSimpleValuesComposite taguriComposite;
     private Label createdAtLabel;
     private Label updatedAtLabel;
+    private Text textId;
     private StarRating bookRating;
     private int ratingValue = 0;
     private Carte carte;
@@ -136,6 +137,9 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5).spacing(5, 2).applyTo(temp);
         GridDataFactory.fillDefaults().span(2, 1).grab(true, true).applyTo(temp);
 
+        label("Id", temp);
+        textId = new Text(temp, SWT.BORDER | SWT.READ_ONLY);
+
         label("Web", temp);
         rightWebResourcesComposite = new LinkedInUrlsComposite(temp, null);
 
@@ -212,6 +216,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     @Async
     private void populateFields(Carte carte) {
         this.carte = carte;
+        textId.setText(carte.getId().toString());
         if (carte.getTitlu().length() > 40) {
             rightLabelTitle.setText(carte.getTitlu().substring(0, 35) + "...");
         } else {
