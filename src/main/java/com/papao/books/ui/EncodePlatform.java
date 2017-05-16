@@ -450,15 +450,21 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             return;
         }
         if ("tabela".equals(comboSearch.getText())) {
-            searchInTable(searchText.getText());
+            searchInTable(searchText.getText().trim());
         } else if ("baza de date".equals(comboSearch.getText())) {
-            searchInDatabase(searchText.getText());
+            searchInDatabase(searchText.getText().trim());
         }
     }
 
     private void searchInDatabase(String text) {
+        if (text.contains("ObjectId(\"")) {
+            text = text.replace("ObjectId(\"", "");
+            text = text.replace("\")", "");
+        }
         paginationComposite.setSearchQuery(text);
-        searchInTable(text);
+        if (!ObjectId.isValid(text)) {
+            searchInTable(text);
+        }
     }
 
     private void searchInTable(final String text) {

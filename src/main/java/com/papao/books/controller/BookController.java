@@ -217,8 +217,8 @@ public class BookController extends Observable {
         return repository.getByTitluAndIdAutori(titlu, idAutori);
     }
 
-    public void getByTitluLikeOrIdAutoriContains(String titlu, List<ObjectId> idAutori, Pageable pageable) {
-        carti = repository.getByTitluLikeIgnoreCaseOrIdAutoriContains(titlu, idAutori, pageable);
+    public void getByIdIsOrTitluLikeOrIdAutoriContains(String searchTerm, List<ObjectId> idAutori, Pageable pageable) {
+        carti = repository.getByIdIsOrTitluLikeIgnoreCaseOrIdAutoriContains(searchTerm, searchTerm, idAutori, pageable);
         setChanged();
         notifyObservers();
     }
