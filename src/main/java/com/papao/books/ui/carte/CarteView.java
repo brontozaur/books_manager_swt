@@ -55,6 +55,7 @@ public class CarteView extends AbstractCSaveView {
     private LinkedinComposite compositeAutoriIlustratii;
     private LinkedinComposite compositeTehnoredactori;
     private Text textImprimerie;
+    private Text textLocatie;
     private Combo comboTipCoperta;
     private Combo comboLimba;
     private Text textGoodreadsUrl;
@@ -332,7 +333,12 @@ public class CarteView extends AbstractCSaveView {
 
         label(mainCompLeft, "Imprimerie");
         this.textImprimerie = new Text(mainCompLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).span(5, 1).applyTo(this.textImprimerie);
+        GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(this.textImprimerie);
+
+        label(mainCompLeft, "Locatie");
+        this.textLocatie = new Text(mainCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(this.textLocatie);
+        ContentProposalProvider.addContentProposal(textLocatie, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "locatie"));
 
         label(mainCompLeft, "An aparitie");
         textAnAparitie = new Text(mainCompLeft, SWT.BORDER);
@@ -607,6 +613,7 @@ public class CarteView extends AbstractCSaveView {
         this.textEditia.setText(this.carte.getEditia());
         this.textIsbn.setText(this.carte.getIsbn());
         this.textImprimerie.setText(this.carte.getImprimerie());
+        this.textLocatie.setText(this.carte.getLocatie());
         this.comboTipCoperta.select(comboTipCoperta.indexOf(this.carte.getTipCoperta().name()));
         this.comboLimba.select(comboLimba.indexOf(this.carte.getLimba().name()));
         this.comboTraducereDin.select(comboTraducereDin.indexOf(this.carte.getTraducereDin().name()));
@@ -646,6 +653,7 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setAutoriIlustratii(compositeAutoriIlustratii.getValoriIntroduse());
         this.carte.setTehnoredactori(compositeTehnoredactori.getValoriIntroduse());
         this.carte.setImprimerie(textImprimerie.getText().trim());
+        this.carte.setLocatie(textLocatie.getText().trim());
         this.carte.setTipCoperta(TipCoperta.valueOf(comboTipCoperta.getText()));
         this.carte.setLimba(Limba.valueOf(comboLimba.getText()));
         this.carte.setGoodreadsUrl(textGoodreadsUrl.getText().trim());

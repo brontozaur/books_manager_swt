@@ -7,12 +7,10 @@ import com.papao.books.config.StringSetting;
 import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.controller.UserController;
-import com.papao.books.model.Carte;
-import com.papao.books.model.CarteCitita;
-import com.papao.books.model.DocumentData;
-import com.papao.books.model.UserActivity;
+import com.papao.books.model.*;
 import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.auth.EncodeLive;
+import com.papao.books.ui.providers.ContentProposalProvider;
 import com.papao.books.ui.util.ColorUtil;
 import com.papao.books.ui.util.FontUtil;
 import com.papao.books.ui.view.SWTeXtension;
@@ -25,6 +23,7 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.springframework.scheduling.annotation.Async;
 
@@ -48,7 +47,9 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private Label createdAtLabel;
     private Label updatedAtLabel;
     private Text textId;
+    private Text textLocatie;
     private StarRating bookRating;
+    private StarRating translationRating;
     private int ratingValue = 0;
     private Carte carte;
     private String observableProperty = null;
@@ -139,6 +140,25 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
 
         label("Id", temp);
         textId = new Text(temp, SWT.BORDER | SWT.READ_ONLY);
+        GridData data = new GridData();
+        data.widthHint = 175;
+        textId.setLayoutData(data);
+
+        label("Locatie", temp);
+        textLocatie = new Text(temp, SWT.BORDER);
+        data = new GridData();
+        data.widthHint = 150;
+        textLocatie.setLayoutData(data);
+        ContentProposalProvider.addContentProposal(textLocatie, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "locatie"));
+        textLocatie.addListener(SWT.KeyDown, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (carte != null) {
+                    carte.setLocatie(textLocatie.getText());
+                    ApplicationService.getBookController().save(carte);
+                }
+            }
+        });
 
         label("Web", temp);
         rightWebResourcesComposite = new LinkedInUrlsComposite(temp, null);
@@ -194,6 +214,33 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
                 saveUserActivity();
             }
         });
+
+        label("Traducere", temp);
+        translationRating = new StarRating(temp, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
+        GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(translationRating);
+        translationRating.addListener(SWT.MouseUp, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (carte == null) {
+                    return;
+                }
+                UserActivity userActivity = UserController.getUserActivity(EncodeLive.getIdUser(), carte.getId());
+                if (userActivity == null) {
+                    userActivity = new UserActivity();
+                    userActivity.setBookId(carte.getId());
+                    userActivity.setUserId(EncodeLive.getIdUser());
+                }
+                if (userActivity.getTranslationRating() == null) {
+                    userActivity.setTranslationRating(new BookTranslationRating());
+                }
+                if (userActivity.getTranslationRating().getRatingTraducere() == translationRating.getCurrentNumberOfStars()) {
+                    return;
+                }
+                userActivity.getTranslationRating().setRatingTraducere(translationRating.getCurrentNumberOfStars());
+                UserController.saveUserActivity(userActivity);
+                SWTeXtension.displayMessageI("Nota acordata traducerii a fost salvata cu success!");
+            }
+        });
     }
 
     private void saveUserActivity() {
@@ -247,6 +294,9 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
                     readEndDate.setValue(carteCitita.getDataStop());
                 }
             }
+            if (userActivity.getTranslationRating() != null) {
+                translationRating.setCurrentNumberOfStars(userActivity.getTranslationRating().getRatingTraducere());
+            }
         }
         if (carteCitita == null) {
             readStartDate.setValue(null);
@@ -265,6 +315,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         bookRating.setCurrentNumberOfStars(UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
         ratingValue = bookRating.getCurrentNumberOfStars();
         observableProperty = rightAutoriComposite.getGoogleSearchTerm() + " - " + carte.getTitlu();
+        textLocatie.setText(carte.getLocatie());
 
         setChanged();
         notifyObservers();

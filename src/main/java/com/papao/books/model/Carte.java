@@ -56,6 +56,7 @@ public class Carte extends AuditObject implements Serializable {
     private EditiaOriginala editiaOriginala;
     private List<String> traducatori;
     private Limba traducereDin;
+    private String locatie;
 
     @Override
     public ObjectId getId() {
@@ -415,6 +416,17 @@ public class Carte extends AuditObject implements Serializable {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
+    }
+
+    public String getLocatie() {
+        if (locatie == null) {
+            return "";
+        }
+        return locatie;
+    }
+
+    public void setLocatie(String locatie) {
+        this.locatie = locatie;
     }
 
     public void initCopy() {
