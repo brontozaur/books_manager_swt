@@ -8,6 +8,7 @@ import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.*;
+import com.papao.books.ui.AppImages;
 import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.providers.ContentProposalProvider;
@@ -56,6 +57,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private Button buttonCitita;
     private DateChooserCustom readStartDate;
     private DateChooserCustom readEndDate;
+    private Button buttonSave;
 
     public BookReadOnlyDetailsComposite(Composite parent) {
 
@@ -150,15 +152,6 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         data.widthHint = 150;
         textLocatie.setLayoutData(data);
         ContentProposalProvider.addContentProposal(textLocatie, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "locatie"));
-        textLocatie.addListener(SWT.KeyDown, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (carte != null) {
-                    carte.setLocatie(textLocatie.getText());
-                    ApplicationService.getBookController().save(carte);
-                }
-            }
-        });
 
         label("Web", temp);
         rightWebResourcesComposite = new LinkedInUrlsComposite(temp, null);
@@ -178,6 +171,15 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         label("Modificata la", temp);
         updatedAtLabel = new Label(temp, SWT.NONE);
 
+        label("", temp);
+        label("", temp);
+
+        Label separator = new Label(temp, SWT.SEPARATOR|SWT.HORIZONTAL);
+        GridDataFactory.fillDefaults().span(2,1).applyTo(separator);
+
+        label("", temp);
+        label("", temp);
+
         buttonCitita = new Button(temp, SWT.CHECK);
         buttonCitita.setText("citita");
         buttonCitita.setEnabled(false);
@@ -187,7 +189,6 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
             public void handleEvent(Event event) {
                 readStartDate.setEnabled(buttonCitita.getSelection());
                 readEndDate.setEnabled(buttonCitita.getSelection());
-                saveUserActivity();
             }
         });
 
@@ -198,49 +199,39 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         new Label(comp, SWT.NONE).setText("inceputa");
         readStartDate = new DateChooserCustom(comp);
         readStartDate.setEnabled(false);
-        readStartDate.getFormattedText().addListener(SWT.Modify, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                saveUserActivity();
-            }
-        });
 
         new Label(comp, SWT.NONE).setText("terminata");
         readEndDate = new DateChooserCustom(comp);
         readEndDate.setEnabled(false);
-        readEndDate.getFormattedText().addListener(SWT.Modify, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                saveUserActivity();
-            }
-        });
 
         label("Traducere", temp);
         translationRating = new StarRating(temp, SWT.READ_ONLY, StarRating.Size.SMALL, 5);
         GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).applyTo(translationRating);
-        translationRating.addListener(SWT.MouseUp, new Listener() {
+
+        new Label(temp, SWT.NONE);
+        buttonSave = new Button(temp, SWT.PUSH);
+        this.buttonSave.setText("Salvare");
+        this.buttonSave.setToolTipText("Salvare detalii carte");
+        this.buttonSave.setImage(AppImages.getImage16(AppImages.IMG_OK));
+        data = new GridData(SWT.BEGINNING, SWT.END, false, false);
+        this.buttonSave.setLayoutData(data);
+        this.buttonSave.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (carte == null) {
-                    return;
-                }
-                UserActivity userActivity = UserController.getUserActivity(EncodeLive.getIdUser(), carte.getId());
-                if (userActivity == null) {
-                    userActivity = new UserActivity();
-                    userActivity.setBookId(carte.getId());
-                    userActivity.setUserId(EncodeLive.getIdUser());
-                }
-                if (userActivity.getTranslationRating() == null) {
-                    userActivity.setTranslationRating(new BookTranslationRating());
-                }
-                if (userActivity.getTranslationRating().getRatingTraducere() == translationRating.getCurrentNumberOfStars()) {
-                    return;
-                }
-                userActivity.getTranslationRating().setRatingTraducere(translationRating.getCurrentNumberOfStars());
-                UserController.saveUserActivity(userActivity);
-                SWTeXtension.displayMessageI("Nota acordata traducerii a fost salvata cu success!");
+                saveDetails();
             }
         });
+        SWTeXtension.addImageChangeListener16(this.buttonSave, AppImages.IMG_OK);
+        this.buttonSave.setEnabled(false);
+    }
+
+    private void saveDetails() {
+        if (textLocatie.getText().equals(carte.getLocatie())) {
+            carte.setLocatie(textLocatie.getText());
+            ApplicationService.getBookController().save(carte);
+        }
+        saveUserActivity();
+        SWTeXtension.displayMessageI("Datele au fost salvate cu succes!");
     }
 
     private void saveUserActivity() {
@@ -257,12 +248,18 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         userActivity.getCarteCitita().setCitita(buttonCitita.getSelection());
         userActivity.getCarteCitita().setDataStart(readStartDate.getValue());
         userActivity.getCarteCitita().setDataStop(readEndDate.getValue());
+
+        if (userActivity.getTranslationRating() == null) {
+            userActivity.setTranslationRating(new BookTranslationRating());
+        }
+        userActivity.getTranslationRating().setRatingTraducere(translationRating.getCurrentNumberOfStars());
         UserController.saveUserActivity(userActivity);
     }
 
     @Async
     private void populateFields(Carte carte) {
         this.carte = carte;
+        this.buttonSave.setEnabled(carte != null);
         textId.setText(carte.getId().toString());
         if (carte.getTitlu().length() > 40) {
             rightLabelTitle.setText(carte.getTitlu().substring(0, 35) + "...");
