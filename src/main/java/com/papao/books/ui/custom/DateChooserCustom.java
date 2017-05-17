@@ -128,7 +128,7 @@ public class DateChooserCustom {
         selectorComposite.setEnabled(enabled);
     }
 
-    private Text getFormattedText() {
+    public Text getFormattedText() {
         return this.formattedText.getControl();
     }
 
