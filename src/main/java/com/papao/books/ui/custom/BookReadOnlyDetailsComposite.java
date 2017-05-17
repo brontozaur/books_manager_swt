@@ -143,7 +143,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         label("Id", temp);
         textId = new Text(temp, SWT.BORDER | SWT.READ_ONLY);
         GridData data = new GridData();
-        data.widthHint = 175;
+        data.widthHint = 190;
         textId.setLayoutData(data);
 
         label("Locatie", temp);

@@ -46,7 +46,7 @@ public class DateChooserCustom {
                 SettingsController.getString(StringSetting.APP_DATE_FORMAT),
                 EncodeLive.ROMANIAN_LOCALE));
         GC gc = new GC(this.formattedText.getControl());
-        int width = gc.textExtent("01/01/2000 ").x;
+        int width = gc.textExtent("01/01/2000  ").x;
         gc.dispose();
         GridDataFactory.fillDefaults().hint(width, SWT.DEFAULT).applyTo(formattedText.getControl());
 
