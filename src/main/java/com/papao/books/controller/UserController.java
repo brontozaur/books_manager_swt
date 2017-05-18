@@ -40,6 +40,11 @@ public class UserController {
         repository.delete(user);
     }
 
+    public static void deleteAllBookUserActivity(ObjectId bookId) {
+        List<UserActivity> userActivities = userActivityRepository.getByBookId(bookId);
+        userActivityRepository.delete(userActivities);
+    }
+
     public static List<User> findAll() {
         return repository.findAll();
     }

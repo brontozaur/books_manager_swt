@@ -11,6 +11,8 @@ import java.util.List;
 @Repository
 public interface UserActivityRepository extends MongoRepository<UserActivity, String> {
 
+    List<UserActivity> getByBookId(ObjectId bookId);
+
     UserActivity getByUserIdAndBookId(ObjectId userId, ObjectId bookId);
 
     @Transactional

@@ -1584,6 +1584,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     return false;
                 }
                 ApplicationService.getBookController().delete(carteDb);
+                UserController.deleteAllBookUserActivity(carteDb.getId());
                 tableViewer.remove(carte);
             }
             if (selectedCount == 1) {
