@@ -174,8 +174,8 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         label("", temp);
         label("", temp);
 
-        Label separator = new Label(temp, SWT.SEPARATOR|SWT.HORIZONTAL);
-        GridDataFactory.fillDefaults().span(2,1).applyTo(separator);
+        Label separator = new Label(temp, SWT.SEPARATOR | SWT.HORIZONTAL);
+        GridDataFactory.fillDefaults().span(2, 1).applyTo(separator);
 
         label("", temp);
         label("", temp);
@@ -260,7 +260,10 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private void populateFields(Carte carte) {
         this.carte = carte;
         this.buttonSave.setEnabled(carte != null);
-        textId.setText(carte.getId().toString());
+        if (carte == null) {
+            carte = new Carte();
+        }
+        textId.setText(carte.getId() != null ? carte.getId().toString() : "");
         if (carte.getTitlu().length() > 40) {
             rightLabelTitle.setText(carte.getTitlu().substring(0, 35) + "...");
         } else {
