@@ -9,6 +9,7 @@ import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.papao.books.config.BooleanSetting;
 import com.papao.books.model.DocumentData;
+import com.papao.books.model.UserActivity;
 import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.config.StilAfisareData;
@@ -174,42 +175,31 @@ public class ApplicationController {
     }
 
     /*
-        db.carte.aggregate([
-            {
-                $lookup: {
-                    from: "userActivity",
-                    localField: "_id",
-                    foreignField: "bookId",
-                    as: "ref"
-                }
-            },
-            {
-              $match: {"ref.userId": ObjectId("590b89c643744724bbc03581")}
-            },
-            {$group: {_id: "$ref.bookRating", count: {$sum: 1}}}
-        ])
+    To check for user activities that refers to books that no longer exist (by absurd), do this awesome check:
+
+    var vals = db.carte.find({}, {id: 1}).map(function(a){return a._id;});
+    db.userActivity.find({bookId: {$nin: vals}});
      */
-    public static SimpleTextNode buildRatingTreeForCurrentUser(String localCollection,
-                                                               String localField,
-                                                               String referenceCollection,
-                                                               String refPropertyName,
-                                                               String refUserIdPropName,
+    public static SimpleTextNode buildRatingTreeForCurrentUser(String refUserIdPropName,
                                                                ObjectId userId,
                                                                String groupProperty,
                                                                String rootNodeName) {
 
-        LookupOperation lookup = Aggregation.lookup(referenceCollection, localField, refPropertyName, "ref");
-        GroupOperation group = Aggregation.group("ref." + groupProperty).count().as("count");
-        MatchOperation matchOperation = Aggregation.match(Criteria.where("ref." + refUserIdPropName).is(userId));
-        Aggregation aggregation = Aggregation.newAggregation(lookup, matchOperation, group);
-        List<BasicDBObject> results = mongoTemplate.aggregate(aggregation, localCollection, BasicDBObject.class).getMappedResults();
+        Aggregation agg = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where(refUserIdPropName).is(userId)),
+                Aggregation.group(groupProperty).count().as("totalForRating")
+        );
+
+        AggregationResults<BasicDBObject> groupResults
+                = mongoTemplate.aggregate(agg, UserActivity.class, BasicDBObject.class);
+        List<BasicDBObject> result = groupResults.getMappedResults();
 
         Map<Integer, Integer> sortedResults = new TreeMap<>();
 
         int ratedBooksCount = 0;
-        for (DBObject distinctValue : results) {
-            Integer ratingNumber = ((BasicDBObject) distinctValue.get("0")).getInt("rating");
-            int count = (int) distinctValue.get("count");
+        for (DBObject distinctValue : result) {
+            Integer ratingNumber = (int) distinctValue.get("_id");
+            int count = (int) distinctValue.get("totalForRating");
             ratedBooksCount += count;
             sortedResults.put(ratingNumber, count);
         }

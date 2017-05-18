@@ -684,13 +684,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 break;
             }
             case BOOK_RATING: {
-                SimpleTextNode rootNode = ApplicationController.buildRatingTreeForCurrentUser(ApplicationService.getApplicationConfig().getBooksCollectionName(),
-                        "_id",
-                        ApplicationService.getApplicationConfig().getUserActivityCollectionName(),
-                        "bookId",
+                SimpleTextNode rootNode = ApplicationController.buildRatingTreeForCurrentUser(
                         "userId",
                         EncodeLive.getIdUser(),
-                        "bookRating",
+                        "bookRating.rating",
                         "Rating");
                 leftTreeViewer.setInput(rootNode);
                 break;
@@ -1568,7 +1565,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             TableItem[] selected = tableViewer.getTable().getSelection();
             final int selectedCount = selected.length;
             if (selected.length > 1) {
-                if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cele " + selectedCount + " carti selectate?", "Confirmare stergere") == SWT.NO) {
+                if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cele " + selectedCount + " carti selectate si toate informatiile asociate lor?", "Confirmare stergere multipla") == SWT.NO) {
                     return true;
                 }
             } else {
