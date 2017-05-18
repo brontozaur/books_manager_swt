@@ -1572,7 +1572,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     return true;
                 }
             } else {
-                if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cartea selectata?", "Confirmare stergere") == SWT.NO) {
+                if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cartea selectata si toate informatiile asociate?", "Confirmare stergere") == SWT.NO) {
                     return true;
                 }
             }
