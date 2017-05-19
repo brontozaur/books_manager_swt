@@ -807,6 +807,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
     private class MainPerspective extends AbstractIConfigAdapter {
 
         private Button buttonShowGallery;
+        private Button buttonAutorLink;
 
         public MainPerspective() {
             super(AppConfigView.this.rightForm);
@@ -827,16 +828,23 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             this.buttonShowGallery.setText("afisare galerie carti");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowGallery);
             WidgetCursorUtil.addHandCursorListener(this.buttonShowGallery);
+
+            this.buttonAutorLink = new Button(group, SWT.CHECK);
+            this.buttonAutorLink.setText("click suport pt autor");
+            GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonAutorLink);
+            WidgetCursorUtil.addHandCursorListener(this.buttonAutorLink);
         }
 
         @Override
         public void populateFields() {
             this.buttonShowGallery.setSelection(SettingsController.getBoolean(PERSPECTIVE_SHOW_GALLERY));
+            this.buttonAutorLink.setSelection(SettingsController.getBoolean(PERSPECTIVE_AUTHOR_LINKS));
         }
 
         @Override
         public void save() {
             SettingsController.saveBooleanSetting(PERSPECTIVE_SHOW_GALLERY, buttonShowGallery.getSelection());
+            SettingsController.saveBooleanSetting(PERSPECTIVE_AUTHOR_LINKS, buttonAutorLink.getSelection());
         }
 
         @Override

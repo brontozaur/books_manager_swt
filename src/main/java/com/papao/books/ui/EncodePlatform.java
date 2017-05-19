@@ -20,6 +20,8 @@ import com.papao.books.ui.menu.PlatformMenu;
 import com.papao.books.ui.preluari.AutoriImportView;
 import com.papao.books.ui.preluari.BookImportView;
 import com.papao.books.ui.providers.AdbMongoContentProvider;
+import com.papao.books.ui.providers.LinkLabelProvider;
+import com.papao.books.ui.providers.LinkOpener;
 import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
 import com.papao.books.ui.providers.tree.*;
 import com.papao.books.ui.searcheable.BookSearchType;
@@ -436,7 +438,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     private void resetSearchFilters() {
         tableViewer.resetFilters();
-        ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText("");
+        ((UnifiedStyledLabelProvider) ((LinkLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).getLabelProvider()).setSearchText("");
         ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText("");
         refreshTableViewer();
     }
@@ -474,7 +476,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             public void run() {
                 tableViewer.resetFilters();
                 java.util.List<ViewerFilter> listFilters = new ArrayList<>();
-                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).setSearchText(text);
+                ((UnifiedStyledLabelProvider) ((LinkLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).getLabelProvider()).setSearchText(text);
                 ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText(text);
                 listFilters.add(new ViewerFilter() {
                     @Override
@@ -1067,6 +1069,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private void pickRandomBook() {
         try {
             ObjectId objectId = ApplicationController.getRandomBook(ApplicationService.getApplicationConfig().getBooksCollectionName());
+            tableViewer.resetFilters();
             searchInDatabase(objectId.toString());
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -1177,7 +1180,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return bar;
     }
 
-    private final void initViewerCols() {
+    private void initViewerCols() {
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed()) {
             return;
         }
@@ -1196,13 +1199,23 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             col.getColumn().setMoveable(true);
             switch (i) {
                 case IDX_AUTOR: {
-                    col.setLabelProvider(new UnifiedStyledLabelProvider() {
+                    LinkOpener linkHandler = new LinkOpener() {
+                        @Override
+                        public void openLink(Object rowObject) {
+                            Carte carte = (Carte) rowObject;
+                            tableViewer.resetFilters();
+                            tableViewer.setInput(null);
+                            paginationComposite.setIdAutori(carte.getIdAutori());
+                        }
+                    };
+                    UnifiedStyledLabelProvider columnLabelProvider = new UnifiedStyledLabelProvider() {
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
                             return ApplicationService.getBookController().getBookAuthorNames(carte);
                         }
-                    });
+                    };
+                    col.setLabelProvider(new LinkLabelProvider(columnLabelProvider, linkHandler));
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
                         @Override
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {

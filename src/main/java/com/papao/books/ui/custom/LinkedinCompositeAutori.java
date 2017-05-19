@@ -135,7 +135,6 @@ public class LinkedinCompositeAutori extends Composite {
         }
     }
 
-    //todo check why some records can be duplicated
     private void createClosableCanvas(Autor autor, boolean layoutParent) {
         if (autor != null && (!autori.contains(autor) || !layoutParent)) {
             final ClosableCanvas canvas = new ClosableCanvas(compSelections, autor.getNumeSiTitlu());

@@ -15,7 +15,8 @@ public enum BooleanSetting {
     LEFT_TREE_SHOW_ALL(true),
     LEFT_TREE_SHOW_NUMBERS(true),
     LEFT_TREE_SHOW_RECENT(true),
-    PERSPECTIVE_SHOW_GALLERY(false);
+    PERSPECTIVE_SHOW_GALLERY(false),
+    PERSPECTIVE_AUTHOR_LINKS(false);
 
     private boolean defaultValue;
 

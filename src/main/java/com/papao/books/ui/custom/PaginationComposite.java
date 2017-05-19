@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -30,6 +31,7 @@ public class PaginationComposite extends Composite implements Observer {
     private ToolItem itemNext;
     private ToolItem itemLastPage;
     private String searchQuery;
+    private List<ObjectId> idAutori;
 
     private long totalCount = 0;
     private long totalPages = 0;
@@ -182,6 +184,8 @@ public class PaginationComposite extends Composite implements Observer {
         if (searchQuery != null) {
             java.util.List<ObjectId> autori = AutorController.getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(searchQuery);
             ApplicationService.getBookController().getByIdIsOrTitluLikeOrIdAutoriContains(searchQuery, autori, getPageable(false));
+        } else if (this.idAutori != null) {
+            ApplicationService.getBookController().getByIdAutoriIn(idAutori, getPageable(false));
         } else {
             ApplicationService.getBookController().requestSearch(getPageable(false));
         }
@@ -191,7 +195,21 @@ public class PaginationComposite extends Composite implements Observer {
         updateUI();
     }
 
+    public void setIdAutori(java.util.List<ObjectId> idAutori) {
+        this.searchQuery = null;
+        this.idAutori = idAutori;
+        totalCount = 0;
+        totalPages = 0;
+        currentPage = 1;
+
+        updateUI();
+        if (this.idAutori != null) {
+            search();
+        }
+    }
+
     public void setSearchQuery(String searchQuery) {
+        this.idAutori = null;
         this.searchQuery = searchQuery;
         totalCount = 0;
         totalPages = 0;

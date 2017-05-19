@@ -272,4 +272,10 @@ public class BookController extends Observable {
     public List<Carte> getByIdAutoriContains(ObjectId idAutor) {
         return repository.getByIdAutoriContains(idAutor);
     }
+
+    public void getByIdAutoriIn(List<ObjectId> idAutori, Pageable pageable) {
+        carti = repository.getByIdAutoriIn(idAutori, pageable);
+        setChanged();
+        notifyObservers();
+    }
 }
