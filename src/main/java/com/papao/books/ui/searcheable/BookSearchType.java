@@ -16,5 +16,7 @@ public enum BookSearchType {
     NOTA_TRADUCERE,
     LOCATIE,
     CITITORI,
-    UTILIZATORI
+    UTILIZATORI,
+    GEN_LITERAR,
+    TAGURI
 }

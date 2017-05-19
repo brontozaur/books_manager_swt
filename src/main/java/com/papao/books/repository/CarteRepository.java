@@ -62,6 +62,10 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByTraducatoriContainsIgnoreCaseOrderByTitluAsc(String traducator, Pageable pageable);
 
+    Page<Carte> getByTagsIsNullOrTagsIsLessThanEqualOrderByTitluAsc(String[] emptyString, Pageable pageable);
+
+    Page<Carte> getByTagsContainsIgnoreCaseOrderByTitluAsc(String tag, Pageable pageable);
+
     //reference collections - using ref ObjectId!
 
     Page<Carte> getByIdAutoriIsNullOrIdAutoriIsLessThanEqualOrderByTitluAsc(String[] emptyString, Pageable pageable);

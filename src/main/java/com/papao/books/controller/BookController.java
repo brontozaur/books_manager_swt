@@ -106,6 +106,14 @@ public class BookController extends Observable {
                 }
                 break;
             }
+            case TAGURI: {
+                if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByTagsContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByTagsIsNullOrTagsIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
+                }
+                break;
+            }
             case AUTOR: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
