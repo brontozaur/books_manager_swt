@@ -637,9 +637,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         comboModAfisare = new Combo(compLeftTree, SWT.READ_ONLY | SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(comboModAfisare);
         for (BookSearchType searchType : BookSearchType.values()) {
-            if (searchType != BookSearchType.CITITORI) {
-                comboModAfisare.add(searchType.name());
-            }
+            comboModAfisare.add(searchType.name());
         }
         comboModAfisare.select(comboModAfisare.indexOf(searchType.name()));
         comboModAfisare.addListener(SWT.Selection, new Listener() {
@@ -683,12 +681,31 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 createTreeNodes(wrapper, "Autori");
                 break;
             }
-            case BOOK_RATING: {
+            case NOTA_CARTE: {
                 SimpleTextNode rootNode = ApplicationController.buildRatingTreeForCurrentUser(
                         "userId",
                         EncodeLive.getIdUser(),
                         "bookRating.rating",
                         "Rating");
+                leftTreeViewer.setInput(rootNode);
+                break;
+            }
+            case NOTA_TRADUCERE: {
+                SimpleTextNode rootNode = ApplicationController.buildRatingTreeForCurrentUser(
+                        "userId",
+                        EncodeLive.getIdUser(),
+                        "translationRating.ratingTraducere",
+                        "Calitate traducere");
+                leftTreeViewer.setInput(rootNode);
+                break;
+            }
+            case CITITORI: {
+                SimpleTextNode rootNode = ApplicationController.buildUserActivityTree("userId", "carteCitita.citita", true, "Carti citite");
+                leftTreeViewer.setInput(rootNode);
+                break;
+            }
+            case UTILIZATORI: {
+                SimpleTextNode rootNode = ApplicationController.buildUserActivityTree("userId", null, null, "Activitate utilizator");
                 leftTreeViewer.setInput(rootNode);
                 break;
             }

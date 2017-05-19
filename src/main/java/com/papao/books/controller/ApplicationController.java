@@ -9,6 +9,7 @@ import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.papao.books.config.BooleanSetting;
 import com.papao.books.model.DocumentData;
+import com.papao.books.model.User;
 import com.papao.books.model.UserActivity;
 import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.ui.AppImages;
@@ -229,6 +230,61 @@ public class ApplicationController {
             //spacing is needed to avoid overlapping of the node name with the 5 star image
             ratingNode.setName("                " + ratingNode.getName() + ratingNode.getItemCountStr());
         }
+        return invisibleRoot;
+    }
+
+    public static SimpleTextNode buildUserActivityTree(String userIdProperty,
+                                                       String filterProperty,
+                                                       Object filterValue,
+                                                       String rootNodeName) {
+
+        Aggregation agg = null;
+        if (filterProperty != null && filterValue != null) {
+            agg = Aggregation.newAggregation(
+                    Aggregation.match(Criteria.where(filterProperty).is(filterValue)),
+                    Aggregation.group(userIdProperty).count().as("userBooks")
+            );
+        } else {
+            agg = Aggregation.newAggregation(
+                    Aggregation.group(userIdProperty).count().as("userBooks")
+            );
+        }
+
+        AggregationResults<BasicDBObject> groupResults
+                = mongoTemplate.aggregate(agg, UserActivity.class, BasicDBObject.class);
+        List<BasicDBObject> result = groupResults.getMappedResults();
+
+        SimpleTextNode baseNode;
+        SimpleTextNode invisibleRoot = new SimpleTextNode(null);
+        boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
+        if (SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_ALL)) {
+            SimpleTextNode allNode = new SimpleTextNode(invisibleRoot, rootNodeName);
+            allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+            allNode.setNodeType(NodeType.ALL);
+            allNode.setQueryValue(null);
+            if (showNumbers) {
+                allNode.setName(allNode.getName() + allNode.getItemCountStr());
+            }
+            baseNode = allNode;
+        } else {
+            baseNode = invisibleRoot;
+        }
+
+        for (DBObject distinctValue : result) {
+            ObjectId userId = (ObjectId) distinctValue.get("_id");
+            int count = (int) distinctValue.get("userBooks");
+
+            User user = UserController.findOne(userId);
+            SimpleTextNode userNode = new SimpleTextNode(baseNode, user != null ? user.getNumeComplet() : "");
+            userNode.setQueryValue(userId);
+            userNode.setCount(count);
+            userNode.setImage(AppImages.getImage16(AppImages.IMG_USER));
+            userNode.modifyCount(showNumbers, true);
+
+            baseNode.increment(count);
+        }
+        baseNode.modifyCount(showNumbers, false);
+
         return invisibleRoot;
     }
 

@@ -19,4 +19,10 @@ public interface UserActivityRepository extends MongoRepository<UserActivity, St
     List<UserActivity> removeByUserId(ObjectId idUser);
 
     List<UserActivity> getByBookRating_RatingAndUserId(int bookRating, ObjectId userId);
+
+    List<UserActivity> getByTranslationRating_RatingTraducereAndUserId(int translationRating, ObjectId userId);
+
+    List<UserActivity> getByUserId(ObjectId userId);
+
+    List<UserActivity> getByUserIdAndCarteCititaCititaIs(ObjectId userId, boolean citita);
 }

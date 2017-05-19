@@ -12,8 +12,9 @@ public enum BookSearchType {
     LIMBA_ORIGINALA,
     CREATA,
     ACTUALIZATA,
-    BOOK_RATING,
+    NOTA_CARTE,
+    NOTA_TRADUCERE,
     LOCATIE,
-
-    CITITORI
+    CITITORI,
+    UTILIZATORI
 }

@@ -192,13 +192,33 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case BOOK_RATING: {
+            case NOTA_CARTE: {
                 List<ObjectId> bookIds;
                 if (value != null) {
                     bookIds = UserController.getBookIdsWithSpecifiedRatingForCurrentUser((Integer) value);
                 } else {
                     bookIds = UserController.getBookIdsWithSpecifiedRatingForCurrentUser(-1);
                 }
+                carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
+                break;
+            }
+            case NOTA_TRADUCERE: {
+                List<ObjectId> bookIds;
+                if (value != null) {
+                    bookIds = UserController.getBookIdsWithSpecifiedTranslationRatingForCurrentUser((Integer) value);
+                } else {
+                    bookIds = UserController.getBookIdsWithSpecifiedTranslationRatingForCurrentUser(-1);
+                }
+                carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
+                break;
+            }
+            case CITITORI: {
+                List<ObjectId> bookIds = UserController.getReadedBookIdsForUser((ObjectId)value);
+                carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
+                break;
+            }
+            case UTILIZATORI: {
+                List<ObjectId> bookIds = UserController.getBookIdsForUser((ObjectId)value);
                 carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
                 break;
             }

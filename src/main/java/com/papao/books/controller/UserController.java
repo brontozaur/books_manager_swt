@@ -97,4 +97,46 @@ public class UserController {
         }
         return ids;
     }
+
+    public static List<ObjectId> getBookIdsWithSpecifiedTranslationRatingForCurrentUser(int rating) {
+        List<ObjectId> ids = new ArrayList<>();
+        List<UserActivity> userActivities;
+        if (rating == -1) {
+            userActivities = userActivityRepository.findAll();
+        } else {
+            userActivities = userActivityRepository.getByTranslationRating_RatingTraducereAndUserId(rating, EncodeLive.getIdUser());
+        }
+        for (UserActivity userActivity : userActivities) {
+            ids.add(userActivity.getBookId());
+        }
+        return ids;
+    }
+
+    public static List<ObjectId> getBookIdsForUser(ObjectId userId) {
+        List<ObjectId> ids = new ArrayList<>();
+        List<UserActivity> userActivities;
+        if (userId == null) {
+            userActivities = userActivityRepository.findAll();
+        } else {
+            userActivities = userActivityRepository.getByUserId(userId);
+        }
+        for (UserActivity userActivity : userActivities) {
+            ids.add(userActivity.getBookId());
+        }
+        return ids;
+    }
+
+    public static List<ObjectId> getReadedBookIdsForUser(ObjectId userId) {
+        List<ObjectId> ids = new ArrayList<>();
+        List<UserActivity> userActivities;
+        if (userId == null) {
+            userActivities = userActivityRepository.findAll();
+        } else {
+            userActivities = userActivityRepository.getByUserIdAndCarteCititaCititaIs(userId, true);
+        }
+        for (UserActivity userActivity : userActivities) {
+            ids.add(userActivity.getBookId());
+        }
+        return ids;
+    }
 }

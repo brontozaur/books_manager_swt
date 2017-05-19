@@ -260,6 +260,10 @@ public class SimpleTextNode implements ITreeNode {
         return this.childrens;
     }
 
+    public void increment(int amount) {
+        count += amount;
+    }
+
     public void increment() {
         count++;
     }
