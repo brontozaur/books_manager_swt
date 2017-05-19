@@ -7,7 +7,10 @@ import com.papao.books.config.StringSetting;
 import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.controller.UserController;
-import com.papao.books.model.*;
+import com.papao.books.model.Carte;
+import com.papao.books.model.CarteCitita;
+import com.papao.books.model.DocumentData;
+import com.papao.books.model.UserActivity;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.auth.EncodeLive;
@@ -256,10 +259,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         userActivity.getCarteCitita().setDataStart(readStartDate.getValue());
         userActivity.getCarteCitita().setDataStop(readEndDate.getValue());
 
-        if (userActivity.getTranslationRating() == null) {
-            userActivity.setTranslationRating(new BookTranslationRating());
-        }
-        userActivity.getTranslationRating().setRatingTraducere(translationRating.getCurrentNumberOfStars());
+        userActivity.setTranslationRating(translationRating.getCurrentNumberOfStars());
         UserController.saveUserActivity(userActivity);
     }
 
@@ -301,9 +301,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
                     readEndDate.setValue(carteCitita.getDataStop());
                 }
             }
-            if (userActivity.getTranslationRating() != null) {
-                translationRating.setCurrentNumberOfStars(userActivity.getTranslationRating().getRatingTraducere());
-            }
+            translationRating.setCurrentNumberOfStars(userActivity.getTranslationRating());
         }
         textIdUserActivity.setText(userActivity.getId() != null ? userActivity.getId().toString() : "");
         if (carteCitita == null) {

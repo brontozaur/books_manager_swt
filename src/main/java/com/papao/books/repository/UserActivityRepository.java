@@ -20,7 +20,7 @@ public interface UserActivityRepository extends MongoRepository<UserActivity, St
 
     List<UserActivity> getByRatingAndUserId(int rating, ObjectId userId);
 
-    List<UserActivity> getByTranslationRating_RatingTraducereAndUserId(int translationRating, ObjectId userId);
+    List<UserActivity> getByTranslationRatingAndUserId(int translationRating, ObjectId userId);
 
     List<UserActivity> getByUserId(ObjectId userId);
 

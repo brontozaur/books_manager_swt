@@ -104,7 +104,7 @@ public class UserController {
         if (rating == -1) {
             userActivities = userActivityRepository.findAll();
         } else {
-            userActivities = userActivityRepository.getByTranslationRating_RatingTraducereAndUserId(rating, EncodeLive.getIdUser());
+            userActivities = userActivityRepository.getByTranslationRatingAndUserId(rating, EncodeLive.getIdUser());
         }
         for (UserActivity userActivity : userActivities) {
             ids.add(userActivity.getBookId());

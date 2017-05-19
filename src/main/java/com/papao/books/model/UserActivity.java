@@ -22,7 +22,7 @@ public class UserActivity extends AuditObject {
     private List<Citat> citate = new ArrayList<>();
     private CarteCitita carteCitita;
     private int rating;
-    private BookTranslationRating translationRating = new BookTranslationRating();
+    private int translationRating;
 
     public ObjectId getId() {
         return id;
@@ -56,11 +56,11 @@ public class UserActivity extends AuditObject {
         this.rating = rating;
     }
 
-    public BookTranslationRating getTranslationRating() {
+    public int getTranslationRating() {
         return translationRating;
     }
 
-    public void setTranslationRating(BookTranslationRating translationRating) {
+    public void setTranslationRating(int translationRating) {
         this.translationRating = translationRating;
     }
 

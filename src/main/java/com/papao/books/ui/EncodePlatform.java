@@ -694,7 +694,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 SimpleTextNode rootNode = ApplicationController.buildRatingTreeForCurrentUser(
                         "userId",
                         EncodeLive.getIdUser(),
-                        "translationRating.ratingTraducere",
+                        "translationRating",
                         "Calitate traducere");
                 leftTreeViewer.setInput(rootNode);
                 break;
