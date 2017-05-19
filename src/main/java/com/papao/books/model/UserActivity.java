@@ -21,7 +21,7 @@ public class UserActivity extends AuditObject {
     private ObjectId bookId;
     private List<Citat> citate = new ArrayList<>();
     private CarteCitita carteCitita;
-    private BookRating bookRating = new BookRating();
+    private int rating;
     private BookTranslationRating translationRating = new BookTranslationRating();
 
     public ObjectId getId() {
@@ -48,12 +48,12 @@ public class UserActivity extends AuditObject {
         this.bookId = bookId;
     }
 
-    public BookRating getBookRating() {
-        return bookRating;
+    public int getRating() {
+        return rating;
     }
 
-    public void setBookRating(BookRating bookRating) {
-        this.bookRating = bookRating;
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public BookTranslationRating getTranslationRating() {
@@ -78,12 +78,5 @@ public class UserActivity extends AuditObject {
 
     public void setCarteCitita(CarteCitita carteCitita) {
         this.carteCitita = carteCitita;
-    }
-
-    public int getRatingForBook(ObjectId bookId) {
-        if (bookRating != null) {
-            return bookRating.getRating();
-        }
-        return 0;
     }
 }

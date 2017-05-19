@@ -64,7 +64,7 @@ public class UserController {
     public static int getPersonalRating(ObjectId userId, ObjectId bookId) {
         UserActivity activity = getUserActivity(userId, bookId);
         if (activity != null) {
-            return activity.getRatingForBook(bookId);
+            return activity.getRating();
         }
         return 0;
     }
@@ -76,7 +76,7 @@ public class UserController {
             userActivity.setBookId(bookId);
             userActivity.setUserId(EncodeLive.getIdUser());
         }
-        userActivity.getBookRating().setRating(rating);
+        userActivity.setRating(rating);
         return saveUserActivity(userActivity);
     }
 
@@ -90,7 +90,7 @@ public class UserController {
         if (rating == -1) {
             userActivities = userActivityRepository.findAll();
         } else {
-            userActivities = userActivityRepository.getByBookRating_RatingAndUserId(rating, EncodeLive.getIdUser());
+            userActivities = userActivityRepository.getByRatingAndUserId(rating, EncodeLive.getIdUser());
         }
         for (UserActivity userActivity : userActivities) {
             ids.add(userActivity.getBookId());

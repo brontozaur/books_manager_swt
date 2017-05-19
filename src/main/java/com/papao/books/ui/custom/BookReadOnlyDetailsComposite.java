@@ -48,6 +48,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private Label createdAtLabel;
     private Label updatedAtLabel;
     private Text textId;
+    private Text textIdUserActivity;
     private Text textLocatie;
     private StarRating bookRating;
     private StarRating translationRating;
@@ -180,6 +181,12 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         label("", temp);
         label("", temp);
 
+        label("Id activitate", temp);
+        textIdUserActivity = new Text(temp, SWT.BORDER | SWT.READ_ONLY);
+        data = new GridData();
+        data.widthHint = 190;
+        textIdUserActivity.setLayoutData(data);
+
         buttonCitita = new Button(temp, SWT.CHECK);
         buttonCitita.setText("citita");
         buttonCitita.setEnabled(false);
@@ -298,6 +305,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
                 translationRating.setCurrentNumberOfStars(userActivity.getTranslationRating().getRatingTraducere());
             }
         }
+        textIdUserActivity.setText(userActivity.getId() != null ? userActivity.getId().toString() : "");
         if (carteCitita == null) {
             readStartDate.setValue(null);
             readEndDate.setValue(null);
