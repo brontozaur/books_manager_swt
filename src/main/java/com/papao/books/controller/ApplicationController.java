@@ -490,4 +490,12 @@ public class ApplicationController {
         }
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
     }
+
+    public static ObjectId getRandomBook(String collectionName) {
+        DBCollection collection = mongoTemplate.getCollection(collectionName);
+        DBObject sample = new BasicDBObject("$sample", new BasicDBObject("size", 1));
+        List<DBObject> pipeline = Arrays.asList(sample);
+        AggregationOutput output = collection.aggregate(pipeline);
+        return (ObjectId) output.results().iterator().next().get("_id");
+    }
 }

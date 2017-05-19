@@ -51,11 +51,11 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByCreatedAtIsNullOrderByTitluAsc(Pageable pageable);
 
-    Page<Carte> getByCreatedAtBetweenOrderByTitluAsc(Date createdDateStart, Date createdDateEnd,  Pageable pageable);
+    Page<Carte> getByCreatedAtBetweenOrderByTitluAsc(Date createdDateStart, Date createdDateEnd, Pageable pageable);
 
     Page<Carte> getByUpdatedAtIsNullOrderByTitluAsc(Pageable pageable);
 
-    Page<Carte> getByUpdatedAtBetweenOrderByTitluAsc(Date updatedDateStart, Date updatedDateEnd,  Pageable pageable);
+    Page<Carte> getByUpdatedAtBetweenOrderByTitluAsc(Date updatedDateStart, Date updatedDateEnd, Pageable pageable);
 
     //string arrays
     Page<Carte> getByTraducatoriIsNullOrTraducatoriIsLessThanEqualOrderByTitluAsc(String[] emptyString, Pageable pageable);
@@ -65,6 +65,10 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
     Page<Carte> getByTagsIsNullOrTagsIsLessThanEqualOrderByTitluAsc(String[] emptyString, Pageable pageable);
 
     Page<Carte> getByTagsContainsIgnoreCaseOrderByTitluAsc(String tag, Pageable pageable);
+
+    Page<Carte> getByGenLiterarIsNullOrGenLiterarIsLessThanEqualOrderByTitluAsc(String[] emptyString, Pageable pageable);
+
+    Page<Carte> getByGenLiterarContainsIgnoreCaseOrderByTitluAsc(String genLiterar, Pageable pageable);
 
     //reference collections - using ref ObjectId!
 

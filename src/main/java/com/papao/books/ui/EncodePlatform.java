@@ -86,6 +86,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ToolItem toolItemDel;
     private ToolItem toolItemRefresh;
     private ToolItem toolItemGrupare;
+    private ToolItem toolItemRandom;
     private Composite compRight;
     private UnifiedStyledLabelProvider leftTreeColumnProvider;
     private TreeViewer leftTreeViewer;
@@ -676,6 +677,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 createTreeNodes(wrapper, "Taguri");
                 break;
             }
+            case GEN_LITERAR: {
+                IntValuePairsWrapper wrapper = ApplicationController.getDistinctArrayPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "genLiterar");
+                createTreeNodes(wrapper, "Gen literar");
+                break;
+            }
             case AUTOR: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctValuesForReferenceCollection(ApplicationService.getApplicationConfig().getBooksCollectionName(),
                         "idAutori",
@@ -1008,6 +1014,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
+        this.toolItemRandom = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
+        this.toolItemRandom.setImage(AppImages.getImage24(AppImages.IMG_WARNING));
+        this.toolItemRandom.setHotImage(AppImages.getImage24Focus(AppImages.IMG_WARNING));
+        this.toolItemRandom.setText("Aleator!");
+        this.toolItemRandom.setToolTipText("Alege carte aleatorie!");
+        this.toolItemRandom.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                pickRandomBook();
+            }
+        });
+
         final Menu importMenu = new Menu(getShell(), SWT.POP_UP);
         MenuItem item = new MenuItem(importMenu, SWT.PUSH);
         item.setText("Import carti");
@@ -1044,6 +1062,16 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         return barOps;
+    }
+
+    private void pickRandomBook() {
+        try {
+            ObjectId objectId = ApplicationController.getRandomBook(ApplicationService.getApplicationConfig().getBooksCollectionName());
+            searchInDatabase(objectId.toString());
+        } catch (Exception exc) {
+            logger.error(exc.getMessage(), exc);
+            SWTeXtension.displayMessageE("Oops...eroare!", exc);
+        }
     }
 
     private void handleLeftTreeDisplay() {

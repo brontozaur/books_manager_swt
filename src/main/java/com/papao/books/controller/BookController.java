@@ -114,6 +114,14 @@ public class BookController extends Observable {
                 }
                 break;
             }
+            case GEN_LITERAR: {
+                if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByGenLiterarContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByGenLiterarIsNullOrGenLiterarIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
+                }
+                break;
+            }
             case AUTOR: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
@@ -221,12 +229,12 @@ public class BookController extends Observable {
                 break;
             }
             case CITITORI: {
-                List<ObjectId> bookIds = UserController.getReadedBookIdsForUser((ObjectId)value);
+                List<ObjectId> bookIds = UserController.getReadedBookIdsForUser((ObjectId) value);
                 carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
                 break;
             }
             case UTILIZATORI: {
-                List<ObjectId> bookIds = UserController.getBookIdsForUser((ObjectId)value);
+                List<ObjectId> bookIds = UserController.getBookIdsForUser((ObjectId) value);
                 carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
                 break;
             }
