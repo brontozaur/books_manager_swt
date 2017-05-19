@@ -303,7 +303,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
             }
             translationRating.setCurrentNumberOfStars(userActivity.getTranslationRating());
         }
-        textIdUserActivity.setText(userActivity.getId() != null ? userActivity.getId().toString() : "");
+        textIdUserActivity.setText(userActivity != null && userActivity.getId() != null ? userActivity.getId().toString() : "");
         if (carteCitita == null) {
             readStartDate.setValue(null);
             readEndDate.setValue(null);
