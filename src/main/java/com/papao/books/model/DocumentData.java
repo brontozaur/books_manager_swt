@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class DocumentData implements Serializable {
 
-    private ObjectId id = new ObjectId();
+    private ObjectId id;
     private String fileName = "";
 
     @Transient
@@ -88,7 +88,10 @@ public class DocumentData implements Serializable {
         DocumentData that = (DocumentData) o;
 
         return id != null && id.equals(that.id);
+    }
 
+    public boolean exists() {
+        return this.id != null;
     }
 
     @Override

@@ -32,6 +32,9 @@ public class ApplicationConfig {
     @Value("${app.images.folder}")
     private String appImagesFolder;
 
+    @Value("${app.images.export.folder}")
+    private String appImagesExportFolder;
+
     @Value("${app.out.folder}")
     private String appOutFolder;
 
@@ -59,6 +62,14 @@ public class ApplicationConfig {
 
     public String getUserActivityCollectionName() {
         return userActivityCollectionName;
+    }
+
+    public String getAppImagesExportFolder() {
+        File imageFolder = new File(System.getProperties().getProperty("user.dir") + appImagesExportFolder);
+        if (!imageFolder.exists() || !imageFolder.isDirectory()) {
+            imageFolder.mkdirs();
+        }
+        return imageFolder.getAbsolutePath();
     }
 
     public String getAppImagesFolder() {

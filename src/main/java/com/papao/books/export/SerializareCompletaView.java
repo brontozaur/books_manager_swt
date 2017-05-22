@@ -2,7 +2,9 @@ package com.papao.books.export;
 
 import com.inamik.utils.SimpleTableFormatter;
 import com.inamik.utils.TableFormatter;
+import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.ApplicationService;
+import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.ReportController;
 import com.papao.books.model.ApplicationReport;
 import com.papao.books.model.Carte;
@@ -40,20 +42,21 @@ public class SerializareCompletaView extends AbstractCViewAdapter implements Lis
     private static final Logger logger = Logger.getLogger(SerializareCompletaView.class);
 
     private DirectorySelectorComposite dsc;
+    private DirectorySelectorComposite dscSerializareImagini;
     private Text textFileName;
     private Button buttonExportPathAuto;
     private Button buttonShowNrCrt;
     private Button buttonShowBorder;
     private Button buttonShowTitle;
+    private Button buttonSerializareImagini;
     private Text textTitleName;
     private PGroup groupProperties;
     private Map<String, Button> buttonsMap = new HashMap<>();
 
     // todo export simplu option (nume autori + " - " + nume carte
-    // todo selectare props carte
     // todo checkbox pt serializare imagini
     // todo view design and logic
-    // todo romanian characters display
+    // todo selectable property order (use table?)
 
     public SerializareCompletaView(Shell parent) {
         super(parent, MODE_NONE);
@@ -82,7 +85,7 @@ public class SerializareCompletaView extends AbstractCViewAdapter implements Lis
         this.buttonExportPathAuto.setText("cale automata export");
 
         this.dsc = new DirectorySelectorComposite(groupOptions);
-        this.dsc.setDirPath(ApplicationService.getApplicationConfig().getAppOutFolder() + "/full_export" + System.currentTimeMillis());
+        this.dsc.setDirPath(ApplicationService.getApplicationConfig().getAppOutFolder());
 
         this.buttonShowNrCrt = new Button(groupOptions, SWT.CHECK);
         this.buttonShowNrCrt.setText("Afisare coloana pentru numar curent");
@@ -91,6 +94,13 @@ public class SerializareCompletaView extends AbstractCViewAdapter implements Lis
         this.buttonShowBorder = new Button(groupOptions, SWT.CHECK);
         this.buttonShowBorder.setText("Afisare margini celule");
         WidgetCursorUtil.addHandCursorListener(this.buttonShowBorder);
+
+        this.buttonSerializareImagini = new Button(groupOptions, SWT.CHECK);
+        this.buttonSerializareImagini.setText("Serializare imagini");
+        WidgetCursorUtil.addHandCursorListener(this.buttonSerializareImagini);
+
+        this.dscSerializareImagini = new DirectorySelectorComposite(groupOptions);
+        this.dscSerializareImagini.setDirPath(ApplicationService.getApplicationConfig().getAppImagesExportFolder());
 
         this.buttonShowTitle = new Button(groupOptions, SWT.CHECK);
         this.buttonShowTitle.setText("Afisare denumire raport");
@@ -162,13 +172,6 @@ public class SerializareCompletaView extends AbstractCViewAdapter implements Lis
                 getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
             }
         });
-
-        getShell().addListener(SWT.Close, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                event.doit = false;
-            }
-        });
     }
 
     private void selectAll(Composite parent, boolean select) {
@@ -188,6 +191,16 @@ public class SerializareCompletaView extends AbstractCViewAdapter implements Lis
             }
         }
         return selectedButtons;
+    }
+
+    private String getExtension(String filePath) {
+        if (filePath == null) {
+            return ".jpg";
+        }
+        if (filePath.contains(".")) {
+            return filePath.substring(filePath.lastIndexOf("."));
+        }
+        return ".jpg";
     }
 
     private void export() {
@@ -218,6 +231,7 @@ public class SerializareCompletaView extends AbstractCViewAdapter implements Lis
             final boolean showNrCrt = buttonShowNrCrt.getSelection();
             final boolean hasTitle = buttonShowTitle.getSelection();
             final String titleName = textTitleName.getText();
+            final boolean serializareImagini = buttonSerializareImagini.getSelection();
 
             if (StringUtils.isNotEmpty(textFileName.getText())) {
                 fileName = textFileName.getText() + "_" + System.currentTimeMillis();
@@ -247,7 +261,21 @@ public class SerializareCompletaView extends AbstractCViewAdapter implements Lis
 
             for (int i = 0; i < allBooks.size(); i++) {
                 Carte carte = allBooks.get(i);
-                exportBooks.add(new CarteExport(carte));
+                CarteExport ce = new CarteExport(carte);
+                exportBooks.add(ce);
+                if (serializareImagini) {
+                    if (carte.getCopertaFata().exists()) {
+                        GridFSDBFile image = ApplicationController.getDocumentData(carte.getCopertaFata().getId());
+                        if (image != null) {
+                            String temp = this.dscSerializareImagini.getSelectedDirPath() + File.separator +
+                                    ce.getAutori() + " - " + ce.getTitlu().replaceAll("[^a-zA-Z0-9.-]", "_") + getExtension((String) image.getMetaData().get("localFilePath"));
+                            File file = new File(temp);
+                            image.writeTo(file);
+                        } else {
+                            logger.error("Image not found for book with id " + ce.getId());
+                        }
+                    }
+                }
             }
 
             exportBooks.sort(Comparator.comparing(CarteExport::getAutori));
