@@ -21,7 +21,7 @@ public class LinkedinCompositeAutoriLinks extends Composite {
         super(parent, SWT.NONE);
 
         if (autori != null) {
-            this.autori = AutorController.findByIds(autori);
+            this.autori = AutorController.findByIdsOrderByNumeComplet(autori);
         }
 
         GridDataFactory.fillDefaults().grab(false, false).hint(parent.getSize().x, SWT.DEFAULT).applyTo(this);
@@ -62,7 +62,7 @@ public class LinkedinCompositeAutoriLinks extends Composite {
     public void setAutori(List<ObjectId> ids) {
         this.autori.clear();
         if (ids != null && !ids.isEmpty()) {
-            this.autori = AutorController.findByIds(ids);
+            this.autori = AutorController.findByIdsOrderByNumeComplet(ids);
         }
         for (Control control : getChildren()) {
             control.dispose();

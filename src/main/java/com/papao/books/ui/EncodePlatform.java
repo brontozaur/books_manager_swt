@@ -6,6 +6,7 @@ import com.papao.books.ApplicationService;
 import com.papao.books.BooksApplication;
 import com.papao.books.config.BooleanSetting;
 import com.papao.books.controller.*;
+import com.papao.books.export.SerializareCompletaView;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
@@ -102,6 +103,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ImageGalleryComposite galleryComposite;
     private ProgressBarComposite progressBarComposite;
     private ToolItem itemImport;
+    private ToolItem itemExport;
     private ToolItem itemConfig;
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
@@ -483,7 +485,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                         Carte carte = (Carte) element;
                         return StringUtil.compareStrings(text.toLowerCase(),
-                                ApplicationService.getBookController().getBookAuthorNames(carte).toLowerCase())
+                                ApplicationService.getBookController().getBookAuthorNamesOrderByNumeComplet(carte).toLowerCase())
                                 || StringUtil.compareStrings(text.toLowerCase(), carte.getTitlu().toLowerCase());
                     }
                 });
@@ -1063,6 +1065,33 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
+        final Menu exportMenu = new Menu(getShell(), SWT.POP_UP);
+        item = new MenuItem(exportMenu, SWT.PUSH);
+        item.setText("Serializare completa");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                new SerializareCompletaView(getShell()).open(true, true);
+            }
+        });
+
+        itemExport = new ToolItem(barOps, SWT.DROP_DOWN);
+        itemExport.setImage(AppImages.getImage24(AppImages.IMG_EXPORT));
+        itemExport.setHotImage(AppImages.getImage24Focus(AppImages.IMG_EXPORT));
+        itemExport.setToolTipText("Export");
+        itemExport.setText("Export");
+        itemExport.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                Rectangle rect = itemExport.getBounds();
+                Point pt = new Point(rect.x, rect.y + rect.height);
+                pt = barOps.toDisplay(pt);
+                exportMenu.setLocation(pt.x, pt.y);
+                exportMenu.setVisible(true);
+            }
+        });
+
+
         return barOps;
     }
 
@@ -1212,7 +1241,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return ApplicationService.getBookController().getBookAuthorNames(carte);
+                            return ApplicationService.getBookController().getBookAuthorNamesOrderByNumeComplet(carte);
                         }
                     };
                     col.setLabelProvider(new LinkLabelProvider(columnLabelProvider, linkHandler));
@@ -1221,7 +1250,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return StringUtil.romanianCompare(ApplicationService.getBookController().getBookAuthorNames(a), ApplicationService.getBookController().getBookAuthorNames(b));
+                            return StringUtil.romanianCompare(ApplicationService.getBookController().getBookAuthorNamesOrderByNumeComplet(a), ApplicationService.getBookController().getBookAuthorNamesOrderByNumeComplet(b));
                         }
 
                     };

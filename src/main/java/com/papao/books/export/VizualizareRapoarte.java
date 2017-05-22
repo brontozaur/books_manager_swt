@@ -2,6 +2,7 @@ package com.papao.books.export;
 
 import com.papao.books.ApplicationService;
 import com.papao.books.config.BooleanSetting;
+import com.papao.books.config.StringSetting;
 import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.ReportController;
 import com.papao.books.controller.SettingsController;
@@ -18,7 +19,9 @@ import com.papao.books.ui.util.sorter.AbstractTreeColumnViewerSorter;
 import com.papao.books.ui.view.AbstractCViewAdapter;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.apache.tika.io.IOUtils;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
@@ -32,6 +35,10 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public final class VizualizareRapoarte extends AbstractCViewAdapter implements Listener {
 
@@ -49,6 +56,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
     private static final String TREE_KEY = "leftTree";
     private static final String TABLE_KEY = "reportsViewer";
     private final static String[] COLS = new String[]{"Nume raport", "Tip raport", "Cale", "Data server"};
+    private DateFormat df;
 
     private final static int IDX_NUME = 0;
     private final static int IDX_TIP = 1;
@@ -272,7 +280,8 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
                         @Override
                         public String getText(final Object element) {
                             ApplicationReport obj = (ApplicationReport) element;
-                            return obj.getCreatedAt().toString();
+                            return getDateFormat().format(obj.getCreatedAt());
+
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.rightViewer, tblCol) {
@@ -588,7 +597,25 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
             item.setControl(browser);
             item.getParent().setSelection(item);
             item.setData(raport);
-            browser.setUrl(raport.getCale());
+            try {
+                File reportFile = new File(raport.getCale());
+                if (reportFile.exists() && reportFile.isFile()) {
+                    FileInputStream fileInputStream = new FileInputStream(reportFile);
+                    java.util.List<String> fileContents = IOUtils.readLines(fileInputStream);
+                    fileInputStream.close();
+                    StringBuilder sb = new StringBuilder();
+                    for (String str: fileContents) {
+                        sb.append(StringEscapeUtils.escapeHtml4(str)).append("<br/>");
+                    }
+                    browser.setText(sb.toString());
+                } else {
+                    browser.setUrl(raport.getCale());
+                }
+            } catch (IOException ioex) {
+                logger.error(ioex.getMessage(), ioex);
+                SWTeXtension.displayMessageE(ioex.getMessage(), ioex);
+                browser.setUrl(raport.getCale());
+            }
             if (VizualizareRapoarte.instance.getShell().getMinimized() && !VizualizareRapoarte.instance.getShell().getMaximized()) {
                 VizualizareRapoarte.instance.getShell().setMinimized(false);
             }
@@ -611,6 +638,14 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
             VizualizareRapoarte.instance = new VizualizareRapoarte();
         }
         return VizualizareRapoarte.instance;
+    }
+
+    private DateFormat getDateFormat() {
+        if (df == null) {
+            final String dateFormat = SettingsController.getString(StringSetting.APP_DATE_FORMAT) + " " + SettingsController.getString(StringSetting.APP_TIME_FORMAT);
+            df = new SimpleDateFormat(dateFormat);
+        }
+        return df;
     }
 
 }

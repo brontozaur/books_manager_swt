@@ -147,7 +147,7 @@ public class ImageViewComposite extends Observable {
 
         starRating.setCurrentNumberOfStars(UserController.getPersonalRating(carte.getId()));
         labelName.setText(carte.getTitlu());
-        labelImage.setToolTipText(ApplicationService.getBookController().getBookAuthorNames(carte) + " - " + carte.getTitlu());
+        labelImage.setToolTipText(ApplicationService.getBookController().getBookAuthorNamesOrderByNumeComplet(carte) + " - " + carte.getTitlu());
     }
 
     public Carte getCarte() {

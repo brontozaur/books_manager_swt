@@ -1,10 +1,13 @@
 package com.papao.books.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class EditiaOriginala implements Serializable{
+public class EditiaOriginala implements Serializable {
 
     private String titlu;
     private Limba limba;
@@ -74,5 +77,35 @@ public class EditiaOriginala implements Serializable{
 
     public void setAn(String an) {
         this.an = an;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isNotEmpty(titlu)) {
+            sb.append("titlu: ").append(titlu);
+        }
+        sb.append(";");
+        if (limba != null) {
+            sb.append("limba: ").append(limba);
+        }
+        sb.append(";");
+        if (StringUtils.isNotEmpty(editura)) {
+            sb.append("editura: ").append(editura);
+        }
+        sb.append(";");
+        if (ilustratori != null) {
+            sb.append("ilustratori: ").append(Arrays.toString(ilustratori.toArray()));
+        }
+        sb.append(";");
+        if (StringUtils.isNotEmpty(tara)) {
+            sb.append("editura: ").append(tara);
+        }
+        sb.append(";");
+        if (StringUtils.isNotEmpty(an)) {
+            sb.append("an: ").append(an);
+        }
+        sb.append(";");
+        return sb.toString();
     }
 }

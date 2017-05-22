@@ -3,6 +3,7 @@ package com.papao.books.ui.util;
 import com.papao.books.model.AbstractMongoDB;
 import org.apache.log4j.Logger;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -64,6 +65,15 @@ public final class ObjectUtil {
 
     public static Object copy(final Object orig) {
         return ObjectCloner.copy(orig);
+    }
+
+    public static List<String> getFieldNames(Object object) {
+        Field[] declaredFields = object.getClass().getDeclaredFields();
+        List<String> declaredFieldsNames = new ArrayList<>();
+        for (Field field : declaredFields) {
+            declaredFieldsNames.add(field.getName());
+        }
+        return declaredFieldsNames;
     }
 
 }

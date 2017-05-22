@@ -146,7 +146,7 @@ public class ExportHtmlOptionsView extends AbstractExportView {
             ExportHtmlOptionsView.this.buttonExportPathAuto.setText("cale automata export");
             ExportHtmlOptionsView.this.buttonExportPathAuto.addListener(SWT.Selection, this);
             GridDataFactory.fillDefaults().applyTo(ExportHtmlOptionsView.this.buttonExportPathAuto);
-            this.dsc = new DirectorySelectorComposite(groupOptions, false);
+            this.dsc = new DirectorySelectorComposite(groupOptions);
 
             new Label(groupOptions, SWT.NONE).setText("Font tabela");
             this.fs = new FontSelectorComposite(groupOptions);

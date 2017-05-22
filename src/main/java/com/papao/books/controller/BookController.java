@@ -41,12 +41,12 @@ public class BookController extends Observable {
         this.cacheableAutorRepository = cacheableAutorRepository;
     }
 
-    public Iterable<Autor> getBookAuthors(Carte carte) {
-        return cacheableAutorRepository.getByIds(carte.getIdAutori());
+    public Iterable<Autor> getBookAuthorsOrderByNumeComplet(Carte carte) {
+        return cacheableAutorRepository.getByIdsOrderByNumeComplet(carte.getIdAutori());
     }
 
-    public String getBookAuthorNames(Carte carte) {
-        Iterable<Autor> autori = getBookAuthors(carte);
+    public String getBookAuthorNamesOrderByNumeComplet(Carte carte) {
+        Iterable<Autor> autori = getBookAuthorsOrderByNumeComplet(carte);
         StringBuilder autoriNames = new StringBuilder();
         for (Autor autor : autori) {
             if (autoriNames.length() > 0) {

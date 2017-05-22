@@ -148,7 +148,7 @@ public class ExportXlsOptionsView extends AbstractExportView {
             ExportXlsOptionsView.this.buttonExportPathAuto.setText("cale automata export");
             ExportXlsOptionsView.this.buttonExportPathAuto.addListener(SWT.Selection, this);
 
-            this.dsc = new DirectorySelectorComposite(groupOptions, false);
+            this.dsc = new DirectorySelectorComposite(groupOptions);
 
             temp = new Label(groupOptions, SWT.NONE);
             temp.setText("Text antet");

@@ -29,14 +29,8 @@ public class CacheableAutorRepository {
     }
 
     @Cacheable("autoriList")
-    public Iterable<Autor> getByIds(List<ObjectId> ids) {
-        List<String> idsStr = new ArrayList<>();
-        for (ObjectId id: ids) {
-            if (id != null) {
-                idsStr.add(id.toString());
-            }
-        }
-        return autorRepository.findAll(idsStr);
+    public Iterable<Autor> getByIdsOrderByNumeComplet(List<ObjectId> ids) {
+        return autorRepository.getByIdInOrderByNumeComplet(ids);
     }
 
     @Cacheable("byNumeComplet")
@@ -47,7 +41,7 @@ public class CacheableAutorRepository {
     public List<ObjectId> getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(String numeComplet) {
         List<Autor> autori = autorRepository.getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(numeComplet, numeComplet);
         List<ObjectId> idAutori = new ArrayList<>();
-        for (Autor autor: autori) {
+        for (Autor autor : autori) {
             idAutori.add(autor.getId());
         }
         return idAutori;

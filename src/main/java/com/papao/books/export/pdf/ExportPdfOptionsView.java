@@ -157,7 +157,7 @@ public class ExportPdfOptionsView extends AbstractExportView {
             ExportPdfOptionsView.this.buttonExportPathAuto.addListener(SWT.Selection, this);
             GridDataFactory.fillDefaults().applyTo(ExportPdfOptionsView.this.buttonExportPathAuto);
 
-            this.dsc = new DirectorySelectorComposite(groupOptions, false);
+            this.dsc = new DirectorySelectorComposite(groupOptions);
 
             new Label(groupOptions, SWT.NONE).setText("Orientare");
             this.comboOrientation = new Combo(groupOptions, SWT.BORDER | SWT.READ_ONLY);

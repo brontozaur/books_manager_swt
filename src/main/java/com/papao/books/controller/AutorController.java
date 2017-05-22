@@ -38,8 +38,8 @@ public class AutorController {
         return cacheableAutorRepository.getAutorRepository().findAll();
     }
 
-    public static List<Autor> findByIds(List<ObjectId> ids) {
-        Iterable<Autor> iterable = cacheableAutorRepository.getByIds(ids);
+    public static List<Autor> findByIdsOrderByNumeComplet(List<ObjectId> ids) {
+        Iterable<Autor> iterable = cacheableAutorRepository.getByIdsOrderByNumeComplet(ids);
         List<Autor> autori = new ArrayList<>();
         for (Autor autor : iterable) {
             autori.add(autor);

@@ -31,7 +31,7 @@ public class LinkedinCompositeAutori extends Composite {
         super(parent, SWT.BORDER);
 
         if (autori != null) {
-            this.autori = AutorController.findByIds(autori);
+            this.autori = AutorController.findByIdsOrderByNumeComplet(autori);
         }
 
         this.setBackground(ColorUtil.COLOR_WHITE);
@@ -189,7 +189,7 @@ public class LinkedinCompositeAutori extends Composite {
     public void setAutori(List<ObjectId> ids) {
         this.autori.clear();
         if (ids != null && !ids.isEmpty()) {
-            this.autori = AutorController.findByIds(ids);
+            this.autori = AutorController.findByIdsOrderByNumeComplet(ids);
         }
         populateFields();
     }

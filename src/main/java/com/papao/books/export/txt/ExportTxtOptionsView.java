@@ -132,7 +132,7 @@ public class ExportTxtOptionsView extends AbstractExportView {
             ExportTxtOptionsView.this.buttonExportPathAuto.setText("cale automata export");
             ExportTxtOptionsView.this.buttonExportPathAuto.addListener(SWT.Selection, this);
 
-            this.dsc = new DirectorySelectorComposite(groupOptions, false);
+            this.dsc = new DirectorySelectorComposite(groupOptions);
 
             this.buttonShowNrCrt = new Button(groupOptions, SWT.CHECK);
             this.buttonShowNrCrt.setText("Afisare coloana pentru numar curent");

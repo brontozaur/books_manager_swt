@@ -190,7 +190,7 @@ public class ExportRtfOptionsView extends AbstractExportView {
             ExportRtfOptionsView.this.buttonExportPathAuto.setText("cale automata export");
             ExportRtfOptionsView.this.buttonExportPathAuto.addListener(SWT.Selection, this);
             GridDataFactory.fillDefaults().applyTo(ExportRtfOptionsView.this.buttonExportPathAuto);
-            this.dsc = new DirectorySelectorComposite(groupOptions, false);
+            this.dsc = new DirectorySelectorComposite(groupOptions);
 
             new Label(groupOptions, SWT.NONE).setText("Orientare");
             this.comboOrientation = new Combo(groupOptions, SWT.BORDER | SWT.READ_ONLY);

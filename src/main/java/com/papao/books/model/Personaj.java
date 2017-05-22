@@ -36,4 +36,13 @@ public class Personaj implements ComboElement{
     public String getText() {
         return this.nume;
     }
+
+    @Override
+    public String toString() {
+        return "Personaj{" +
+                "nume='" + nume + '\'' +
+                ", rol='" + rol + '\'' +
+                ", descriere='" + descriere + '\'' +
+                '}';
+    }
 }

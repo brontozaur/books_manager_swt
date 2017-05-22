@@ -17,19 +17,18 @@ public class DirectorySelectorComposite extends Composite implements Listener {
     private String dirPath;
 
     public DirectorySelectorComposite(final Composite parent) {
-        this(parent, false);
+        this(parent, null);
     }
 
     /**
-     * @param
-     * @param drawLabelInfo
-     *            creeaza un label cu textul "Fisier", daca este true
+     * @param parent composite-ul parinte
+     * @param label  creeaza un label cu textul dorit
      */
-    public DirectorySelectorComposite(final Composite parent, final boolean drawLabelInfo) {
+    public DirectorySelectorComposite(final Composite parent, final String label) {
         super(parent, SWT.NONE);
 
-        if (drawLabelInfo) {
-            new Label(this, SWT.NONE).setText("Director");
+        if (StringUtils.isNotEmpty(label)) {
+            new Label(this, SWT.NONE).setText(label);
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) parent.getLayout()).numColumns,
                     1).applyTo(this);
             GridLayoutFactory.swtDefaults().numColumns(3).equalWidth(false).margins(0, 0).applyTo(this);
