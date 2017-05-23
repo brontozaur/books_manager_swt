@@ -9,6 +9,7 @@ public final class TableRow {
     private int dim;
     private int align;
     private int order;
+    private boolean sort;
 
     public final static String[] ALIGNS = new String[]{
             "Stânga", "Centru", "Dreapta"};
@@ -17,12 +18,14 @@ public final class TableRow {
                     final boolean checked,
                     final int dim,
                     final int align,
-                    final int order) {
-        setColName(colName);
-        setChecked(checked);
-        setDim(dim);
-        setAlign(align);
-        setOrder(order);
+                    final int order,
+                    final boolean sort) {
+        this.colName = colName;
+        this.checked = checked;
+        this.dim = dim;
+        this.align = align;
+        this.order = order;
+        this.sort = sort;
     }
 
     public final String getAlignStr() {
@@ -36,43 +39,51 @@ public final class TableRow {
     }
 
     public String getColName() {
-        return this.colName;
+        return colName;
     }
 
-    public void setColName(final String colName) {
+    public void setColName(String colName) {
         this.colName = colName;
     }
 
     public boolean isChecked() {
-        return this.checked;
+        return checked;
     }
 
-    public void setChecked(final boolean checked) {
+    public void setChecked(boolean checked) {
         this.checked = checked;
     }
 
     public int getDim() {
-        return this.dim;
+        return dim;
     }
 
-    public void setDim(final int dim) {
+    public void setDim(int dim) {
         this.dim = dim;
     }
 
     public int getAlign() {
-        return this.align;
+        return align;
     }
 
-    public void setAlign(final int align) {
+    public void setAlign(int align) {
         this.align = align;
     }
 
     public int getOrder() {
-        return this.order;
+        return order;
     }
 
-    public void setOrder(final int order) {
+    public void setOrder(int order) {
         this.order = order;
+    }
+
+    public boolean isSort() {
+        return sort;
+    }
+
+    public void setSort(boolean sort) {
+        this.sort = sort;
     }
 
     @Override

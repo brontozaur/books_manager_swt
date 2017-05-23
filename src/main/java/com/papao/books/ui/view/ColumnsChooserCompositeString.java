@@ -24,8 +24,11 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
     private final static int IDX_NUME = 0;
     private final static int IDX_DIM = 1;
     private final static int IDX_ALIGN = 2;
-    private final static String[] COLS = new String[]{
+    private final static int IDX_SORT = 3;
+    private final static String[] COLS_NO_SORT = new String[]{
             "Coloana", "Dimensiune", "Aliniere"};
+    private final static String[] COLS_WITH_SORT = new String[]{
+            "Coloana", "Dimensiune", "Aliniere", "Sort?"};
 
     private ToolItem toolSelectAll;
     private ToolItem toolDeSelectAll;
@@ -36,12 +39,17 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
     private int[] gridAligns;
     private int[] gridOrder;
     private boolean[] gridVisibility;
+    private boolean[] sort;
+    private boolean sortPropertySupport;
 
     private java.util.List<String> columnNames;
 
-    public ColumnsChooserCompositeString(final Composite parent, final java.util.List<String> columnNames) {
+    public ColumnsChooserCompositeString(final Composite parent,
+                                         final java.util.List<String> columnNames,
+                                         final boolean sortPropertySupport) {
         super(parent, SWT.NONE);
         this.columnNames = columnNames;
+        this.sortPropertySupport = sortPropertySupport;
         addComponents();
         populateFields();
     }
@@ -58,9 +66,10 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
         this.viewer.getTable().setHeaderVisible(true);
         this.viewer.getTable().addListener(SWT.Selection, this);
         GridDataFactory.fillDefaults().grab(true, true).hint(350, 400).span(1, 2).applyTo(this.viewer.getControl());
-        for (int i = 0; i < ColumnsChooserCompositeString.COLS.length; i++) {
+        String[] cols = this.sortPropertySupport ? COLS_WITH_SORT : COLS_NO_SORT;
+        for (int i = 0; i < cols.length; i++) {
             final TableViewerColumn tblCol = new TableViewerColumn(this.viewer, SWT.NONE);
-            tblCol.getColumn().setText(ColumnsChooserCompositeString.COLS[i]);
+            tblCol.getColumn().setText(cols[i]);
             if (i == 0) {
                 tblCol.getColumn().setWidth(150);
             } else {
@@ -69,8 +78,7 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
             tblCol.getColumn().setAlignment(SWT.LEFT);
             tblCol.getColumn().setResizable(true);
             tblCol.getColumn().setMoveable(true);
-            final int z = i;
-            switch (z) {
+            switch (i) {
                 case IDX_NUME: {
                     tblCol.setLabelProvider(new ColumnLabelProvider() {
                         @Override
@@ -142,6 +150,35 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
                     tblCol.setEditingSupport(new ComboCellEditor(viewer));
                     break;
                 }
+                case IDX_SORT: {
+                    tblCol.setLabelProvider(new ColumnLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            TableRow obj = (TableRow) element;
+                            return obj.isSort() ? "DA" : "NU";
+                        }
+
+                        @Override
+                        public Color getForeground(final Object element) {
+                            TableRow obj = (TableRow) element;
+                            if (obj.isSort()) {
+                                return null;
+                            }
+                            return Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);
+                        }
+
+                        @Override
+                        public Image getImage(final Object element) {
+                            TableRow obj = (TableRow) element;
+                            if (obj.isSort()) {
+                                return AppImages.getImage16(AppImages.IMG_SELECT);
+                            }
+                            return AppImages.getImage16(AppImages.IMG_DESELECT);
+                        }
+                    });
+                    tblCol.setEditingSupport(new SortedCellEditor(viewer));
+                    break;
+                }
                 default:
             }
         }
@@ -198,9 +235,11 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
         Arrays.fill(visibleCols, true);
         int[] aligns = new int[length];
         Arrays.fill(aligns, SWT.LEFT);
+        boolean[] sort = new boolean[length];
+        Arrays.fill(sort, false);
         for (int i = 0; i < length; i++) {
             final String colName = columnNames.get(i);
-            TableRow row = new TableRow(colName, visibleCols[i], dims[i], aligns[i], order[i]);
+            TableRow row = new TableRow(colName, visibleCols[i], dims[i], aligns[i], order[i], sort[i]);
             input[i] = row;
         }
         return input;
@@ -247,12 +286,14 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
             this.gridAligns = new int[elements.length];
             this.gridOrder = new int[elements.length];
             this.gridVisibility = new boolean[elements.length];
+            this.sort = new boolean[elements.length];
             for (int i = 0; i < elements.length; i++) {
                 TableRow row = elements[i];
                 this.gridDims[row.getOrder()] = row.getDim();
                 this.gridAligns[row.getOrder()] = row.getAlign();
                 this.gridOrder[i] = row.getOrder();
                 this.gridVisibility[row.getOrder()] = row.isChecked();
+                this.sort[row.getOrder()] = row.isSort();
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -276,6 +317,10 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
 
     public final boolean[] getSelection() {
         return this.gridVisibility;
+    }
+
+    public final boolean[] getSort() {
+        return this.sort;
     }
 
     public final java.util.List<String> getColumnNames() {
@@ -346,6 +391,7 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
             element.setChecked(true);
             element.setDim(100);
             element.setOrder(getColumnIndex(element.getColName()));
+            element.setSort(false);
             inputNou[element.getOrder()] = element;
         }
         this.viewer.setInput(inputNou);

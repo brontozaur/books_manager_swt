@@ -215,7 +215,7 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
         for (int i = 0; i < length; i++) {
             final String colName = this.table == null ? this.tree.getColumn(order[i]).getText()
                     : this.table.getColumn(order[i]).getText();
-            TableRow row = new TableRow(colName, visibleCols[i], dims[i], aligns[i], order[i]);
+            TableRow row = new TableRow(colName, visibleCols[i], dims[i], aligns[i], order[i], false);
             input[i] = row;
         }
         return input;
