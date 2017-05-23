@@ -11,6 +11,7 @@ import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
 import com.papao.books.model.config.TableSetting;
+import com.papao.books.rapoarte.MostReadAuthorsView;
 import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.carte.AutorView;
 import com.papao.books.ui.carte.AutoriView;
@@ -104,6 +105,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private ProgressBarComposite progressBarComposite;
     private ToolItem itemImport;
     private ToolItem itemExport;
+    private ToolItem itemRapoarte;
     private ToolItem itemConfig;
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
@@ -1091,6 +1093,32 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
+        final Menu rapoarteMenu = new Menu(getShell(), SWT.POP_UP);
+        item = new MenuItem(rapoarteMenu, SWT.PUSH);
+        item.setText("Cei mai cititi autori");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                new MostReadAuthorsView(getShell()).open(true, true);
+            }
+        });
+
+        itemRapoarte = new ToolItem(barOps, SWT.DROP_DOWN);
+        itemRapoarte.setImage(AppImages.getImage24(AppImages.IMG_ADOBE));
+        itemRapoarte.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ADOBE));
+        itemRapoarte.setToolTipText("Diferite statistici");
+        itemRapoarte.setText("Rapoarte");
+        itemRapoarte.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                Rectangle rect = itemRapoarte.getBounds();
+                Point pt = new Point(rect.x, rect.y + rect.height);
+                pt = barOps.toDisplay(pt);
+                rapoarteMenu.setLocation(pt.x, pt.y);
+                rapoarteMenu.setVisible(true);
+            }
+        });
+
 
         return barOps;
     }
@@ -1125,8 +1153,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         ToolItem item = new ToolItem(bar, SWT.NONE);
         item.setImage(AppImages.getImage24(AppImages.IMG_MOD_VIZUALIZARE));
         item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_MOD_VIZUALIZARE));
-        item.setToolTipText("Afisare rapoarte");
-        item.setText("Rapoarte");
+        item.setToolTipText("Afisare fisiere exportate");
+        item.setText("Exporturi");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {

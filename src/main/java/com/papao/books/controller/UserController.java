@@ -139,4 +139,8 @@ public class UserController {
         }
         return ids;
     }
+
+    public static List<UserActivity> getAllCartiCitite() {
+        return userActivityRepository.getByCarteCitita_CititaIs(true);
+    }
 }

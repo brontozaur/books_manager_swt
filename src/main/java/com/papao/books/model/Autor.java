@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "autor")
-public class Autor extends AuditObject implements Serializable {
+public class Autor extends AuditObject implements Serializable, Comparable {
 
     @Id
     private ObjectId id;
@@ -249,5 +249,13 @@ public class Autor extends AuditObject implements Serializable {
             return false;
         }
         return ((Autor) obj).getId().equals(this.id);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (!(o instanceof Autor)) {
+            return 1;
+        }
+        return this.getNumeComplet().compareToIgnoreCase(((Autor) o).getNumeComplet());
     }
 }

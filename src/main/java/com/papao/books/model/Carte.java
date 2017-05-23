@@ -3,6 +3,7 @@ package com.papao.books.model;
 import com.sun.istack.internal.NotNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "carte")
@@ -60,6 +62,12 @@ public class Carte extends AuditObject implements Serializable {
     private List<String> traducatori;
     private Limba traducereDin;
     private String locatie;
+
+    @Transient
+    private Date readStartDate;
+
+    @Transient
+    private Date readEndDate;
 
     @Override
     public ObjectId getId() {
@@ -434,6 +442,22 @@ public class Carte extends AuditObject implements Serializable {
 
     public boolean hasCopertaFata() {
         return this.copertaFata != null && this.copertaFata.exists();
+    }
+
+    public Date getReadStartDate() {
+        return readStartDate;
+    }
+
+    public void setReadStartDate(Date readStartDate) {
+        this.readStartDate = readStartDate;
+    }
+
+    public Date getReadEndDate() {
+        return readEndDate;
+    }
+
+    public void setReadEndDate(Date readEndDate) {
+        this.readEndDate = readEndDate;
     }
 
     public void initCopy() {
