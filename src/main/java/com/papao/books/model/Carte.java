@@ -432,6 +432,10 @@ public class Carte extends AuditObject implements Serializable {
         this.locatie = locatie;
     }
 
+    public boolean hasCopertaFata() {
+        return this.copertaFata != null && this.copertaFata.exists();
+    }
+
     public void initCopy() {
         id = null;
         copertaFata = null;
