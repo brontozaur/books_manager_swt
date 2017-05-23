@@ -123,7 +123,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         rightFrontCoverImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if (rightFrontCoverImageComposite.imageChanged() && carte != null && carte.getCopertaFata() != null) {
+                if (rightFrontCoverImageComposite.imageChanged() && carte != null && carte.getCopertaFata() != null && carte.getCopertaFata().exists()) {
                     ApplicationController.removeDocument(carte.getCopertaFata().getId());
                     carte.setCopertaFata(null);
                     try {
