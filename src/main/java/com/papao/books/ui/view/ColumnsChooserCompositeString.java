@@ -1,7 +1,5 @@
 package com.papao.books.ui.view;
 
-import com.papao.books.controller.SettingsController;
-import com.papao.books.model.config.TableSetting;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.interfaces.IReset;
 import com.papao.books.ui.providers.AdbStringContentProvider;
@@ -16,14 +14,12 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
-public class ColumnsChooserComposite extends Composite implements Listener, IReset {
+import java.util.Arrays;
 
-    private static Logger logger = Logger.getLogger(ColumnsChooserComposite.class);
+public class ColumnsChooserCompositeString extends Composite implements Listener, IReset {
 
-    private Table table;
-    private Tree tree;
-    private final Class<?> clazz;
-    private final String tableKey;
+    private static Logger logger = Logger.getLogger(ColumnsChooserCompositeString.class);
+
     private TableViewer viewer;
     private final static int IDX_NUME = 0;
     private final static int IDX_DIM = 1;
@@ -41,26 +37,11 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
     private int[] gridOrder;
     private boolean[] gridVisibility;
 
-    public ColumnsChooserComposite(final Composite parent,
-                                   final Table table,
-                                   final Class<?> clazz,
-                                   final String tableKey) {
-        super(parent, SWT.NONE);
-        this.table = table;
-        this.clazz = clazz;
-        this.tableKey = tableKey;
-        addComponents();
-        populateFields();
-    }
+    private java.util.List<String> columnNames;
 
-    public ColumnsChooserComposite(final Composite parent,
-                                   final Tree tree,
-                                   final Class<?> clazz,
-                                   final String tableKey) {
+    public ColumnsChooserCompositeString(final Composite parent, final java.util.List<String> columnNames) {
         super(parent, SWT.NONE);
-        this.tree = tree;
-        this.clazz = clazz;
-        this.tableKey = tableKey;
+        this.columnNames = columnNames;
         addComponents();
         populateFields();
     }
@@ -77,9 +58,9 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
         this.viewer.getTable().setHeaderVisible(true);
         this.viewer.getTable().addListener(SWT.Selection, this);
         GridDataFactory.fillDefaults().grab(true, true).hint(350, 400).span(1, 2).applyTo(this.viewer.getControl());
-        for (int i = 0; i < ColumnsChooserComposite.COLS.length; i++) {
+        for (int i = 0; i < ColumnsChooserCompositeString.COLS.length; i++) {
             final TableViewerColumn tblCol = new TableViewerColumn(this.viewer, SWT.NONE);
-            tblCol.getColumn().setText(ColumnsChooserComposite.COLS[i]);
+            tblCol.getColumn().setText(ColumnsChooserCompositeString.COLS[i]);
             if (i == 0) {
                 tblCol.getColumn().setWidth(150);
             } else {
@@ -88,7 +69,8 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
             tblCol.getColumn().setAlignment(SWT.LEFT);
             tblCol.getColumn().setResizable(true);
             tblCol.getColumn().setMoveable(true);
-            switch (i) {
+            final int z = i;
+            switch (z) {
                 case IDX_NUME: {
                     tblCol.setLabelProvider(new ColumnLabelProvider() {
                         @Override
@@ -204,17 +186,20 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
 
     private TableRow[] getInputFromTable() {
         TableRow[] input;
-        final int length = this.table == null ? this.tree.getColumnCount()
-                : this.table.getColumnCount();
+        final int length = columnNames.size();
         input = new TableRow[length];
-        TableSetting tableSetting = SettingsController.getTableSetting(length, this.clazz, this.tableKey);
-        int[] order = tableSetting.getOrder();
-        int[] dims = tableSetting.getCorrectDims();
-        boolean[] visibleCols = tableSetting.getCorrectVisible();
-        int[] aligns = tableSetting.getCorrectAligns();
+        int[] order = new int[length];
         for (int i = 0; i < length; i++) {
-            final String colName = this.table == null ? this.tree.getColumn(order[i]).getText()
-                    : this.table.getColumn(order[i]).getText();
+            order[i] = i;
+        }
+        int[] dims = new int[length];
+        Arrays.fill(dims, 100);
+        boolean[] visibleCols = new boolean[length];
+        Arrays.fill(visibleCols, true);
+        int[] aligns = new int[length];
+        Arrays.fill(aligns, SWT.LEFT);
+        for (int i = 0; i < length; i++) {
+            final String colName = columnNames.get(i);
             TableRow row = new TableRow(colName, visibleCols[i], dims[i], aligns[i], order[i]);
             input[i] = row;
         }
@@ -255,57 +240,20 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
         return true;
     }
 
-    public boolean save(final boolean makeitPermanent) {
+    public boolean save() {
         try {
             TableRow[] elements = (TableRow[]) this.viewer.getInput();
             this.gridDims = new int[elements.length];
             this.gridAligns = new int[elements.length];
             this.gridOrder = new int[elements.length];
             this.gridVisibility = new boolean[elements.length];
-            if (this.table != null) {
-                for (int i = 0; i < elements.length; i++) {
-                    TableRow row = elements[i];
-                    if (makeitPermanent) {
-                        this.table.getColumn(row.getOrder()).setAlignment(row.getAlign());
-                        this.table.getColumn(row.getOrder()).setWidth(row.isChecked() ? row.getDim()
-                                : 0);
-                        this.table.getColumn(row.getOrder()).setResizable(row.isChecked());
-                    }
-                    this.gridDims[row.getOrder()] = row.getDim();
-                    this.gridAligns[row.getOrder()] = row.getAlign();
-                    this.gridOrder[i] = row.getOrder();
-                    this.gridVisibility[row.getOrder()] = row.isChecked();
-                }
-                if (makeitPermanent) {
-                    this.table.setColumnOrder(this.gridOrder);
-                }
-            } else {
-                for (int i = 0; i < elements.length; i++) {
-                    TableRow row = elements[i];
-                    if (makeitPermanent) {
-                        this.tree.getColumn(row.getOrder()).setAlignment(row.getAlign());
-                        this.tree.getColumn(row.getOrder()).setWidth(row.isChecked() ? row.getDim()
-                                : 0);
-                        this.tree.getColumn(row.getOrder()).setResizable(row.isChecked());
-                    }
-                    this.gridDims[row.getOrder()] = row.getDim();
-                    this.gridAligns[row.getOrder()] = row.getAlign();
-                    this.gridOrder[i] = row.getOrder();
-                    this.gridVisibility[row.getOrder()] = row.isChecked();
-                }
-                if (makeitPermanent) {
-                    this.tree.setColumnOrder(this.gridOrder);
-                }
+            for (int i = 0; i < elements.length; i++) {
+                TableRow row = elements[i];
+                this.gridDims[row.getOrder()] = row.getDim();
+                this.gridAligns[row.getOrder()] = row.getAlign();
+                this.gridOrder[i] = row.getOrder();
+                this.gridVisibility[row.getOrder()] = row.isChecked();
             }
-
-            if (makeitPermanent) {
-                TableSetting tableSetting = SettingsController.getTableSetting(this.gridAligns.length, this.clazz, this.tableKey);
-                tableSetting.setOrder(this.gridOrder);
-                tableSetting.setVisibility(this.gridVisibility);
-                tableSetting.setWidths(this.gridDims);
-                tableSetting.setAligns(this.gridAligns);
-            }
-
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             SWTeXtension.displayMessageE("A intervenit o eroare.", exc);
@@ -328,6 +276,10 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
 
     public final boolean[] getSelection() {
         return this.gridVisibility;
+    }
+
+    public final java.util.List<String> getColumnNames() {
+        return this.columnNames;
     }
 
     private void selectAll(final boolean select) {
@@ -402,20 +354,7 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
     }
 
     private int getColumnIndex(final String columnName) {
-        if (this.table != null) {
-            for (int i = 0; i < this.table.getColumnCount(); i++) {
-                if (this.table.getColumn(i).getText().equals(columnName)) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = 0; i < this.tree.getColumnCount(); i++) {
-                if (this.tree.getColumn(i).getText().equals(columnName)) {
-                    return i;
-                }
-            }
-        }
-        return -1;
+        return columnNames.indexOf(columnName);
     }
 
 }

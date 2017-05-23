@@ -598,16 +598,18 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
             item.getParent().setSelection(item);
             item.setData(raport);
             try {
-                File reportFile = new File(raport.getCale());
-                if (reportFile.exists() && reportFile.isFile()) {
-                    FileInputStream fileInputStream = new FileInputStream(reportFile);
-                    java.util.List<String> fileContents = IOUtils.readLines(fileInputStream);
-                    fileInputStream.close();
-                    StringBuilder sb = new StringBuilder();
-                    for (String str: fileContents) {
-                        sb.append(StringEscapeUtils.escapeHtml4(str)).append("<br/>");
+                if (raport.getType() == ExportType.TXT) {
+                    File reportFile = new File(raport.getCale());
+                    if (reportFile.exists() && reportFile.isFile()) {
+                        FileInputStream fileInputStream = new FileInputStream(reportFile);
+                        java.util.List<String> fileContents = IOUtils.readLines(fileInputStream);
+                        fileInputStream.close();
+                        StringBuilder sb = new StringBuilder();
+                        for (String str : fileContents) {
+                            sb.append(StringEscapeUtils.escapeHtml4(str)).append("<br/>");
+                        }
+                        browser.setText(sb.toString());
                     }
-                    browser.setText(sb.toString());
                 } else {
                     browser.setUrl(raport.getCale());
                 }
