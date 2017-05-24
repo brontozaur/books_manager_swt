@@ -363,8 +363,10 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
             public void handleEvent(Event event) {
                 if (autorImageComposite.imageChanged() && autoriTableViewer.getTable().getSelectionCount() == 1) {
                     Autor autor = (Autor) autoriTableViewer.getTable().getSelection()[0].getData();
-                    ApplicationController.removeDocument(autor.getMainImage().getId());
-                    autor.setMainImage(null);
+                    if (autor.getMainImage().exists()) {
+                        ApplicationController.removeDocument(autor.getMainImage().getId());
+                        autor.setMainImage(null);
+                    }
                     try {
                         autor.setMainImage(ApplicationController.saveDocument(autorImageComposite));
                         AutorController.save(autor);
@@ -399,8 +401,10 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
             public void handleEvent(Event event) {
                 if (booksImageComposite.imageChanged() && booksTableViewer.getTable().getSelectionCount() == 1) {
                     Carte carte = (Carte) booksTableViewer.getTable().getSelection()[0].getData();
-                    ApplicationController.removeDocument(carte.getCopertaFata().getId());
-                    carte.setCopertaFata(null);
+                    if (carte.getCopertaFata().exists()) {
+                        ApplicationController.removeDocument(carte.getCopertaFata().getId());
+                        carte.setCopertaFata(null);
+                    }
                     try {
                         carte.setCopertaFata(ApplicationController.saveDocument(booksImageComposite));
                         ApplicationService.getBookController().save(carte);

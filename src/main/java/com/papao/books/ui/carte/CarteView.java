@@ -668,8 +668,10 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setTraducereDin(Limba.valueOf(comboTraducereDin.getText()));
 
         if (frontCoverComposite.imageChanged()) {
-            ApplicationController.removeDocument(carte.getCopertaFata().getId());
-            carte.setCopertaFata(null);
+            if (carte.getCopertaFata().exists()) {
+                ApplicationController.removeDocument(carte.getCopertaFata().getId());
+                carte.setCopertaFata(null);
+            }
             carte.setCopertaFata(ApplicationController.saveDocument(frontCoverComposite));
         }
 
@@ -683,14 +685,18 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setEditiaOriginala(editiaOriginala);
 
         if (backCoverComposite.imageChanged()) {
-            ApplicationController.removeDocument(carte.getCopertaSpate().getId());
-            carte.setCopertaSpate(null);
+            if (carte.getCopertaFata().exists()) {
+                ApplicationController.removeDocument(carte.getCopertaSpate().getId());
+                carte.setCopertaSpate(null);
+            }
             carte.setCopertaSpate(ApplicationController.saveDocument(backCoverComposite));
         }
 
         if (autografComposite.imageChanged()) {
-            ApplicationController.removeDocument(carte.getAutograf().getId());
-            carte.setAutograf(null);
+            if (carte.getAutograf().exists()) {
+                ApplicationController.removeDocument(carte.getAutograf().getId());
+                carte.setAutograf(null);
+            }
             carte.setAutograf(ApplicationController.saveDocument(autografComposite));
         }
 
