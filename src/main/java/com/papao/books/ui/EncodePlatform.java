@@ -1290,7 +1290,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return carte.getTitlu();
+                            String titlu = carte.getTitlu();
+                            if (StringUtils.isNotEmpty(carte.getSerie())) {
+                                titlu += " (" + carte.getSerie() + ")";
+                            }
+                            return titlu;
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {

@@ -28,6 +28,7 @@ import com.papao.books.ui.util.sorter.AbstractTableColumnViewerSorter;
 import com.papao.books.ui.view.AbstractCView;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -321,7 +322,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
 
                 booksTableViewer.setInput(ApplicationService.getBookController().getByIdAutoriContains(autor.getId()));
                 booksImageComposite.setImage(null, null);
-                if (booksTableViewer.getTable().getItemCount() >0) {
+                if (booksTableViewer.getTable().getItemCount() > 0) {
                     booksTableViewer.getTable().select(0);
                     booksTableViewer.getTable().notifyListeners(SWT.Selection, new Event());
                 }
@@ -603,7 +604,11 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return carte.getTitlu();
+                            String titlu = carte.getTitlu();
+                            if (StringUtils.isNotEmpty(carte.getSerie())) {
+                                titlu += " (" + carte.getSerie() + ")";
+                            }
+                            return titlu;
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.booksTableViewer, col) {

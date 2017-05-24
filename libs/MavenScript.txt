@@ -115,3 +115,5 @@ Expandable composite:
 http://www.eclipse.org/mylyn/
 
 inamik table formatter is moving: https://github.com/iNamik/Java-Text-Table-Formatter
+
+swt sources: http://download.eclipse.org/eclipse/downloads/drops4/R-4.6.3-201703010400/
