@@ -241,8 +241,10 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
             public void handleEvent(Event event) {
                 if (booksImageComposite.imageChanged() && booksTableViewer.getTable().getSelectionCount() == 1) {
                     Carte carte = (Carte) booksTableViewer.getTable().getSelection()[0].getData();
-                    ApplicationController.removeDocument(carte.getCopertaFata().getId());
-                    carte.setCopertaFata(null);
+                    if (carte.getCopertaFata().exists()) {
+                        ApplicationController.removeDocument(carte.getCopertaFata().getId());
+                        carte.setCopertaFata(null);
+                    }
                     try {
                         carte.setCopertaFata(ApplicationController.saveDocument(booksImageComposite));
                         ApplicationService.getBookController().save(carte);
