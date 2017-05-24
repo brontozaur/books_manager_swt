@@ -170,7 +170,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
                 Image mainImage;
                 String imageName;
                 autorImageComposite.setImage(null, null);
-                if (autor.getMainImage() != null) {
+                if (autor.getMainImage().exists()) {
                     GridFSDBFile image = ApplicationController.getDocumentData(autor.getMainImage().getId());
                     if (image != null) {
                         imageName = image.getFilename();
@@ -205,8 +205,10 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
             public void handleEvent(Event event) {
                 if (autorImageComposite.imageChanged() && autoriTableViewer.getTable().getSelectionCount() == 1) {
                     Autor autor = (Autor) autoriTableViewer.getTable().getSelection()[0].getData();
-                    ApplicationController.removeDocument(autor.getMainImage().getId());
-                    autor.setMainImage(null);
+                    if (autor.getMainImage().exists()) {
+                        ApplicationController.removeDocument(autor.getMainImage().getId());
+                        autor.setMainImage(null);
+                    }
                     try {
                         autor.setMainImage(ApplicationController.saveDocument(autorImageComposite));
                         AutorController.save(autor);
