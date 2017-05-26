@@ -181,7 +181,7 @@ public class CartePersonajComposite extends Composite implements Observer {
         if (personaj != null) {
             textNume.setText(personaj.getText());
             textRol.setText(personaj.getText());
-            textDescriere.setText(personaj.getText());
+            textDescriere.setText(personaj.getDescriere());
         } else {
             textNume.setText("");
             textRol.setText("");
@@ -220,7 +220,7 @@ public class CartePersonajComposite extends Composite implements Observer {
         if (personaj != null) {
             textNume.setText(personaj.getNume());
             textRol.setText(personaj.getRol());
-            textDescriere.setText(personaj.getText());
+            textDescriere.setText(personaj.getDescriere());
             textDescriere.setFocus();
             textDescriere.setSelection(textDescriere.getText().length());
         }

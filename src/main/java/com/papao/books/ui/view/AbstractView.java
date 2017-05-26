@@ -178,6 +178,8 @@ public abstract class AbstractView extends Observable {
     private AbstractMongoDB observableObject;
     private int textSearchWithHighlightWidth = 100;
 
+    private boolean addEscapeTraverseClose;
+
     public AbstractView(final Shell parent, final Class<? extends Widget> widgetClass, final int viewMode) {
         this(parent, widgetClass, null, viewMode);
     }
@@ -297,6 +299,18 @@ public abstract class AbstractView extends Observable {
                     Notifier.setParent(notificationParent);
                 }
             });
+            if (addEscapeTraverseClose) {
+                this.shell.addListener(SWT.Traverse, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        if (event.detail == SWT.TRAVERSE_ESCAPE) {
+                            getShell().close();
+                            event.detail = SWT.TRAVERSE_NONE;
+                            event.doit = true;
+                        }
+                    }
+                });
+            }
             this.shell.setLayout(new GridLayout(1, true));
             ((GridLayout) this.shell.getLayout()).verticalSpacing = 0;
             this.shell.setSize(getShellWidth(), getShellHeight());
@@ -1575,6 +1589,14 @@ public abstract class AbstractView extends Observable {
         if (!initial.equals(decoded)) {
             widget.setText(decoded);
         }
+    }
+
+    public boolean isAddEscapeTraverseClose() {
+        return addEscapeTraverseClose;
+    }
+
+    public void setAddEscapeTraverseClose(boolean addEscapeTraverseClose) {
+        this.addEscapeTraverseClose = addEscapeTraverseClose;
     }
 
     public AbstractMongoDB getObservableObject() {

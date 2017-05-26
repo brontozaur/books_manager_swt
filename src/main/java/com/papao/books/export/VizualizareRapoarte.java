@@ -561,6 +561,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL);
         setObjectName("rapoarte");
+        setAddEscapeTraverseClose(true);
     }
 
     public static void show() {

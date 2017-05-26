@@ -9,6 +9,9 @@ public class Personaj implements ComboElement{
     private String descriere;
 
     public String getNume() {
+        if (nume == null) {
+            return "";
+        }
         return nume;
     }
 
@@ -17,6 +20,9 @@ public class Personaj implements ComboElement{
     }
 
     public String getRol() {
+        if (rol == null) {
+            return "";
+        }
         return rol;
     }
 
@@ -25,6 +31,9 @@ public class Personaj implements ComboElement{
     }
 
     public String getDescriere() {
+        if (descriere == null) {
+            return "";
+        }
         return descriere;
     }
 
@@ -35,6 +44,14 @@ public class Personaj implements ComboElement{
     @Override
     public String getText() {
         return this.nume;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Personaj)) {
+            return false;
+        }
+        return ((Personaj)obj).getNume().equals(this.nume);
     }
 
     @Override

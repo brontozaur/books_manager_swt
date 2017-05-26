@@ -238,7 +238,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     }
 
     private void saveDetails() {
-        if (textLocatie.getText().equals(carte.getLocatie())) {
+        if (!textLocatie.getText().equals(carte.getLocatie())) {
             carte.setLocatie(textLocatie.getText());
             ApplicationService.getBookController().save(carte);
         }

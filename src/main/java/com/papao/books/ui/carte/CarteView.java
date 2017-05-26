@@ -390,10 +390,8 @@ public class CarteView extends AbstractCSaveView {
 
         label(comp, "Editura");
         this.textEditiaPrincepsEditura = new Text(comp, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(false, false).span(4, 1).hint(150, SWT.DEFAULT).applyTo(this.textEditiaPrincepsEditura);
+        GridDataFactory.fillDefaults().grab(false, false).span(5, 1).hint(150, SWT.DEFAULT).applyTo(this.textEditiaPrincepsEditura);
         ContentProposalProvider.addContentProposal(textEditiaPrincepsEditura, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editiaOriginala.editura"));
-
-        new Label(comp, SWT.NONE);
 
         label(comp, "An aparitie");
         textEditiaPrincepsAn = new Text(comp, SWT.BORDER);

@@ -43,18 +43,6 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
     public WebBrowser(final Shell parent, String startUrl, final boolean allowImageSelection) {
         super(parent, MODE_NONE);
         try {
-
-            getShell().addListener(SWT.Traverse, new Listener() {
-                @Override
-                public void handleEvent(Event event) {
-                    if (event.detail == SWT.TRAVERSE_ESCAPE) {
-                        getShell().close();
-                        event.detail = SWT.TRAVERSE_NONE;
-                        event.doit = true;
-                    }
-                }
-            });
-
             CLabel cLabelNavigare = new CLabel(getContainer(), SWT.SHADOW_ETCHED_OUT);
             cLabelNavigare.setLayout(new GridLayout(4, false));
             ((GridLayout) cLabelNavigare.getLayout()).verticalSpacing = 0;
@@ -335,5 +323,6 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
         final int monitorHeight = monitorBounds.height;
         setShellWidth(monitorWidth * 60 / 100);
         setShellHeight(monitorHeight * 60 / 100);
+        setAddEscapeTraverseClose(true);
     }
 }
