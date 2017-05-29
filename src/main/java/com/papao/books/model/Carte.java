@@ -62,6 +62,8 @@ public class Carte extends AuditObject implements Serializable {
     private List<String> traducatori;
     private Limba traducereDin;
     private String locatie;
+    private List<String> redactori;
+    private List<String> autoriCoperta;
 
     @Transient
     private Date readStartDate;
@@ -458,6 +460,28 @@ public class Carte extends AuditObject implements Serializable {
 
     public void setReadEndDate(Date readEndDate) {
         this.readEndDate = readEndDate;
+    }
+
+    public List<String> getRedactori() {
+        if (redactori == null) {
+            redactori = new ArrayList<>();
+        }
+        return redactori;
+    }
+
+    public void setRedactori(List<String> redactori) {
+        this.redactori = redactori;
+    }
+
+    public List<String> getAutoriCoperta() {
+        if (autoriCoperta == null) {
+            autoriCoperta = new ArrayList<>();
+        }
+        return autoriCoperta;
+    }
+
+    public void setAutoriCoperta(List<String> autoriCoperta) {
+        this.autoriCoperta = autoriCoperta;
     }
 
     public void initCopy() {

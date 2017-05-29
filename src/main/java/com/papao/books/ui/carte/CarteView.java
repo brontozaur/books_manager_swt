@@ -52,7 +52,9 @@ public class CarteView extends AbstractCSaveView {
     private Text textSerie;
     private LinkedinCompositeAutori compositeAutori;
     private Text textIsbn;
+    private LinkedinComposite compositeAutoriCoperta;
     private LinkedinComposite compositeAutoriIlustratii;
+    private LinkedinComposite compositeRedactori;
     private LinkedinComposite compositeTehnoredactori;
     private Text textImprimerie;
     private Text textLocatie;
@@ -355,6 +357,11 @@ public class CarteView extends AbstractCSaveView {
         this.textEditia = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(this.textEditia);
 
+        label(mainCompLeft, "Redactori");
+        this.compositeRedactori = new LinkedinComposite(mainCompLeft, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "redactori"), carte.getRedactori());
+        ((GridData) compositeRedactori.getLayoutData()).horizontalSpan = 5;
+        ((GridData) compositeRedactori.getLayoutData()).grabExcessHorizontalSpace = true;
+
         label(mainCompLeft, "Tehnoredactori");
         this.compositeTehnoredactori = new LinkedinComposite(mainCompLeft, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "tehnoredactori"), carte.getTehnoredactori());
         ((GridData) compositeTehnoredactori.getLayoutData()).horizontalSpan = 5;
@@ -536,6 +543,11 @@ public class CarteView extends AbstractCSaveView {
         ((GridData) compositeAutoriIlustratii.getLayoutData()).horizontalSpan = 7;
         ((GridData) compositeAutoriIlustratii.getLayoutData()).grabExcessHorizontalSpace = true;
 
+        label(comp, "Autori coperta");
+        this.compositeAutoriCoperta = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "autoriCoperta"), carte.getAutoriCoperta());
+        ((GridData) compositeAutoriCoperta.getLayoutData()).horizontalSpan = 7;
+        ((GridData) compositeAutoriCoperta.getLayoutData()).grabExcessHorizontalSpace = true;
+
         label(comp, "Greutate (kg)");
         this.textGreutate = new FormattedText(comp, SWT.BORDER);
         this.textGreutate.setFormatter(NumberUtil.getFormatter(2, true));
@@ -649,6 +661,8 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setEditia(textEditia.getText().trim());
         this.carte.setIsbn(textIsbn.getText().trim());
         this.carte.setAutoriIlustratii(compositeAutoriIlustratii.getValoriIntroduse());
+        this.carte.setAutoriCoperta(compositeAutoriCoperta.getValoriIntroduse());
+        this.carte.setRedactori(compositeRedactori.getValoriIntroduse());
         this.carte.setTehnoredactori(compositeTehnoredactori.getValoriIntroduse());
         this.carte.setImprimerie(textImprimerie.getText().trim());
         this.carte.setLocatie(textLocatie.getText().trim());
