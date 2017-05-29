@@ -50,7 +50,7 @@ public class Carte extends AuditObject implements Serializable {
     private String goodreadsUrl;
     private String wikiUrl;
     private String website;
-    private List<GenLiterar> genLiterar;
+    private List<String> genLiterar;
     private DocumentData copertaFata;
     private DocumentData copertaSpate;
     private DocumentData autograf;
@@ -299,7 +299,7 @@ public class Carte extends AuditObject implements Serializable {
         this.autograf = autograf;
     }
 
-    public List<GenLiterar> getGenLiterar() {
+    public List<String> getGenLiterar() {
         if (genLiterar == null) {
             genLiterar = new ArrayList<>();
         }
@@ -317,7 +317,7 @@ public class Carte extends AuditObject implements Serializable {
         this.idAutori = idAutori;
     }
 
-    public void setGenLiterar(List<GenLiterar> genLiterar) {
+    public void setGenLiterar(List<String> genLiterar) {
         this.genLiterar = genLiterar;
     }
 

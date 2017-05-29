@@ -6,7 +6,6 @@ import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.AutorController;
 import com.papao.books.model.AnLunaZiData;
 import com.papao.books.model.Autor;
-import com.papao.books.model.GenLiterar;
 import com.papao.books.ui.custom.AnLunaZiComposite;
 import com.papao.books.ui.custom.ImageSelectorComposite;
 import com.papao.books.ui.custom.LinkedinComposite;
@@ -25,8 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AutorView extends AbstractCSaveView {
 
@@ -87,8 +84,7 @@ public class AutorView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(this.dataMortiiComposite);
 
         label(compLeft, "Gen literar");
-        this.genLiterarComposite = new LinkedinComposite(compLeft,
-                GenLiterar.class, autor.getGenLiterar());
+        this.genLiterarComposite = new LinkedinComposite(compLeft, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getAutoriCollectionName(), "getLiterar"), autor.getGenLiterar());
         ((GridData) this.genLiterarComposite.getLayoutData()).horizontalSpan = 3;
         ((GridData) this.genLiterarComposite.getLayoutData()).widthHint = 350;
 
@@ -224,11 +220,7 @@ public class AutorView extends AbstractCSaveView {
         this.autor.setFacebook(this.textFacebook.getText());
         this.autor.setDescriere(this.textDescriere.getText());
         this.autor.setWiki(this.textWiki.getText());
-        List<GenLiterar> genuriLiterare = new ArrayList<>();
-        for (Enum value : genLiterarComposite.getEnumValues()) {
-            genuriLiterare.add((GenLiterar) value);
-        }
-        this.autor.setGenLiterar(genuriLiterare);
+        this.autor.setGenLiterar(genLiterarComposite.getValoriIntroduse());
         this.autor.setLoculNasterii(textLocNastere.getText());
         this.autor.setTara(textTara.getText());
         if (mainImageComposite.getSelectedFile() != null) {

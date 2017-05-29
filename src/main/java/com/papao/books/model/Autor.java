@@ -26,7 +26,7 @@ public class Autor extends AuditObject implements Serializable, Comparable {
     private int ziDeces;
     private DocumentData mainImage;
     private List<DocumentData> documents;
-    private List<GenLiterar> genLiterar;
+    private List<String> genLiterar;
     private String website;
     private String twitter;
     private String facebook;
@@ -147,14 +147,14 @@ public class Autor extends AuditObject implements Serializable, Comparable {
         this.wiki = wiki;
     }
 
-    public List<GenLiterar> getGenLiterar() {
+    public List<String> getGenLiterar() {
         if (genLiterar == null) {
             genLiterar = new ArrayList<>();
         }
         return genLiterar;
     }
 
-    public void setGenLiterar(List<GenLiterar> genLiterar) {
+    public void setGenLiterar(List<String> genLiterar) {
         this.genLiterar = genLiterar;
     }
 

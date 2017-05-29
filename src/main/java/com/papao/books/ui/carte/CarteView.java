@@ -535,7 +535,7 @@ public class CarteView extends AbstractCSaveView {
         });
 
         label(comp, "Gen literar");
-        this.compositeGenLiterar = new LinkedinComposite(comp, GenLiterar.class, carte.getGenLiterar());
+        this.compositeGenLiterar = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "genLiterar"), carte.getGenLiterar());
         ((GridData) compositeGenLiterar.getLayoutData()).horizontalSpan = 7;
 
         label(comp, "Autori ilustratii");
@@ -712,11 +712,7 @@ public class CarteView extends AbstractCSaveView {
             carte.setAutograf(ApplicationController.saveDocument(autografComposite));
         }
 
-        List<GenLiterar> genuriLiterare = new ArrayList<>();
-        for (Enum value : compositeGenLiterar.getEnumValues()) {
-            genuriLiterare.add((GenLiterar) value);
-        }
-        carte.setGenLiterar(genuriLiterare);
+        carte.setGenLiterar(compositeGenLiterar.getValoriIntroduse());
         carte.setTags(compositeTags.getValoriIntroduse());
 
         if (dragAndDropTableComposite.isChanged()) {
