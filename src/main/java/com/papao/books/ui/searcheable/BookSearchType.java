@@ -2,21 +2,21 @@ package com.papao.books.ui.searcheable;
 
 public enum BookSearchType {
 
-    EDITURA,
-    AUTOR,
-    AN_APARITIE,
-    LIMBA,
-    TITLU,
-    TRADUCATOR,
-    TIP_COPERTA,
-    LIMBA_ORIGINALA,
-    CREATA,
-    ACTUALIZATA,
-    NOTA_CARTE,
-    NOTA_TRADUCERE,
-    LOCATIE,
-    CITITORI,
-    UTILIZATORI,
-    GEN_LITERAR,
-    TAGURI
+    Editura,
+    Autor,
+    An_aparitie,
+    Limba,
+    Titlu,
+    Traducator,
+    Tip_coperta,
+    Limba_originala,
+    Creata,
+    Actualizata,
+    Nota_carte,
+    Nota_traducere,
+    Locatie,
+    Cititori,
+    Utilizatori,
+    Gen_literar,
+    Taguri
 }

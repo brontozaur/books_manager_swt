@@ -86,7 +86,7 @@ public class BookController extends Observable {
         //TODO need to think about consistent handling for node type ALL
         Object value = node.getQueryValue();
         switch (searchType) {
-            case EDITURA: {
+            case Editura: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
@@ -96,7 +96,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case LOCATIE: {
+            case Locatie: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
@@ -106,7 +106,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case TAGURI: {
+            case Taguri: {
                 if (StringUtils.isNotEmpty((String) value)) {
                     carti = repository.getByTagsContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
                 } else {
@@ -114,7 +114,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case GEN_LITERAR: {
+            case Gen_literar: {
                 if (StringUtils.isNotEmpty((String) value)) {
                     carti = repository.getByGenLiterarContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
                 } else {
@@ -122,7 +122,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case AUTOR: {
+            case Autor: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
@@ -132,7 +132,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case TRADUCATOR: {
+            case Traducator: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
@@ -142,7 +142,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case AN_APARITIE: {
+            case An_aparitie: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
@@ -152,7 +152,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case LIMBA: {
+            case Limba: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
@@ -162,7 +162,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case LIMBA_ORIGINALA: {
+            case Limba_originala: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
@@ -172,7 +172,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case TIP_COPERTA: {
+            case Tip_coperta: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
@@ -182,7 +182,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case TITLU: {
+            case Titlu: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
@@ -192,7 +192,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case CREATA: {
+            case Creata: {
                 if (value != null) {
                     carti = repository.getByCreatedAtBetweenOrderByTitluAsc(node.getMinDate(), node.getMaxDate(), pageable);
                 } else {
@@ -200,7 +200,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case ACTUALIZATA: {
+            case Actualizata: {
                 if (value != null) {
                     carti = repository.getByUpdatedAtBetweenOrderByTitluAsc(node.getMinDate(), node.getMaxDate(), pageable);
                 } else {
@@ -208,7 +208,7 @@ public class BookController extends Observable {
                 }
                 break;
             }
-            case NOTA_CARTE: {
+            case Nota_carte: {
                 List<ObjectId> bookIds;
                 if (value != null) {
                     bookIds = UserController.getBookIdsWithSpecifiedRatingForCurrentUser((Integer) value);
@@ -218,7 +218,7 @@ public class BookController extends Observable {
                 carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
                 break;
             }
-            case NOTA_TRADUCERE: {
+            case Nota_traducere: {
                 List<ObjectId> bookIds;
                 if (value != null) {
                     bookIds = UserController.getBookIdsWithSpecifiedTranslationRatingForCurrentUser((Integer) value);
@@ -228,12 +228,12 @@ public class BookController extends Observable {
                 carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
                 break;
             }
-            case CITITORI: {
+            case Cititori: {
                 List<ObjectId> bookIds = UserController.getReadedBookIdsForUser((ObjectId) value);
                 carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
                 break;
             }
-            case UTILIZATORI: {
+            case Utilizatori: {
                 List<ObjectId> bookIds = UserController.getBookIdsForUser((ObjectId) value);
                 carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
                 break;

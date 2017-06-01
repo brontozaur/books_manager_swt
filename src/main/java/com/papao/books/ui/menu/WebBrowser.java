@@ -53,30 +53,30 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
                     false,
                     ((GridLayout) getContainer().getLayout()).numColumns,
                     1));
-            ((GridData) cLabelNavigare.getLayoutData()).heightHint = 25;
+            ((GridData) cLabelNavigare.getLayoutData()).heightHint = 30;
             ((GridLayout) cLabelNavigare.getLayout()).marginHeight = ((GridLayout) cLabelNavigare.getLayout()).marginWidth = 1;
             ((GridLayout) cLabelNavigare.getLayout()).verticalSpacing = 0;
 
             ToolBar barNavigare = new ToolBar(cLabelNavigare, SWT.FLAT | SWT.WRAP);
 
             this.itemBack = new ToolItem(barNavigare, SWT.PUSH);
-            this.itemBack.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT));
-            this.itemBack.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_LEFT));
+            this.itemBack.setImage(AppImages.getImage24(AppImages.IMG_ARROW_LEFT));
+            this.itemBack.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_LEFT));
             this.itemBack.setData(WebBrowser.BACK);
 
             this.itemNext = new ToolItem(barNavigare, SWT.PUSH);
-            this.itemNext.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
-            this.itemNext.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT));
+            this.itemNext.setImage(AppImages.getImage24(AppImages.IMG_ARROW_RIGHT));
+            this.itemNext.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_RIGHT));
             this.itemNext.setData(WebBrowser.FWD);
 
             this.itemRefresh = new ToolItem(barNavigare, SWT.PUSH);
-            this.itemRefresh.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
-            this.itemRefresh.setHotImage(AppImages.getImage16Focus(AppImages.IMG_REFRESH));
+            this.itemRefresh.setImage(AppImages.getImage24(AppImages.IMG_REFRESH));
+            this.itemRefresh.setHotImage(AppImages.getImage24Focus(AppImages.IMG_REFRESH));
             this.itemRefresh.setData(WebBrowser.REFRESH);
 
             this.itemStop = new ToolItem(barNavigare, SWT.PUSH);
-            this.itemStop.setImage(AppImages.getImage16(AppImages.IMG_STOP));
-            this.itemStop.setHotImage(AppImages.getImage16Focus(AppImages.IMG_STOP));
+            this.itemStop.setImage(AppImages.getImage24(AppImages.IMG_STOP));
+            this.itemStop.setHotImage(AppImages.getImage24Focus(AppImages.IMG_STOP));
             this.itemStop.setData(WebBrowser.STOP);
 
             new ToolItem(barNavigare, SWT.SEPARATOR);
@@ -93,8 +93,8 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
             ToolBar barGo = new ToolBar(cLabelNavigare, SWT.FLAT | SWT.WRAP);
 
             this.itemGo = new ToolItem(barGo, SWT.PUSH);
-            this.itemGo.setImage(AppImages.getImage16(AppImages.IMG_OK));
-            this.itemGo.setHotImage(AppImages.getImage16Focus(AppImages.IMG_OK));
+            this.itemGo.setImage(AppImages.getImage24(AppImages.IMG_OK));
+            this.itemGo.setHotImage(AppImages.getImage24Focus(AppImages.IMG_OK));
             this.itemGo.setData(WebBrowser.GO);
 
             int browser_style = SWT.BORDER;

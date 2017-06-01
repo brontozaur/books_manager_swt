@@ -96,7 +96,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private TreeViewer leftTreeViewer;
 
     private PaginationComposite paginationComposite;
-    private BookSearchType searchType = BookSearchType.AUTOR;
+    private BookSearchType searchType = BookSearchType.Autor;
     private Combo comboModAfisare;
     private DragAndDropTableComposite dragAndDropTableComposite;
     private LiveSashForm rightVerticalSash;
@@ -668,27 +668,27 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             return;
         }
         switch (searchType) {
-            case EDITURA: {
+            case Editura: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editura");
                 createTreeNodes(wrapper, "Edituri");
                 break;
             }
-            case LOCATIE: {
+            case Locatie: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "locatie");
                 createTreeNodes(wrapper, "Locatii");
                 break;
             }
-            case TAGURI: {
+            case Taguri: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctArrayPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "tags");
                 createTreeNodes(wrapper, "Taguri");
                 break;
             }
-            case GEN_LITERAR: {
+            case Gen_literar: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctArrayPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "genLiterar");
                 createTreeNodes(wrapper, "Gen literar");
                 break;
             }
-            case AUTOR: {
+            case Autor: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctValuesForReferenceCollection(ApplicationService.getApplicationConfig().getBooksCollectionName(),
                         "idAutori",
                         ApplicationService.getApplicationConfig().getAutoriCollectionName(),
@@ -698,7 +698,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 createTreeNodes(wrapper, "Autori");
                 break;
             }
-            case NOTA_CARTE: {
+            case Nota_carte: {
                 SimpleTextNode rootNode = ApplicationController.buildRatingTreeForCurrentUser(
                         "userId",
                         EncodeLive.getIdUser(),
@@ -707,7 +707,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 leftTreeViewer.setInput(rootNode);
                 break;
             }
-            case NOTA_TRADUCERE: {
+            case Nota_traducere: {
                 SimpleTextNode rootNode = ApplicationController.buildRatingTreeForCurrentUser(
                         "userId",
                         EncodeLive.getIdUser(),
@@ -716,54 +716,54 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 leftTreeViewer.setInput(rootNode);
                 break;
             }
-            case CITITORI: {
+            case Cititori: {
                 SimpleTextNode rootNode = ApplicationController.buildUserActivityTree("userId", "carteCitita.citita", true, "Carti citite");
                 leftTreeViewer.setInput(rootNode);
                 break;
             }
-            case UTILIZATORI: {
+            case Utilizatori: {
                 SimpleTextNode rootNode = ApplicationController.buildUserActivityTree("userId", null, null, "Activitate utilizator");
                 leftTreeViewer.setInput(rootNode);
                 break;
             }
-            case TRADUCATOR: {
+            case Traducator: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctArrayPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "traducere.traducatori");
                 createTreeNodes(wrapper, "Traducatori");
                 break;
             }
-            case AN_APARITIE: {
+            case An_aparitie: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "anAparitie");
                 createTreeNodes(wrapper, "Ani aparitie");
                 break;
             }
-            case LIMBA: {
+            case Limba: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "limba");
                 createTreeNodes(wrapper, "Limba textului");
                 break;
             }
-            case LIMBA_ORIGINALA: {
+            case Limba_originala: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editiaOriginala.limba");
                 createTreeNodes(wrapper, "Limba originala");
                 break;
             }
-            case TIP_COPERTA: {
+            case Tip_coperta: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "tipCoperta");
                 createTreeNodes(wrapper, " Tipuri coperta");
                 break;
             }
-            case TITLU: {
+            case Titlu: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "titlu", true);
                 createTreeNodes(wrapper, "Toate titlurile");
                 break;
             }
-            case CREATA: {
+            case Creata: {
                 SimpleTextNode invisibleRoot = ApplicationController.getDateTreeStructure(ApplicationService.getApplicationConfig().getBooksCollectionName(),
                         "createdAt",
                         leftTreeViewer.getAutoExpandLevel() == AbstractTreeViewer.ALL_LEVELS);
                 leftTreeViewer.setInput(invisibleRoot);
                 break;
             }
-            case ACTUALIZATA: {
+            case Actualizata: {
                 SimpleTextNode invisibleRoot = ApplicationController.getDateTreeStructure(ApplicationService.getApplicationConfig().getBooksCollectionName(),
                         "updatedAt",
                         leftTreeViewer.getAutoExpandLevel() == AbstractTreeViewer.ALL_LEVELS);
@@ -831,7 +831,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 boolean autorEnabled = false;
                 if (flagItemCount) {
                     SimpleTextNode selectedNode = (SimpleTextNode) leftTreeViewer.getTree().getSelection()[0].getData();
-                    autorEnabled = !selectedNode.isAllNode() && searchType == BookSearchType.AUTOR;
+                    autorEnabled = !selectedNode.isAllNode() && searchType == BookSearchType.Autor;
                 }
                 menu.getItem(idx++).setEnabled(autorEnabled); // edit autor
             }
@@ -892,7 +892,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         menuItem = new MenuItem(menu, SWT.NONE);
         menuItem.setText("Edit autor");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_USER));
-        menuItem.setEnabled(searchType == BookSearchType.AUTOR);
+        menuItem.setEnabled(searchType == BookSearchType.Autor);
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
