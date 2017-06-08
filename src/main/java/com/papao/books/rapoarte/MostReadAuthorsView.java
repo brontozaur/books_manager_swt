@@ -133,8 +133,8 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
 
         ToolItem itemAplica = new ToolItem(new ToolBar(compAplica, SWT.RIGHT | SWT.FLAT), SWT.RIGHT | SWT.FLAT);
         itemAplica.setText("Aplica filtrele");
-        itemAplica.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
-        itemAplica.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT));
+        itemAplica.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
+        itemAplica.setHotImage(AppImages.getImage16Focus(AppImages.IMG_REFRESH));
         itemAplica.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {

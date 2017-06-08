@@ -273,6 +273,10 @@ public class BookController extends Observable {
         return repository.getByIdAutoriContains(idAutor);
     }
 
+    public List<Carte> getBooksWithNoImage() {
+        return repository.getByCopertaFataIsNull();
+    }
+
     public void getByIdAutoriIn(List<ObjectId> idAutori, Pageable pageable) {
         carti = repository.getByIdAutoriIn(idAutori, pageable);
         setChanged();

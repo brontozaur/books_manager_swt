@@ -11,6 +11,7 @@ import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.AbstractMongoDB;
 import com.papao.books.model.Carte;
 import com.papao.books.model.config.TableSetting;
+import com.papao.books.rapoarte.BooksWithNoCoverView;
 import com.papao.books.rapoarte.MostReadAuthorsView;
 import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.carte.AutorView;
@@ -1100,6 +1101,15 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             @Override
             public void handleEvent(Event event) {
                 new MostReadAuthorsView(getShell()).open(true, true);
+            }
+        });
+
+        item = new MenuItem(rapoarteMenu, SWT.PUSH);
+        item.setText("Carti fara imagine");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                new BooksWithNoCoverView(getShell()).open(true, true);
             }
         });
 
