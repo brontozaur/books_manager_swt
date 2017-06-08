@@ -697,7 +697,7 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setEditiaOriginala(editiaOriginala);
 
         if (backCoverComposite.imageChanged()) {
-            if (carte.getCopertaFata().exists()) {
+            if (carte.getCopertaSpate().exists()) {
                 ApplicationController.removeDocument(carte.getCopertaSpate().getId());
                 carte.setCopertaSpate(null);
             }
