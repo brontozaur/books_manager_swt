@@ -9,7 +9,7 @@ import com.papao.books.model.Carte;
 import com.papao.books.model.config.TableSetting;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.custom.ImageSelectorComposite;
-import com.papao.books.ui.custom.ProgressBarComposite;
+import com.papao.books.ui.custom.SimplePaginationComposite;
 import com.papao.books.ui.providers.AdbMongoContentProvider;
 import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
 import com.papao.books.ui.util.StringUtil;
@@ -35,11 +35,10 @@ import org.eclipse.swt.widgets.*;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Observable;
+import java.util.Observer;
 
-public class BooksWithNoCoverView extends AbstractCViewAdapter {
-
-    private ProgressBarComposite progressBarComposite;
+public class BooksWithNoCoverView extends AbstractCViewAdapter implements Observer {
 
     private static final String[] BOOK_COLS = new String[]{"Autor", "Titlu"};
     private final static int IDX_BOOK_AUTHOR = 0;
@@ -47,6 +46,7 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter {
 
     private TableViewer booksTableViewer;
     private ImageSelectorComposite booksImageComposite;
+    private SimplePaginationComposite simplePaginationComposite;
 
     private static final String BOOKS_TABLE_KEY = "booksTable";
 
@@ -66,7 +66,7 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter {
 
         Composite compAplica = new Composite(getContainer(), SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(compAplica);
-        GridLayoutFactory.fillDefaults().numColumns(2).applyTo(compAplica);
+        GridLayoutFactory.fillDefaults().numColumns(1).applyTo(compAplica);
 
         ToolItem itemAplica = new ToolItem(new ToolBar(compAplica, SWT.RIGHT | SWT.FLAT), SWT.RIGHT | SWT.FLAT);
         itemAplica.setText("Afiseaza cartile");
@@ -79,8 +79,6 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter {
             }
         });
 
-        progressBarComposite = new ProgressBarComposite(compAplica, SWT.SMOOTH|SWT.INDETERMINATE);
-
         this.booksTableViewer = new TableViewer(getContainer(), SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE);
         this.booksTableViewer.getTable().setHeaderVisible(true);
         this.booksTableViewer.getTable().setLinesVisible(true);
@@ -91,6 +89,7 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter {
         GridData data = booksImageComposite.getLayoutData();
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = false;
+        data.verticalSpan = 2;
         data.verticalAlignment = SWT.BEGINNING;
         data.horizontalAlignment = SWT.BEGINNING;
         booksImageComposite.getLabelImage().addListener(SWT.Paint, new Listener() {
@@ -115,6 +114,9 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter {
             }
         });
 
+        simplePaginationComposite = new SimplePaginationComposite(getContainer());
+        simplePaginationComposite.addObserver(this);
+
         this.booksTableViewer.getTable().addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -135,6 +137,9 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter {
                 }
 
                 String observableProperty = "";
+
+                observableProperty += ApplicationService.getBookController().getBookAuthorNamesOrderByNumeComplet(carte) + " - ";
+
                 observableProperty += carte.getTitlu();
                 setObservableProperty(observableProperty);
                 setChanged();
@@ -149,8 +154,8 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter {
     }
 
     private void aplica() {
-        java.util.List<Carte> books = ApplicationService.getBookController().getBooksWithNoImage();
-        booksTableViewer.setInput(books);
+        simplePaginationComposite.reset();
+        simplePaginationComposite.search();
     }
 
     private void initBooksTableCols() {
@@ -221,5 +226,14 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter {
     protected void customizeView() {
         setShellText("Carti fara imagine");
         setViewOptions(ADD_CANCEL);
+        setUseCoords(true);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        this.booksImageComposite.setImageChanged(false);
+        this.booksImageComposite.setImage(null, null);
+        SimplePaginationComposite paginationComposite = (SimplePaginationComposite) o;
+        booksTableViewer.setInput(paginationComposite.getBooks());
     }
 }

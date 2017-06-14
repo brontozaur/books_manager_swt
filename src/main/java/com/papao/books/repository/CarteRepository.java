@@ -19,7 +19,7 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     List<Carte> getByIdAutoriContains(ObjectId idAutor);
 
-    List<Carte> getByCopertaFataIsNull();
+    Page<Carte> getByCopertaFataIsNull(Pageable pageable);
 
     Page<Carte> getByIdAutoriIn(List<ObjectId> idAutori, Pageable pageable);
 
