@@ -33,7 +33,11 @@ public class BooksApplication {
     private static final Logger logger = Logger.getLogger(BooksApplication.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(BooksApplication.class, args);
+        try {
+            SpringApplication.run(BooksApplication.class, args);
+        } catch (Exception exc) {
+            logger.error(exc.getMessage(), exc);
+        }
     }
 
     private static BooksApplication app;
