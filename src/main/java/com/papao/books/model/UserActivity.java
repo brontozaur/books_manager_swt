@@ -23,6 +23,7 @@ public class UserActivity extends AuditObject {
     private CarteCitita carteCitita;
     private int rating;
     private int translationRating;
+    private String review;
 
     public ObjectId getId() {
         return id;
@@ -78,5 +79,16 @@ public class UserActivity extends AuditObject {
 
     public void setCarteCitita(CarteCitita carteCitita) {
         this.carteCitita = carteCitita;
+    }
+
+    public String getReview() {
+        if (this.review == null) {
+            return "";
+        }
+        return review;
+    }
+
+    public void setReview(String review) {
+        this.review = review;
     }
 }
