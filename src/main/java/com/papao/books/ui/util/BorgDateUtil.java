@@ -4,8 +4,10 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public final class BorgDateUtil {
 
@@ -42,6 +44,7 @@ public final class BorgDateUtil {
     public static final String[] LUNILE = new String[]{
             BorgDateUtil.IANUARIE, BorgDateUtil.FEBRUARIE, BorgDateUtil.MARTIE, BorgDateUtil.APRILIE, BorgDateUtil.MAI, BorgDateUtil.IUNIE,
             BorgDateUtil.IULIE, BorgDateUtil.AUGUST, BorgDateUtil.SEPTEMBRIE, BorgDateUtil.OCTOMBRIE, BorgDateUtil.NOIEMBRIE, BorgDateUtil.DECEMBRIE};
+    public static final List<String> LUNILE_LIST = Arrays.asList(LUNILE);
 
     public static final String IAN = "Ian";
     public static final String FEB = "Feb";
@@ -59,6 +62,7 @@ public final class BorgDateUtil {
     public static final String[] LUNILE_SCURT = new String[]{
             BorgDateUtil.IAN, BorgDateUtil.FEB, BorgDateUtil.MAR, BorgDateUtil.APR, BorgDateUtil.MAI_, BorgDateUtil.IUN, BorgDateUtil.IUL,
             BorgDateUtil.AUG, BorgDateUtil.SEP, BorgDateUtil.OCT, BorgDateUtil.NOI, BorgDateUtil.DEC};
+    public static final List<String> LUNILE_SCURT_LIST = Arrays.asList(LUNILE_SCURT);
 
     private static final String ERR_NULL_DATE_VALUE = "Cannot get a valid date from a null value..";
 

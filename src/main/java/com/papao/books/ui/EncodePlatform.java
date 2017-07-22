@@ -632,6 +632,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     return -1;
                 } else if (b == null) {
                     return 1;
+                } else if (searchType == BookSearchType.Creata || searchType == BookSearchType.Actualizata) {
+                    return StringUtil.dateCompare(a.getNameWithoutCount(), b.getNameWithoutCount());
                 } else {
                     return StringUtil.romanianCompare(a.getName(), b.getName());
                 }

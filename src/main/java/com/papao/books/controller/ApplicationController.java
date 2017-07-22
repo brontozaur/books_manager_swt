@@ -397,7 +397,7 @@ public class ApplicationController {
             } else if (afisareTipScurt) {
                 numeLuna.append(BorgDateUtil.LUNILE_SCURT[luna]);
             } else {
-                String nume = String.valueOf(luna);
+                String nume = String.valueOf(luna + 1);
                 if (luna < 10) {
                     nume = "0" + nume;
                 }
@@ -494,7 +494,7 @@ public class ApplicationController {
     public static ObjectId getRandomBook(String collectionName) {
         DBCollection collection = mongoTemplate.getCollection(collectionName);
         DBObject sample = new BasicDBObject("$sample", new BasicDBObject("size", 1));
-        List<DBObject> pipeline = Arrays.asList(sample);
+        List<DBObject> pipeline = Collections.singletonList(sample);
         AggregationOutput output = collection.aggregate(pipeline);
         return (ObjectId) output.results().iterator().next().get("_id");
     }

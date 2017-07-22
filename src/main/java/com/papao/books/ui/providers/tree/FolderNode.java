@@ -115,4 +115,15 @@ public class FolderNode implements ITreeNode {
 		return null;
 	}
 
+	@Override
+	public String getNameWithoutCount() {
+		if (this.folder == null || this.folder.getName() == null) {
+			return null;
+		}
+		if (this.folder.getName().contains("(")) {
+			return this.folder.getName().substring(0, this.folder.getName().indexOf("("));
+		}
+		return this.folder.getName();
+	}
+
 }

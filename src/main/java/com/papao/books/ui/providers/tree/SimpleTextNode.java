@@ -357,4 +357,15 @@ public class SimpleTextNode implements ITreeNode {
             return maxDate.getTime();
         }
     }
+
+    @Override
+    public String getNameWithoutCount() {
+        if (this.node == null) {
+            return null;
+        }
+        if (this.node.contains("(")) {
+            return this.node.substring(0, this.node.indexOf("("));
+        }
+        return this.node;
+    }
 }

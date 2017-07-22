@@ -18,6 +18,8 @@ public interface ITreeNode {
 
     String getName();
 
+    String getNameWithoutCount();
+
     Image getImage();
 
     Color getForeground();
