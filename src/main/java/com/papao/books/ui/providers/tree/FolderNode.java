@@ -15,8 +15,9 @@ public class FolderNode implements ITreeNode {
 	private final File folder;
 	private ITreeNode parent;
 	private List<ITreeNode> childrens;
+    private String invisibleName;
 
-	public FolderNode(final File folder) {
+    public FolderNode(final File folder) {
 		this(null, folder);
 	}
 
@@ -125,5 +126,14 @@ public class FolderNode implements ITreeNode {
 		}
 		return this.folder.getName();
 	}
+
+    public void setInvisibleName(String invisibleName) {
+        this.invisibleName = invisibleName;
+    }
+
+    @Override
+    public String getInvisibleName() {
+        return this.invisibleName;
+    }
 
 }

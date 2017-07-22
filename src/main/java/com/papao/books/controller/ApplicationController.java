@@ -195,16 +195,6 @@ public class ApplicationController {
                 = mongoTemplate.aggregate(agg, UserActivity.class, BasicDBObject.class);
         List<BasicDBObject> result = groupResults.getMappedResults();
 
-        Map<Integer, Integer> sortedResults = new TreeMap<>();
-
-        int ratedBooksCount = 0;
-        for (DBObject distinctValue : result) {
-            Integer ratingNumber = (int) distinctValue.get("_id");
-            int count = (int) distinctValue.get("totalForRating");
-            ratedBooksCount += count;
-            sortedResults.put(ratingNumber, count);
-        }
-
         SimpleTextNode baseNode;
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
         boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
@@ -213,7 +203,6 @@ public class ApplicationController {
             allNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
             allNode.setNodeType(NodeType.ALL);
             allNode.setQueryValue(null);
-            allNode.setCount(ratedBooksCount);
             if (showNumbers) {
                 allNode.setName(allNode.getName() + allNode.getItemCountStr());
             }
@@ -222,14 +211,20 @@ public class ApplicationController {
             baseNode = invisibleRoot;
         }
 
-        for (Map.Entry<Integer, Integer> entry : sortedResults.entrySet()) {
+        for (DBObject distinctValue : result) {
+            Integer ratingNumber = (int) distinctValue.get("_id");
+            int count = (int) distinctValue.get("totalForRating");
             SimpleTextNode ratingNode = new SimpleTextNode(baseNode, "");
-            ratingNode.setQueryValue(entry.getKey());
-            ratingNode.setCount(entry.getValue());
-            ratingNode.setImage(AppImages.getRatingStars(entry.getKey()));
+            ratingNode.setQueryValue(ratingNumber);
+            ratingNode.setCount(count);
+            ratingNode.setInvisibleName(String.valueOf(ratingNumber));
+            ratingNode.setImage(AppImages.getRatingStars(ratingNumber));
             //spacing is needed to avoid overlapping of the node name with the 5 star image
             ratingNode.setName("                " + ratingNode.getName() + ratingNode.getItemCountStr());
+            baseNode.increment(count);
         }
+        baseNode.modifyCount(showNumbers, false);
+
         return invisibleRoot;
     }
 

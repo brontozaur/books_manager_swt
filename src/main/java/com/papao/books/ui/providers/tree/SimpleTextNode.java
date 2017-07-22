@@ -27,6 +27,7 @@ public class SimpleTextNode implements ITreeNode {
     private int count;
     private Object queryValue;
     private NodeType nodeType;
+    private String invisibleName;
 
     public SimpleTextNode(final String node) {
         this(null, node);
@@ -367,5 +368,14 @@ public class SimpleTextNode implements ITreeNode {
             return this.node.substring(0, this.node.indexOf("("));
         }
         return this.node;
+    }
+
+    public void setInvisibleName(String invisibleName) {
+        this.invisibleName = invisibleName;
+    }
+
+    @Override
+    public String getInvisibleName() {
+        return this.invisibleName;
     }
 }
