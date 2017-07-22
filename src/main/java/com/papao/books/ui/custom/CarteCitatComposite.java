@@ -23,6 +23,7 @@ import static com.papao.books.ui.custom.ComboImage2.*;
 public class CarteCitatComposite extends Composite implements Observer {
 
     private ComboImage2 citateCombo;
+    private Text textNrPagina;
     private Text textCitat;
     private Button buttonSave;
     private Button buttonCancel;
@@ -38,7 +39,7 @@ public class CarteCitatComposite extends Composite implements Observer {
     }
 
     private void addComponents() {
-        citateCombo = new ComboImage2(this, ADD_ADD | ADD_DEL | ADD_CONTENT_PROPOSAL, "Citat");
+        citateCombo = new ComboImage2(this, ADD_ADD | ADD_DEL | ADD_CONTENT_PROPOSAL, "Lista citate");
         ((GridData) citateCombo.getLayoutData()).horizontalAlignment = SWT.BEGINNING;
         ((GridData) citateCombo.getLayoutData()).widthHint = 250;
         citateCombo.getCombo().addListener(SWT.KeyUp, new Listener() {
@@ -62,8 +63,15 @@ public class CarteCitatComposite extends Composite implements Observer {
             }
         });
 
+        Composite comp = new Composite(this, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).applyTo(comp);
+        Label tmp = new Label(comp, SWT.NONE);
+        tmp.setText("Nr pagina");
+        GridDataFactory.fillDefaults().hint(68, SWT.DEFAULT).applyTo(tmp);
+        this.textNrPagina = new Text(comp, SWT.BORDER);
+
         this.textCitat = new Text(this, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(300, SWT.DEFAULT).applyTo(this.textCitat);
+        GridDataFactory.fillDefaults().grab(true, true).hint(300, SWT.DEFAULT).span(1,1).applyTo(this.textCitat);
         this.textCitat.addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event e) {
@@ -121,7 +129,9 @@ public class CarteCitatComposite extends Composite implements Observer {
         citateCombo.getCombo().setText("");
         textCitat.setEnabled(true);
         textCitat.setText("");
-        textCitat.setFocus();
+        textNrPagina.setEnabled(true);
+        textNrPagina.setText("");
+        textNrPagina.setFocus();
     }
 
     private void del() {
@@ -171,13 +181,16 @@ public class CarteCitatComposite extends Composite implements Observer {
     private void cancel() {
         Citat citat = (Citat) citateCombo.getSelectedElement();
         if (citat != null) {
-            textCitat.setText(citat.getText());
+            textNrPagina.setText(citat.getNrPagina());
+            textCitat.setText(citat.getContent());
         } else {
             textCitat.setText("");
+            textNrPagina.setText("");
             citateCombo.getCombo().deselectAll();
             citateCombo.getCombo().setText("");
         }
         textCitat.setEnabled(false);
+        textNrPagina.setEnabled(false);
     }
 
     private void setInput(Collection<ComboElement> input) {
@@ -192,6 +205,7 @@ public class CarteCitatComposite extends Composite implements Observer {
     private void populateFields(Citat citat) {
         citateCombo.setInput(null);
         textCitat.setText("");
+        textNrPagina.setText("");
         if (carte == null) {
             return;
         }
@@ -206,7 +220,8 @@ public class CarteCitatComposite extends Composite implements Observer {
             }
         }
         if (citat != null) {
-            textCitat.setText(citat.getText());
+            textNrPagina.setText(citat.getNrPagina());
+            textCitat.setText(citat.getContent());
             textCitat.setFocus();
             textCitat.setSelection(textCitat.getText().length());
         }

@@ -6,6 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 public class Citat implements ComboElement {
 
+    private String nrPagina;
     private String content;
     private String createdBy;
 
@@ -21,6 +22,17 @@ public class Citat implements ComboElement {
             return "";
         }
         return content;
+    }
+
+    public String getNrPagina() {
+        if (nrPagina == null) {
+            return "";
+        }
+        return nrPagina;
+    }
+
+    public void setNrPagina(String nrPagina) {
+        this.nrPagina = nrPagina;
     }
 
     public void setContent(String content) {
@@ -61,10 +73,10 @@ public class Citat implements ComboElement {
 
     @Override
     public String getText() {
-        if (content == null) {
+        if (nrPagina == null) {
             return "";
         }
-        return content;
+        return nrPagina;
     }
 
     @Override
