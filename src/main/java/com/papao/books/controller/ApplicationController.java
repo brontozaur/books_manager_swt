@@ -417,6 +417,7 @@ public class ApplicationController {
                 ziuaNode.setQueryValue(cal.getTime());
                 ziuaNode.setNodeType(NodeType.DAY);
             }
+            ziuaNode.setInvisibleName(ziua);
             ziuaNode.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
             ziuaNode.increment();
             lunaNode.increment();

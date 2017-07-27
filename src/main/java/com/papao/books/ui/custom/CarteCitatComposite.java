@@ -171,6 +171,7 @@ public class CarteCitatComposite extends Composite implements Observer {
         if (userActivity.getCitate().contains(citat)) {
             userActivity.getCitate().remove(citat);
         }
+        citat.setNrPagina(textNrPagina.getText());
         citat.setContent(textCitat.getText());
         userActivity.getCitate().add(citat);
         UserController.saveUserActivity(userActivity);

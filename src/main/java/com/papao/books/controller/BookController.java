@@ -192,6 +192,16 @@ public class BookController extends Observable {
                 }
                 break;
             }
+            case Serie: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getBySerieStartingWithIgnoreCaseOrderBySerieAsc((String) value, pageable);
+                } else {
+                    carti = repository.getBySerieIsNullOrSerieIsOrderBySerieAsc("", pageable);
+                }
+                break;
+            }
             case Creata: {
                 if (value != null) {
                     carti = repository.getByCreatedAtBetweenOrderByTitluAsc(node.getMinDate(), node.getMaxDate(), pageable);
