@@ -38,7 +38,7 @@ public class Carte extends AuditObject implements Serializable {
     private int inaltime;
     private double greutate;
     private int nrPagini;
-    private String serie;
+    private CarteSerie serie;
     private String isbn;
     private List<String> autoriIlustratii;
     private List<String> tehnoredactori;
@@ -156,14 +156,14 @@ public class Carte extends AuditObject implements Serializable {
         this.nrPagini = nrPagini;
     }
 
-    public String getSerie() {
-        if (serie == null) {
-            return "";
+    public CarteSerie getSerie() {
+        if (this.serie == null) {
+            return new CarteSerie("", "");
         }
         return serie;
     }
 
-    public void setSerie(String serie) {
+    public void setSerie(CarteSerie serie) {
         this.serie = serie;
     }
 

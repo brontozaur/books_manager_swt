@@ -605,8 +605,8 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
                             String titlu = carte.getTitlu();
-                            if (StringUtils.isNotEmpty(carte.getSerie())) {
-                                titlu += " (" + carte.getSerie() + ")";
+                            if (StringUtils.isNotEmpty(carte.getSerie().getNume())) {
+                                titlu += " (" + carte.getSerie().getFormattedValue() + ")";
                             }
                             return titlu;
                         }

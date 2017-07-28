@@ -51,7 +51,7 @@ public class CarteExport {
         this.inaltime = carte.getInaltime() + "";
         this.greutate = carte.getGreutate() + "";
         this.nrPagini = carte.getNrPagini() + "";
-        this.serie = carte.getSerie();
+        this.serie = carte.getSerie().getFormattedValue();
         this.isbn = carte.getIsbn();
         this.autoriIlustratii = Arrays.deepToString(carte.getAutoriIlustratii().toArray());
         this.tehnoredactori = Arrays.deepToString(carte.getTehnoredactori().toArray());

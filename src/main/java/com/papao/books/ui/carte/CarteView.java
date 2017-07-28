@@ -7,10 +7,7 @@ import com.papao.books.controller.UserController;
 import com.papao.books.model.*;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.auth.EncodeLive;
-import com.papao.books.ui.custom.DragAndDropTableComposite;
-import com.papao.books.ui.custom.ImageSelectorComposite;
-import com.papao.books.ui.custom.LinkedinComposite;
-import com.papao.books.ui.custom.LinkedinCompositeAutori;
+import com.papao.books.ui.custom.*;
 import com.papao.books.ui.providers.ContentProposalProvider;
 import com.papao.books.ui.util.NumberUtil;
 import com.papao.books.ui.util.WidgetCompositeUtil;
@@ -49,7 +46,7 @@ public class CarteView extends AbstractCSaveView {
     private FormattedText textLatime;
     private FormattedText textGreutate;
     private FormattedText textNrPagini;
-    private Text textSerie;
+    private CarteSerieComposite textSerie;
     private LinkedinCompositeAutori compositeAutori;
     private Text textIsbn;
     private LinkedinComposite compositeAutoriCoperta;
@@ -315,9 +312,8 @@ public class CarteView extends AbstractCSaveView {
         });
 
         label(mainCompLeft, "Serie");
-        this.textSerie = new Text(mainCompLeft, SWT.BORDER);
+        this.textSerie = new CarteSerieComposite(mainCompLeft, this.carte.getSerie());
         GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(this.textSerie);
-        ContentProposalProvider.addContentProposal(textSerie, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "serie"));
 
         label(mainCompLeft, "ISBN");
         this.textIsbn = new Text(mainCompLeft, SWT.BORDER);
@@ -619,7 +615,6 @@ public class CarteView extends AbstractCSaveView {
         this.textLatime.setValue(this.carte.getLatime());
         this.textNrPagini.setValue(this.carte.getNrPagini());
         this.textGreutate.setValue(this.carte.getGreutate());
-        this.textSerie.setText(this.carte.getSerie());
         this.textEditia.setText(this.carte.getEditia());
         this.textIsbn.setText(this.carte.getIsbn());
         this.textImprimerie.setText(this.carte.getImprimerie());
@@ -657,7 +652,7 @@ public class CarteView extends AbstractCSaveView {
         this.carte.setLatime(Integer.valueOf(textLatime.getValue().toString()));
         this.carte.setNrPagini(Integer.valueOf(textNrPagini.getValue().toString()));
         this.carte.setGreutate(Double.valueOf(textGreutate.getValue().toString()));
-        this.carte.setSerie(textSerie.getText().trim());
+        this.carte.setSerie(textSerie.getCarteSerie());
         this.carte.setEditia(textEditia.getText().trim());
         this.carte.setIsbn(textIsbn.getText().trim());
         this.carte.setAutoriIlustratii(compositeAutoriIlustratii.getValoriIntroduse());
@@ -751,7 +746,6 @@ public class CarteView extends AbstractCSaveView {
                 textTitlu.setFocus();
                 return false;
             }
-
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             return false;

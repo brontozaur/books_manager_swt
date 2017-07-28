@@ -283,10 +283,6 @@ public class ApplicationController {
         return invisibleRoot;
     }
 
-    public static IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName, String propName) {
-        return getDistinctStringPropertyValues(collectionName, propName, false);
-    }
-
     /*
 
     db.collectionName.aggregate([
@@ -299,7 +295,10 @@ public class ApplicationController {
     })
 
      */
-    public static IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName, String propName, boolean useFirstLetter) {
+    public static IntValuePairsWrapper getDistinctStringPropertyValues(String collectionName,
+                                                                       String propName,
+                                                                       boolean useFirstLetter,
+                                                                       boolean includeEmpty) {
         DBCollection collection = mongoTemplate.getCollection(collectionName);
 
         /*
@@ -336,7 +335,7 @@ public class ApplicationController {
                 emptyOrNullCount += count;
             }
         }
-        if (emptyOrNullCount > 0) {
+        if (emptyOrNullCount > 0 && includeEmpty) {
             occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);

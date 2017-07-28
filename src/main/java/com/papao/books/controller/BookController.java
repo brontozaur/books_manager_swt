@@ -194,11 +194,11 @@ public class BookController extends Observable {
             }
             case Serie: {
                 if (node.getNodeType() == NodeType.ALL) {
-                    carti = repository.findAll(pageable);
+                    carti = repository.getBySerieExistsOrderBySerie_NumeAscSerie_VolumAsc(true, pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getBySerieStartingWithIgnoreCaseOrderBySerieAsc((String) value, pageable);
+                    carti = repository.getBySerie_NumeIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getBySerieIsNullOrSerieIsOrderBySerieAsc("", pageable);
+                    throw new IllegalArgumentException("Nume serie invalid!");
                 }
                 break;
             }

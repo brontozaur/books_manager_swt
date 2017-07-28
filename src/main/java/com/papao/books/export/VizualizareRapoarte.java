@@ -394,7 +394,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         this.leftViewer.getTree().setSortColumn(null);
         this.rightViewer.getTable().setSortColumn(null);
 
-        IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getReportsCollectionName(), "type");
+        IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getReportsCollectionName(), "type", false, true);
         createTreeNodes(wrapper);
     }
 

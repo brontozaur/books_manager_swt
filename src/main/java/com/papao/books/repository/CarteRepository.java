@@ -53,9 +53,9 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByTitluStartingWithIgnoreCaseOrderByTitluAsc(String titluStartsWith, Pageable pageable);
 
-    Page<Carte> getBySerieIsNullOrSerieIsOrderBySerieAsc(String emptyString, Pageable pageable);
+    Page<Carte> getBySerieExistsOrderBySerie_NumeAscSerie_VolumAsc(boolean exists, Pageable pageable);
 
-    Page<Carte> getBySerieStartingWithIgnoreCaseOrderBySerieAsc(String serieStartsWith, Pageable pageable);
+    Page<Carte> getBySerie_NumeIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAsc(String serieStartsWith, Pageable pageable);
 
     Page<Carte> getByCreatedAtIsNullOrderByTitluAsc(Pageable pageable);
 
