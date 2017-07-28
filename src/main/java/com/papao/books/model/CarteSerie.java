@@ -1,6 +1,8 @@
 package com.papao.books.model;
 
-public class CarteSerie {
+import java.io.Serializable;
+
+public class CarteSerie implements Serializable{
 
     private String nume;
     private String volum;

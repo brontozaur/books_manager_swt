@@ -10,6 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.springframework.util.StringUtils;
 
 public class CarteSerieComposite extends Composite {
 
@@ -40,6 +41,9 @@ public class CarteSerieComposite extends Composite {
     }
 
     public CarteSerie getCarteSerie() {
+        if(StringUtils.isEmpty(this.textSerie.getText())) {
+            return null;
+        }
         return new CarteSerie(this.textSerie.getText(), this.textVolum.getText());
     }
 }
