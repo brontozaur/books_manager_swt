@@ -279,6 +279,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
                 }
                 previewShell = new ImageViewer(image);
                 previewShell.setImageName(((DocumentData) item.getData()).getFileName());
+                previewShell.setBucketId(((DocumentData) item.getData()).getId());
                 previewShell.open();
             }
             return true;

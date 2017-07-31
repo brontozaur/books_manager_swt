@@ -1,21 +1,30 @@
 package com.papao.books.ui.custom;
 
+import com.mongodb.gridfs.GridFSDBFile;
+import com.papao.books.ApplicationService;
+import com.papao.books.controller.ApplicationController;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.util.WidgetCompositeUtil;
 import com.papao.books.ui.view.SWTeXtension;
 import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
+
+import java.io.IOException;
 
 public class ImageViewer {
 
     private final static Logger logger = Logger.getLogger(ImageViewer.class);
     private Shell shell;
+    private ObjectId bucketId;
+    private String imageName;
 
     public ImageViewer(ImageData imageData) {
         show(imageData, null);
@@ -76,10 +85,32 @@ public class ImageViewer {
             imgLabel.addListener(SWT.MouseDown, new Listener() {
                 @Override
                 public void handleEvent(Event event) {
-                    shell.close();
+                    if (event.button == 1) {
+                        shell.close();
+                    }
                 }
             });
             sc.setContent(imgLabel);
+
+            final Menu imageSaveMenu = new Menu(getShell(), SWT.POP_UP);
+            MenuItem menuItem = new MenuItem(imageSaveMenu, SWT.PUSH);
+            menuItem.setText("Salvare imagine");
+            menuItem.setImage(AppImages.getImage16(AppImages.IMG_OK));
+            menuItem.addListener(SWT.Selection, new Listener() {
+                @Override
+                public final void handleEvent(final Event event) {
+                    saveImage();
+                }
+            });
+
+            imgLabel.addListener(SWT.MenuDetect, new Listener() {
+                @Override
+                public final void handleEvent(final Event event) {
+                    if (!imageSaveMenu.isDisposed()) {
+                        imageSaveMenu.setVisible(true);
+                    }
+                }
+            });
 
             if (needsBorders) {
                 shell.setSize(monitorWidth * 80 / 100, monitorHeight * 80 / 100);
@@ -96,8 +127,33 @@ public class ImageViewer {
         }
     }
 
+    private void saveImage() {
+        if (this.bucketId == null) {
+            SWTeXtension.displayMessageI("Id imagine invalid!");
+            return;
+        }
+        GridFSDBFile imageDb = ApplicationController.getDocumentData(this.bucketId);
+        if (imageDb == null) {
+            SWTeXtension.displayMessageI("Imagine invalida cu id " + this.bucketId);
+            return;
+        }
+        try {
+            String imagePath = ApplicationService.getApplicationConfig().getAppImagesExportFolder() + "/" + this.imageName;
+            imageDb.writeTo(imagePath);
+            Program.launch(imagePath);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            SWTeXtension.displayMessageE(e.getMessage(), e);
+        }
+    }
+
+    public void setBucketId(ObjectId id) {
+        this.bucketId = id;
+    }
+
     public void setImageName(String imageName) {
-        shell.setText("Vizualizare imagine [" + imageName + "]");
+        this.imageName = imageName;
+        shell.setText(imageName);
     }
 
     public Shell getShell() {

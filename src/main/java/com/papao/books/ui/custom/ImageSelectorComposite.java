@@ -9,6 +9,7 @@ import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -31,6 +32,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
     private static String OS_FILE = "OS_FILE";
     private static String WEB_FILE = "WEB_FILE";
 
+    private ObjectId imageId;
     private Label labelImage;
     private ImageViewer previewShell;
     private boolean imageChanged;
@@ -195,6 +197,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
                 }
                 previewShell = new ImageViewer(image);
                 previewShell.setImageName(labelImage.getData() + "");
+                previewShell.setBucketId(imageId);
                 previewShell.open();
             }
         }
@@ -320,6 +323,13 @@ public class ImageSelectorComposite extends Observable implements Observer {
                     Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
                     Display.getCurrent().getPrimaryMonitor().getBounds().height +
                     "&q=" + query + "&oq=" + query;
+        }
+    }
+
+    public void setImageId(ObjectId imageId) {
+        this.imageId = imageId;
+        if (this.previewShell != null) {
+            this.previewShell.setBucketId(imageId);
         }
     }
 

@@ -280,6 +280,7 @@ public class CarteView extends AbstractCSaveView {
         Image frontCover = ApplicationService.getBookController().getImage(carte.getCopertaFata());
 
         frontCoverComposite = new ImageSelectorComposite(compImages, frontCover, carte.getCopertaFata().getFileName());
+        frontCoverComposite.setImageId(carte.getCopertaFata().getId());
         GridData data = frontCoverComposite.getLayoutData();
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = false;
@@ -586,6 +587,7 @@ public class CarteView extends AbstractCSaveView {
         Image backCover = ApplicationService.getBookController().getImage(carte.getCopertaSpate());
 
         backCoverComposite = new ImageSelectorComposite(comp, backCover, carte.getCopertaSpate().getFileName());
+        backCoverComposite.setImageId(carte.getCopertaSpate().getId());
         GridData backCoverData = backCoverComposite.getLayoutData();
         backCoverData.grabExcessHorizontalSpace = false;
         backCoverData.grabExcessVerticalSpace = false;
@@ -595,6 +597,7 @@ public class CarteView extends AbstractCSaveView {
         Image autograf = ApplicationService.getBookController().getImage(carte.getAutograf());
 
         autografComposite = new ImageSelectorComposite(comp, autograf, carte.getAutograf().getFileName());
+        autografComposite.setImageId(carte.getAutograf().getId());
         GridData data = autografComposite.getLayoutData();
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = false;

@@ -18,6 +18,7 @@ import com.papao.books.ui.providers.ContentProposalProvider;
 import com.papao.books.ui.util.ColorUtil;
 import com.papao.books.ui.util.FontUtil;
 import com.papao.books.ui.view.SWTeXtension;
+import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -335,6 +336,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         if (coverDescriptor != null && coverDescriptor.getId() != null) {
             GridFSDBFile dbFile = ApplicationController.getDocumentData(coverDescriptor.getId());
             if (dbFile != null) {
+                imageSelectorComposite.setImageId((ObjectId) dbFile.getId());
                 image = new Image(Display.getDefault(), dbFile.getInputStream());
                 imageName = dbFile.getFilename();
             }
