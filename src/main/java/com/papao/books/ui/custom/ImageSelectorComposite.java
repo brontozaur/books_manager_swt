@@ -40,9 +40,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
     private final int WIDTH = 160;
     private final int HEIGHT = 180;
     private Composite mainComposite;
-    private String startUrl = "https://www.google.ro/search?tbm=isch&biw=" +
-            Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
-            Display.getCurrent().getPrimaryMonitor().getBounds().height + "&q=&oq=";
+    private String searchTerm;
 
     public ImageSelectorComposite(Composite parent, Image fullImage, String fileName) {
         this.fileName = fileName;
@@ -153,7 +151,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
     }
 
     private void webImageSearch() {
-        final WebBrowser hb = new WebBrowser(this.mainComposite.getShell(), startUrl, true);
+        final WebBrowser hb = new WebBrowser(this.mainComposite.getShell(), searchTerm);
         hb.getShell().addListener(SWT.Close, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -318,11 +316,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
             valueChanged = ((BookReadOnlyDetailsComposite) o).getObservableProperty();
         }
         if (valueChanged != null) {
-            String query = valueChanged.replace(" ", "+");
-            startUrl = "https://www.google.ro/search?tbm=isch&biw=" +
-                    Display.getCurrent().getPrimaryMonitor().getBounds().width + "&bih=" +
-                    Display.getCurrent().getPrimaryMonitor().getBounds().height +
-                    "&q=" + query + "&oq=" + query;
+            this.searchTerm = valueChanged.replace(" ", "+");
         }
     }
 

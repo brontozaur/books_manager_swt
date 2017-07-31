@@ -1,9 +1,13 @@
 package com.papao.books.ui.menu;
 
+import com.papao.books.controller.SettingsController;
 import com.papao.books.model.ImagePath;
+import com.papao.books.model.config.GeneralSetting;
+import com.papao.books.model.config.SearchEngine;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.util.ColorUtil;
 import com.papao.books.ui.util.UrlImageValidator;
+import com.papao.books.ui.util.WidgetCursorUtil;
 import com.papao.books.ui.view.AbstractCViewAdapter;
 import com.papao.books.ui.view.SWTeXtension;
 import org.apache.log4j.Logger;
@@ -26,6 +30,7 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
     private static Logger logger = Logger.getLogger(WebBrowser.class);
     private ToolItem itemBack, itemNext, itemStop, itemRefresh, itemGo;
     private Combo comboAdress;
+    private Combo comboSearchEngine;
     private ProgressBar pBar;
     private CLabel cLabelStatus;
     private static final String BACK = "back";
@@ -36,15 +41,37 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
     private Browser browser;
     private ToolItem itemSave;
     private ImagePath imagePath;
+    private String query;
+
+    public WebBrowser(final Shell parent, String query) {
+        super(parent, MODE_NONE);
+        this.query = query;
+        GeneralSetting searchEngineConfig = SettingsController.getGeneralSetting("searchEngine");
+        int searchEngineIndex;
+        if (searchEngineConfig != null) {
+            searchEngineIndex = Integer.valueOf(searchEngineConfig.getValue().toString());
+        } else {
+            searchEngineIndex = SearchEngine.GOOGLE_COM.getOrdinal();
+        }
+        addComponents("", true);
+        if (query != null) {
+            comboSearchEngine.select(searchEngineIndex);
+            comboSearchEngine.notifyListeners(SWT.Selection, new Event());
+        }
+    }
 
     /**
      * @param parent
      */
     public WebBrowser(final Shell parent, String startUrl, final boolean allowImageSelection) {
         super(parent, MODE_NONE);
+        addComponents(startUrl, allowImageSelection);
+    }
+
+    private void addComponents(String startUrl, boolean allowImageSelection) {
         try {
             CLabel cLabelNavigare = new CLabel(getContainer(), SWT.SHADOW_ETCHED_OUT);
-            cLabelNavigare.setLayout(new GridLayout(4, false));
+            cLabelNavigare.setLayout(new GridLayout(this.query != null ? 5 : 4, false));
             ((GridLayout) cLabelNavigare.getLayout()).verticalSpacing = 0;
             cLabelNavigare.setLayoutData(new GridData(
                     SWT.FILL,
@@ -89,6 +116,22 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
             this.comboAdress.setText(startUrl);
             SWTeXtension.addColoredFocusListener(this.comboAdress, ColorUtil.COLOR_FOCUS_YELLOW);
             this.comboAdress.addListener(SWT.Selection, this);
+
+            if (this.query != null) {
+                this.comboSearchEngine = new Combo(cLabelNavigare, SWT.READ_ONLY);
+                this.comboSearchEngine.setItems(SearchEngine.getComboItems());
+                GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).hint(120, SWT.DEFAULT).applyTo(comboSearchEngine);
+                WidgetCursorUtil.addHandCursorListener(this.comboSearchEngine);
+                comboSearchEngine.addListener(SWT.Selection, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        String startUrl = SearchEngine.getQueryByComboIndex(comboSearchEngine.getSelectionIndex());
+                        startUrl = startUrl.replace(SearchEngine.QUERY_PLACEHOLDER, query);
+                        setComboItems(startUrl);
+                        browser.setUrl(startUrl);
+                    }
+                });
+            }
 
             ToolBar barGo = new ToolBar(cLabelNavigare, SWT.FLAT | SWT.WRAP);
 

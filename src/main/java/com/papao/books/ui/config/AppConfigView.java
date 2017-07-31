@@ -3,6 +3,7 @@ package com.papao.books.ui.config;
 import com.papao.books.config.StringSetting;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.model.config.GeneralSetting;
+import com.papao.books.model.config.SearchEngine;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.interfaces.AbstractIConfigAdapter;
 import com.papao.books.ui.interfaces.IConfig;
@@ -808,6 +809,8 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
 
         private Button buttonShowGallery;
         private Button buttonAutorLink;
+        private Combo comboSearchEngine;
+        private GeneralSetting searchEngineConfig = null;
 
         public MainPerspective() {
             super(AppConfigView.this.rightForm);
@@ -833,18 +836,32 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             this.buttonAutorLink.setText("click suport pt autor");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonAutorLink);
             WidgetCursorUtil.addHandCursorListener(this.buttonAutorLink);
+
+            new Label(group, SWT.NONE).setText("Motor cautare:");
+            this.comboSearchEngine = new Combo(group, SWT.READ_ONLY);
+            this.comboSearchEngine.setItems(SearchEngine.getComboItems());
+            WidgetCursorUtil.addHandCursorListener(this.comboSearchEngine);
         }
 
         @Override
         public void populateFields() {
             this.buttonShowGallery.setSelection(SettingsController.getBoolean(PERSPECTIVE_SHOW_GALLERY));
             this.buttonAutorLink.setSelection(SettingsController.getBoolean(PERSPECTIVE_AUTHOR_LINKS));
+            searchEngineConfig = SettingsController.getGeneralSetting("searchEngine");
+            if (searchEngineConfig == null) {
+                searchEngineConfig = new GeneralSetting();
+                searchEngineConfig.setKey("searchEngine");
+                searchEngineConfig.setValue(comboSearchEngine.indexOf("librarie.net"));
+            }
+            comboSearchEngine.select(Integer.valueOf(searchEngineConfig.getValue().toString()));
         }
 
         @Override
         public void save() {
             SettingsController.saveBooleanSetting(PERSPECTIVE_SHOW_GALLERY, buttonShowGallery.getSelection());
             SettingsController.saveBooleanSetting(PERSPECTIVE_AUTHOR_LINKS, buttonAutorLink.getSelection());
+            searchEngineConfig.setValue(comboSearchEngine.getSelectionIndex());
+            SettingsController.saveGeneralSetting(searchEngineConfig);
         }
 
         @Override
