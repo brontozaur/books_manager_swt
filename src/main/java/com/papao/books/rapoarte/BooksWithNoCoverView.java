@@ -136,12 +136,7 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter implements Observ
                     }
                 }
 
-                String observableProperty = "";
-
-                observableProperty += ApplicationService.getBookController().getBookAuthorNamesOrderByNumeComplet(carte) + " - ";
-
-                observableProperty += carte.getTitlu();
-                setObservableProperty(observableProperty);
+                setObservableProperty(carte.getTitlu());
                 setChanged();
                 notifyObservers();
             }

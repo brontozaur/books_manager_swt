@@ -323,7 +323,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
 
         bookRating.setCurrentNumberOfStars(UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
         ratingValue = bookRating.getCurrentNumberOfStars();
-        observableProperty = rightAutoriComposite.getGoogleSearchTerm() + " - " + carte.getTitlu();
+        observableProperty = carte.getTitlu();
         textLocatie.setText(carte.getLocatie());
 
         setChanged();

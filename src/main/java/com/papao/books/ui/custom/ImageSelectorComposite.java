@@ -316,7 +316,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
             valueChanged = ((BookReadOnlyDetailsComposite) o).getObservableProperty();
         }
         if (valueChanged != null) {
-            this.searchTerm = valueChanged.replace(" ", "+");
+            this.searchTerm = valueChanged;
         }
     }
 

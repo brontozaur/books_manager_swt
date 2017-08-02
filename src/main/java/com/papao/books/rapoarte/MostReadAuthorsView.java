@@ -279,13 +279,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
                     }
                 }
 
-                String observableProperty = "";
-                if (autoriTableViewer.getTable().getSelectionCount() == 1) {
-                    Autor autor = (Autor) autoriTableViewer.getTable().getSelection()[0].getData();
-                    observableProperty += autor.getNumeComplet() + " - ";
-                }
-                observableProperty += carte.getTitlu();
-                setObservableProperty(observableProperty);
+                setObservableProperty(carte.getTitlu());
                 deleteObserver(autorImageComposite);
                 setChanged();
                 notifyObservers();
