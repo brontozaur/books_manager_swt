@@ -761,7 +761,7 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private void markAsChanged() {
-        observableProperty = compositeAutori.getGoogleSearchTerm() + " - " + this.textTitlu.getText();
+        observableProperty = this.textTitlu.getText();
         if (!observableProperty.equals(" - ")) {
             if (compositeAutori.getGoogleSearchTerm().isEmpty()) {
                 getBigLabelText().setText(this.textTitlu.getText());
