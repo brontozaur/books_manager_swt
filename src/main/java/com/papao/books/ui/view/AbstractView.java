@@ -1054,7 +1054,9 @@ public abstract class AbstractView extends Observable {
 
     private final void shellCloseEvent(final Event e) {
         try {
-            SettingsController.saveWindowCoords(getShell().getBounds(), getClass().getCanonicalName());
+            if (this.useCoords) {
+                SettingsController.saveWindowCoords(getShell().getBounds(), getClass().getCanonicalName());
+            }
 
             if ((getDockingItem() != null) && !getDockingItem().isDisposed()) {
                 getDockingItem().dispose();
