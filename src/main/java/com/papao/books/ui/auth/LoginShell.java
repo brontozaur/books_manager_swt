@@ -213,6 +213,7 @@ public class LoginShell extends AbstractCView implements Listener {
         setShellStyle(SWT.CLOSE | SWT.MIN | SWT.APPLICATION_MODAL);
         setViewOptions(SWT.NONE);
         setShellImage(AppImages.getImage16(AppImages.IMG_BORG_MAIN));
+        //cannot use coords, since coords are user-based
         setIsUsingCoords(false);
         setShowSaveOKMessage(false);
         setUseDocking(false);
