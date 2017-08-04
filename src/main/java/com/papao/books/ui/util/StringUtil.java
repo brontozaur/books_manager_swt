@@ -1,9 +1,6 @@
 package com.papao.books.ui.util;
 
-import com.papao.books.controller.SettingsController;
-import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.ui.auth.EncodeLive;
-import com.papao.books.ui.config.StilAfisareData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -22,23 +19,6 @@ public final class StringUtil {
     private static final Collator ROMANIAN_COLLATOR = Collator.getInstance(EncodeLive.ROMANIAN_LOCALE);
 
     private StringUtil() {
-    }
-
-    public static int dateCompare(String dateA, String dateB) {
-        GeneralSetting stilAfisareDataInTree = SettingsController.getGeneralSetting("stilAfisareDataInTree");
-        boolean afisareTipScurt = stilAfisareDataInTree != null && ((Integer) stilAfisareDataInTree.getValue()) == StilAfisareData.AFISARE_LUNI_IN_LITERE_SCURT;
-        if (dateA == null) {
-            return 1;
-        } else if (dateB == null) {
-            return -1;
-        }
-        if (afisareTipScurt) {
-            return BorgDateUtil.LUNILE_LIST.indexOf(dateA) -
-                    BorgDateUtil.LUNILE_LIST.indexOf(dateB);
-        } else {
-            return BorgDateUtil.LUNILE_SCURT_LIST.indexOf(dateA) -
-                    BorgDateUtil.LUNILE_SCURT_LIST.indexOf(dateB);
-        }
     }
 
     public static int romanianCompare(String a, String b) {

@@ -180,6 +180,8 @@ public abstract class AbstractView extends Observable {
 
     private boolean addEscapeTraverseClose;
 
+    private Listener keyDownFiter;
+
     public AbstractView(final Shell parent, final Class<? extends Widget> widgetClass, final int viewMode) {
         this(parent, widgetClass, null, viewMode);
     }
@@ -289,6 +291,13 @@ public abstract class AbstractView extends Observable {
             //we set the current shell as the parent shell for notifications. For just in case ;-)
             this.notificationParent = this.shell;
             Notifier.setParent(this.shell);
+            keyDownFiter = new Listener() {
+                public void handleEvent(Event e) {
+                    if (SWTeXtension.getSaveTrigger(e))
+                        saveAndClose(true);
+                }
+            };
+            shell.getDisplay().addFilter(SWT.KeyDown, keyDownFiter);
             this.shell.addListener(SWT.Dispose, new Listener() {
                 @Override
                 public void handleEvent(Event event) {
@@ -297,6 +306,9 @@ public abstract class AbstractView extends Observable {
                     }
                     //we restore the original notification parent
                     Notifier.setParent(notificationParent);
+                    if (keyDownFiter != null) {
+                        shell.getDisplay().removeFilter(SWT.KeyDown, keyDownFiter);
+                    }
                 }
             });
             if (addEscapeTraverseClose) {
@@ -879,7 +891,7 @@ public abstract class AbstractView extends Observable {
             }
             this.shell.open();
 
-            while ((this.shell != null) && !this.shell.isDisposed()) {
+            while ((this.shell != null) && !this.shell.isDisposed() && !shell.getDisplay().isDisposed()) {
                 if (!shell.getDisplay().readAndDispatch()) {
                     this.shell.getDisplay().sleep();
                 }
