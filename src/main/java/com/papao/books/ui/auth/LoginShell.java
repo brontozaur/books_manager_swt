@@ -120,6 +120,24 @@ public class LoginShell extends AbstractCView implements Listener {
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
 
+    @Override
+    public void saveAndClose(boolean closeShell) {
+        if (!validate()) {
+            return;
+        }
+        //remove the listeners added by content proposal to avoid SWTException on saveAndClose() using Cmd + S
+        while (comboUsers.getCombo().getListeners(SWT.KeyDown).length > 0) {
+            comboUsers.getCombo().removeListener(SWT.KeyDown, comboUsers.getCombo().getListeners(SWT.KeyDown)[0]);
+        }
+        while (comboUsers.getCombo().getListeners(SWT.Traverse).length > 0) {
+            comboUsers.getCombo().removeListener(SWT.Traverse, comboUsers.getCombo().getListeners(SWT.Traverse)[0]);
+        }
+        while (comboUsers.getCombo().getListeners(SWT.Modify).length > 0) {
+            comboUsers.getCombo().removeListener(SWT.Modify, comboUsers.getCombo().getListeners(SWT.Modify)[0]);
+        }
+        super.saveAndClose(true);
+    }
+
     private void createLoginComposite(Composite parent) {
         Composite compDown1 = new Composite(parent, SWT.NONE);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(compDown1);

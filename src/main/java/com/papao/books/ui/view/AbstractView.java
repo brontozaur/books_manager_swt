@@ -292,7 +292,7 @@ public abstract class AbstractView extends Observable {
             this.notificationParent = this.shell;
             Notifier.setParent(this.shell);
 
-            if ((viewMode & ADD_OK) != 0) {
+            if ((viewOptions & ADD_OK) != 0) {
                 saveTriggerFilter = new Listener() {
                     public void handleEvent(Event e) {
                         if (SWTeXtension.getSaveTrigger(e))
