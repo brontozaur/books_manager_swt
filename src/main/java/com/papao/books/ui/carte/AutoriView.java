@@ -134,7 +134,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                 SWTeXtension.displayMessageW("Autorul nu mai exista!");
                 return false;
             }
-            java.util.List<Carte> cartileAutorului = ApplicationService.getBookController().getRepository().getByIdAutoriContains(autor.getId());
+            java.util.List<Carte> cartileAutorului = ApplicationService.getBookController().getRepository().getByIdAutoriContainsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(autor.getId());
             if (cartileAutorului != null && !cartileAutorului.isEmpty()) {
                 SWTeXtension.displayMessageW("Nu se poate sterge autorul selectat, pentru ca exista " + cartileAutorului.size() +
                         " carti cu acest autor in baza de date!");
@@ -601,7 +601,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return StringUtil.romanianCompare(a.getTitlu(), b.getTitlu());
+                            return StringUtil.romanianCompare(a.getTitluVolumSiSerie(), b.getTitluVolumSiSerie());
                         }
 
                     };

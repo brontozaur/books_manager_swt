@@ -438,7 +438,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return StringUtil.romanianCompare(a.getTitlu(), b.getTitlu());
+                            return StringUtil.romanianCompare(a.getTitluVolumSiSerie(), b.getTitluVolumSiSerie());
                         }
 
                     };

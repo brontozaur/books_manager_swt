@@ -90,9 +90,9 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByEdituraContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByEdituraContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByEdituraIsNullOrEdituraIsOrderByTitluAsc("", pageable);
+                    carti = repository.getByEdituraIsNullOrEdituraIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
                 }
                 break;
             }
@@ -100,25 +100,25 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByLocatieContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByLocatieContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByLocatieIsNullOrLocatieIsOrderByTitluAsc("", pageable);
+                    carti = repository.getByLocatieIsNullOrLocatieIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
                 }
                 break;
             }
             case Taguri: {
                 if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByTagsContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByTagsContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByTagsIsNullOrTagsIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
+                    carti = repository.getByTagsIsNullOrTagsIsLessThanEqualOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(new String[]{""}, pageable);
                 }
                 break;
             }
             case Gen_literar: {
                 if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByGenLiterarContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByGenLiterarContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByGenLiterarIsNullOrGenLiterarIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
+                    carti = repository.getByGenLiterarIsNullOrGenLiterarIsLessThanEqualOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(new String[]{""}, pageable);
                 }
                 break;
             }
@@ -126,9 +126,9 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByIdAutoriLikeOrderByTitluAsc(new ObjectId((String) value), pageable);
+                    carti = repository.getByIdAutoriLikeOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(new ObjectId((String) value), pageable);
                 } else {
-                    carti = repository.getByIdAutoriIsNullOrIdAutoriIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
+                    carti = repository.getByIdAutoriIsNullOrIdAutoriIsLessThanEqualOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(new String[]{""}, pageable);
                 }
                 break;
             }
@@ -136,9 +136,9 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByTraducatoriContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByTraducatoriContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqualOrderByTitluAsc(new String[]{""}, pageable);
+                    carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqualOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(new String[]{""}, pageable);
                 }
                 break;
             }
@@ -146,9 +146,9 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByAnAparitieContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByAnAparitieContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByAnAparitieIsNullOrAnAparitieIsOrderByTitluAsc("", pageable);
+                    carti = repository.getByAnAparitieIsNullOrAnAparitieIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
                 }
                 break;
             }
@@ -156,9 +156,9 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByLimbaContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByLimbaContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByLimbaIsNullOrLimbaIsOrderByTitluAsc("", pageable);
+                    carti = repository.getByLimbaIsNullOrLimbaIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
                 }
                 break;
             }
@@ -166,9 +166,9 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByEditiaOriginala_LimbaContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByEditiaOriginala_LimbaContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByEditiaOriginala_LimbaIsNullOrEditiaOriginala_LimbaIsOrderByTitluAsc("", pageable);
+                    carti = repository.getByEditiaOriginala_LimbaIsNullOrEditiaOriginala_LimbaIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
                 }
                 break;
             }
@@ -176,9 +176,9 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByTipCopertaContainsIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByTipCopertaContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByTipCopertaIsNullOrTipCopertaIsOrderByTitluAsc("", pageable);
+                    carti = repository.getByTipCopertaIsNullOrTipCopertaIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
                 }
                 break;
             }
@@ -186,9 +186,9 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getByTitluStartingWithIgnoreCaseOrderByTitluAsc((String) value, pageable);
+                    carti = repository.getByTitluStartingWithIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByTitluIsNullOrTitluIsOrderByTitluAsc("", pageable);
+                    carti = repository.getByTitluIsNullOrTitluIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
                 }
                 break;
             }
@@ -196,7 +196,7 @@ public class BookController extends Observable {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.getBySerieExistsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(true, pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
-                    carti = repository.getBySerie_NumeIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAsc((String) value, pageable);
+                    carti = repository.getBySerie_NumeIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
                     throw new IllegalArgumentException("Nume serie invalid!");
                 }
@@ -204,17 +204,17 @@ public class BookController extends Observable {
             }
             case Creata: {
                 if (value != null) {
-                    carti = repository.getByCreatedAtBetweenOrderByTitluAsc(node.getMinDate(), node.getMaxDate(), pageable);
+                    carti = repository.getByCreatedAtBetweenOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(node.getMinDate(), node.getMaxDate(), pageable);
                 } else {
-                    carti = repository.getByCreatedAtIsNullOrderByTitluAsc(pageable);
+                    carti = repository.getByCreatedAtIsNullOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(pageable);
                 }
                 break;
             }
             case Actualizata: {
                 if (value != null) {
-                    carti = repository.getByUpdatedAtBetween(node.getMinDate(), node.getMaxDate(), pageable);
+                    carti = repository.getByUpdatedAtBetweenOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(node.getMinDate(), node.getMaxDate(), pageable);
                 } else {
-                    carti = repository.getByUpdatedAtIsNullOrderByTitluAsc(pageable);
+                    carti = repository.getByUpdatedAtIsNullOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(pageable);
                 }
                 break;
             }
@@ -225,7 +225,7 @@ public class BookController extends Observable {
                 } else {
                     bookIds = UserController.getBookIdsWithSpecifiedRatingForCurrentUser(-1);
                 }
-                carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
+                carti = repository.getByIdInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(bookIds, pageable);
                 break;
             }
             case Nota_traducere: {
@@ -235,17 +235,17 @@ public class BookController extends Observable {
                 } else {
                     bookIds = UserController.getBookIdsWithSpecifiedTranslationRatingForCurrentUser(-1);
                 }
-                carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
+                carti = repository.getByIdInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(bookIds, pageable);
                 break;
             }
             case Cititori: {
                 List<ObjectId> bookIds = UserController.getReadedBookIdsForUser((ObjectId) value);
-                carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
+                carti = repository.getByIdInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(bookIds, pageable);
                 break;
             }
             case Utilizatori: {
                 List<ObjectId> bookIds = UserController.getBookIdsForUser((ObjectId) value);
-                carti = repository.getByIdInOrderByTitluAsc(bookIds, pageable);
+                carti = repository.getByIdInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(bookIds, pageable);
                 break;
             }
             default:
@@ -280,15 +280,15 @@ public class BookController extends Observable {
     }
 
     public List<Carte> getByIdAutoriContains(ObjectId idAutor) {
-        return repository.getByIdAutoriContains(idAutor);
+        return repository.getByIdAutoriContainsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(idAutor);
     }
 
     public Page<Carte> getBooksWithNoImage(Pageable pageable) {
-        return repository.getByCopertaFataIsNull(pageable);
+        return repository.getByCopertaFataIsNullOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(pageable);
     }
 
     public void getByIdAutoriInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(List<ObjectId> idAutori, Pageable pageable) {
-        carti = repository.getByIdAutoriIn(idAutori, pageable);
+        carti = repository.getByIdAutoriInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(idAutori, pageable);
         setChanged();
         notifyObservers();
     }
