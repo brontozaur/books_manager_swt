@@ -46,7 +46,7 @@ public class LinkedinComposite extends Composite {
         this.setBackground(ColorUtil.COLOR_WHITE);
 
         GridDataFactory.fillDefaults().grab(true, false).hint(230, SWT.DEFAULT).applyTo(this);
-        RowLayoutFactory.fillDefaults().extendedMargins(3, 5, 2, 2).spacing(1).pack(true).wrap(true).applyTo(this);
+        RowLayoutFactory.fillDefaults().extendedMargins(2, 5, 2, 2).spacing(1).pack(true).wrap(true).applyTo(this);
 
         textSearch = new Text(this, SWT.SEARCH);
         textSearch.setMessage("Cautare...");

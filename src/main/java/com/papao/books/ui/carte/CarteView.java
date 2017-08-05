@@ -39,7 +39,7 @@ public class CarteView extends AbstractCSaveView {
     private Carte carte;
     private String observableProperty;
 
-    private Text textTitlu;
+    private CarteTitluVolumComposite carteTitluVolumComposite;
     private Text textSubtitlu;
     private Text textEditura;
     private Text textAnAparitie;
@@ -85,7 +85,7 @@ public class CarteView extends AbstractCSaveView {
     private Text textEditiaPrincepsAn;
     private Combo comboEditiaPrincepsLimba;
 
-    //tags and description tag
+    //tags and description tab
     private LinkedinComposite compositeTags;
     private Text textDescriere;
     private Text textMotto;
@@ -94,9 +94,15 @@ public class CarteView extends AbstractCSaveView {
     private ToolItem itemEditiaOriginala;
     private ToolItem itemTaguri;
     private ToolItem itemBookDetails;
+
+    //pret tab
     private ToolItem itemPret;
     private ToolItem itemBackCover;
     private PremiiLiterareComposite premiiLiterareComposite;
+
+    private LinkedinComposite compositeAutoriIlustratiiCoperta;
+    private LinkedinComposite compositeLectori;
+    private Text textColectie;
 
     public CarteView(final Shell parent, final Carte carte,
                      final int viewMode) {
@@ -110,7 +116,7 @@ public class CarteView extends AbstractCSaveView {
         this.addObserver(backCoverComposite);
         markAsChanged();
 
-        textTitlu.setFocus();
+        carteTitluVolumComposite.setFocus();
     }
 
     private void addComponents() {
@@ -283,7 +289,7 @@ public class CarteView extends AbstractCSaveView {
 
     private Composite createMainPropertiesTab(Composite parent) {
         Composite comp = new Composite(parent, SWT.NONE);
-        GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(5, 5, 5, 5).applyTo(comp);
+        GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(2, 4, 5, 5).spacing(2, 0).applyTo(comp);
 
         Composite mainCompLeft = new Composite(comp, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(6).equalWidth(false).applyTo(mainCompLeft);
@@ -307,9 +313,9 @@ public class CarteView extends AbstractCSaveView {
         data.horizontalAlignment = SWT.CENTER;
 
         label(mainCompLeft, "Titlu *");
-        this.textTitlu = new Text(mainCompLeft, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).span(5, 1).applyTo(this.textTitlu);
-        this.textTitlu.addListener(SWT.Modify, new Listener() {
+        this.carteTitluVolumComposite = new CarteTitluVolumComposite(mainCompLeft, carte.getTitlu(), carte.getVolum());
+        GridDataFactory.fillDefaults().grab(true, false).span(5, 1).applyTo(this.carteTitluVolumComposite);
+        this.carteTitluVolumComposite.getTextTitlu().addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 markAsChanged();
@@ -372,6 +378,14 @@ public class CarteView extends AbstractCSaveView {
         label(mainCompLeft, "Editia");
         this.textEditia = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(this.textEditia);
+
+        label(mainCompLeft, "Colectie");
+        this.textColectie = new Text(mainCompLeft, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(false, false).span(3, 1).applyTo(this.textColectie);
+        ContentProposalProvider.addContentProposal(textColectie, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "colectie"));
+
+        new Label(mainCompLeft, SWT.NONE);
+        new Label(mainCompLeft, SWT.NONE);
 
         label(mainCompLeft, "Redactori");
         this.compositeRedactori = new LinkedinComposite(mainCompLeft, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "redactori"), carte.getRedactori());
@@ -564,6 +578,16 @@ public class CarteView extends AbstractCSaveView {
         ((GridData) compositeAutoriCoperta.getLayoutData()).horizontalSpan = 7;
         ((GridData) compositeAutoriCoperta.getLayoutData()).grabExcessHorizontalSpace = true;
 
+        label(comp, "Ilustratii coperta");
+        this.compositeAutoriIlustratiiCoperta = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "autoriIlustratiiCoperta"), carte.getAutoriIlustratiiCoperta());
+        ((GridData) compositeAutoriIlustratiiCoperta.getLayoutData()).horizontalSpan = 7;
+        ((GridData) compositeAutoriIlustratiiCoperta.getLayoutData()).grabExcessHorizontalSpace = true;
+
+        label(comp, "Lectori");
+        this.compositeLectori = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "lectori"), carte.getLectori());
+        ((GridData) compositeLectori.getLayoutData()).horizontalSpan = 7;
+        ((GridData) compositeLectori.getLayoutData()).grabExcessHorizontalSpace = true;
+
         //read only combos receive focus on OSX, only after enabling
         // System Preferences -> Keyboard -> Keyboard Shortcuts -> All Controls
         //see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376039
@@ -659,7 +683,6 @@ public class CarteView extends AbstractCSaveView {
 
     private void populateFields() {
         this.starRating.setCurrentNumberOfStars(UserController.getPersonalRating(EncodeLive.getIdUser(), this.carte.getId()));
-        this.textTitlu.setText(this.carte.getTitlu());
         this.textSubtitlu.setText(this.carte.getSubtitlu());
         this.textEditura.setText(this.carte.getEditura());
         this.textAnAparitie.setText(this.carte.getAnAparitie());
@@ -692,6 +715,8 @@ public class CarteView extends AbstractCSaveView {
         this.textDataCumparare.setValue(this.carte.getPret().getDataCumpararii());
         this.textMagazin.setText(this.carte.getPret().getMagazin());
 
+        this.textColectie.setText(this.carte.getColectie());
+
         if (!isViewEnabled()) {
             WidgetCompositeUtil.enableGUI(getContainer(), false);
             WidgetCompositeUtil.enableGUI(getCompHIRE(), false);
@@ -701,7 +726,8 @@ public class CarteView extends AbstractCSaveView {
 
     @Override
     protected void saveData() throws Exception {
-        this.carte.setTitlu(this.textTitlu.getText().trim());
+        this.carte.setTitlu(this.carteTitluVolumComposite.getTitlu());
+        this.carte.setVolum(this.carteTitluVolumComposite.getVolum());
         this.carte.setSubtitlu(this.textSubtitlu.getText().trim());
         this.carte.setEditura(textEditura.getText().trim());
         this.carte.setAnAparitie(textAnAparitie.getText().trim());
@@ -747,6 +773,10 @@ public class CarteView extends AbstractCSaveView {
         editiaOriginala.setTara(this.textEditiaPrincepsTara.getText().trim());
         editiaOriginala.setIlustratori(compositeEditiaPrincepsAutoriIlustratii.getValoriIntroduse());
         this.carte.setEditiaOriginala(editiaOriginala);
+
+        this.carte.setColectie(textColectie.getText());
+        this.carte.setAutoriIlustratiiCoperta(compositeAutoriIlustratiiCoperta.getValoriIntroduse());
+        this.carte.setLectori(compositeLectori.getValoriIntroduse());
 
         if (backCoverComposite.imageChanged()) {
             if (carte.getCopertaSpate().exists()) {
@@ -810,6 +840,7 @@ public class CarteView extends AbstractCSaveView {
         SWTeXtension.removeContentProposal(compositeAutori.getComboAutor().getCombo());
         SWTeXtension.removeContentProposal(textSerie);
         SWTeXtension.removeContentProposal(textEditura);
+        SWTeXtension.removeContentProposal(textColectie);
         SWTeXtension.removeContentProposal(textLocatie);
         SWTeXtension.removeContentProposal(textAnAparitie);
         SWTeXtension.removeContentProposal(compositeRedactori.getTextSearch());
@@ -817,7 +848,9 @@ public class CarteView extends AbstractCSaveView {
         SWTeXtension.removeContentProposal(compositeTraducatori.getTextSearch());
         SWTeXtension.removeContentProposal(compositeGenLiterar.getTextSearch());
         SWTeXtension.removeContentProposal(compositeAutoriIlustratii.getTextSearch());
+        SWTeXtension.removeContentProposal(compositeAutoriIlustratiiCoperta.getTextSearch());
         SWTeXtension.removeContentProposal(compositeAutoriCoperta.getTextSearch());
+        SWTeXtension.removeContentProposal(compositeLectori.getTextSearch());
         SWTeXtension.removeContentProposal(textMagazin);
         SWTeXtension.removeContentProposal(textEditiaPrincepsTara);
         SWTeXtension.removeContentProposal(textEditiaPrincepsEditura);
@@ -837,9 +870,9 @@ public class CarteView extends AbstractCSaveView {
     @Override
     protected boolean validate() {
         try {
-            if (StringUtils.isEmpty(this.textTitlu.getText())) {
+            if (StringUtils.isEmpty(this.carteTitluVolumComposite.getTitlu())) {
                 SWTeXtension.displayMessageW("Titlul cartii nu este introdus!");
-                textTitlu.setFocus();
+                carteTitluVolumComposite.setFocus();
                 return false;
             }
             if (compositeAutori.getSelectedIds().isEmpty()) {
@@ -859,11 +892,11 @@ public class CarteView extends AbstractCSaveView {
     }
 
     private void markAsChanged() {
-        observableProperty = this.textTitlu.getText();
+        observableProperty = this.carteTitluVolumComposite.getTitlu();
         if (!observableProperty.equals(" - ")) {
             if (compositeAutori.getGoogleSearchTerm().isEmpty()) {
-                getBigLabelText().setText(this.textTitlu.getText());
-            } else if (this.textTitlu.getText().isEmpty()) {
+                getBigLabelText().setText(this.carteTitluVolumComposite.getTitlu());
+            } else if (this.carteTitluVolumComposite.getTitlu().isEmpty()) {
                 getBigLabelText().setText(compositeAutori.getGoogleSearchTerm());
             } else {
                 getBigLabelText().setText(observableProperty);
