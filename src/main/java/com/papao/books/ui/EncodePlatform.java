@@ -485,9 +485,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     @Override
                     public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
                         Carte carte = (Carte) element;
-                        return StringUtil.compareStrings(text.toLowerCase(),
+                        final String searchTerm = text.toLowerCase();
+                        return StringUtil.compareStrings(searchTerm,
                                 ApplicationService.getBookController().getBookAuthorNamesOrderByNumeComplet(carte).toLowerCase())
-                                || StringUtil.compareStrings(text.toLowerCase(), carte.getTitlu().toLowerCase());
+                                || StringUtil.compareStrings(searchTerm, carte.getTitlu().toLowerCase())
+                                || StringUtil.compareStrings(searchTerm, carte.getSerie().getNume().toLowerCase())
+                                || StringUtil.compareStrings(searchTerm, carte.getVolum().toLowerCase());
                     }
                 });
                 tableViewer.setFilters(listFilters.toArray(new ViewerFilter[listFilters.size()]));
@@ -1243,11 +1246,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            String titlu = carte.getTitlu();
-                            if (StringUtils.isNotEmpty(carte.getSerie().getNume())) {
-                                titlu += " (" + carte.getSerie().getFormattedValue() + ")";
-                            }
-                            return titlu;
+                            return carte.getTitluVolumSiSerie();
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
@@ -1255,10 +1254,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            if (searchType == BookSearchType.Serie) {
-                                return StringUtil.romanianCompare(a.getSerie().getVolum(), b.getSerie().getVolum());
-                            }
-                            return StringUtil.romanianCompare(a.getTitlu(), b.getTitlu());
+                            return StringUtil.romanianCompare(a.getSerie().getFormattedValue() + a.getTitlu() + a.getVolum(),
+                                    b.getSerie().getFormattedValue() + b.getTitlu() + b.getVolum());
                         }
 
                     };

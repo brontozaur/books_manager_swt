@@ -21,7 +21,7 @@ public class CarteTitluVolumComposite extends Composite {
         this.textTitlu = new Text(this, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).hint(100, SWT.DEFAULT).applyTo(this.textTitlu);
 
-        new Label(this, SWT.NONE).setText("#");
+        new Label(this, SWT.NONE).setText(" vol.");
 
         this.textVolum = new Text(this, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).hint(20, SWT.DEFAULT).applyTo(this.textVolum);

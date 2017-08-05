@@ -15,7 +15,7 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Carte getByTitluAndIdAutori(String titlu, List<ObjectId> idAutori);
 
-    Page<Carte> getByIdIsOrTitluLikeIgnoreCaseOrIdAutoriContains(String id, String titlu, List<ObjectId> idAutori, Pageable pageable);
+    Page<Carte> getByIdIsOrTitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String id, String titlu, List<ObjectId> idAutori, String serie, String volum, Pageable pageable);
 
     List<Carte> getByIdAutoriContains(ObjectId idAutor);
 
@@ -53,7 +53,7 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByTitluStartingWithIgnoreCaseOrderByTitluAsc(String titluStartsWith, Pageable pageable);
 
-    Page<Carte> getBySerieExistsOrderBySerie_NumeAscSerie_VolumAsc(boolean exists, Pageable pageable);
+    Page<Carte> getBySerieExistsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(boolean exists, Pageable pageable);
 
     Page<Carte> getBySerie_NumeIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAsc(String serieStartsWith, Pageable pageable);
 
@@ -63,7 +63,7 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByUpdatedAtIsNullOrderByTitluAsc(Pageable pageable);
 
-    Page<Carte> getByUpdatedAtBetweenOrderByTitluAsc(Date updatedDateStart, Date updatedDateEnd, Pageable pageable);
+    Page<Carte> getByUpdatedAtBetween(Date updatedDateStart, Date updatedDateEnd, Pageable pageable);
 
     //string arrays
     Page<Carte> getByTraducatoriIsNullOrTraducatoriIsLessThanEqualOrderByTitluAsc(String[] emptyString, Pageable pageable);

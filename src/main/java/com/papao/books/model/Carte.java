@@ -1,6 +1,7 @@
 package com.papao.books.model;
 
 import com.sun.istack.internal.NotNull;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @Document(collection = "carte")
 @CompoundIndexes({
-        @CompoundIndex(name = "uniqueAutoriAndTitle", def = "{'idAutori': 1, 'titlu': 1}", unique = true)})
+        @CompoundIndex(name = "uniqueAutoriAndTitleAndVolumAndEditura", def = "{'idAutori': 1, 'titlu': 1, 'volum': 1, 'editura': 1}", unique = true)})
 public class Carte extends AuditObject implements Serializable {
 
     public static String REPLACEMENT_FOR_NOT_SET = "";
@@ -92,6 +93,17 @@ public class Carte extends AuditObject implements Serializable {
             return "";
         }
         return titlu;
+    }
+
+    public String getTitluVolumSiSerie() {
+        String result = titlu;
+        if (StringUtils.isNotEmpty(getSerie().getNume())) {
+            result += " (" + getSerie().getFormattedValue() + ")";
+        }
+        if (StringUtils.isNotEmpty(volum)) {
+            result += " (vol #" + volum + ")";
+        }
+        return result;
     }
 
     public void setTitlu(String titlu) {

@@ -194,7 +194,7 @@ public class BookController extends Observable {
             }
             case Serie: {
                 if (node.getNodeType() == NodeType.ALL) {
-                    carti = repository.getBySerieExistsOrderBySerie_NumeAscSerie_VolumAsc(true, pageable);
+                    carti = repository.getBySerieExistsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(true, pageable);
                 } else if (StringUtils.isNotEmpty((String) value)) {
                     carti = repository.getBySerie_NumeIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAsc((String) value, pageable);
                 } else {
@@ -212,7 +212,7 @@ public class BookController extends Observable {
             }
             case Actualizata: {
                 if (value != null) {
-                    carti = repository.getByUpdatedAtBetweenOrderByTitluAsc(node.getMinDate(), node.getMaxDate(), pageable);
+                    carti = repository.getByUpdatedAtBetween(node.getMinDate(), node.getMaxDate(), pageable);
                 } else {
                     carti = repository.getByUpdatedAtIsNullOrderByTitluAsc(pageable);
                 }
@@ -273,8 +273,8 @@ public class BookController extends Observable {
         return repository.getByTitluAndIdAutori(titlu, idAutori);
     }
 
-    public void getByIdIsOrTitluLikeOrIdAutoriContains(String searchTerm, List<ObjectId> idAutori, Pageable pageable) {
-        carti = repository.getByIdIsOrTitluLikeIgnoreCaseOrIdAutoriContains(searchTerm, searchTerm, idAutori, pageable);
+    public void getByIdIsOrTitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String searchTerm, List<ObjectId> idAutori, Pageable pageable) {
+        carti = repository.getByIdIsOrTitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(searchTerm, searchTerm, idAutori, searchTerm, searchTerm, pageable);
         setChanged();
         notifyObservers();
     }
@@ -287,7 +287,7 @@ public class BookController extends Observable {
         return repository.getByCopertaFataIsNull(pageable);
     }
 
-    public void getByIdAutoriIn(List<ObjectId> idAutori, Pageable pageable) {
+    public void getByIdAutoriInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(List<ObjectId> idAutori, Pageable pageable) {
         carti = repository.getByIdAutoriIn(idAutori, pageable);
         setChanged();
         notifyObservers();
