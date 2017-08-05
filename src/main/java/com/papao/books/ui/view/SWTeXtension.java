@@ -782,4 +782,16 @@ public final class SWTeXtension {
             });
         }
     }
+
+    public static void removeContentProposal(Widget widget) {
+        while (widget.getListeners(SWT.KeyDown).length > 0) {
+            widget.removeListener(SWT.KeyDown, widget.getListeners(SWT.KeyDown)[0]);
+        }
+        while (widget.getListeners(SWT.Traverse).length > 0) {
+            widget.removeListener(SWT.Traverse, widget.getListeners(SWT.Traverse)[0]);
+        }
+        while (widget.getListeners(SWT.Modify).length > 0) {
+            widget.removeListener(SWT.Modify, widget.getListeners(SWT.Modify)[0]);
+        }
+    }
 }

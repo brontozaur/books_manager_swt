@@ -38,6 +38,9 @@ public class ApplicationConfig {
     @Value("${app.out.folder}")
     private String appOutFolder;
 
+    @Value("${app.default.username}")
+    private String defaultUserName;
+
     @Bean
     public MongoClient mongo() throws Exception {
         return new MongoClient(host);
@@ -88,4 +91,7 @@ public class ApplicationConfig {
         return outFolder.getAbsolutePath();
     }
 
+    public String getDefaultUserName() {
+        return defaultUserName;
+    }
 }

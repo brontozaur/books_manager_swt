@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.nebula.widgets.formattedtext.DoubleFormatter;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
 import org.eclipse.nebula.widgets.formattedtext.IntegerFormatter;
 import org.eclipse.nebula.widgets.formattedtext.NumberFormatter;
@@ -28,6 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CarteView extends AbstractCSaveView {
@@ -66,6 +68,11 @@ public class CarteView extends AbstractCSaveView {
     private ImageSelectorComposite autografComposite;
     private LinkedinComposite compositeGenLiterar;
 
+    private DateChooserCustom textDataCumparare;
+    private FormattedText textPretIntreg;
+    private FormattedText textPretRedus;
+    private Text textMagazin;
+
     private Combo comboTraducereDin;
     private LinkedinComposite compositeTraducatori;
     private DragAndDropTableComposite dragAndDropTableComposite;
@@ -87,6 +94,7 @@ public class CarteView extends AbstractCSaveView {
     private ToolItem itemEditiaOriginala;
     private ToolItem itemTaguri;
     private ToolItem itemBookDetails;
+    private ToolItem itemPret;
     private ToolItem itemBackCover;
     private PremiiLiterareComposite premiiLiterareComposite;
 
@@ -121,7 +129,6 @@ public class CarteView extends AbstractCSaveView {
         itemInformatiiEsentiale = new ToolItem(toolBar, SWT.RADIO);
         itemInformatiiEsentiale.setText("Informatii esentiale");
         itemInformatiiEsentiale.setImage(AppImages.getImage16(AppImages.IMG_ARROW_UP_OPAL));
-//        itemInformatiiEsentiale.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_UP_OPAL));
         itemInformatiiEsentiale.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -137,7 +144,6 @@ public class CarteView extends AbstractCSaveView {
         itemTraducere = new ToolItem(toolBar, SWT.RADIO);
         itemTraducere.setText("Traducere");
         itemTraducere.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-//        itemTraducere.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemTraducere.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -153,7 +159,6 @@ public class CarteView extends AbstractCSaveView {
         itemBookDetails = new ToolItem(toolBar, SWT.RADIO);
         itemBookDetails.setText("Detalii");
         itemBookDetails.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-//        itemBookDetails.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemBookDetails.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -164,12 +169,26 @@ public class CarteView extends AbstractCSaveView {
             }
         });
 
+        final Composite pretComposite = createPretTab(mainComp);
+
+        itemPret = new ToolItem(toolBar, SWT.RADIO);
+        itemPret.setText("Pret");
+        itemPret.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
+        itemPret.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (((ToolItem) event.widget).getSelection()) {
+                    ((StackLayout) mainComp.getLayout()).topControl = pretComposite;
+                    mainComp.layout();
+                }
+            }
+        });
+
         final Composite editiaOriginalaComposite = createEditiaOriginalaTab(mainComp);
 
         itemEditiaOriginala = new ToolItem(toolBar, SWT.RADIO);
         itemEditiaOriginala.setText("Editia originala");
         itemEditiaOriginala.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-//        itemEditiaOriginala.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemEditiaOriginala.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -185,7 +204,6 @@ public class CarteView extends AbstractCSaveView {
         itemTaguri = new ToolItem(toolBar, SWT.RADIO);
         itemTaguri.setText("Taguri");
         itemTaguri.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-//        itemTaguri.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemTaguri.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -201,7 +219,6 @@ public class CarteView extends AbstractCSaveView {
         itemBackCover = new ToolItem(toolBar, SWT.RADIO);
         itemBackCover.setText("Coperta spate");
         itemBackCover.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-//        itemBackCover.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemBackCover.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -218,15 +235,17 @@ public class CarteView extends AbstractCSaveView {
         //traverse next
         handleTraverseNextEvent(compositeTehnoredactori.getTextSearch(), itemInformatiiEsentiale, itemTraducere);
         handleTraverseNextEvent(compositeTraducatori.getTextSearch(), itemTraducere, itemBookDetails);
-        handleTraverseNextEvent(comboLimba, itemBookDetails, itemEditiaOriginala);
+        handleTraverseNextEvent(textLatime.getControl(), itemBookDetails, itemPret);
+        handleTraverseNextEvent(textMagazin, itemPret, itemEditiaOriginala);
         handleTraverseNextEvent(premiiLiterareComposite.getTable(), itemEditiaOriginala, itemTaguri);
         handleTraverseNextEvent(compositeTags.getTextSearch(), itemTaguri, itemBackCover);
 
         //traverse previous
         handleTraversePreviousEvent(textMotto, itemTaguri, itemEditiaOriginala);
-        handleTraversePreviousEvent(textEditiaPrincepsTitlu, itemEditiaOriginala, itemBookDetails);
+        handleTraversePreviousEvent(textEditiaPrincepsTitlu, itemEditiaOriginala, itemPret);
+        handleTraversePreviousEvent(textDataCumparare.getFormattedText(), itemPret, itemBookDetails);
         handleTraversePreviousEvent(textGoodreadsUrl, itemBookDetails, itemTraducere);
-        handleTraversePreviousEvent(comboTraducereDin, itemTraducere, itemInformatiiEsentiale);
+        handleTraversePreviousEvent(compositeTraducatori.getTextSearch(), itemTraducere, itemInformatiiEsentiale);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
@@ -236,6 +255,10 @@ public class CarteView extends AbstractCSaveView {
         GridLayoutFactory.fillDefaults().numColumns(6).equalWidth(false).applyTo(comp);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
 
+        label(comp, "Traducatori");
+        this.compositeTraducatori = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "traducatori"), carte.getTraducatori());
+        ((GridData) compositeTraducatori.getLayoutData()).horizontalSpan = 5;
+
         label(comp, "Traducere din");
         comboTraducereDin = new Combo(comp, SWT.READ_ONLY);
         comboTraducereDin.setItems(Limba.getComboItems());
@@ -244,10 +267,6 @@ public class CarteView extends AbstractCSaveView {
         label(comp, "");
         label(comp, "");
         label(comp, "");
-
-        label(comp, "Traducatori");
-        this.compositeTraducatori = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "traducatori"), carte.getTraducatori());
-        ((GridData) compositeTraducatori.getLayoutData()).horizontalSpan = 5;
 
         label(comp, "Documente");
         dragAndDropTableComposite = new DragAndDropTableComposite(comp, carte, false);
@@ -287,7 +306,7 @@ public class CarteView extends AbstractCSaveView {
         data.verticalAlignment = SWT.BEGINNING;
         data.horizontalAlignment = SWT.CENTER;
 
-        label(mainCompLeft, "Titlu");
+        label(mainCompLeft, "Titlu *");
         this.textTitlu = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(5, 1).applyTo(this.textTitlu);
         this.textTitlu.addListener(SWT.Modify, new Listener() {
@@ -301,7 +320,7 @@ public class CarteView extends AbstractCSaveView {
         this.textSubtitlu = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(5, 1).applyTo(this.textSubtitlu);
 
-        label(mainCompLeft, "Autori");
+        label(mainCompLeft, "Autori *");
         compositeAutori = new LinkedinCompositeAutori(mainCompLeft, carte.getIdAutori());
         ((GridData) compositeAutori.getLayoutData()).horizontalSpan = 5;
         ((GridData) compositeAutori.getLayoutData()).grabExcessHorizontalSpace = true;
@@ -545,6 +564,19 @@ public class CarteView extends AbstractCSaveView {
         ((GridData) compositeAutoriCoperta.getLayoutData()).horizontalSpan = 7;
         ((GridData) compositeAutoriCoperta.getLayoutData()).grabExcessHorizontalSpace = true;
 
+        //read only combos receive focus on OSX, only after enabling
+        // System Preferences -> Keyboard -> Keyboard Shortcuts -> All Controls
+        //see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376039
+        label(comp, "Limba");
+        comboLimba = new Combo(comp, SWT.READ_ONLY);
+        comboLimba.setItems(Limba.getComboItems());
+        label(comp, "");
+        label(comp, "");
+        label(comp, "");
+        label(comp, "");
+        label(comp, "");
+        label(comp, "");
+
         label(comp, "Greutate (kg)");
         this.textGreutate = new FormattedText(comp, SWT.BORDER);
         this.textGreutate.setFormatter(NumberUtil.getFormatter(2, true));
@@ -563,15 +595,32 @@ public class CarteView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textLatime.getControl());
         ((NumberFormatter) this.textLatime.getFormatter()).setFixedLengths(false, true);
 
-        label(comp, "");
-        label(comp, "");
+        return comp;
+    }
 
-        //read only combos receive focus on OSX, only after enabling
-        // System Preferences -> Keyboard -> Keyboard Shortcuts -> All Controls
-        //see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376039
-        label(comp, "Limba");
-        comboLimba = new Combo(comp, SWT.READ_ONLY);
-        comboLimba.setItems(Limba.getComboItems());
+    private Composite createPretTab(Composite parent) {
+        Composite comp = new Composite(parent, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(5, 5, 5, 5).applyTo(comp);
+
+        label(comp, "Data cumparare");
+        textDataCumparare = new DateChooserCustom(comp);
+
+        label(comp, "Pret intreg");
+        textPretIntreg = new FormattedText(comp, SWT.BORDER);
+        this.textPretIntreg.setFormatter(new DoubleFormatter(NumberUtil.getPattern(2, false)));
+        GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textPretIntreg.getControl());
+        ((NumberFormatter) this.textPretIntreg.getFormatter()).setFixedLengths(false, true);
+
+        label(comp, "Pret redus");
+        textPretRedus = new FormattedText(comp, SWT.BORDER);
+        this.textPretRedus.setFormatter(new DoubleFormatter(NumberUtil.getPattern(2, false)));
+        GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textPretRedus.getControl());
+        ((NumberFormatter) this.textPretRedus.getFormatter()).setFixedLengths(false, true);
+
+        label(comp, "Magazin");
+        this.textMagazin = new Text(comp, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(this.textMagazin);
+        ContentProposalProvider.addContentProposal(textMagazin, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "pret.magazin"));
 
         return comp;
     }
@@ -637,6 +686,11 @@ public class CarteView extends AbstractCSaveView {
 
         this.textMotto.setText(this.carte.getMotto());
         this.textDescriere.setText(this.carte.getDescriere());
+
+        this.textPretIntreg.setValue(this.carte.getPret().getPretIntreg());
+        this.textPretRedus.setValue(this.carte.getPret().getPret());
+        this.textDataCumparare.setValue(this.carte.getPret().getDataCumpararii());
+        this.textMagazin.setText(this.carte.getPret().getMagazin());
 
         if (!isViewEnabled()) {
             WidgetCompositeUtil.enableGUI(getContainer(), false);
@@ -729,9 +783,48 @@ public class CarteView extends AbstractCSaveView {
             carte.setDocuments(docs);
         }
 
+        String magazin = textMagazin.getText();
+        double pretIntreg = (Double) textPretIntreg.getValue();
+        double pretRedus = (Double) textPretRedus.getValue();
+        if (pretRedus != 0 && pretIntreg == 0) {
+            pretIntreg = pretRedus;
+        }
+        Date dataCumpararii = textDataCumparare.getValue();
+        if (dataCumpararii != null || pretIntreg > 0 || pretRedus > 0 || StringUtils.isNotEmpty(magazin)) {
+            carte.setPret(new CartePret(dataCumpararii, pretIntreg, pretRedus, magazin));
+        }
+
         carte = ApplicationService.getBookController().save(carte);
 
-        UserController.saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
+        if (starRating.getCurrentNumberOfStars() > 0) {
+            UserController.saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
+        }
+    }
+
+    @Override
+    public void saveAndClose(boolean closeShell) {
+        if (!validate()) {
+            return;
+        }
+        //remove the listeners added by content proposal to avoid SWTException on saveAndClose() using Cmd + S
+        SWTeXtension.removeContentProposal(compositeAutori.getComboAutor().getCombo());
+        SWTeXtension.removeContentProposal(textSerie);
+        SWTeXtension.removeContentProposal(textEditura);
+        SWTeXtension.removeContentProposal(textLocatie);
+        SWTeXtension.removeContentProposal(textAnAparitie);
+        SWTeXtension.removeContentProposal(compositeRedactori.getTextSearch());
+        SWTeXtension.removeContentProposal(compositeTehnoredactori.getTextSearch());
+        SWTeXtension.removeContentProposal(compositeTraducatori.getTextSearch());
+        SWTeXtension.removeContentProposal(compositeGenLiterar.getTextSearch());
+        SWTeXtension.removeContentProposal(compositeAutoriIlustratii.getTextSearch());
+        SWTeXtension.removeContentProposal(compositeAutoriCoperta.getTextSearch());
+        SWTeXtension.removeContentProposal(textMagazin);
+        SWTeXtension.removeContentProposal(textEditiaPrincepsTara);
+        SWTeXtension.removeContentProposal(textEditiaPrincepsEditura);
+        SWTeXtension.removeContentProposal(textEditiaPrincepsAn);
+        SWTeXtension.removeContentProposal(compositeEditiaPrincepsAutoriIlustratii.getTextSearch());
+        SWTeXtension.removeContentProposal(compositeTags.getTextSearch());
+        super.saveAndClose(true);
     }
 
     @Override
@@ -747,6 +840,11 @@ public class CarteView extends AbstractCSaveView {
             if (StringUtils.isEmpty(this.textTitlu.getText())) {
                 SWTeXtension.displayMessageW("Titlul cartii nu este introdus!");
                 textTitlu.setFocus();
+                return false;
+            }
+            if (compositeAutori.getSelectedIds().isEmpty()) {
+                SWTeXtension.displayMessageW("Autorul cartii nu a fost introdus!");
+                compositeAutori.setFocus();
                 return false;
             }
         } catch (Exception exc) {

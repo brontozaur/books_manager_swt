@@ -269,7 +269,7 @@ public class ApplicationController {
             ObjectId userId = (ObjectId) distinctValue.get("_id");
             int count = (int) distinctValue.get("userBooks");
 
-            User user = UserController.findOne(userId);
+            User user = UserController.getById(userId);
             SimpleTextNode userNode = new SimpleTextNode(baseNode, user != null ? user.getNumeComplet() : "");
             userNode.setQueryValue(userId);
             userNode.setCount(count);

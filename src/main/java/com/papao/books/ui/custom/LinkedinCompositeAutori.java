@@ -51,9 +51,9 @@ public class LinkedinCompositeAutori extends Composite {
         comboAutor.getItemAdd().getParent().setBackground(ColorUtil.COLOR_WHITE);
         GridDataFactory.fillDefaults().grab(false, false).hint(150, SWT.DEFAULT).applyTo(comboAutor);
         GridDataFactory.fillDefaults().grab(false, false).hint(120, SWT.DEFAULT).applyTo(comboAutor.getCombo());
-        ((GridLayout)comboAutor.getLayout()).marginBottom = 0;
-        ((GridLayout)comboAutor.getLayout()).marginTop = 2;
-        ((GridLayout)comboAutor.getLayout()).marginLeft = 3;
+        ((GridLayout) comboAutor.getLayout()).marginBottom = 0;
+        ((GridLayout) comboAutor.getLayout()).marginTop = 2;
+        ((GridLayout) comboAutor.getLayout()).marginLeft = 3;
         comboAutor.getItemAdd().addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -192,5 +192,15 @@ public class LinkedinCompositeAutori extends Composite {
             this.autori = AutorController.findByIdsOrderByNumeComplet(ids);
         }
         populateFields();
+    }
+
+    @Override
+    public boolean setFocus() {
+        comboAutor.getCombo().setFocus();
+        return super.setFocus();
+    }
+
+    public ComboImage getComboAutor() {
+        return comboAutor;
     }
 }

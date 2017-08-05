@@ -247,6 +247,22 @@ public class ComboImage extends Composite implements Listener {
         return getSelectedElement() != null ? getSelectedElement().getId() : null;
     }
 
+    public final void selectFirstLike(String str) {
+        if ((str == null) || this.combo.isDisposed()) {
+            return;
+        }
+        str = str.toLowerCase();
+        for (int i = 0; i < combo.getItemCount(); i++) {
+            if (combo.getItems()[i].toLowerCase().contains(str)) {
+                this.combo.select(i);
+                if (getSelectedObjectId() != null && getSelectedObjectId().equals(this.lastId)) {
+                    this.lastId = getSelectedObjectId();
+                    getCombo().notifyListeners(SWT.Selection, new Event());
+                }
+            }
+        }
+    }
+
     public final void select(final String str) {
         if ((str == null) || this.combo.isDisposed() || (this.combo.indexOf(str) == -1)) {
             return;

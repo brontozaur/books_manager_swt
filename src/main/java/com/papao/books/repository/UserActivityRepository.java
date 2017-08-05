@@ -16,7 +16,7 @@ public interface UserActivityRepository extends MongoRepository<UserActivity, St
     UserActivity getByUserIdAndBookId(ObjectId userId, ObjectId bookId);
 
     @Transactional
-    List<UserActivity> removeByUserId(ObjectId idUser);
+    void removeByUserId(ObjectId idUser);
 
     List<UserActivity> getByRatingAndUserId(int rating, ObjectId userId);
 

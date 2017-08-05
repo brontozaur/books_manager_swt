@@ -37,6 +37,7 @@ import com.papao.books.ui.util.sorter.AbstractTreeColumnViewerSorter;
 import com.papao.books.ui.view.AbstractCViewAdapter;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
@@ -109,6 +110,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private CarteCitatComposite carteCitatComposite;
     private CartePersonajComposite cartePersonajComposite;
     private CarteReviewComposite carteReviewComposite;
+
+    private SimpleTextNode lastTreeSelection;
 
     public EncodePlatform() {
         super(null, AbstractView.MODE_NONE);
@@ -215,7 +218,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private void createComponents(Composite parent) {
 
         createAdditionalToolItems();
-        ((CBanner)getUpperComp()).setRight(createTopRightComponents(getUpperComp()));
+        ((CBanner) getUpperComp()).setRight(createTopRightComponents(getUpperComp()));
 
         verticalSash = new LiveSashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
         verticalSash.sashWidth = 4;
@@ -666,6 +669,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private void populateLeftTree() {
         if ((leftTreeViewer == null) || leftTreeViewer.getControl().isDisposed()) {
             return;
+        }
+        if (!leftTreeViewer.getSelection().isEmpty()) {
+            TreeItem item = leftTreeViewer.getTree().getSelection()[0];
+            lastTreeSelection = (SimpleTextNode) item.getData();
         }
         switch (searchType) {
             case Editura: {
@@ -1628,6 +1635,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         tableViewer.add(view.getCarte());
         tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+
+        populateLeftTree();
+        if (lastTreeSelection != null) {
+            TreeItem[] items = WidgetTreeUtil.getTreeItemsX(leftTreeViewer.getTree());
+            for (TreeItem item : items) {
+                SimpleTextNode node = (SimpleTextNode) item.getData();
+                if (node != null && ObjectUtils.equals(node.getQueryValue(), lastTreeSelection.getQueryValue())) {
+                    this.leftTreeViewer.getTree().setSelection(item);
+                }
+            }
+        }
+
         if (SettingsController.getBoolean(BooleanSetting.WINDOWS_REENTER_DATA)) {
             return add();
         } else {
@@ -1662,6 +1681,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 ApplicationService.getBookController().delete(carteDb);
                 UserController.deleteAllBookUserActivity(carteDb.getId());
                 tableViewer.remove(carte);
+                if (!leftTreeViewer.getSelection().isEmpty()) {
+                    TreeItem treeItem = leftTreeViewer.getTree().getSelection()[0];
+                    lastTreeSelection = (SimpleTextNode) treeItem.getData();
+                    lastTreeSelection.decrement();
+                    lastTreeSelection.modifyCount(true, false);
+                    treeItem.setText(lastTreeSelection.getName());
+                }
             }
             if (selectedCount == 1) {
                 SWTeXtension.displayMessageI("Cartea selectata a fost stearsa cu succes!");
@@ -1737,6 +1763,17 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     public void refresh() {
         populateLeftTree();
         refreshTableViewer();
+
+        if (lastTreeSelection != null) {
+            TreeItem[] items = WidgetTreeUtil.getTreeItemsX(leftTreeViewer.getTree());
+            for (TreeItem item : items) {
+                SimpleTextNode node = (SimpleTextNode) item.getData();
+                if (node != null && ObjectUtils.equals(node.getQueryValue(), lastTreeSelection.getQueryValue())) {
+                    this.leftTreeViewer.getTree().setSelection(item);
+                    this.leftTreeViewer.getTree().notifyListeners(SWT.Selection, new Event());
+                }
+            }
+        }
     }
 
     private void refreshTableViewer() {

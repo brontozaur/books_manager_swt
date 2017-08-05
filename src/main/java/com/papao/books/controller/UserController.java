@@ -32,7 +32,7 @@ public class UserController {
         return repository.save(user);
     }
 
-    public static User findOne(ObjectId id) {
+    public static User getById(ObjectId id) {
         if (id == null) {
             return null;
         }

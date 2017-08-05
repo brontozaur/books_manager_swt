@@ -37,8 +37,6 @@ public class LoginShell extends AbstractCView implements Listener {
 
     private Text textPassword;
     private ComboImage comboUsers;
-    private XButton buttonLogin;
-    private XButton buttonExit;
     private BlurredPanel bp;
     private Label easterEggLabel;
 
@@ -93,8 +91,8 @@ public class LoginShell extends AbstractCView implements Listener {
         data.setMainText("Login");
         data.setWidth(55);
 
-        this.buttonLogin = new XButton(compDownToolBar, data);
-        this.buttonLogin.registerListeners(SWT.MouseUp, new Listener() {
+        XButton buttonLogin = new XButton(compDownToolBar, data);
+        buttonLogin.registerListeners(SWT.MouseUp, new Listener() {
             @Override
             public void handleEvent(final Event event) {
                 saveAndClose(true);
@@ -109,8 +107,8 @@ public class LoginShell extends AbstractCView implements Listener {
         data.setMainText("Exit");
         data.setWidth(55);
 
-        this.buttonExit = new XButton(compDownToolBar, data);
-        this.buttonExit.registerListeners(SWT.MouseUp, new Listener() {
+        XButton buttonExit = new XButton(compDownToolBar, data);
+        buttonExit.registerListeners(SWT.MouseUp, new Listener() {
             @Override
             public void handleEvent(final Event event) {
                 close(SWT.CANCEL);
@@ -126,15 +124,7 @@ public class LoginShell extends AbstractCView implements Listener {
             return;
         }
         //remove the listeners added by content proposal to avoid SWTException on saveAndClose() using Cmd + S
-        while (comboUsers.getCombo().getListeners(SWT.KeyDown).length > 0) {
-            comboUsers.getCombo().removeListener(SWT.KeyDown, comboUsers.getCombo().getListeners(SWT.KeyDown)[0]);
-        }
-        while (comboUsers.getCombo().getListeners(SWT.Traverse).length > 0) {
-            comboUsers.getCombo().removeListener(SWT.Traverse, comboUsers.getCombo().getListeners(SWT.Traverse)[0]);
-        }
-        while (comboUsers.getCombo().getListeners(SWT.Modify).length > 0) {
-            comboUsers.getCombo().removeListener(SWT.Modify, comboUsers.getCombo().getListeners(SWT.Modify)[0]);
-        }
+        SWTeXtension.removeContentProposal(comboUsers.getCombo());
         super.saveAndClose(true);
     }
 
@@ -208,6 +198,7 @@ public class LoginShell extends AbstractCView implements Listener {
         List<User> users = UserController.findAll();
         users.sort(AMongodbComparator.getComparator(User.class, "getNumeComplet"));
         comboUsers.setInput(users);
+        comboUsers.selectFirstLike(ApplicationService.getApplicationConfig().getDefaultUserName());
         easterEggLabel.setText(ApplicationService.getRandomWelcomeMessage());
     }
 

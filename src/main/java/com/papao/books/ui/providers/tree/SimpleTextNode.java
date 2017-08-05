@@ -225,10 +225,10 @@ public class SimpleTextNode implements ITreeNode {
         return " (" + count + ")";
     }
 
-    public void modifyCount(boolean showItemCount,
+    public void modifyCount(boolean tryToShowItemCount,
                             boolean processParents) {
         String numeNod = getName();
-        if (showItemCount) {
+        if (tryToShowItemCount) {
             if (numeNod.contains(" (")) {
                 numeNod = numeNod.substring(0, numeNod.lastIndexOf(" ("));
             }
@@ -238,7 +238,7 @@ public class SimpleTextNode implements ITreeNode {
             List<SimpleTextNode> parents = getAncestors();
             if (parents != null) {
                 for (int i = 0; i < parents.size(); i++) {
-                    parents.get(i).modifyCount(showItemCount, processParents);
+                    parents.get(i).modifyCount(tryToShowItemCount, processParents);
                 }
             }
         }

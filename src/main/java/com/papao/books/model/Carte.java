@@ -64,6 +64,7 @@ public class Carte extends AuditObject implements Serializable {
     private String locatie;
     private List<String> redactori;
     private List<String> autoriCoperta;
+    private CartePret pret;
 
     @Transient
     private Date readStartDate;
@@ -484,11 +485,23 @@ public class Carte extends AuditObject implements Serializable {
         this.autoriCoperta = autoriCoperta;
     }
 
+    public CartePret getPret() {
+        if (this.pret == null) {
+            return new CartePret(null, 0, 0, "");
+        }
+        return pret;
+    }
+
+    public void setPret(CartePret pret) {
+        this.pret = pret;
+    }
+
     public void initCopy() {
         id = null;
         copertaFata = null;
         copertaSpate = null;
         autograf = null;
+        pret = null;
         documents = new ArrayList<>();
         personaje = new ArrayList<>();
         autoriIlustratii = new ArrayList<>();

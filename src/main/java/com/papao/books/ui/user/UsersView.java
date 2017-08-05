@@ -83,7 +83,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return false;
         }
-        if (UserController.findOne(usr.getId()) == null) {
+        if (UserController.getById(usr.getId()) == null) {
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return false;
         }
@@ -108,7 +108,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
                 SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
                 return false;
             }
-            usr = UserController.findOne(usr.getId());
+            usr = UserController.getById(usr.getId());
             if (usr == null) {
                 SWTeXtension.displayMessageW("Utilizatorul nu mai exista!");
                 return false;
@@ -141,7 +141,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return;
         }
-        if (UserController.findOne(usr.getId()) == null) {
+        if (UserController.getById(usr.getId()) == null) {
             SWTeXtension.displayMessageI("Utilizatorul selectat este invalid!");
             return;
         }
