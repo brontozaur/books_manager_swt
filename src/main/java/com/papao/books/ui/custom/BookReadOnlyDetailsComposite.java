@@ -30,6 +30,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.IOException;
@@ -39,6 +41,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class BookReadOnlyDetailsComposite extends Observable implements Observer {
+
+    private static final Logger logger = LoggerFactory.getLogger(BookReadOnlyDetailsComposite.class);
 
     private Composite mainComp;
     private ScrolledComposite scrolledComposite;
@@ -263,7 +267,11 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         userActivity.getCarteCitita().setDataStop(readEndDate.getValue());
 
         userActivity.setTranslationRating(translationRating.getCurrentNumberOfStars());
-        UserController.saveUserActivity(userActivity);
+        if (userActivity.isChanged()) {
+            UserController.saveUserActivity(userActivity);
+        } else {
+            logger.error("User activity not changed => not saved!");
+        }
     }
 
     @Async

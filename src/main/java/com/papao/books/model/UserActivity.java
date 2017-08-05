@@ -1,5 +1,6 @@
 package com.papao.books.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -90,5 +91,9 @@ public class UserActivity extends AuditObject {
 
     public void setReview(String review) {
         this.review = review;
+    }
+
+    public boolean isChanged() {
+        return !citate.isEmpty() || translationRating > 0 || rating > 0 || carteCitita != null && carteCitita.getDataStart() != null || StringUtils.isNotEmpty(review);
     }
 }

@@ -122,7 +122,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
             }
             UserController.delete(usr);
             SettingsController.removeAllUserSettings(usr.getId());
-            UserController.removeAllUserActivities(usr.getId());
+            UserController.removeUserActivities(usr.getId());
             refresh();
             SWTeXtension.displayMessageI("Operatie executata cu succes!");
         } catch (Exception exc) {

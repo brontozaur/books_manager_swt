@@ -6,6 +6,8 @@ import com.papao.books.repository.UserActivityRepository;
 import com.papao.books.repository.UserRepository;
 import com.papao.books.ui.auth.EncodeLive;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -15,6 +17,7 @@ import java.util.List;
 @Controller
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private static UserRepository repository;
     private static UserActivityRepository userActivityRepository;
 
@@ -69,7 +72,7 @@ public class UserController {
         return 0;
     }
 
-    public static UserActivity saveBookRatingForCurrentUser(ObjectId bookId, int rating) {
+    public static void saveBookRatingForCurrentUser(ObjectId bookId, int rating) {
         UserActivity userActivity = getUserActivity(EncodeLive.getIdUser(), bookId);
         if (userActivity == null) {
             userActivity = new UserActivity();
@@ -77,11 +80,15 @@ public class UserController {
             userActivity.setUserId(EncodeLive.getIdUser());
         }
         userActivity.setRating(rating);
-        return saveUserActivity(userActivity);
+        if (userActivity.isChanged()) {
+            saveUserActivity(userActivity);
+        } else {
+            logger.error("User activity not saved because it was not changed!");
+        }
     }
 
-    public static List<UserActivity> removeAllUserActivities(ObjectId userId) {
-        return userActivityRepository.removeByUserId(userId);
+    public static void removeUserActivities(ObjectId userId) {
+        userActivityRepository.removeByUserId(userId);
     }
 
     public static List<ObjectId> getBookIdsWithSpecifiedRatingForCurrentUser(int rating) {
