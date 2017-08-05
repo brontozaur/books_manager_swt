@@ -311,14 +311,19 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
                 if (carteCitita.getDataStop() != null) {
                     readEndDate.setValue(carteCitita.getDataStop());
                 }
+            } else {
+                readStartDate.setValue(null);
+                readEndDate.setValue(null);
             }
             translationRating.setCurrentNumberOfStars(userActivity.getTranslationRating());
-        }
-        textIdUserActivity.setText(userActivity != null && userActivity.getId() != null ? userActivity.getId().toString() : "");
-        if (carteCitita == null) {
+            bookRating.setCurrentNumberOfStars(userActivity.getRating());
+        } else {
+            translationRating.setCurrentNumberOfStars(0);
+            bookRating.setCurrentNumberOfStars(0);
             readStartDate.setValue(null);
             readEndDate.setValue(null);
         }
+        textIdUserActivity.setText(userActivity != null && userActivity.getId() != null ? userActivity.getId().toString() : "");
         buttonCitita.setEnabled(carte.getId() != null);
         buttonCitita.setSelection(carteCitita != null && carteCitita.isCitita());
         readStartDate.setEnabled(buttonCitita.getEnabled() && buttonCitita.getSelection());
@@ -329,7 +334,6 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         Rectangle r = scrolledComposite.getClientArea();
         scrolledComposite.setMinSize(mainComp.computeSize(r.width, SWT.DEFAULT));
 
-        bookRating.setCurrentNumberOfStars(UserController.getPersonalRating(EncodeLive.getIdUser(), carte.getId()));
         ratingValue = bookRating.getCurrentNumberOfStars();
         observableProperty = carte.getTitlu();
         textLocatie.setText(carte.getLocatie());
