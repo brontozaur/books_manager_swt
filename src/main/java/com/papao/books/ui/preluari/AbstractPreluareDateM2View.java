@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 
@@ -39,9 +40,7 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
     private ToolItem itemOpenFile;
     protected ToolItem itemValidateFile;
     protected ToolItem itemPreluare;
-    private ToolBar barOps;
     private ProgressBarComposite cpBar;
-    protected Composite compSuport;
     public boolean ready4Import = false;
     public String[] columnLabels;
     public String[] columnDescriptions;
@@ -68,17 +67,18 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
         addComponents();
     }
 
-    private void addComponents() {
-        this.compSuport = new Composite(getContainer(), SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(this.compSuport);
-        GridLayoutFactory.fillDefaults().numColumns(6).equalWidth(false).applyTo(this.compSuport);
+    @Override
+    protected void customizeView() {
+        setViewOptions(AbstractView.ADD_CANCEL);
+        setBigViewImage(AppImages.getImage24(AppImages.IMG_IMPORT));
+        setCreateUpperCompLeftArea(true);
+        setCreateUpperCompRightArea(true);
+    }
 
-        barOps = new ToolBar(this.compSuport, SWT.RIGHT | SWT.FLAT);
-        GridDataFactory.fillDefaults().grab(false, false).align(SWT.FILL, SWT.CENTER).applyTo(this.barOps);
-
-        this.itemOpenFile = new ToolItem(barOps, SWT.PUSH);
-        itemOpenFile.setImage(AppImages.getImage16(AppImages.IMG_IMPORT));
-        itemOpenFile.setHotImage(AppImages.getImage16Focus(AppImages.IMG_IMPORT));
+    private void createToolBarItems() {
+        this.itemOpenFile = new ToolItem(getMainToolBar(), SWT.PUSH);
+        itemOpenFile.setImage(AppImages.getImage24(AppImages.IMG_IMPORT));
+        itemOpenFile.setHotImage(AppImages.getImage24Focus(AppImages.IMG_IMPORT));
         itemOpenFile.setToolTipText("Import fisier (prima linie este rezervata pentru denumirea coloanelor)");
         itemOpenFile.setText("&Import");
         itemOpenFile.addListener(SWT.Selection, new Listener() {
@@ -92,9 +92,9 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
             }
         });
 
-        this.itemValidateFile = new ToolItem(barOps, SWT.PUSH);
-        itemValidateFile.setImage(AppImages.getImage16(AppImages.IMG_OK));
-        itemValidateFile.setHotImage(AppImages.getImage16Focus(AppImages.IMG_OK));
+        this.itemValidateFile = new ToolItem(getMainToolBar(), SWT.PUSH);
+        itemValidateFile.setImage(AppImages.getImage24(AppImages.IMG_OK));
+        itemValidateFile.setHotImage(AppImages.getImage24Focus(AppImages.IMG_OK));
         itemValidateFile.setToolTipText("Validare fisier");
         itemValidateFile.setText("&Validare");
         itemValidateFile.setEnabled(false);
@@ -123,9 +123,9 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
             }
         });
 
-        this.itemPreluare = new ToolItem(barOps, SWT.PUSH);
-        itemPreluare.setImage(AppImages.getImage16(AppImages.IMG_EXPORT));
-        itemPreluare.setHotImage(AppImages.getImage16Focus(AppImages.IMG_EXPORT));
+        this.itemPreluare = new ToolItem(getMainToolBar(), SWT.PUSH);
+        itemPreluare.setImage(AppImages.getImage24(AppImages.IMG_EXPORT));
+        itemPreluare.setHotImage(AppImages.getImage24Focus(AppImages.IMG_EXPORT));
         itemPreluare.setToolTipText("Start preluare");
         itemPreluare.setText("&Preluare");
         itemPreluare.setEnabled(false);
@@ -135,9 +135,15 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
                 preluareDate();
             }
         });
+    }
 
-        new Label(compSuport, SWT.NONE).setText("Delimitator:");
-        textDelimitator = new Text(compSuport, SWT.BORDER);
+    private void createRightArea() {
+        Composite rightArea = new Composite(getUpperCompRightArea(), SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(3).applyTo(rightArea);
+        GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).applyTo(rightArea);
+
+        new Label(rightArea, SWT.NONE).setText("Delimitator:");
+        textDelimitator = new Text(rightArea, SWT.BORDER);
         textDelimitator.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -146,12 +152,20 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
         });
 
         this.cpBar = new ProgressBarComposite(
-                this.compSuport,
+                rightArea,
                 Integer.MAX_VALUE,
                 ColorUtil.COLOR_ROSU_SEMI_ROSU,
                 SWT.SMOOTH);
         cpBar.setVisible(false);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(cpBar);
+
+        ((CBanner) getUpperComp()).setRightWidth(200);
+    }
+
+    private void addComponents() {
+
+        createToolBarItems();
+        createRightArea();
 
         this.tableDocumente = new Table(getContainer(), SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION
                 | SWT.H_SCROLL | SWT.V_SCROLL);

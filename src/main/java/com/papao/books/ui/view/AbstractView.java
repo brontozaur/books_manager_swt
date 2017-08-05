@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.GC;
@@ -83,6 +84,8 @@ public abstract class AbstractView extends Observable {
      * when true, the attempt of closing the current view, not using Save button will prompt user for confirmation if the ADD_OK flag is specified.
      */
     private boolean addCloseListener;
+    private boolean createUpperCompLeftArea;
+    private boolean createUpperCompRightArea;
 
     private boolean automaticallyShowSaveOKMessage = false;
 
@@ -94,7 +97,7 @@ public abstract class AbstractView extends Observable {
     private Button buttonDetails;
 
     private ToolBar barNavigare;
-    private ToolBar barAMD;
+    private ToolBar mainToolbar;
 
     private ToolItem toolItemAdd;
     private ToolItem toolItemMod;
@@ -111,8 +114,8 @@ public abstract class AbstractView extends Observable {
     private GridLayout widgetLayout = new GridLayout(1, false);
 
     private Composite upperComp;
+    private Composite upperCompRightArea;
     private Composite lowerComp;
-    private Composite compButtonsAMD;
     private Composite compHIRE;
     private Composite compSaveButtons;
     private Composite compSearchWithHighlight;
@@ -180,7 +183,7 @@ public abstract class AbstractView extends Observable {
 
     private boolean addEscapeTraverseClose;
 
-    private Listener keyDownFiter;
+    private Listener saveTriggerFilter;
 
     public AbstractView(final Shell parent, final Class<? extends Widget> widgetClass, final int viewMode) {
         this(parent, widgetClass, null, viewMode);
@@ -257,12 +260,9 @@ public abstract class AbstractView extends Observable {
      * customizeView() to perform his task, if any.
      */
     protected final void createGUI() {
-        int numColsCompAMD = 0;
         int numColsCompHIRE = 0;
         int numColsCompSaveBtn = 0;
         int numColsLowerComp = 0;
-        int numColsUpperComp = 0;
-        int numColsNavigare = 0;
         Composite bigUpperComp;
         Label separator;
         boolean appIsUsingRichWindows;
@@ -291,13 +291,17 @@ public abstract class AbstractView extends Observable {
             //we set the current shell as the parent shell for notifications. For just in case ;-)
             this.notificationParent = this.shell;
             Notifier.setParent(this.shell);
-            keyDownFiter = new Listener() {
-                public void handleEvent(Event e) {
-                    if (SWTeXtension.getSaveTrigger(e))
-                        saveAndClose(true);
-                }
-            };
-            shell.getDisplay().addFilter(SWT.KeyDown, keyDownFiter);
+
+            if ((viewMode & ADD_OK) != 0) {
+                saveTriggerFilter = new Listener() {
+                    public void handleEvent(Event e) {
+                        if (SWTeXtension.getSaveTrigger(e))
+                            saveAndClose(true);
+                    }
+                };
+                shell.getDisplay().addFilter(SWT.KeyDown, saveTriggerFilter);
+            }
+
             this.shell.addListener(SWT.Dispose, new Listener() {
                 @Override
                 public void handleEvent(Event event) {
@@ -306,8 +310,9 @@ public abstract class AbstractView extends Observable {
                     }
                     //we restore the original notification parent
                     Notifier.setParent(notificationParent);
-                    if (keyDownFiter != null) {
-                        shell.getDisplay().removeFilter(SWT.KeyDown, keyDownFiter);
+
+                    if (saveTriggerFilter != null) {
+                        shell.getDisplay().removeFilter(SWT.KeyDown, saveTriggerFilter);
                     }
                 }
             });
@@ -399,45 +404,21 @@ public abstract class AbstractView extends Observable {
 
             }
 
-            if (this.addNavigation) {
-                numColsNavigare++;
-            }
+            final boolean hasLeftArea = this.addAdd || this.addMod || this.addDel || this.addRefresh || createUpperCompLeftArea;
+            final boolean hasRightArea = this.addSearchWithHighlight || this.addNavigation || createUpperCompRightArea;
 
-            if (numColsNavigare > 0) {
-                numColsUpperComp++;
-            }
-
-            if (this.addAdd) {
-                numColsCompAMD++;
-            }
-            if (this.addMod) {
-                numColsCompAMD++;
-            }
-            if (this.addDel) {
-                numColsCompAMD++;
-            }
-
-            if (this.addSearchWithHighlight) {
-                numColsUpperComp++;
-            }
-
-            if (numColsCompAMD > 0) {
-                numColsUpperComp++;
-            }
-
-            if (this.addRefresh) {
-                numColsCompAMD++;
-            }
-
-            if (numColsUpperComp > 0) {
-                setUpperComp(new Composite(this.shell, SWT.NONE));
-                GridLayout lay = new GridLayout(numColsUpperComp, false);
-                lay.verticalSpacing = 0;
-                lay.horizontalSpacing = 2;
-                lay.marginHeight = 0;
-                getUpperComp().setLayout(lay);
-                GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-                getUpperComp().setLayoutData(data);
+            if (hasLeftArea || hasRightArea) {
+                if (hasRightArea) {
+                    Composite temp = new Composite(shell, SWT.NONE);
+                    GridLayoutFactory.fillDefaults().numColumns(1).margins(5, 5).applyTo(temp);
+                    GridDataFactory.fillDefaults().grab(true, false).applyTo(temp);
+                    this.upperComp = new CBanner(temp, SWT.NONE);
+                    ((CBanner) this.upperComp).setSimple(true);
+                } else {
+                    this.upperComp = new Composite(shell, SWT.NONE);
+                    GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).applyTo(this.upperComp);
+                }
+                GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.upperComp);
 
                 /**
                  * daca s-a lansat o fereastra care extinde aceasta clasa, cu cel putin unul din butoanele Adaugare, Modificare, Stergere vizibile, atunci, pentru optiunile de lansare adaugam listener
@@ -448,24 +429,13 @@ public abstract class AbstractView extends Observable {
                  * navigare si refresh, se va alinia la centru :D
                  */
 
-                if (numColsCompAMD > 0) {
-                    int compAMDAlignment = SWT.BEGINNING;
-
-                    this.compButtonsAMD = new Composite(getUpperComp(), SWT.NONE);
-                    GridDataFactory.fillDefaults().grab(false, false).align(compAMDAlignment, SWT.CENTER).span(numColsUpperComp - numColsNavigare - numColsCompAMD, 1).applyTo(this.compButtonsAMD);
-                    lay = new GridLayout(numColsCompAMD, false);
-                    lay.verticalSpacing = 0;
-                    lay.marginHeight = 2;
-                    this.compButtonsAMD.setLayout(lay);
-
-                    if (this.addAdd || this.addMod || this.addDel) {
-                        this.barAMD = new ToolBar(this.compButtonsAMD, SWT.FLAT);
-                    }
+                if (hasLeftArea) {
+                    this.mainToolbar = new ToolBar(this.upperComp, SWT.FLAT);
 
                     if (this.addAdd) {
-                        this.toolItemAdd = new ToolItem(this.barAMD, SWT.PUSH | SWT.FLAT);
-                        this.toolItemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
-                        this.toolItemAdd.setHotImage(AppImages.getImage16Focus(AppImages.IMG_PLUS));
+                        this.toolItemAdd = new ToolItem(this.mainToolbar, SWT.PUSH | SWT.FLAT);
+                        this.toolItemAdd.setImage(AppImages.getImage24(AppImages.IMG_PLUS));
+                        this.toolItemAdd.setHotImage(AppImages.getImage24Focus(AppImages.IMG_PLUS));
                         this.toolItemAdd.setToolTipText("Adaugare");
                         if (this.showOpsLabels) {
                             this.toolItemAdd.setText("&Adaugare");
@@ -473,9 +443,9 @@ public abstract class AbstractView extends Observable {
                         this.toolItemAdd.addListener(SWT.Selection, this.viewListener);
                     }
                     if (this.addMod) {
-                        this.toolItemMod = new ToolItem(this.barAMD, SWT.PUSH | SWT.FLAT);
-                        this.toolItemMod.setImage(AppImages.getImage16(AppImages.IMG_MODIFICARE));
-                        this.toolItemMod.setHotImage(AppImages.getImage16Focus(AppImages.IMG_MODIFICARE));
+                        this.toolItemMod = new ToolItem(this.mainToolbar, SWT.PUSH | SWT.FLAT);
+                        this.toolItemMod.setImage(AppImages.getImage24(AppImages.IMG_MODIFICARE));
+                        this.toolItemMod.setHotImage(AppImages.getImage24Focus(AppImages.IMG_MODIFICARE));
                         this.toolItemMod.setToolTipText("Modificare");
                         if (this.showOpsLabels) {
                             this.toolItemMod.setText("&Modificare");
@@ -483,9 +453,9 @@ public abstract class AbstractView extends Observable {
                         this.toolItemMod.addListener(SWT.Selection, this.viewListener);
                     }
                     if (this.addDel) {
-                        this.toolItemDel = new ToolItem(this.barAMD, SWT.PUSH | SWT.FLAT);
-                        this.toolItemDel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
-                        this.toolItemDel.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
+                        this.toolItemDel = new ToolItem(this.mainToolbar, SWT.PUSH | SWT.FLAT);
+                        this.toolItemDel.setImage(AppImages.getImage24(AppImages.IMG_CANCEL));
+                        this.toolItemDel.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CANCEL));
                         this.toolItemDel.setToolTipText("Stergere");
                         if (this.showOpsLabels) {
                             this.toolItemDel.setText("Stergere");
@@ -493,48 +463,62 @@ public abstract class AbstractView extends Observable {
                         this.toolItemDel.addListener(SWT.Selection, this.viewListener);
                     }
                     if (this.addRefresh) {
-                        new ToolItem(this.barAMD, SWT.SEPARATOR);
-                        this.toolItemRefresh = new ToolItem(this.barAMD, SWT.PUSH | SWT.FLAT);
-                        this.toolItemRefresh.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
-                        this.toolItemRefresh.setHotImage(AppImages.getImage16Focus(AppImages.IMG_REFRESH));
+                        new ToolItem(this.mainToolbar, SWT.SEPARATOR);
+                        this.toolItemRefresh = new ToolItem(this.mainToolbar, SWT.PUSH | SWT.FLAT);
+                        this.toolItemRefresh.setImage(AppImages.getImage24(AppImages.IMG_REFRESH));
+                        this.toolItemRefresh.setHotImage(AppImages.getImage24Focus(AppImages.IMG_REFRESH));
                         this.toolItemRefresh.setToolTipText("Reactualizare informatii");
                         if (this.showOpsLabels) {
                             this.toolItemRefresh.setText("Refresh");
                         }
                         this.toolItemRefresh.addListener(SWT.Selection, this.viewListener);
                     }
+                    if (upperComp instanceof CBanner) {
+                        ((CBanner) this.upperComp).setLeft(mainToolbar);
+                    }
                 }
 
-                if (numColsNavigare > 0) {
-                    this.barNavigare = new ToolBar(getUpperComp(), SWT.FLAT);
-                    if (!this.addRefresh && (numColsCompAMD == 0)) {
-                        GridDataFactory.fillDefaults().align(SWT.RIGHT, SWT.CENTER).grab(true, false).applyTo(this.barNavigare);
+                if (hasRightArea) {
+                    upperCompRightArea = new Composite(upperComp, SWT.NONE);
+                    int rightAreaNumColumns = 0;
+                    if (addNavigation) {
+                        rightAreaNumColumns++;
+                    }
+                    if (addSearchWithHighlight) {
+                        rightAreaNumColumns++;
+                    }
+                    GridLayoutFactory.fillDefaults().numColumns(rightAreaNumColumns == 0 ? 1 : rightAreaNumColumns).equalWidth(false).applyTo(upperCompRightArea);
+                    GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).applyTo(upperCompRightArea);
+
+                    if (addNavigation) {
+                        this.barNavigare = new ToolBar(this.upperCompRightArea, SWT.FLAT);
+
+                        this.toolItemBack = new ToolItem(this.barNavigare, SWT.PUSH | SWT.FLAT);
+                        this.toolItemBack.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT));
+                        this.toolItemBack.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_LEFT));
+                        this.toolItemBack.setToolTipText("Inapoi/Anterior");
+                        this.toolItemBack.addListener(SWT.Selection, this.viewListener);
+
+                        this.toolItemNext = new ToolItem(this.barNavigare, SWT.PUSH | SWT.FLAT);
+                        this.toolItemNext.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
+                        this.toolItemNext.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT));
+                        this.toolItemNext.setToolTipText("Inainte/Urmatorul");
+                        this.toolItemNext.addListener(SWT.Selection, this.viewListener);
                     }
 
-                    this.toolItemBack = new ToolItem(this.barNavigare, SWT.PUSH | SWT.FLAT);
-                    this.toolItemBack.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT));
-                    this.toolItemBack.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_LEFT));
-                    this.toolItemBack.setToolTipText("Inapoi/Anterior");
-                    this.toolItemBack.addListener(SWT.Selection, this.viewListener);
+                    if (this.addSearchWithHighlight) {
+                        this.compSearchWithHighlight = new Composite(this.upperCompRightArea, SWT.NONE);
+                        GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).grab(true, true).applyTo(this.compSearchWithHighlight);
+                        GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(0, 4, 0, 4).equalWidth(false).applyTo(this.compSearchWithHighlight);
+                        new Label(this.compSearchWithHighlight, SWT.NONE).setText("Cautare");
+                        this.textSearchWithHighlight = new Text(this.compSearchWithHighlight, SWT.BORDER);
+                        GridDataFactory.fillDefaults().hint(textSearchWithHighlightWidth, SWT.DEFAULT).grab(true, false).align(SWT.CENTER, SWT.CENTER).applyTo(this.textSearchWithHighlight);
+                        this.textSearchWithHighlight.addListener(SWT.Modify, this.viewListener);
+                        SWTeXtension.addColoredFocusListener(this.textSearchWithHighlight, ColorUtil.COLOR_FOCUS_YELLOW);
+                    }
 
-                    this.toolItemNext = new ToolItem(this.barNavigare, SWT.PUSH | SWT.FLAT);
-                    this.toolItemNext.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
-                    this.toolItemNext.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT));
-                    this.toolItemNext.setToolTipText("Inainte/Urmatorul");
-                    this.toolItemNext.addListener(SWT.Selection, this.viewListener);
+                    ((CBanner) this.upperComp).setRight(upperCompRightArea);
                 }
-
-                if (this.addSearchWithHighlight) {
-                    this.compSearchWithHighlight = new Composite(this.upperComp, SWT.NONE);
-                    GridDataFactory.fillDefaults().align(SWT.END, SWT.END).grab(true, false).applyTo(this.compSearchWithHighlight);
-                    GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(0, 4, 0, 4).equalWidth(false).applyTo(this.compSearchWithHighlight);
-                    new Label(this.compSearchWithHighlight, SWT.NONE).setText("Cautare");
-                    this.textSearchWithHighlight = new Text(this.compSearchWithHighlight, SWT.BORDER);
-                    GridDataFactory.fillDefaults().hint(textSearchWithHighlightWidth, SWT.DEFAULT).grab(true, false).applyTo(this.textSearchWithHighlight);
-                    this.textSearchWithHighlight.addListener(SWT.Modify, this.viewListener);
-                    SWTeXtension.addColoredFocusListener(this.textSearchWithHighlight, ColorUtil.COLOR_FOCUS_YELLOW);
-                }
-
             }
 
             getWidgetGridData().horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
@@ -1212,8 +1196,8 @@ public abstract class AbstractView extends Observable {
         return this.upperComp;
     }
 
-    private final void setUpperComp(final Composite upperComp) {
-        this.upperComp = upperComp;
+    public Composite getUpperCompRightArea() {
+        return upperCompRightArea;
     }
 
     private void setShell(final Shell shell) {
@@ -1613,11 +1597,23 @@ public abstract class AbstractView extends Observable {
         this.addEscapeTraverseClose = addEscapeTraverseClose;
     }
 
+    public ToolBar getMainToolBar() {
+        return mainToolbar;
+    }
+
     public AbstractMongoDB getObservableObject() {
         return observableObject;
     }
 
     public void setObservableObject(AbstractMongoDB observableObject) {
         this.observableObject = observableObject;
+    }
+
+    public void setCreateUpperCompLeftArea(boolean createUpperCompLeftArea) {
+        this.createUpperCompLeftArea = createUpperCompLeftArea;
+    }
+
+    public void setCreateUpperCompRightArea(boolean createUpperCompRightArea) {
+        this.createUpperCompRightArea = createUpperCompRightArea;
     }
 }

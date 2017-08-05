@@ -271,17 +271,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
                 enableOps();
             }
         });
-        this.tableViewer.getTable().addListener(SWT.KeyDown, new Listener() {
-            @Override
-            public void handleEvent(Event e) {
-                if (SWTeXtension.getDeleteTrigger(e)) {
-                    delete();
-                }
-                if (e.keyCode == SWT.F5) {
-                    refresh();
-                }
-            }
-        });
+        SWTeXtension.addKeyDownListeners(this.tableViewer.getTable(), this);
         this.tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
             @Override
             public void handleEvent(Event event) {

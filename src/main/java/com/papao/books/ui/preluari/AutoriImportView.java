@@ -2,9 +2,7 @@ package com.papao.books.ui.preluari;
 
 import com.papao.books.controller.AutorController;
 import com.papao.books.model.Autor;
-import com.papao.books.ui.AppImages;
 import com.papao.books.ui.util.ColorUtil;
-import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -25,8 +23,7 @@ public class AutoriImportView extends AbstractPreluareDateM2View {
     @Override
     protected void customizeView() {
         setShellText("Import autori");
-        setViewOptions(AbstractView.ADD_CANCEL);
-        setBigViewImage(AppImages.getImage24(AppImages.IMG_IMPORT));
+        super.customizeView();
     }
 
     @Override

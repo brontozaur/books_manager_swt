@@ -7,7 +7,6 @@ import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.EncodePlatform;
-import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.util.BorgDateUtil;
 import com.papao.books.ui.util.ColorUtil;
 import com.papao.books.ui.util.FileTypeDetector;
@@ -129,17 +128,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
         table.setLinesVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(table);
         table.setToolTipText("Tabela suporta drag and drop multiplu pentru orice tip de fisier, \ncu detectia tipului acestora.");
-        table.addListener(SWT.KeyDown, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                boolean stateMask = event.stateMask == new Integer(EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
-                if (stateMask) {
-                    if ((event.keyCode == 'a') || (event.keyCode == 'A')) {
-                        table.selectAll();
-                    }
-                }
-            }
-        });
+        SWTeXtension.addSelectAllListener(table);
         table.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {

@@ -29,7 +29,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class LoginShell extends AbstractCView implements Listener {
@@ -158,6 +157,14 @@ public class LoginShell extends AbstractCView implements Listener {
                 }
             }
         });
+        this.comboUsers.getCombo().addListener(SWT.KeyDown, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (SWTeXtension.getSaveTrigger(event)) {
+                    saveAndClose(true);
+                }
+            }
+        });
 
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.comboUsers);
         this.comboUsers.getCombo().setToolTipText("Selectati utilizatorul cu care va veti autentifica in sistem");
@@ -169,11 +176,19 @@ public class LoginShell extends AbstractCView implements Listener {
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.textPassword);
         this.textPassword.setToolTipText("Introduceti parola utilizatorului selectat");
         this.textPassword.addListener(SWT.KeyDown, this);
+        this.textPassword.addListener(SWT.KeyDown, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (SWTeXtension.getSaveTrigger(event)) {
+                    saveAndClose(true);
+                }
+            }
+        });
     }
 
     private void populateFields() throws Exception {
         List<User> users = UserController.findAll();
-        Collections.sort(users, AMongodbComparator.getComparator(User.class, "getNumeComplet"));
+        users.sort(AMongodbComparator.getComparator(User.class, "getNumeComplet"));
         comboUsers.setInput(users);
         easterEggLabel.setText(ApplicationService.getRandomWelcomeMessage());
     }

@@ -90,7 +90,7 @@ public class CartePersonajComposite extends Composite implements Observer {
         this.textDescriere.addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event e) {
-                if (SWTeXtension.getNewTrigger(e)) {
+                if (SWTeXtension.getAddTrigger(e)) {
                     add();
                 }
             }

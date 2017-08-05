@@ -2,6 +2,7 @@ package com.papao.books.ui.view;
 
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.auth.EncodeLive;
+import com.papao.books.ui.interfaces.*;
 import com.papao.books.ui.util.ColorUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -662,44 +663,113 @@ public final class SWTeXtension {
         }
     }
 
+    public static boolean getModifyTrigger(Event e) {
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = (e.character == 'M' || e.character == 'm');
+        return stateMask && trigger;
+    }
+
     public static boolean getDeleteTrigger(Event e) {
-        boolean deleteTrigger;
-        if (EncodeLive.IS_MAC) {
-            deleteTrigger = (e.stateMask & SWT.COMMAND) != 0;
-            if (deleteTrigger) {
-                deleteTrigger = e.character == SWT.BS;
-            }
-        } else {
-            deleteTrigger = e.character == SWT.DEL;
-        }
-        return deleteTrigger;
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = e.character == (EncodeLive.IS_MAC ? SWT.BS: SWT.DEL);
+        return stateMask && trigger;
     }
 
     public static boolean getSaveTrigger(Event e) {
-        boolean saveTrigger;
-        if (EncodeLive.IS_MAC) {
-            saveTrigger = (e.stateMask & SWT.COMMAND) != 0;
-            if (saveTrigger) {
-                saveTrigger = (e.character == 'S' || e.character == 's');
-            }
-        } else {
-            saveTrigger = (e.character == 'S' || e.character == 's');
-        }
-        return saveTrigger;
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = (e.character == 'S' || e.character == 's');
+        return stateMask && trigger;
     }
 
-    public static boolean getNewTrigger(Event e) {
-        boolean newTrigger;
-        if (EncodeLive.IS_MAC) {
-            newTrigger = (e.stateMask & SWT.COMMAND) != 0;
-            if (newTrigger) {
-                newTrigger = (e.character == 'A' || e.character == 'a'
-                        || e.character == 'N' || e.character == 'n');
-            }
-        } else {
-            newTrigger = (e.character == 'A' || e.character == 'a'
-                    || e.character == 'N' || e.character == 'n');
+    public static boolean getAddTrigger(Event e) {
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = (e.character == 'N' || e.character == 'n');
+        return stateMask && trigger;
+    }
+
+    public static boolean getRefreshTrigger(Event e) {
+        if (e.character == SWT.F5) {
+            return true;
         }
-        return newTrigger;
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = (e.character == 'R' || e.character == 'r');
+        return stateMask && trigger;
+    }
+
+    public static boolean getHelpTrigger(Event e) {
+        if (e.character == SWT.F1) {
+            return true;
+        }
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = (e.character == SWT.F1);
+        return stateMask && trigger;
+    }
+
+    public static boolean getExportTrigger(Event e) {
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = (e.character == 'E' || e.character == 'e');
+        return stateMask && trigger;
+    }
+
+    public static boolean getPrintTrigger(Event e) {
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = (e.character == 'P' || e.character == 'p');
+        return stateMask && trigger;
+    }
+
+    public static void addKeyDownListeners(Widget widget, AbstractView view) {
+        widget.addListener(SWT.KeyDown, new Listener() {
+            @Override
+            public void handleEvent(Event e) {
+                if (getHelpTrigger(e)) {
+                    if (view instanceof IHelp) {
+                        ((IHelp) view).showHelp();
+                    }
+                } else if (getExportTrigger(e)) {
+                    if (view instanceof IExport) {
+                        ((IExport) view).exportTxt();
+                    }
+                } else if (getPrintTrigger(e)) {
+                    if (view instanceof IPrint) {
+                        ((IPrint) view).printPrinter();
+                    }
+                } else if (getRefreshTrigger(e)) {
+                    if (view instanceof IRefresh) {
+                        ((IRefresh) view).refresh();
+                    }
+                } else if (getAddTrigger(e)) {
+                    if (view instanceof IAdd) {
+                        ((IAdd) view).add();
+                    }
+                } else if (getModifyTrigger(e)) {
+                    if (view instanceof IModify) {
+                        ((IModify) view).modify();
+                    }
+                } else if (getDeleteTrigger(e)) {
+                    if (view instanceof IDelete) {
+                        ((IDelete) view).delete();
+                    }
+                }
+            }
+        });
+    }
+
+    public static boolean selectAllTrigger(Event e) {
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = (e.character == 'A' || e.character == 'a');
+        return stateMask && trigger;
+    }
+
+    public static void addSelectAllListener(Table table) {
+        if ((table.getStyle() & SWT.MULTI) != 0) {
+            table.addListener(SWT.KeyDown, new Listener() {
+                @Override
+                public void handleEvent(Event e) {
+                    if (selectAllTrigger(e)) {
+                        table.selectAll();
+                    }
+                }
+            });
+        }
     }
 }

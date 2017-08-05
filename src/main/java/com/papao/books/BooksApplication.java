@@ -45,7 +45,8 @@ public class BooksApplication {
     private EncodePlatform encodePlatform;
 
     @Autowired
-    private ApplicationService applicationService;
+    public BooksApplication(ApplicationService applicationService) {
+    }
 
     @Value("${app.notification.style}")
     String notificationStyle;

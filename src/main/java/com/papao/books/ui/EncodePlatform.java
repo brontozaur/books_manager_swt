@@ -19,6 +19,10 @@ import com.papao.books.ui.carte.AutoriView;
 import com.papao.books.ui.carte.CarteView;
 import com.papao.books.ui.config.AppConfigView;
 import com.papao.books.ui.custom.*;
+import com.papao.books.ui.interfaces.IAdd;
+import com.papao.books.ui.interfaces.IDelete;
+import com.papao.books.ui.interfaces.IModify;
+import com.papao.books.ui.interfaces.IRefresh;
 import com.papao.books.ui.menu.PlatformMenu;
 import com.papao.books.ui.preluari.AutoriImportView;
 import com.papao.books.ui.preluari.BookImportView;
@@ -62,14 +66,13 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer {
+public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer, IAdd, IModify, IDelete, IRefresh {
 
     private static Logger logger = Logger.getLogger(EncodePlatform.class);
     private ToolTip appToolTip;
     private Tray appTray;
     private static ToolBar barDocking;
     private static EncodePlatform instance;
-    private CBanner mainCBanner;
     private LiveSashForm verticalSash;
     private Composite compLeftTree;
     private LiveSashForm rightInnerSash;
@@ -85,11 +88,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private final static int IDX_AN_APARITIE = 4;
     private final static int IDX_LIMBA = 5;
 
-    private ToolItem toolItemAdd;
-    private ToolItem toolItemMod;
     private ToolItem toolItemClone;
-    private ToolItem toolItemDel;
-    private ToolItem toolItemRefresh;
     private ToolItem toolItemGrupare;
     private ToolItem toolItemRandom;
     private Composite compRight;
@@ -187,7 +186,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
      */
     @Override
     public void open() {
-        fullRefresh();
+        refresh();
         super.open();
     }
 
@@ -219,12 +218,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     private void createComponents(Composite parent) {
 
-        this.mainCBanner = new CBanner(parent, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.mainCBanner);
-        this.mainCBanner.setSimple(false);
-        this.mainCBanner.setRight(createTopRightComponents(mainCBanner));
-
-        this.mainCBanner.setLeft(createBarOps(mainCBanner));
+        createAdditionalToolItems();
+        ((CBanner)getUpperComp()).setRight(createTopRightComponents(getUpperComp()));
 
         verticalSash = new LiveSashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
         verticalSash.sashWidth = 4;
@@ -333,17 +328,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 displayBookData();
             }
         });
-        this.tableViewer.getTable().addListener(SWT.KeyDown, new Listener() {
-            @Override
-            public void handleEvent(Event e) {
-                if (SWTeXtension.getDeleteTrigger(e)) {
-                    delete();
-                }
-                if (e.keyCode == SWT.F5) {
-                    refreshTableViewer();
-                }
-            }
-        });
+        SWTeXtension.addKeyDownListeners(this.tableViewer.getTable(), this);
+        SWTeXtension.addSelectAllListener(tableViewer.getTable());
         this.tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -428,6 +414,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         SWTeXtension.addColoredFocusListener(this.tableViewer.getTable(), null);
 
         getContainer().layout();
+
+        leftTreeViewer.getTree().setFocus();
     }
 
     private CTabItem createTabGallery(CTabFolder parent) {
@@ -541,9 +529,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         boolean enable = this.tableViewer.getTable().getSelectionCount() != 0
                 && this.tableViewer.getTable().getSelection()[0].getData() instanceof AbstractMongoDB;
-        toolItemAdd.setEnabled(true); // add
-        toolItemMod.setEnabled(enable); // mod
-        toolItemDel.setEnabled(enable); // del
+        getToolItemAdd().setEnabled(true); // add
+        getToolItemMod().setEnabled(enable); // mod
+        getToolItemDel().setEnabled(enable); // del
         toolItemClone.setEnabled(enable); // clone
     }
 
@@ -607,6 +595,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(leftTreeViewer.getTree());
         leftTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         WidgetTreeUtil.customizeTreeBehaviour(leftTreeViewer.getTree());
+        SWTeXtension.addKeyDownListeners(this.leftTreeViewer.getTree(), this);
 
         TableSetting setting = SettingsController.getTableSetting(1, getClass(), TREE_KEY);
         int[] dims = setting.getWidths();
@@ -959,48 +948,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
     }
 
-    private ToolBar createBarOps(Composite parent) {
-        final ToolBar barOps = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
+    private void createAdditionalToolItems() {
+        new ToolItem(getMainToolBar(), SWT.SEPARATOR);
 
-        this.toolItemAdd = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
-        this.toolItemAdd.setImage(AppImages.getImage24(AppImages.IMG_PLUS));
-        this.toolItemAdd.setHotImage(AppImages.getImage24Focus(AppImages.IMG_PLUS));
-        this.toolItemAdd.setToolTipText("Adaugare");
-        this.toolItemAdd.setText("&Adaugare");
-        this.toolItemAdd.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                add();
-            }
-        });
-
-        this.toolItemMod = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
-        this.toolItemMod.setImage(AppImages.getImage24(AppImages.IMG_MODIFICARE));
-        this.toolItemMod.setHotImage(AppImages.getImage24Focus(AppImages.IMG_MODIFICARE));
-        this.toolItemMod.setToolTipText("Modificare");
-        this.toolItemMod.setText("&Modificare");
-        this.toolItemMod.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                modify(false);
-            }
-        });
-
-        this.toolItemDel = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
-        this.toolItemDel.setImage(AppImages.getImage24(AppImages.IMG_CANCEL));
-        this.toolItemDel.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CANCEL));
-        this.toolItemDel.setToolTipText("Stergere");
-        this.toolItemDel.setText("Stergere");
-        this.toolItemDel.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                delete();
-            }
-        });
-
-        new ToolItem(barOps, SWT.SEPARATOR);
-
-        this.toolItemGrupare = new ToolItem(barOps, SWT.CHECK);
+        this.toolItemGrupare = new ToolItem(getMainToolBar(), SWT.CHECK);
         this.toolItemGrupare.setImage(AppImages.getImage24(AppImages.IMG_SHOW));
         this.toolItemGrupare.setHotImage(AppImages.getImage24Focus(AppImages.IMG_HIDE));
         this.toolItemGrupare.setToolTipText("Afisare sau ascundere grupare documente");
@@ -1012,23 +963,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        new ToolItem(barOps, SWT.SEPARATOR);
+        new ToolItem(getMainToolBar(), SWT.SEPARATOR);
 
-        this.toolItemRefresh = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
-        this.toolItemRefresh.setImage(AppImages.getImage24(AppImages.IMG_REFRESH));
-        this.toolItemRefresh.setHotImage(AppImages.getImage24Focus(AppImages.IMG_REFRESH));
-        this.toolItemRefresh.setToolTipText("Reactualizare informatii");
-        this.toolItemRefresh.setText("Refresh");
-        this.toolItemRefresh.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                refreshTableViewer();
-            }
-        });
-
-        new ToolItem(barOps, SWT.SEPARATOR);
-
-        this.toolItemClone = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
+        this.toolItemClone = new ToolItem(getMainToolBar(), SWT.PUSH | SWT.FLAT);
         this.toolItemClone.setImage(AppImages.getImage24(AppImages.IMG_COPY));
         this.toolItemClone.setHotImage(AppImages.getImage24Focus(AppImages.IMG_COPY));
         this.toolItemClone.setToolTipText("Duplicare");
@@ -1040,7 +977,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        this.toolItemRandom = new ToolItem(barOps, SWT.PUSH | SWT.FLAT);
+        this.toolItemRandom = new ToolItem(getMainToolBar(), SWT.PUSH | SWT.FLAT);
         this.toolItemRandom.setImage(AppImages.getImage24(AppImages.IMG_WARNING));
         this.toolItemRandom.setHotImage(AppImages.getImage24Focus(AppImages.IMG_WARNING));
         this.toolItemRandom.setText("Aleator!");
@@ -1071,7 +1008,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        itemImport = new ToolItem(barOps, SWT.DROP_DOWN);
+        itemImport = new ToolItem(getMainToolBar(), SWT.DROP_DOWN);
         itemImport.setImage(AppImages.getImage24(AppImages.IMG_IMPORT));
         itemImport.setHotImage(AppImages.getImage24Focus(AppImages.IMG_IMPORT));
         itemImport.setToolTipText("Import documente");
@@ -1081,7 +1018,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             public void handleEvent(Event event) {
                 Rectangle rect = itemImport.getBounds();
                 Point pt = new Point(rect.x, rect.y + rect.height);
-                pt = barOps.toDisplay(pt);
+                pt = getMainToolBar().toDisplay(pt);
                 importMenu.setLocation(pt.x, pt.y);
                 importMenu.setVisible(true);
             }
@@ -1097,7 +1034,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        itemExport = new ToolItem(barOps, SWT.DROP_DOWN);
+        itemExport = new ToolItem(getMainToolBar(), SWT.DROP_DOWN);
         itemExport.setImage(AppImages.getImage24(AppImages.IMG_EXPORT));
         itemExport.setHotImage(AppImages.getImage24Focus(AppImages.IMG_EXPORT));
         itemExport.setToolTipText("Export");
@@ -1107,7 +1044,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             public void handleEvent(Event event) {
                 Rectangle rect = itemExport.getBounds();
                 Point pt = new Point(rect.x, rect.y + rect.height);
-                pt = barOps.toDisplay(pt);
+                pt = getMainToolBar().toDisplay(pt);
                 exportMenu.setLocation(pt.x, pt.y);
                 exportMenu.setVisible(true);
             }
@@ -1132,7 +1069,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        itemRapoarte = new ToolItem(barOps, SWT.DROP_DOWN);
+        itemRapoarte = new ToolItem(getMainToolBar(), SWT.DROP_DOWN);
         itemRapoarte.setImage(AppImages.getImage24(AppImages.IMG_ADOBE));
         itemRapoarte.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ADOBE));
         itemRapoarte.setToolTipText("Diferite statistici");
@@ -1142,14 +1079,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             public void handleEvent(Event event) {
                 Rectangle rect = itemRapoarte.getBounds();
                 Point pt = new Point(rect.x, rect.y + rect.height);
-                pt = barOps.toDisplay(pt);
+                pt = getMainToolBar().toDisplay(pt);
                 rapoarteMenu.setLocation(pt.x, pt.y);
                 rapoarteMenu.setVisible(true);
             }
         });
 
-
-        return barOps;
     }
 
     private void pickRandomBook() {
@@ -1170,9 +1105,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             verticalSash.setMaximizedControl(null);
         }
         if (this.toolItemGrupare.getSelection()) {
-            this.toolItemGrupare.setImage(AppImages.getImage16(AppImages.IMG_HIDE));
+            this.toolItemGrupare.setImage(AppImages.getImage24(AppImages.IMG_HIDE));
         } else {
-            this.toolItemGrupare.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
+            this.toolItemGrupare.setImage(AppImages.getImage24(AppImages.IMG_SHOW));
         }
     }
 
@@ -1689,6 +1624,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     public void customizeView() {
         setShellText("Books Manager [utilizator: $$$]");
         setViewOptions(AbstractView.SHOW_OPS_LABELS);
+        setCreateUpperCompRightArea(true);
 //        setBigViewMessage("12:15. Press return.");
 //        setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
     }
@@ -1753,6 +1689,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         return true;
     }
 
+    @Override
+    public boolean modify() {
+        return modify(false);
+    }
+
     public boolean modify(boolean createDuplicate) {
         CarteView view;
         if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
@@ -1805,7 +1746,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         new CarteView(this.tableViewer.getTable().getShell(), carte, AbstractView.MODE_VIEW).open();
     }
 
-    private void fullRefresh() {
+    @Override
+    public void refresh() {
         populateLeftTree();
         refreshTableViewer();
     }

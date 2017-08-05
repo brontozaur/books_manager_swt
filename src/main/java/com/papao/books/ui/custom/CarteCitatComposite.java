@@ -83,7 +83,7 @@ public class CarteCitatComposite extends Composite implements Observer {
         this.textCitat.addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event e) {
-                if (SWTeXtension.getNewTrigger(e)) {
+                if (SWTeXtension.getAddTrigger(e)) {
                     add();
                 }
             }

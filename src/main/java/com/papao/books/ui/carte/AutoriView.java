@@ -328,17 +328,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                 }
             }
         });
-        this.autoriTableViewer.getTable().addListener(SWT.KeyDown, new Listener() {
-            @Override
-            public void handleEvent(Event e) {
-                if (SWTeXtension.getDeleteTrigger(e)) {
-                    delete();
-                }
-                if (e.keyCode == SWT.F5) {
-                    refresh();
-                }
-            }
-        });
+        SWTeXtension.addKeyDownListeners(this.autoriTableViewer.getTable(), this);
         this.autoriTableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
             @Override
             public void handleEvent(Event event) {
