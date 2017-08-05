@@ -19,10 +19,7 @@ import com.papao.books.ui.carte.AutoriView;
 import com.papao.books.ui.carte.CarteView;
 import com.papao.books.ui.config.AppConfigView;
 import com.papao.books.ui.custom.*;
-import com.papao.books.ui.interfaces.IAdd;
-import com.papao.books.ui.interfaces.IDelete;
-import com.papao.books.ui.interfaces.IModify;
-import com.papao.books.ui.interfaces.IRefresh;
+import com.papao.books.ui.interfaces.*;
 import com.papao.books.ui.menu.PlatformMenu;
 import com.papao.books.ui.preluari.AutoriImportView;
 import com.papao.books.ui.preluari.BookImportView;
@@ -66,7 +63,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer, IAdd, IModify, IDelete, IRefresh {
+public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer, IAdd, IModify, IDelete, IRefresh, IDuplicate {
 
     private static Logger logger = Logger.getLogger(EncodePlatform.class);
     private ToolTip appToolTip;
@@ -88,7 +85,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private final static int IDX_AN_APARITIE = 4;
     private final static int IDX_LIMBA = 5;
 
-    private ToolItem toolItemClone;
     private ToolItem toolItemGrupare;
     private ToolItem toolItemRandom;
     private Composite compRight;
@@ -532,7 +528,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         getToolItemAdd().setEnabled(true); // add
         getToolItemMod().setEnabled(enable); // mod
         getToolItemDel().setEnabled(enable); // del
-        toolItemClone.setEnabled(enable); // clone
+        getToolItemDuplicate().setEnabled(enable); //duplicate
     }
 
     private void createCompLeftTree(LiveSashForm verticalSash) {
@@ -949,8 +945,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     private void createAdditionalToolItems() {
-        new ToolItem(getMainToolBar(), SWT.SEPARATOR);
-
         this.toolItemGrupare = new ToolItem(getMainToolBar(), SWT.CHECK);
         this.toolItemGrupare.setImage(AppImages.getImage24(AppImages.IMG_SHOW));
         this.toolItemGrupare.setHotImage(AppImages.getImage24Focus(AppImages.IMG_HIDE));
@@ -964,18 +958,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         new ToolItem(getMainToolBar(), SWT.SEPARATOR);
-
-        this.toolItemClone = new ToolItem(getMainToolBar(), SWT.PUSH | SWT.FLAT);
-        this.toolItemClone.setImage(AppImages.getImage24(AppImages.IMG_COPY));
-        this.toolItemClone.setHotImage(AppImages.getImage24Focus(AppImages.IMG_COPY));
-        this.toolItemClone.setToolTipText("Duplicare");
-        this.toolItemClone.setText("&Duplicare");
-        this.toolItemClone.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                modify(true);
-            }
-        });
 
         this.toolItemRandom = new ToolItem(getMainToolBar(), SWT.PUSH | SWT.FLAT);
         this.toolItemRandom.setImage(AppImages.getImage24(AppImages.IMG_WARNING));
@@ -1456,7 +1438,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                modify(true);
+                duplicate();
                 enableOps();
             }
         });
@@ -1627,6 +1609,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         setCreateUpperCompRightArea(true);
 //        setBigViewMessage("12:15. Press return.");
 //        setBigViewImage(AppImages.getImage32(AppImages.IMG_HOME));
+    }
+
+    @Override
+    public boolean duplicate() {
+        return modify(true);
     }
 
     public boolean add() {

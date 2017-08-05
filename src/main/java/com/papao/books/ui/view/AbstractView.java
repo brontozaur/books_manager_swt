@@ -163,6 +163,7 @@ public abstract class AbstractView extends Observable {
     private final boolean addAdd;
     private final boolean addMod;
     private final boolean addDel;
+    private final boolean addDuplicate;
 
     private boolean useCoords = true;
     private boolean useDocking = true;
@@ -184,6 +185,7 @@ public abstract class AbstractView extends Observable {
     private boolean addEscapeTraverseClose;
 
     private Listener saveTriggerFilter;
+    private ToolItem toolItemDuplicate;
 
     public AbstractView(final Shell parent, final Class<? extends Widget> widgetClass, final int viewMode) {
         this(parent, widgetClass, null, viewMode);
@@ -201,6 +203,7 @@ public abstract class AbstractView extends Observable {
         this.addAdd = this instanceof IAdd;
         this.addMod = this instanceof IModify;
         this.addDel = this instanceof IDelete;
+        this.addDuplicate = this instanceof IDuplicate;
 
         int width;
         int height;
@@ -404,7 +407,7 @@ public abstract class AbstractView extends Observable {
 
             }
 
-            final boolean hasLeftArea = this.addAdd || this.addMod || this.addDel || this.addRefresh || createUpperCompLeftArea;
+            final boolean hasLeftArea = this.addAdd || this.addMod || this.addDel || this.addRefresh || this.addDuplicate || createUpperCompLeftArea;
             final boolean hasRightArea = this.addSearchWithHighlight || this.addNavigation || createUpperCompRightArea;
 
             if (hasLeftArea || hasRightArea) {
@@ -472,6 +475,14 @@ public abstract class AbstractView extends Observable {
                             this.toolItemRefresh.setText("Refresh");
                         }
                         this.toolItemRefresh.addListener(SWT.Selection, this.viewListener);
+                    }
+                    if (this.addDuplicate) {
+                        this.toolItemDuplicate = new ToolItem(getMainToolBar(), SWT.PUSH | SWT.FLAT);
+                        this.toolItemDuplicate.setImage(AppImages.getImage24(AppImages.IMG_COPY));
+                        this.toolItemDuplicate.setHotImage(AppImages.getImage24Focus(AppImages.IMG_COPY));
+                        this.toolItemDuplicate.setToolTipText("Duplicare");
+                        this.toolItemDuplicate.setText("&Duplicare");
+                        this.toolItemDuplicate.addListener(SWT.Selection, this.viewListener);
                     }
                     if (upperComp instanceof CBanner) {
                         ((CBanner) this.upperComp).setLeft(mainToolbar);
@@ -606,7 +617,7 @@ public abstract class AbstractView extends Observable {
             }
 
             if (numColsLowerComp > 0) {
-                setLowerComp(new Composite(this.shell, SWT.NONE));
+                this.lowerComp = new Composite(this.shell, SWT.NONE);
                 GridLayout lay = new GridLayout(numColsLowerComp, false);
                 if (appIsUsingRichWindows) {
                     lay.marginHeight = 5;
@@ -616,7 +627,7 @@ public abstract class AbstractView extends Observable {
                     lay.marginHeight = 2;
                 }
                 getLowerComp().setLayout(lay);
-                GridData data = new GridData(SWT.FILL, SWT.END, true, false);
+                GridData data = new GridData(SWT.END, SWT.END, true, false);
                 data.horizontalSpan = ((GridLayout) this.shell.getLayout()).numColumns;
                 getLowerComp().setLayoutData(data);
 
@@ -1156,6 +1167,8 @@ public abstract class AbstractView extends Observable {
             ((IModify) AbstractView.this).modify();
         } else if (e.widget == this.toolItemDel) {
             ((IDelete) AbstractView.this).delete();
+        }else if (e.widget == this.toolItemDuplicate) {
+            ((IDuplicate) AbstractView.this).duplicate();
         } else if (e.widget == this.toolItemNext) {
             ((INavigation) AbstractView.this).goForward();
         } else if (e.widget == this.toolItemBack) {
@@ -1322,10 +1335,6 @@ public abstract class AbstractView extends Observable {
         this.viewMode = viewMode;
     }
 
-    private void setLowerComp(final Composite lowerComp) {
-        this.lowerComp = lowerComp;
-    }
-
     private void setWidgetClass(final Class<? extends Widget> widgetClass) {
         this.widgetClass = widgetClass;
     }
@@ -1418,32 +1427,20 @@ public abstract class AbstractView extends Observable {
         return this.toolItemAdd;
     }
 
-    protected final void setToolItemAdd(final ToolItem toolItemAdd) {
-        this.toolItemAdd = toolItemAdd;
-    }
-
     protected final ToolItem getToolItemMod() {
         return this.toolItemMod;
-    }
-
-    protected final void setToolItemMod(final ToolItem toolItemMod) {
-        this.toolItemMod = toolItemMod;
     }
 
     protected final ToolItem getToolItemDel() {
         return this.toolItemDel;
     }
 
-    protected final void setToolItemDel(final ToolItem toolItemDel) {
-        this.toolItemDel = toolItemDel;
+    public ToolItem getToolItemDuplicate() {
+        return toolItemDuplicate;
     }
 
     protected final ToolItem getToolItemRefresh() {
         return this.toolItemRefresh;
-    }
-
-    protected final void setToolItemRefresh(final ToolItem toolItemRefresh) {
-        this.toolItemRefresh = toolItemRefresh;
     }
 
     protected final int getWidgetNumCols() {

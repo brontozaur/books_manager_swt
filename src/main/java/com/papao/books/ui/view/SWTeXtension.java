@@ -671,7 +671,13 @@ public final class SWTeXtension {
 
     public static boolean getDeleteTrigger(Event e) {
         boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
-        boolean trigger = e.character == (EncodeLive.IS_MAC ? SWT.BS: SWT.DEL);
+        boolean trigger = e.character == (EncodeLive.IS_MAC ? SWT.BS : SWT.DEL);
+        return stateMask && trigger;
+    }
+
+    public static boolean getDuplicateTrigger(Event e) {
+        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
+        boolean trigger = (e.character == 'D' || e.character == 'd');
         return stateMask && trigger;
     }
 
@@ -748,6 +754,10 @@ public final class SWTeXtension {
                 } else if (getDeleteTrigger(e)) {
                     if (view instanceof IDelete) {
                         ((IDelete) view).delete();
+                    }
+                } else if (getDuplicateTrigger(e)) {
+                    if (view instanceof IDuplicate) {
+                        ((IDuplicate) view).duplicate();
                     }
                 }
             }
