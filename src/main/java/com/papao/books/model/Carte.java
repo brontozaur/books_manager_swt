@@ -41,6 +41,8 @@ public class Carte extends AuditObject implements Serializable {
     private CarteSerie serie;
     private String isbn;
     private List<String> autoriIlustratii;
+    private List<String> autoriIlustratiiCoperta;
+    private List<Capitol> capitole;
     private List<String> tehnoredactori;
     private String imprimerie;
     private List<Personaj> personaje;
@@ -65,6 +67,10 @@ public class Carte extends AuditObject implements Serializable {
     private List<String> redactori;
     private List<String> autoriCoperta;
     private CartePret pret;
+    private String volum;
+    private String colectie;
+    private List<String> lectori;
+
 
     @Transient
     private Date readStartDate;
@@ -496,6 +502,61 @@ public class Carte extends AuditObject implements Serializable {
         this.pret = pret;
     }
 
+    public List<String> getAutoriIlustratiiCoperta() {
+        if (this.autoriIlustratiiCoperta == null) {
+            this.autoriIlustratiiCoperta = new ArrayList<>();
+        }
+        return autoriIlustratiiCoperta;
+    }
+
+    public void setAutoriIlustratiiCoperta(List<String> autoriIlustratiiCoperta) {
+        this.autoriIlustratiiCoperta = autoriIlustratiiCoperta;
+    }
+
+    public List<Capitol> getCapitole() {
+        if (this.capitole == null) {
+            this.capitole = new ArrayList<>();
+        }
+        return capitole;
+    }
+
+    public void setCapitole(List<Capitol> capitole) {
+        this.capitole = capitole;
+    }
+
+    public String getVolum() {
+        if (this.volum == null) {
+            return "";
+        }
+        return volum;
+    }
+
+    public void setVolum(String volum) {
+        this.volum = volum;
+    }
+
+    public String getColectie() {
+        if (this.colectie == null) {
+            return "";
+        }
+        return colectie;
+    }
+
+    public void setColectie(String colectie) {
+        this.colectie = colectie;
+    }
+
+    public List<String> getLectori() {
+        if (this.lectori == null) {
+            this.lectori = new ArrayList<>();
+        }
+        return lectori;
+    }
+
+    public void setLectori(List<String> lectori) {
+        this.lectori = lectori;
+    }
+
     public void initCopy() {
         id = null;
         copertaFata = null;
@@ -508,5 +569,6 @@ public class Carte extends AuditObject implements Serializable {
         tehnoredactori = new ArrayList<>();
         premii = new ArrayList<>();
         traducatori = new ArrayList<>();
+        autoriIlustratiiCoperta = new ArrayList<>();
     }
 }

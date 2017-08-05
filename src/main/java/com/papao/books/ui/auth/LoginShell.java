@@ -123,6 +123,19 @@ public class LoginShell extends AbstractCView implements Listener {
         if (!validate()) {
             return;
         }
+
+        User usrApp = (User) this.comboUsers.getSelectedElement();
+        EncodeLive.setIdUser(usrApp.getId());
+        EncodeLive.setCurrentUserName(usrApp.getNumeComplet());
+        LoggerMyWay.configure(LoggerMyWay.LOG_TXT, usrApp.getNumeComplet(), true);
+        logger.info("**********UTILIZATOR CURENT : " + usrApp.getNumeComplet() + " **********");
+
+        GeneralSetting setting = SettingsController.getGeneralSetting("searchHighlightColor");
+        if (setting != null) {
+            List<Integer> rgb = (List<Integer>) setting.getValue();
+            SettingsController.HIGHLIGHT_COLOR = new Color(Display.getDefault(), rgb.get(0), rgb.get(1), rgb.get(2));
+        }
+
         //remove the listeners added by content proposal to avoid SWTException on saveAndClose() using Cmd + S
         SWTeXtension.removeContentProposal(comboUsers.getCombo());
         super.saveAndClose(true);
@@ -259,17 +272,6 @@ public class LoginShell extends AbstractCView implements Listener {
 //            SWTeXtension.displayMessageW("Selectati un utilizator valid!");
             BalloonNotification.showNotification(comboUsers, "Notificare", "Selectati un utilizator valid!", 1500);
             return false;
-        }
-        User usrApp = (User) this.comboUsers.getSelectedElement();
-        EncodeLive.setIdUser(usrApp.getId());
-        EncodeLive.setCurrentUserName(usrApp.getNumeComplet());
-        LoggerMyWay.configure(LoggerMyWay.LOG_TXT, usrApp.getNumeComplet(), true);
-        logger.info("**********UTILIZATOR CURENT : " + usrApp.getNumeComplet() + " **********");
-
-        GeneralSetting setting = SettingsController.getGeneralSetting("searchHighlightColor");
-        if (setting != null) {
-            List<Integer> rgb = (List<Integer>) setting.getValue();
-            SettingsController.HIGHLIGHT_COLOR = new Color(Display.getDefault(), rgb.get(0), rgb.get(1), rgb.get(2));
         }
         return true;
     }
