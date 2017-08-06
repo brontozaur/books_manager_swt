@@ -96,6 +96,16 @@ public class BookController extends Observable {
                 }
                 break;
             }
+            case Colectie: {
+                if (node.getNodeType() == NodeType.ALL) {
+                    carti = repository.findAll(pageable);
+                } else if (StringUtils.isNotEmpty((String) value)) {
+                    carti = repository.getByColectieContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
+                } else {
+                    carti = repository.getByColectieIsNullOrEdituraIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
+                }
+                break;
+            }
             case Locatie: {
                 if (node.getNodeType() == NodeType.ALL) {
                     carti = repository.findAll(pageable);
@@ -273,8 +283,8 @@ public class BookController extends Observable {
         return repository.getByTitluAndIdAutori(titlu, idAutori);
     }
 
-    public void getByIdIsOrTitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String searchTerm, List<ObjectId> idAutori, Pageable pageable) {
-        carti = repository.getByIdIsOrTitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(searchTerm, searchTerm, idAutori, searchTerm, searchTerm, pageable);
+    public void getByIdIsOrTitluLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String searchTerm, List<ObjectId> idAutori, Pageable pageable) {
+        carti = repository.getByIdIsOrTitluLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(searchTerm, searchTerm, searchTerm, idAutori, searchTerm, searchTerm, pageable);
         setChanged();
         notifyObservers();
     }

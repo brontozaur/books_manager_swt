@@ -19,5 +19,6 @@ public enum BookSearchType {
     Utilizatori,
     Gen_literar,
     Taguri,
-    Serie
+    Serie,
+    Colectie
 }

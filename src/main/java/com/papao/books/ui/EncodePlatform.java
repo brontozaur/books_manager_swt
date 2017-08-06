@@ -78,13 +78,14 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private TableViewer tableViewer;
     private CTabFolder mainRightTabFolder;
 
-    private static final String[] COLS = new String[]{"Autor", "Titlu", "Rating", "Editura", "An aparitie", "Limba"};
+    private static final String[] COLS = new String[]{"Autor", "Titlu", "Subtitlu", "Rating", "Editura", "An aparitie", "Limba"};
     private final static int IDX_AUTOR = 0;
     private final static int IDX_TITLU = 1;
-    private final static int IDX_RATING = 2;
-    private final static int IDX_EDITURA = 3;
-    private final static int IDX_AN_APARITIE = 4;
-    private final static int IDX_LIMBA = 5;
+    private final static int IDX_SUBTITLU = 2;
+    private final static int IDX_RATING = 3;
+    private final static int IDX_EDITURA = 4;
+    private final static int IDX_AN_APARITIE = 5;
+    private final static int IDX_LIMBA = 6;
 
     private ToolItem toolItemGrupare;
     private ToolItem toolItemRandom;
@@ -443,6 +444,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         tableViewer.resetFilters();
         ((UnifiedStyledLabelProvider) ((LinkLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).getLabelProvider()).setSearchText("");
         ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText("");
+        ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_SUBTITLU)).setSearchText("");
         refreshTableViewer();
     }
 
@@ -481,6 +483,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 java.util.List<ViewerFilter> listFilters = new ArrayList<>();
                 ((UnifiedStyledLabelProvider) ((LinkLabelProvider) tableViewer.getLabelProvider(IDX_AUTOR)).getLabelProvider()).setSearchText(text);
                 ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_TITLU)).setSearchText(text);
+                ((UnifiedStyledLabelProvider) tableViewer.getLabelProvider(IDX_SUBTITLU)).setSearchText(text);
                 listFilters.add(new ViewerFilter() {
                     @Override
                     public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
@@ -489,6 +492,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         return StringUtil.compareStrings(searchTerm,
                                 ApplicationService.getBookController().getBookAuthorNamesOrderByNumeComplet(carte).toLowerCase())
                                 || StringUtil.compareStrings(searchTerm, carte.getTitlu().toLowerCase())
+                                || StringUtil.compareStrings(searchTerm, carte.getSubtitlu().toLowerCase())
                                 || StringUtil.compareStrings(searchTerm, carte.getSerie().getNume().toLowerCase())
                                 || StringUtil.compareStrings(searchTerm, carte.getVolum().toLowerCase());
                     }
@@ -681,6 +685,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             case Editura: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editura", false, true);
                 createTreeNodes(wrapper, "Edituri");
+                break;
+            }
+            case Colectie: {
+                IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "colectie", false, true);
+                createTreeNodes(wrapper, "Colectii");
                 break;
             }
             case Locatie: {
@@ -1254,8 +1263,28 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
-                            return StringUtil.romanianCompare(a.getSerie().getFormattedValue() + a.getTitlu() + a.getVolum(),
-                                    b.getSerie().getFormattedValue() + b.getTitlu() + b.getVolum());
+                            return StringUtil.romanianCompare(a.getTitluVolumSiSerie(),
+                                    b.getTitluVolumSiSerie());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                case IDX_SUBTITLU: {
+                    col.setLabelProvider(new UnifiedStyledLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Carte carte = (Carte) element;
+                            return carte.getSubtitlu();
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Carte a = (Carte) e1;
+                            Carte b = (Carte) e2;
+                            return StringUtil.romanianCompare(a.getSubtitlu(), b.getSubtitlu());
                         }
 
                     };

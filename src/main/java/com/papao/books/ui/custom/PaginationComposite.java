@@ -183,7 +183,7 @@ public class PaginationComposite extends Composite implements Observer {
     private void search() {
         if (searchQuery != null) {
             java.util.List<ObjectId> autori = AutorController.getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(searchQuery);
-            ApplicationService.getBookController().getByIdIsOrTitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(searchQuery, autori, getPageable(false));
+            ApplicationService.getBookController().getByIdIsOrTitluLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(searchQuery, autori, getPageable(false));
         } else if (this.idAutori != null) {
             ApplicationService.getBookController().getByIdAutoriInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(idAutori, getPageable(false));
         } else {
