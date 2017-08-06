@@ -108,7 +108,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
     private Text searchText;
-    private CarteCitatComposite carteCitatComposite;
+    private CarteCitateTableComposite citateComposite;
     private CapitoleComposite capitoleComposite;
     private CartePersonajComposite cartePersonajComposite;
     private CarteReviewComposite carteReviewComposite;
@@ -362,8 +362,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         CTabItem tabCitate = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
         tabCitate.setText("Citate");
         tabCitate.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
-        carteCitatComposite = new CarteCitatComposite(bottomInnerTabFolderRight);
-        tabCitate.setControl(carteCitatComposite);
+        citateComposite = new CarteCitateTableComposite(bottomInnerTabFolderRight);
+        tabCitate.setControl(citateComposite);
 
         CTabItem tabCapitole = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
         tabCapitole.setText("Capitole");
@@ -400,7 +400,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.addObserver(readOnlyDetailsComposite);
 
         //when a book is selected the citat composite should display it's quotes, if any
-        this.addObserver(carteCitatComposite);
+        this.addObserver(citateComposite);
 
         //when a book is selected the capitole composite should display it's chapters, if any
         this.addObserver(capitoleComposite);

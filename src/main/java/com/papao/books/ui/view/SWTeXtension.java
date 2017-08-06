@@ -723,41 +723,41 @@ public final class SWTeXtension {
         return stateMask && trigger;
     }
 
-    public static void addKeyDownListeners(Widget widget, AbstractView view) {
+    public static void addKeyDownListeners(Widget widget, Object implementation) {
         widget.addListener(SWT.KeyDown, new Listener() {
             @Override
             public void handleEvent(Event e) {
                 if (getHelpTrigger(e)) {
-                    if (view instanceof IHelp) {
-                        ((IHelp) view).showHelp();
+                    if (implementation instanceof IHelp) {
+                        ((IHelp) implementation).showHelp();
                     }
                 } else if (getExportTrigger(e)) {
-                    if (view instanceof IExport) {
-                        ((IExport) view).exportTxt();
+                    if (implementation instanceof IExport) {
+                        ((IExport) implementation).exportTxt();
                     }
                 } else if (getPrintTrigger(e)) {
-                    if (view instanceof IPrint) {
-                        ((IPrint) view).printPrinter();
+                    if (implementation instanceof IPrint) {
+                        ((IPrint) implementation).printPrinter();
                     }
                 } else if (getRefreshTrigger(e)) {
-                    if (view instanceof IRefresh) {
-                        ((IRefresh) view).refresh();
+                    if (implementation instanceof IRefresh) {
+                        ((IRefresh) implementation).refresh();
                     }
                 } else if (getAddTrigger(e)) {
-                    if (view instanceof IAdd) {
-                        ((IAdd) view).add();
+                    if (implementation instanceof IAdd) {
+                        ((IAdd) implementation).add();
                     }
                 } else if (getModifyTrigger(e)) {
-                    if (view instanceof IModify) {
-                        ((IModify) view).modify();
+                    if (implementation instanceof IModify) {
+                        ((IModify) implementation).modify();
                     }
                 } else if (getDeleteTrigger(e)) {
-                    if (view instanceof IDelete) {
-                        ((IDelete) view).delete();
+                    if (implementation instanceof IDelete) {
+                        ((IDelete) implementation).delete();
                     }
                 } else if (getDuplicateTrigger(e)) {
-                    if (view instanceof IDuplicate) {
-                        ((IDuplicate) view).duplicate();
+                    if (implementation instanceof IDuplicate) {
+                        ((IDuplicate) implementation).duplicate();
                     }
                 }
             }

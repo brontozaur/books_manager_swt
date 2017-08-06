@@ -505,14 +505,14 @@ public abstract class AbstractView extends Observable {
                         this.barNavigare = new ToolBar(this.upperCompRightArea, SWT.FLAT);
 
                         this.toolItemBack = new ToolItem(this.barNavigare, SWT.PUSH | SWT.FLAT);
-                        this.toolItemBack.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT));
-                        this.toolItemBack.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_LEFT));
+                        this.toolItemBack.setImage(AppImages.getImage24(AppImages.IMG_ARROW_LEFT));
+                        this.toolItemBack.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_LEFT));
                         this.toolItemBack.setToolTipText("Inapoi/Anterior");
                         this.toolItemBack.addListener(SWT.Selection, this.viewListener);
 
                         this.toolItemNext = new ToolItem(this.barNavigare, SWT.PUSH | SWT.FLAT);
-                        this.toolItemNext.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
-                        this.toolItemNext.setHotImage(AppImages.getImage16Focus(AppImages.IMG_ARROW_RIGHT));
+                        this.toolItemNext.setImage(AppImages.getImage24(AppImages.IMG_ARROW_RIGHT));
+                        this.toolItemNext.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_RIGHT));
                         this.toolItemNext.setToolTipText("Inainte/Urmatorul");
                         this.toolItemNext.addListener(SWT.Selection, this.viewListener);
                     }
@@ -1167,7 +1167,7 @@ public abstract class AbstractView extends Observable {
             ((IModify) AbstractView.this).modify();
         } else if (e.widget == this.toolItemDel) {
             ((IDelete) AbstractView.this).delete();
-        }else if (e.widget == this.toolItemDuplicate) {
+        } else if (e.widget == this.toolItemDuplicate) {
             ((IDuplicate) AbstractView.this).duplicate();
         } else if (e.widget == this.toolItemNext) {
             ((INavigation) AbstractView.this).goForward();

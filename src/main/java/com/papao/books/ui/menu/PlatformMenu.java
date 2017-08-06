@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.*;
  */
 public final class PlatformMenu {
 
-	private static Logger logger = Logger.getLogger(PlatformMenu.class);
+    private static Logger logger = Logger.getLogger(PlatformMenu.class);
 
     private PlatformMenu() {
     }
@@ -58,11 +58,11 @@ public final class PlatformMenu {
         subItem = new MenuItem(menuAuth, SWT.PUSH);
         subItem.setText("Exit\tAlt+Q");
         subItem.setImage(AppImages.getImage16(AppImages.IMG_STOP));
-        subItem.setAccelerator(new Integer(EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL) + 'Q');
+        subItem.setAccelerator((EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL) + 'Q');
         subItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
-                EncodePlatform.getInstance().performShellClose(new Event());
+                BooksApplication.closeApplication(true);
             }
         });
         return menuAuth;
