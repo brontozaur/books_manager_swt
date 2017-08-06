@@ -708,7 +708,7 @@ public abstract class AbstractView extends Observable {
                     if (((getViewOptions() & AbstractView.ADD_OK) == AbstractView.ADD_OK)) {
                         this.buttonOk = new Button(this.compSaveButtons, SWT.PUSH);
                         this.buttonOk.setText("&Salvare");
-                        this.buttonOk.setToolTipText("Salvare date/confirmare actiune");
+                        this.buttonOk.setToolTipText("Salvare modificari");
                         this.buttonOk.setImage(AppImages.getImage16(AppImages.IMG_OK));
                         data = new GridData(SWT.END, SWT.CENTER, false, false);
                         this.buttonOk.setLayoutData(data);

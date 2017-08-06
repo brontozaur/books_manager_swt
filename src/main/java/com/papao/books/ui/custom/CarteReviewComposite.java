@@ -41,7 +41,7 @@ public class CarteReviewComposite extends Composite implements Observer {
 
         this.buttonSave = new Button(compButtons, SWT.PUSH);
         this.buttonSave.setText("&Salvare");
-        this.buttonSave.setToolTipText("Salvare date/confirmare actiune");
+        this.buttonSave.setToolTipText("Salvare modificari");
         this.buttonSave.setImage(AppImages.getImage16(AppImages.IMG_OK));
         GridDataFactory.fillDefaults().grab(false, false).align(SWT.END, SWT.END).applyTo(this.buttonSave);
         SWTeXtension.addImageChangeListener16(this.buttonSave, AppImages.IMG_OK);
