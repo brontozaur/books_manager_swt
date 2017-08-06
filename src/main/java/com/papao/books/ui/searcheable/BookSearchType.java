@@ -20,5 +20,6 @@ public enum BookSearchType {
     Gen_literar,
     Taguri,
     Serie,
-    Colectie
+    Colectie,
+    Data_cumpararii
 }

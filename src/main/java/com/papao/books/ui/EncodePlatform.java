@@ -628,6 +628,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 } else if (b == null) {
                     return 1;
                 } else if (searchType == BookSearchType.Creata || searchType == BookSearchType.Actualizata ||
+                        searchType == BookSearchType.Data_cumpararii ||
                         searchType == BookSearchType.Nota_carte || searchType == BookSearchType.Nota_traducere) {
                     return StringUtil.romanianCompare(a.getInvisibleName(), b.getInvisibleName());
                 } else {
@@ -791,6 +792,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 SimpleTextNode invisibleRoot = ApplicationController.getDateTreeStructure(ApplicationService.getApplicationConfig().getBooksCollectionName(),
                         "updatedAt",
                         leftTreeViewer.getAutoExpandLevel() == AbstractTreeViewer.ALL_LEVELS);
+                leftTreeViewer.setInput(invisibleRoot);
+                break;
+            }
+            case Data_cumpararii: {
+                SimpleTextNode invisibleRoot = ApplicationController.getShortDateTreeStructure(ApplicationService.getApplicationConfig().getBooksCollectionName(),
+                        "pret.dataCumpararii",
+                        leftTreeViewer.getAutoExpandLevel() == AbstractTreeViewer.ALL_LEVELS, true);
                 leftTreeViewer.setInput(invisibleRoot);
                 break;
             }

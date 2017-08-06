@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 
@@ -225,6 +226,14 @@ public class BookController extends Observable {
                     carti = repository.getByUpdatedAtBetweenOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(node.getMinDate(), node.getMaxDate(), pageable);
                 } else {
                     carti = repository.getByUpdatedAtIsNullOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(pageable);
+                }
+                break;
+            }
+            case Data_cumpararii: {
+                if (value != null) {
+                    carti = repository.getByPret_DataCumparariiIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((Date) node.getQueryValue(), pageable);
+                } else {
+                    carti = repository.getByPretIsNullOrPret_DataCumparariiIsNullOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(pageable);
                 }
                 break;
             }

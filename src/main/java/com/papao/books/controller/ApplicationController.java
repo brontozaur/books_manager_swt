@@ -341,6 +341,15 @@ public class ApplicationController {
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
     }
 
+    /**
+     * Applies to items with full date. Using hours, minutes, seconds, distinct values exist and therefore a
+     * minDate -> maxDate interval query makes sense. See {@link SimpleTextNode#getMinDate()} and {@link SimpleTextNode#getMaxDate()}
+     *
+     * @param collectionName
+     * @param propName
+     * @param isAutoExpand
+     * @return
+     */
     public static SimpleTextNode getDateTreeStructure(String collectionName, String propName, boolean isAutoExpand) {
         DBCollection collection = mongoTemplate.getCollection(collectionName);
 
@@ -362,6 +371,7 @@ public class ApplicationController {
             }
             emptyNode.setCount((int) documentsWithNoPropertySet);
             emptyNode.modifyCount(showNumbers, true);
+            emptyNode.setInvisibleName("");
         }
 
         GeneralSetting stilAfisareDataInTree = SettingsController.getGeneralSetting("stilAfisareDataInTree");
@@ -423,6 +433,106 @@ public class ApplicationController {
             ziuaNode.increment();
             lunaNode.increment();
             yearNode.increment();
+            ziuaNode.modifyCount(showNumbers, true);
+        }
+
+        return invisibleRoot;
+    }
+
+    /**
+     * Applies to items with fixed value (e.g. same date for all items), no hours, minutes, seconds taken into account
+     * Used by dataCumparare field, where all values for the same day are identical
+     *
+     * @param collectionName the name of the collection (e.g. carte)
+     * @param propName       the mongo property
+     * @param isAutoExpand   autoexpands the tree
+     * @param includeEmpty   includes records with no information about this field
+     * @return a fully constructed internal tree representation, ready to be plugged into a live tree
+     */
+    public static SimpleTextNode getShortDateTreeStructure(String collectionName, String propName, boolean isAutoExpand, boolean includeEmpty) {
+        DBCollection collection = mongoTemplate.getCollection(collectionName);
+
+        boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
+        SimpleTextNode invisibleRoot = new SimpleTextNode(null);
+
+        GeneralSetting stilAfisareDataInTree = SettingsController.getGeneralSetting("stilAfisareDataInTree");
+        boolean afisareFull = stilAfisareDataInTree != null && ((Integer) stilAfisareDataInTree.getValue()) == StilAfisareData.AFISARE_LUNI_IN_LITERE_FULL;
+        boolean afisareTipScurt = stilAfisareDataInTree != null && ((Integer) stilAfisareDataInTree.getValue()) == StilAfisareData.AFISARE_LUNI_IN_LITERE_SCURT;
+
+        DBObject groupFields = new BasicDBObject("_id", "$" + propName);
+        groupFields.put("count", new BasicDBObject("$sum", 1));
+        DBObject group = new BasicDBObject("$group", groupFields);
+        List<DBObject> pipeline = Arrays.asList(group);
+        AggregationOutput output = collection.aggregate(pipeline);
+
+        for (DBObject distinctValue : output.results()) {
+            Date dataCumpararii = (Date) distinctValue.get("_id");
+            int count = Integer.valueOf(distinctValue.get("count").toString());
+            if (dataCumpararii == null) {
+                if (includeEmpty) {
+                    SimpleTextNode emptyNode = new SimpleTextNode(invisibleRoot, "");
+                    emptyNode.setQueryValue(null);
+                    emptyNode.setImage(AppImages.getImage16(AppImages.IMG_CALENDAR));
+                    emptyNode.increment(count);
+                    emptyNode.modifyCount(showNumbers, true);
+                    emptyNode.setInvisibleName("");
+                }
+                continue;
+            }
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dataCumpararii);
+
+            //an
+            String an = String.valueOf(cal.get(Calendar.YEAR));
+            SimpleTextNode yearNode = invisibleRoot.getChildren(an);
+            if (yearNode == null) {
+                yearNode = new SimpleTextNode(invisibleRoot, an);
+                yearNode.setQueryValue(cal.getTime());
+                yearNode.setNodeType(NodeType.YEAR);
+                yearNode.setInvisibleName(String.valueOf(an));
+            }
+            yearNode.setImage(AppImages.getImage16(isAutoExpand ? AppImages.IMG_EXPAND : AppImages.IMG_COLLAPSE));
+
+            //luna
+            int luna = cal.get(Calendar.MONTH);
+            StringBuilder numeLuna = new StringBuilder();
+            if (afisareFull) {
+                numeLuna.append(BorgDateUtil.LUNILE[luna]);
+            } else if (afisareTipScurt) {
+                numeLuna.append(BorgDateUtil.LUNILE_SCURT[luna]);
+            } else {
+                String nume = String.valueOf(luna + 1);
+                if (luna < 10) {
+                    nume = "0" + nume;
+                }
+                numeLuna.append(nume);
+            }
+
+            SimpleTextNode lunaNode = yearNode.getChildren(numeLuna.toString());
+            if (lunaNode == null) {
+                lunaNode = new SimpleTextNode(yearNode, numeLuna.toString());
+                lunaNode.setQueryValue(cal.getTime());
+                lunaNode.setNodeType(NodeType.MONTH);
+                lunaNode.setInvisibleName(String.valueOf(luna));
+            }
+            lunaNode.setImage(AppImages.getImage16(isAutoExpand ? AppImages.IMG_EXPAND : AppImages.IMG_COLLAPSE));
+
+            String ziua = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+            if (ziua.length() == 1) {
+                ziua = "0" + ziua;
+            }
+            SimpleTextNode ziuaNode = lunaNode.getChildren(ziua);
+            if (ziuaNode == null) {
+                ziuaNode = new SimpleTextNode(lunaNode, ziua);
+                ziuaNode.setQueryValue(cal.getTime());
+                ziuaNode.setNodeType(NodeType.DAY);
+            }
+            ziuaNode.setInvisibleName(ziua);
+            ziuaNode.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT));
+            ziuaNode.increment(count);
+            lunaNode.increment(count);
+            yearNode.increment(count);
             ziuaNode.modifyCount(showNumbers, true);
         }
 
