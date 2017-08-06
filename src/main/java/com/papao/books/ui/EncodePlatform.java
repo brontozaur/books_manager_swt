@@ -608,7 +608,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         int[] aligns = setting.getAligns();
 
         final TreeViewerColumn treeCol = new TreeViewerColumn(leftTreeViewer, SWT.NONE);
-        treeCol.getColumn().setText("Grupare elemente");
+//        treeCol.getColumn().setText("Grupare elemente");
         treeCol.getColumn().setWidth(dims[0]);
         treeCol.getColumn().setAlignment(aligns[0]);
         treeCol.getColumn().setResizable(true);
@@ -1751,17 +1751,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             SWTeXtension.displayMessageI("Cartea selectata este invalida!");
             return false;
         }
-        if (ApplicationService.getBookController().findOne(carte.getId()) == null) {
+        Carte carteDatabase = ApplicationService.getBookController().findOne(carte.getId());
+        if (carteDatabase == null) {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return false;
         }
         int viewMode = MODE_MODIFY;
         if (createDuplicate) {
-            carte = (Carte) ObjectCloner.copy(carte);
-            carte.initCopy();
+            carteDatabase = (Carte) ObjectCloner.copy(carteDatabase);
+            carteDatabase.initCopy();
             viewMode = MODE_CLONE;
         }
-        view = new CarteView(this.tableViewer.getTable().getShell(), carte, viewMode);
+        view = new CarteView(this.tableViewer.getTable().getShell(), carteDatabase, viewMode);
         view.open();
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
@@ -1786,11 +1787,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             SWTeXtension.displayMessageI("Cartea selectata este invalida!");
             return;
         }
-        if (ApplicationService.getBookController().findOne(carte.getId()) == null) {
+        Carte carteDatabase = ApplicationService.getBookController().findOne(carte.getId());
+        if (carteDatabase == null) {
             SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
             return;
         }
-        new CarteView(this.tableViewer.getTable().getShell(), carte, AbstractView.MODE_VIEW).open();
+        new CarteView(this.tableViewer.getTable().getShell(), carteDatabase, AbstractView.MODE_VIEW).open();
     }
 
     @Override
