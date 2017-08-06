@@ -1,9 +1,11 @@
 package com.papao.books.ui.custom;
 
+import com.papao.books.controller.SettingsController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.Carte;
 import com.papao.books.model.Citat;
 import com.papao.books.model.UserActivity;
+import com.papao.books.model.config.TableSetting;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.auth.EncodeLive;
@@ -11,6 +13,7 @@ import com.papao.books.ui.interfaces.IAdd;
 import com.papao.books.ui.interfaces.IDelete;
 import com.papao.books.ui.interfaces.IModify;
 import com.papao.books.ui.util.ColorUtil;
+import com.papao.books.ui.util.WidgetTableUtil;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
 import org.apache.log4j.Logger;
@@ -33,6 +36,8 @@ public class CarteCitateTableComposite extends Composite implements Observer, IA
     private ToolItem itemMod;
     private ToolItem itemDel;
     private Carte carte = null;
+
+    private static final String TABLE_KEY = "citateTable";
 
     public CarteCitateTableComposite(Composite parent) {
         super(parent, SWT.NONE);
@@ -101,17 +106,26 @@ public class CarteCitateTableComposite extends Composite implements Observer, IA
         });
         SWTeXtension.addKeyDownListeners(table, this);
 
+        TableSetting setting = SettingsController.getTableSetting(2, getClass(), TABLE_KEY);
+        int[] dims = setting.getWidths();
+        int[] aligns = setting.getAligns();
+        boolean[] visible = setting.getVisibility();
+
+
         TableColumn column = new TableColumn(table, SWT.LEFT);
         column.setText("Nr pagina");
         column.setResizable(true);
-        column.setWidth(170);
+        column.setWidth(visible[0] ? dims[0]: 0);
+        column.setAlignment(aligns[0]);
 
         column = new TableColumn(table, SWT.LEFT);
         column.setText("Citat");
         column.setResizable(true);
-        column.setWidth(300);
+        column.setWidth(visible[1] ? dims[1]: 0);
+        column.setAlignment(aligns[1]);
 
         SWTeXtension.addColoredFocusListener(table, ColorUtil.COLOR_FOCUS_YELLOW);
+        WidgetTableUtil.customizeTable(this.table, getClass(), TABLE_KEY);
     }
 
     @Override
