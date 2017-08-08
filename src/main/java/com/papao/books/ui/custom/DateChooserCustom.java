@@ -14,10 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 import java.util.Date;
 import java.util.Locale;
@@ -37,9 +34,13 @@ public class DateChooserCustom {
     private Locale locale;
 
     public DateChooserCustom(Composite parent) {
+        this(parent, true);
+    }
+
+    public DateChooserCustom(Composite parent, boolean addTodaySelector) {
         content = new Composite(parent, SWT.NONE);
         GridDataFactory.fillDefaults().grab(false, false).align(SWT.BEGINNING, SWT.CENTER).applyTo(content);
-        GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2).margins(0, 0).extendedMargins(0, 0, 0, 0).spacing(3, 0).applyTo(content);
+        GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(addTodaySelector ? 3 : 2).margins(0, 0).extendedMargins(0, 0, 0, 0).spacing(3, 0).applyTo(content);
 
         this.formattedText = new FormattedText(content, SWT.BORDER);
         this.formattedText.setFormatter(new DateFormatter(
@@ -68,6 +69,19 @@ public class DateChooserCustom {
         });
         createPopupShell();
         content.setSize(content.computeSize(SWT.DEFAULT, 14));
+
+        if (addTodaySelector) {
+            ToolItem itemAzi = new ToolItem(new ToolBar(content, SWT.FLAT), SWT.FLAT);
+            itemAzi.setImage(AppImages.getImage16(AppImages.IMG_SELECT));
+            itemAzi.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SELECT));
+            itemAzi.setToolTipText("Selecteaza data de azi");
+            itemAzi.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    formattedText.setValue(new Date());
+                }
+            });
+        }
 
         this.formattedText.getControl().addListener(SWT.Modify, new Listener() {
             @Override
@@ -133,6 +147,6 @@ public class DateChooserCustom {
     }
 
     public Date getValue() {
-        return (Date)formattedText.getValue();
+        return (Date) formattedText.getValue();
     }
 }

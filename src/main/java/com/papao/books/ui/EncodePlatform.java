@@ -23,10 +23,7 @@ import com.papao.books.ui.interfaces.*;
 import com.papao.books.ui.menu.PlatformMenu;
 import com.papao.books.ui.preluari.AutoriImportView;
 import com.papao.books.ui.preluari.BookImportView;
-import com.papao.books.ui.providers.AdbMongoContentProvider;
-import com.papao.books.ui.providers.LinkLabelProvider;
-import com.papao.books.ui.providers.LinkOpener;
-import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
+import com.papao.books.ui.providers.*;
 import com.papao.books.ui.providers.tree.*;
 import com.papao.books.ui.searcheable.BookSearchType;
 import com.papao.books.ui.user.UsersView;
@@ -61,6 +58,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -94,7 +92,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private TreeViewer leftTreeViewer;
 
     private PaginationComposite paginationComposite;
-    private BookSearchType searchType = BookSearchType.Autor;
+    private BookSearchType searchType;
     private Combo comboModAfisare;
     private DragAndDropTableComposite dragAndDropTableComposite;
     private LiveSashForm rightVerticalSash;
@@ -117,6 +115,16 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     public EncodePlatform() {
         super(null, AbstractView.MODE_NONE);
+        String defaultSearchType = ApplicationService.getApplicationConfig().getDefaultSearchType();
+        for (BookSearchType searchType : BookSearchType.values()) {
+            if (searchType.name().toLowerCase().contains(defaultSearchType.toLowerCase())) {
+                this.searchType = searchType;
+                break;
+            }
+        }
+        if (this.searchType == null) {
+            this.searchType = BookSearchType.Autor;
+        }
         ApplicationService.getBookController().addObserver(this);
         /*
          * linia asta ne scapa de o intrebare tampita, si falsa, cauzata de listenerul pe SWT.Close
@@ -662,16 +670,21 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         new Label(compLeftTree, SWT.NONE).setText("Grupare dupa");
-        comboModAfisare = new Combo(compLeftTree, SWT.READ_ONLY | SWT.BORDER);
+        comboModAfisare = new Combo(compLeftTree, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(comboModAfisare);
         for (BookSearchType searchType : BookSearchType.values()) {
             comboModAfisare.add(searchType.name());
         }
         comboModAfisare.select(comboModAfisare.indexOf(searchType.name()));
+        ContentProposalProvider.addContentProposal(comboModAfisare, comboModAfisare.getItems(), true);
         comboModAfisare.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                searchType = BookSearchType.valueOf(comboModAfisare.getText());
+                try {
+                    searchType = BookSearchType.valueOf(comboModAfisare.getText());
+                } catch (Exception exc) {
+                    return;
+                }
                 populateLeftTree();
             }
         });
@@ -1783,6 +1796,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         } else {
             tableViewer.refresh(view.getCarte(), true, true);
             tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+            tableViewer.getTable().getItem(((List<Carte>) tableViewer.getInput()).indexOf(view.getCarte())).setData(view.getCarte());
         }
         displayBookData();
         return true;

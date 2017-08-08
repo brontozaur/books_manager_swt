@@ -41,6 +41,9 @@ public class ApplicationConfig {
     @Value("${app.default.username}")
     private String defaultUserName;
 
+    @Value("${app.default.searchtype}")
+    private String defaultSearchType;
+
     @Bean
     public MongoClient mongo() throws Exception {
         return new MongoClient(host);
@@ -93,5 +96,9 @@ public class ApplicationConfig {
 
     public String getDefaultUserName() {
         return defaultUserName;
+    }
+
+    public String getDefaultSearchType() {
+        return defaultSearchType;
     }
 }
