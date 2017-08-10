@@ -19,6 +19,7 @@ import com.papao.books.ui.providers.tree.IntValuePair;
 import com.papao.books.ui.providers.tree.IntValuePairsWrapper;
 import com.papao.books.ui.providers.tree.NodeType;
 import com.papao.books.ui.providers.tree.SimpleTextNode;
+import com.papao.books.ui.searcheable.CategoriePret;
 import com.papao.books.ui.util.BorgDateUtil;
 import com.papao.books.ui.util.FileTypeDetector;
 import org.apache.commons.lang3.StringUtils;
@@ -224,6 +225,46 @@ public class ApplicationController {
             baseNode.increment(count);
         }
         baseNode.modifyCount(showNumbers, false);
+
+        return invisibleRoot;
+    }
+
+    public static SimpleTextNode buildPriceTree(String collectionName, String propName) {
+
+        Query query = new Query();
+        Criteria criteria = new Criteria().orOperator(Criteria.where(propName).is(null),
+                Criteria.where(propName).is(""));
+        query.addCriteria(criteria);
+        long documentsWithNoPropertySet = mongoTemplate.count(query, collectionName);
+
+        SimpleTextNode invisibleRoot = new SimpleTextNode(null);
+        boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
+
+        SimpleTextNode noPriceValuesNode = new SimpleTextNode(invisibleRoot, "Fara informatii");
+        noPriceValuesNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+        noPriceValuesNode.setQueryValue(null);
+        noPriceValuesNode.setCount((int) documentsWithNoPropertySet);
+        noPriceValuesNode.setInvisibleName("-1");
+        if (showNumbers) {
+            noPriceValuesNode.setName(noPriceValuesNode.getName() + noPriceValuesNode.getItemCountStr());
+        }
+
+        for (CategoriePret categoriePret: CategoriePret.values()) {
+            query = new Query();
+            criteria = new Criteria().andOperator(Criteria.where(propName).gte(categoriePret.getMin()),
+                    Criteria.where(propName).lt(categoriePret.getMax()));
+            query.addCriteria(criteria);
+            long count = mongoTemplate.count(query, collectionName);
+
+            SimpleTextNode pretNode = new SimpleTextNode(invisibleRoot, categoriePret.getDescriere());
+            pretNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+            pretNode.setQueryValue(categoriePret);
+            pretNode.setCount((int) count);
+            pretNode.setInvisibleName(String.valueOf(categoriePret.getMin()));
+            if (showNumbers) {
+                pretNode.setName(pretNode.getName() + pretNode.getItemCountStr());
+            }
+        }
 
         return invisibleRoot;
     }

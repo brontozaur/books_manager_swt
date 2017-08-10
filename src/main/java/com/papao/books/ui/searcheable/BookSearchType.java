@@ -21,5 +21,6 @@ public enum BookSearchType {
     Taguri,
     Serie,
     Colectie,
-    Data_cumpararii
+    Data_cumpararii,
+    Pret
 }

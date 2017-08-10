@@ -10,6 +10,7 @@ import com.papao.books.repository.CarteRepository;
 import com.papao.books.ui.providers.tree.NodeType;
 import com.papao.books.ui.providers.tree.SimpleTextNode;
 import com.papao.books.ui.searcheable.BookSearchType;
+import com.papao.books.ui.searcheable.CategoriePret;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.swt.graphics.Image;
@@ -94,6 +95,15 @@ public class BookController extends Observable {
                     carti = repository.getByEdituraContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
                     carti = repository.getByEdituraIsNullOrEdituraIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
+                }
+                break;
+            }
+            case Pret: {
+                if (node.getQueryValue() == null) {
+                    carti = repository.getByPretIsNullOrPret_PretOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(0, pageable);
+                } else {
+                    CategoriePret categoriePret = (CategoriePret) node.getQueryValue();
+                    carti = repository.getByPret_PretBetweenOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(categoriePret.getMin(), categoriePret.getMax(), pageable);
                 }
                 break;
             }

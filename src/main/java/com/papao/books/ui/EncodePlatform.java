@@ -645,9 +645,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     return -1;
                 } else if (b == null) {
                     return 1;
-                } else if (searchType == BookSearchType.Creata || searchType == BookSearchType.Actualizata ||
+                } else if (searchType == BookSearchType.Creata ||
+                        searchType == BookSearchType.Actualizata ||
                         searchType == BookSearchType.Data_cumpararii ||
-                        searchType == BookSearchType.Nota_carte || searchType == BookSearchType.Nota_traducere) {
+                        searchType == BookSearchType.Nota_carte ||
+                        searchType == BookSearchType.Nota_traducere ||
+                        searchType == BookSearchType.Pret) {
                     return StringUtil.romanianCompare(a.getInvisibleName(), b.getInvisibleName());
                 } else {
                     return StringUtil.romanianCompare(a.getName(), b.getName());
@@ -714,6 +717,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             case Colectie: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "colectie", false, true);
                 createTreeNodes(wrapper, "Colectii");
+                break;
+            }
+            case Pret: {
+                SimpleTextNode rootNode = ApplicationController.buildPriceTree(ApplicationService.getApplicationConfig().getBooksCollectionName(), "pret.pret");
+                leftTreeViewer.setInput(rootNode);
                 break;
             }
             case Locatie: {

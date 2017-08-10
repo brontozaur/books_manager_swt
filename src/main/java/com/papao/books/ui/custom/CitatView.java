@@ -9,6 +9,7 @@ import com.papao.books.ui.view.AbstractCView;
 import com.papao.books.ui.view.AbstractView;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -33,16 +34,19 @@ public class CitatView extends AbstractCView implements INavigation {
     }
 
     private void addComponents() {
-        setWidgetLayout(new GridLayout(2, false));
+        setWidgetLayout(new GridLayout(1, false));
         getContainer().setLayout(getWidgetLayout());
 
-        new Label(getContainer(), SWT.NONE).setText("Nr pagina");
-        this.textNrPagina = new Text(getContainer(), SWT.BORDER);
+        Composite temp = new Composite(getContainer(), SWT.NONE);
+        GridLayoutFactory.fillDefaults().margins(0,0).numColumns(2).applyTo(temp);
+        new Label(temp, SWT.NONE).setText("Nr pagina");
+        this.textNrPagina = new Text(temp, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrPagina);
 
         new Label(getContainer(), SWT.NONE).setText("Continut");
-        new Label(getContainer(), SWT.NONE);
+
         this.textContent = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(300, 200).span(2, 1).applyTo(this.textContent);
+        GridDataFactory.fillDefaults().grab(true, true).hint(300, 200).span(1, 1).applyTo(this.textContent);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
 

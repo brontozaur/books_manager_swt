@@ -93,4 +93,10 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
     Page<Carte> getByIdAutoriLikeOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(ObjectId idAutor, Pageable pageable);
 
     Page<Carte> getByIdInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(List<ObjectId> bookIds, Pageable pageable);
+
+    //pret
+
+    Page<Carte> getByPretIsNullOrPret_PretOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(double zero, Pageable pageable);
+
+    Page<Carte> getByPret_PretBetweenOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(double min, double max, Pageable pageable);
 }
