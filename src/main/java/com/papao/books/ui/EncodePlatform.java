@@ -107,7 +107,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static final String TABLE_KEY = "booksViewer";
     private Text searchText;
     private CarteCitateTableComposite citateComposite;
-    private CapitoleComposite capitoleComposite;
+    private CarteCapitoleTableComposite capitoleComposite;
     private CartePersonajComposite cartePersonajComposite;
     private CarteReviewComposite carteReviewComposite;
 
@@ -376,7 +376,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         CTabItem tabCapitole = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
         tabCapitole.setText("Capitole");
         tabCapitole.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
-        capitoleComposite = new CapitoleComposite(bottomInnerTabFolderRight, true);
+        capitoleComposite = new CarteCapitoleTableComposite(bottomInnerTabFolderRight);
         tabCapitole.setControl(capitoleComposite);
 
         CTabItem tabPersonaje = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
