@@ -34,16 +34,20 @@ public class CitatView extends AbstractCView implements INavigation {
     }
 
     private void addComponents() {
-        setWidgetLayout(new GridLayout(1, false));
+        setWidgetLayout(new GridLayout(2, false));
         getContainer().setLayout(getWidgetLayout());
 
         Composite temp = new Composite(getContainer(), SWT.NONE);
-        GridLayoutFactory.fillDefaults().margins(0,0).numColumns(2).applyTo(temp);
+        GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(2).applyTo(temp);
+        GridDataFactory.fillDefaults().span(2, 1).applyTo(temp);
+
         new Label(temp, SWT.NONE).setText("Nr pagina");
         this.textNrPagina = new Text(temp, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrPagina);
 
-        new Label(getContainer(), SWT.NONE).setText("Continut");
+        Label tmp = new Label(getContainer(), SWT.NONE);
+        tmp.setText("Continut   ");
+        GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(tmp);
 
         this.textContent = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
         GridDataFactory.fillDefaults().grab(true, true).hint(300, 200).span(1, 1).applyTo(this.textContent);

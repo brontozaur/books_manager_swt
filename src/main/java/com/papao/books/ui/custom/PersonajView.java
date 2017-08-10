@@ -1,32 +1,30 @@
 package com.papao.books.ui.custom;
 
 import com.novocode.naf.swt.custom.BalloonNotification;
-import com.papao.books.model.Capitol;
+import com.papao.books.model.Personaj;
 import com.papao.books.ui.interfaces.INavigation;
 import com.papao.books.ui.util.WidgetCompositeUtil;
 import com.papao.books.ui.view.AbstractCView;
 import com.papao.books.ui.view.AbstractView;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class CapitolView extends AbstractCView implements INavigation {
+public class PersonajView extends AbstractCView implements INavigation {
 
-    private Capitol capitol;
+    private Personaj personaj;
     private Table table;
     private int selIndex;
 
-    private Text textTitlu;
-    private Text textNrPagina;
-    private Text textNrCapitol;
-    private Text textMotto;
+    private Text textNume;
+    private Text textRol;
+    private Text textDescriere;
 
-    public CapitolView(final Shell parent, final Capitol capitol, final Table table, final int viewMode) {
+    public PersonajView(final Shell parent, final Personaj personaj, final Table table, final int viewMode) {
         super(parent, viewMode);
-        this.capitol = capitol;
+        this.personaj = personaj;
         this.table = table;
         this.selIndex = table.getSelectionIndex();
 
@@ -38,32 +36,20 @@ public class CapitolView extends AbstractCView implements INavigation {
         setWidgetLayout(new GridLayout(2, false));
         getContainer().setLayout(getWidgetLayout());
 
-        Composite temp = new Composite(getContainer(), SWT.NONE);
-        GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(4).applyTo(temp);
-        GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(temp);
+        new Label(getContainer(), SWT.NONE).setText("Nume");
+        this.textNume = new Text(getContainer(), SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(textNume);
 
-        new Label(temp, SWT.NONE).setText("Nr capitol");
-        this.textNrCapitol = new Text(temp, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrCapitol);
-
-        new Label(temp, SWT.NONE).setText("Titlu");
-        this.textTitlu = new Text(temp, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textTitlu);
-
-        temp = new Composite(getContainer(), SWT.NONE);
-        GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(2).applyTo(temp);
-        GridDataFactory.fillDefaults().span(2, 1).grab(false, false).applyTo(temp);
-
-        new Label(temp, SWT.NONE).setText("Nr pagina");
-        this.textNrPagina = new Text(temp, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrPagina);
+        new Label(getContainer(), SWT.NONE).setText("Rol");
+        this.textRol = new Text(getContainer(), SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(textRol);
 
         Label tmp = new Label(getContainer(), SWT.NONE);
-        tmp.setText("Motto      ");
+        tmp.setText("Descriere");
         GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(tmp);
 
-        this.textMotto = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(300, 200).span(1, 1).applyTo(this.textMotto);
+        this.textDescriere = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        GridDataFactory.fillDefaults().grab(true, true).hint(300, 200).span(1, 1).applyTo(this.textDescriere);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
 
@@ -92,10 +78,9 @@ public class CapitolView extends AbstractCView implements INavigation {
     }
 
     private void populateFields() {
-        this.textNrCapitol.setText(StringUtils.defaultIfBlank(this.capitol.getNr(), ""));
-        this.textTitlu.setText(StringUtils.defaultIfBlank(this.capitol.getTitlu(), ""));
-        this.textNrPagina.setText(StringUtils.defaultIfBlank(this.capitol.getPagina(), ""));
-        this.textMotto.setText(StringUtils.defaultIfBlank(this.capitol.getMotto(), ""));
+        this.textNume.setText(StringUtils.defaultIfBlank(this.personaj.getNume(), ""));
+        this.textRol.setText(StringUtils.defaultIfBlank(this.personaj.getRol(), ""));
+        this.textDescriere.setText(StringUtils.defaultIfBlank(this.personaj.getDescriere(), ""));
 
         if (!isViewEnabled()) {
             WidgetCompositeUtil.enableGUI(getContainer(), false);
@@ -108,20 +93,22 @@ public class CapitolView extends AbstractCView implements INavigation {
     public final void customizeView() {
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
-        setObjectName("capitol");
+        setObjectName("personaj");
         setCreateUpperCompRightArea(true);
     }
 
     @Override
     protected void saveData() {
-        this.capitol = new Capitol(textNrCapitol.getText(), textTitlu.getText(), textNrPagina.getText(), textMotto.getText());
+        this.personaj.setNume(this.textNume.getText());
+        this.personaj.setRol(this.textRol.getText());
+        this.personaj.setDescriere(textDescriere.getText());
     }
 
     @Override
     protected boolean validate() {
         try {
-            if (StringUtils.isEmpty(this.textTitlu.getText())) {
-                BalloonNotification.showNotification(textTitlu, "Notificare", "Titlul nu este introdus!", 1500);
+            if (StringUtils.isEmpty(this.textNume.getText())) {
+                BalloonNotification.showNotification(textDescriere, "Notificare", "Numele nu este introdus!", 1500);
                 return false;
             }
         } catch (Exception exc) {
@@ -130,8 +117,8 @@ public class CapitolView extends AbstractCView implements INavigation {
         return true;
     }
 
-    public Capitol getCapitol() {
-        return this.capitol;
+    public Personaj getPersonaj() {
+        return personaj;
     }
 
     @Override
@@ -153,7 +140,7 @@ public class CapitolView extends AbstractCView implements INavigation {
         }
 
         final TableItem item = this.table.getSelection()[0];
-        this.capitol = (Capitol) item.getData();
+        this.personaj = (Personaj) item.getData();
         populateFields();
     }
 
@@ -175,7 +162,7 @@ public class CapitolView extends AbstractCView implements INavigation {
             }
         }
         final TableItem item = this.table.getSelection()[0];
-        this.capitol = (Capitol) item.getData();
+        this.personaj = (Personaj) item.getData();
         populateFields();
     }
 }

@@ -108,7 +108,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private Text searchText;
     private CarteCitateTableComposite citateComposite;
     private CarteCapitoleTableComposite capitoleComposite;
-    private CartePersonajComposite cartePersonajComposite;
+    private CartePersonajTableComposite cartePersonajComposite;
     private CarteReviewComposite carteReviewComposite;
 
     private SimpleTextNode lastTreeSelection;
@@ -382,7 +382,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         CTabItem tabPersonaje = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
         tabPersonaje.setText("Personaje");
         tabPersonaje.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
-        cartePersonajComposite = new CartePersonajComposite(bottomInnerTabFolderRight, true);
+        cartePersonajComposite = new CartePersonajTableComposite(bottomInnerTabFolderRight);
         tabPersonaje.setControl(cartePersonajComposite);
 
         CTabItem tabReview = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
