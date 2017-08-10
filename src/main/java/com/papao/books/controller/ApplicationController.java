@@ -240,11 +240,11 @@ public class ApplicationController {
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
         boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
 
-        SimpleTextNode noPriceValuesNode = new SimpleTextNode(invisibleRoot, "Fara informatii");
+        SimpleTextNode noPriceValuesNode = new SimpleTextNode(invisibleRoot, "Fără informații");
         noPriceValuesNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
         noPriceValuesNode.setQueryValue(null);
         noPriceValuesNode.setCount((int) documentsWithNoPropertySet);
-        noPriceValuesNode.setInvisibleName("-1");
+        noPriceValuesNode.setInvisibleName("0");
         if (showNumbers) {
             noPriceValuesNode.setName(noPriceValuesNode.getName() + noPriceValuesNode.getItemCountStr());
         }
