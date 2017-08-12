@@ -143,7 +143,7 @@ public class AutorView extends AbstractCSaveView {
 
         Composite compImage = new Composite(getContainer(), SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(compImage);
-        GridDataFactory.fillDefaults().grab(false, false).align(SWT.END, SWT.BEGINNING).applyTo(compImage);
+        GridDataFactory.fillDefaults().grab(false, true).applyTo(compImage);
 
         Image mainImage = null;
         String imageName = null;
