@@ -26,5 +26,7 @@ public interface UserActivityRepository extends MongoRepository<UserActivity, St
 
     List<UserActivity> getByUserIdAndCarteCititaCititaIs(ObjectId userId, boolean citita);
 
+    List<UserActivity> getByUserIdAndReviewIsGreaterThan(ObjectId userId, String emptyString);
+
     List<UserActivity> getByCarteCitita_CititaIs(boolean citita);
 }

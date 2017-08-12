@@ -54,7 +54,6 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
     private DateChooserCustom dateChooserStart;
     private DateChooserCustom dateChooserEnd;
     private ComboImage comboUsers;
-    private ProgressBarComposite progressBarComposite;
     private static final String[] COLS = new String[]{"Nume", "Nr carti"};
 
     private final static int IDX_NUME = 0;
@@ -142,7 +141,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
             }
         });
 
-        progressBarComposite = new ProgressBarComposite(compAplica, SWT.SMOOTH);
+        ProgressBarComposite progressBarComposite = new ProgressBarComposite(compAplica, SWT.SMOOTH);
 
         LiveSashForm mainSash = new LiveSashForm(getContainer(), SWT.VERTICAL | SWT.SMOOTH);
         mainSash.sashWidth = 4;
@@ -306,7 +305,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
             dataEnd = dateChooserEnd.getValue();
         }
         User user = (User) comboUsers.getSelectedElement();
-        java.util.List<UserActivity> allActivities = UserController.getAllCartiCitite();
+        List<UserActivity> allActivities = user != null ? UserController.getReadedBookForUser(user.getId()) : UserController.getAllCartiCitite();
         for (UserActivity activity : allActivities) {
             if (dataStart != null) {
                 if (activity.getCarteCitita().getDataStart() == null || activity.getCarteCitita().getDataStart().before(dataStart)) {
@@ -318,14 +317,9 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
                     continue;
                 }
             }
-            if (user != null) {
-                if (!user.getId().equals(activity.getUserId())) {
-                    continue;
-                }
-            }
             final Carte carte = ApplicationService.getBookController().findOne(activity.getBookId());
             if (carte == null) {
-                logger.error("Nu am gasit cartea cu id " + carte.getId());
+                logger.error("Nu am gasit cartea cu id " + activity.getBookId());
                 continue;
             }
             carte.setReadStartDate(activity.getCarteCitita().getDataStart());

@@ -23,6 +23,10 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByIdAutoriInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(List<ObjectId> idAutori, Pageable pageable);
 
+    Page<Carte> getByIsbnIsNullOrIsbnIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String emptyString, Pageable pageable);
+
+    Page<Carte> getByIdNotInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(List<ObjectId> bookIds, Pageable pageable);
+
     //string values - contains
     Page<Carte> getByEdituraIsNullOrEdituraIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String emptyString, Pageable pageable);
 
@@ -95,6 +99,8 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
     Page<Carte> getByIdInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(List<ObjectId> bookIds, Pageable pageable);
 
     //pret
+
+    Page<Carte> getByPretIsNullOrPret_PretIntregOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(double zero, Pageable pageable);
 
     Page<Carte> getByPretIsNullOrPret_PretOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(double zero, Pageable pageable);
 

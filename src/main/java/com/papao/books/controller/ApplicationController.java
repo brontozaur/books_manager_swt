@@ -9,10 +9,12 @@ import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.papao.books.config.BooleanSetting;
 import com.papao.books.model.DocumentData;
+import com.papao.books.model.TipCoperta;
 import com.papao.books.model.User;
 import com.papao.books.model.UserActivity;
 import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.ui.AppImages;
+import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.config.StilAfisareData;
 import com.papao.books.ui.custom.ImageSelectorComposite;
 import com.papao.books.ui.providers.tree.IntValuePair;
@@ -229,6 +231,108 @@ public class ApplicationController {
         return invisibleRoot;
     }
 
+    public static SimpleTextNode buildMissingInfoTree(String collectionName) {
+
+        SimpleTextNode invisibleRoot = new SimpleTextNode(null);
+        boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
+        int invisibleSortingProperty = 0;
+
+        createNodeType(invisibleRoot, NodeType.FARA_IMAGINE, collectionName, "copertaFata", "", showNumbers, ++invisibleSortingProperty);
+
+        // carti necitite pentru userul curent
+        SimpleTextNode nodeNecitite = new SimpleTextNode(invisibleRoot, NodeType.NECITITA.getNodeName());
+        nodeNecitite.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+        nodeNecitite.setQueryValue(null);
+        nodeNecitite.setNodeType(NodeType.NECITITA);
+        Query query = new Query();
+        Criteria criteria = new Criteria().andOperator(Criteria.where("userId").is(EncodeLive.getIdUser()),
+                Criteria.where("carteCitita.citita").is(true));
+        query.addCriteria(criteria);
+        int cartiCitite = (int) mongoTemplate.count(query, "userActivity");
+
+        query = new Query();
+        int toateCartile = (int) mongoTemplate.count(query, collectionName);
+
+        nodeNecitite.setCount(toateCartile - cartiCitite);
+        nodeNecitite.setInvisibleName(String.valueOf(++invisibleSortingProperty));
+        if (showNumbers) {
+            nodeNecitite.setName(nodeNecitite.getName() + nodeNecitite.getItemCountStr());
+        }
+
+        // carti citite pentru userul curent
+        SimpleTextNode nodeCitite = new SimpleTextNode(invisibleRoot, NodeType.CITITA.getNodeName());
+        nodeCitite.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+        nodeCitite.setQueryValue(null);
+        nodeCitite.setNodeType(NodeType.CITITA);
+        query = new Query();
+        criteria = new Criteria().andOperator(Criteria.where("userId").is(EncodeLive.getIdUser()),
+                Criteria.where("carteCitita.citita").is(true));
+        query.addCriteria(criteria);
+        nodeCitite.setCount((int) mongoTemplate.count(query, "userActivity"));
+        nodeCitite.setInvisibleName(String.valueOf(++invisibleSortingProperty));
+        if (showNumbers) {
+            nodeCitite.setName(nodeCitite.getName() + nodeCitite.getItemCountStr());
+        }
+
+        // carti cu review pentru userul curent
+        SimpleTextNode nodeCartiCuReview = new SimpleTextNode(invisibleRoot, NodeType.CU_REVIEW.getNodeName());
+        nodeCartiCuReview.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+        nodeCartiCuReview.setQueryValue(null);
+        nodeCartiCuReview.setNodeType(NodeType.CU_REVIEW);
+        query = new Query();
+        criteria = new Criteria().andOperator(Criteria.where("review").gt(""),
+                Criteria.where("userId").is(EncodeLive.getIdUser()));
+        query.addCriteria(criteria);
+        int cartiCuReview = (int) mongoTemplate.count(query, "userActivity");
+        nodeCartiCuReview.setCount(cartiCuReview);
+        nodeCartiCuReview.setInvisibleName(String.valueOf(++invisibleSortingProperty));
+        if (showNumbers) {
+            nodeCartiCuReview.setName(nodeCartiCuReview.getName() + nodeCartiCuReview.getItemCountStr());
+        }
+
+        // carti fara review pentru userul curent
+        SimpleTextNode nodeCartiFaraReview = new SimpleTextNode(invisibleRoot, NodeType.FARA_REVIEW.getNodeName());
+        nodeCartiFaraReview.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+        nodeCartiFaraReview.setQueryValue(null);
+        nodeCartiFaraReview.setNodeType(NodeType.FARA_REVIEW);
+        nodeCartiFaraReview.setCount(toateCartile - cartiCuReview);
+        nodeCartiFaraReview.setInvisibleName(String.valueOf(++invisibleSortingProperty));
+        if (showNumbers) {
+            nodeCartiFaraReview.setName(nodeCartiFaraReview.getName() + nodeCartiFaraReview.getItemCountStr());
+        }
+
+        createNodeType(invisibleRoot, NodeType.FARA_PRET, collectionName, "pret.pretIntreg", 0, showNumbers, ++invisibleSortingProperty);
+        createNodeType(invisibleRoot, NodeType.FARA_DATA_CUMPARARII, collectionName, "pret.dataCumpararii", null, showNumbers, ++invisibleSortingProperty);
+        createNodeType(invisibleRoot, NodeType.FARA_EDITURA, collectionName, "editura", "", showNumbers, ++invisibleSortingProperty);
+        createNodeType(invisibleRoot, NodeType.FARA_TRADUCATOR, collectionName, "traducatori", new String[]{}, showNumbers, ++invisibleSortingProperty);
+        createNodeType(invisibleRoot, NodeType.FARA_TIP_COPERTA, collectionName, "tipCoperta", TipCoperta.Nespecificat, showNumbers, ++invisibleSortingProperty);
+        createNodeType(invisibleRoot, NodeType.FARA_LOCATIE, collectionName, "locatie", "", showNumbers, ++invisibleSortingProperty);
+        createNodeType(invisibleRoot, NodeType.FARA_GEN_LITERAR, collectionName, "genLiterar", new String[]{}, showNumbers, ++invisibleSortingProperty);
+        createNodeType(invisibleRoot, NodeType.FARA_TAGURI, collectionName, "tags", new String[]{}, showNumbers, ++invisibleSortingProperty);
+        createNodeType(invisibleRoot, NodeType.FARA_ISBN, collectionName, "isbn", "", showNumbers, ++invisibleSortingProperty);
+        createNodeType(invisibleRoot, NodeType.FARA_AN_APARITIE, collectionName, "anAparitie", "", showNumbers, ++invisibleSortingProperty);
+
+        return invisibleRoot;
+    }
+
+    private static void createNodeType(SimpleTextNode parent,
+                                       NodeType nodeType,
+                                       String collectionName,
+                                       String propertyName,
+                                       Object emptyValue,
+                                       boolean showNumbers,
+                                       int sorter) {
+        SimpleTextNode noImageNode = new SimpleTextNode(parent, nodeType.getNodeName());
+        noImageNode.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
+        noImageNode.setQueryValue(null);
+        noImageNode.setNodeType(nodeType);
+        noImageNode.setCount((int) getDocumentsWithEmptyOrNullValues(collectionName, propertyName, emptyValue));
+        noImageNode.setInvisibleName(String.valueOf(sorter));
+        if (showNumbers) {
+            noImageNode.setName(noImageNode.getName() + noImageNode.getItemCountStr());
+        }
+    }
+
     public static SimpleTextNode buildPriceTree(String collectionName, String propName) {
 
         Query query = new Query();
@@ -249,7 +353,7 @@ public class ApplicationController {
             noPriceValuesNode.setName(noPriceValuesNode.getName() + noPriceValuesNode.getItemCountStr());
         }
 
-        for (CategoriePret categoriePret: CategoriePret.values()) {
+        for (CategoriePret categoriePret : CategoriePret.values()) {
             query = new Query();
             criteria = new Criteria().andOperator(Criteria.where(propName).gte(categoriePret.getMin()),
                     Criteria.where(propName).lt(categoriePret.getMax()));
@@ -625,18 +729,21 @@ public class ApplicationController {
             }
         }
 
-        Query query = new Query();
-        //array field is null or empty - as a suplement to "valid" fields
-        Criteria criteria = new Criteria().orOperator(Criteria.where(propertyName).is(null),
-                Criteria.where(propertyName).is(new String[]{}));
-        query.addCriteria(criteria);
-        long booksWithEmptyOrNullArrayProperty = mongoTemplate.count(query, collectionName);
+        long booksWithEmptyOrNullArrayProperty = getDocumentsWithEmptyOrNullValues(collectionName, propertyName, new String[]{});
         emptyOrNullCount += booksWithEmptyOrNullArrayProperty;
 
         if (emptyOrNullCount > 0) {
             occurrences.add(new IntValuePair(null, null, emptyOrNullCount));
         }
         return new IntValuePairsWrapper(emptyOrNullCount == 0 ? occurrences.size() : occurrences.size() - 1, occurrences);
+    }
+
+    private static long getDocumentsWithEmptyOrNullValues(String collectionName, String propertyName, Object emptyValue) {
+        Query query = new Query();
+        Criteria criteria = new Criteria().orOperator(Criteria.where(propertyName).exists(false), Criteria.where(propertyName).is(null),
+                Criteria.where(propertyName).is(emptyValue));
+        query.addCriteria(criteria);
+        return mongoTemplate.count(query, collectionName);
     }
 
     public static ObjectId getRandomBook(String collectionName) {

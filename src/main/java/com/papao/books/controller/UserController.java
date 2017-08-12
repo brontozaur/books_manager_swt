@@ -135,12 +135,23 @@ public class UserController {
 
     public static List<ObjectId> getReadedBookIdsForUser(ObjectId userId) {
         List<ObjectId> ids = new ArrayList<>();
-        List<UserActivity> userActivities;
-        if (userId == null) {
-            userActivities = userActivityRepository.findAll();
-        } else {
-            userActivities = userActivityRepository.getByUserIdAndCarteCititaCititaIs(userId, true);
+        List<UserActivity> userActivities = userActivityRepository.getByUserIdAndCarteCititaCititaIs(userId, true);
+        for (UserActivity userActivity : userActivities) {
+            ids.add(userActivity.getBookId());
         }
+        return ids;
+    }
+
+    public static List<UserActivity> getReadedBookForUser(ObjectId userId) {
+        List<ObjectId> ids = new ArrayList<>();
+        return userActivityRepository.getByUserIdAndCarteCititaCititaIs(userId, true);
+    }
+
+
+
+    public static List<ObjectId> getBookIdsWithReview(ObjectId userId) {
+        List<ObjectId> ids = new ArrayList<>();
+        List<UserActivity> userActivities = userActivityRepository.getByUserIdAndReviewIsGreaterThan(userId, "");
         for (UserActivity userActivity : userActivities) {
             ids.add(userActivity.getBookId());
         }

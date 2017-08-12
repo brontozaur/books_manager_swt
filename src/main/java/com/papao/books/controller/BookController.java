@@ -5,8 +5,10 @@ import com.papao.books.exception.UnsupportedSearchTypeException;
 import com.papao.books.model.Autor;
 import com.papao.books.model.Carte;
 import com.papao.books.model.DocumentData;
+import com.papao.books.model.TipCoperta;
 import com.papao.books.repository.CacheableAutorRepository;
 import com.papao.books.repository.CarteRepository;
+import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.providers.tree.NodeType;
 import com.papao.books.ui.providers.tree.SimpleTextNode;
 import com.papao.books.ui.searcheable.BookSearchType;
@@ -15,6 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,6 +39,7 @@ public class BookController extends Observable {
     private Page<Carte> carti = new PageImpl<>(new ArrayList<Carte>());
     private BookSearchType searchType;
     private SimpleTextNode node;
+    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
     @Autowired
     public BookController(CarteRepository repository,
@@ -104,6 +109,67 @@ public class BookController extends Observable {
                 } else {
                     CategoriePret categoriePret = (CategoriePret) node.getQueryValue();
                     carti = repository.getByPret_PretBetweenOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(categoriePret.getMin(), categoriePret.getMax(), pageable);
+                }
+                break;
+            }
+            case Lipsa_informatii: {
+                switch (node.getNodeType()) {
+                    case FARA_IMAGINE:
+                        carti = repository.getByCopertaFataIsNullOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(pageable);
+                        break;
+                    case FARA_PRET:
+                        carti = repository.getByPretIsNullOrPret_PretIntregOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(0, pageable);
+                        break;
+                    case FARA_DATA_CUMPARARII:
+                        carti = repository.getByPretIsNullOrPret_DataCumparariiIsNullOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(pageable);
+                        break;
+                    case FARA_EDITURA:
+                        carti = repository.getByEdituraIsNullOrEdituraIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
+                        break;
+                    case FARA_TRADUCATOR:
+                        carti = repository.getByTraducatoriIsNullOrTraducatoriIsLessThanEqualOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(new String[]{}, pageable);
+                        break;
+                    case FARA_TIP_COPERTA:
+                        carti = repository.getByTipCopertaIsNullOrTipCopertaIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(TipCoperta.Nespecificat.name(), pageable);
+                        break;
+                    case FARA_LOCATIE:
+                        carti = repository.getByLocatieIsNullOrLocatieIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
+                        break;
+                    case NECITITA: {
+                        List<ObjectId> idsCartiCitite = UserController.getReadedBookIdsForUser(EncodeLive.getIdUser());
+                        carti = repository.getByIdNotInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(idsCartiCitite, pageable);
+                        break;
+                    }
+                    case CITITA: {
+                        List<ObjectId> idsCartiCitite = UserController.getReadedBookIdsForUser(EncodeLive.getIdUser());
+                        carti = repository.getByIdInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(idsCartiCitite, pageable);
+                        break;
+                    }
+                    case FARA_GEN_LITERAR:
+                        carti = repository.getByGenLiterarIsNullOrGenLiterarIsLessThanEqualOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(new String[]{}, pageable);
+                        break;
+                    case FARA_TAGURI:
+                        carti = repository.getByTagsIsNullOrTagsIsLessThanEqualOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(new String[]{}, pageable);
+                        break;
+                    case FARA_ISBN:
+                        carti = repository.getByIsbnIsNullOrIsbnIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
+                        break;
+                    case FARA_AN_APARITIE:
+                        carti = repository.getByAnAparitieIsNullOrAnAparitieIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
+                        break;
+                    case CU_REVIEW: {
+                        List<ObjectId> idsCartiCuReview = UserController.getBookIdsWithReview(EncodeLive.getIdUser());
+                        carti = repository.getByIdInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(idsCartiCuReview, pageable);
+                        break;
+                    }
+                    case FARA_REVIEW: {
+                        List<ObjectId> idsCartiCuReview = UserController.getBookIdsWithReview(EncodeLive.getIdUser());
+                        carti = repository.getByIdNotInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(idsCartiCuReview, pageable);
+                        break;
+                    }
+                    default:
+                        carti = repository.findAll(pageable);
+                        logger.error("Node type unsupported " + node.getNodeType());
                 }
                 break;
             }
@@ -199,7 +265,7 @@ public class BookController extends Observable {
                 } else if (StringUtils.isNotEmpty((String) value)) {
                     carti = repository.getByTipCopertaContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc((String) value, pageable);
                 } else {
-                    carti = repository.getByTipCopertaIsNullOrTipCopertaIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc("", pageable);
+                    carti = repository.getByTipCopertaIsNullOrTipCopertaIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(TipCoperta.Nespecificat.name(), pageable);
                 }
                 break;
             }

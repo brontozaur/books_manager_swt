@@ -2,7 +2,6 @@ package com.papao.books.rapoarte;
 
 import com.mongodb.gridfs.GridFSDBFile;
 import com.papao.books.ApplicationService;
-import com.papao.books.config.StringSetting;
 import com.papao.books.controller.ApplicationController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.model.Carte;
@@ -19,7 +18,6 @@ import com.papao.books.ui.util.sorter.AbstractColumnViewerSorter;
 import com.papao.books.ui.util.sorter.AbstractTableColumnViewerSorter;
 import com.papao.books.ui.view.AbstractCViewAdapter;
 import com.papao.books.ui.view.SWTeXtension;
-import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -33,8 +31,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -49,11 +45,6 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter implements Observ
     private SimplePaginationComposite simplePaginationComposite;
 
     private static final String BOOKS_TABLE_KEY = "booksTable";
-
-    final String dateFormat = SettingsController.getString(StringSetting.APP_DATE_FORMAT) + " " + SettingsController.getString(StringSetting.APP_TIME_FORMAT);
-    final DateFormat df = new SimpleDateFormat(dateFormat);
-
-    private static final Logger logger = Logger.getLogger(BooksWithNoCoverView.class);
 
     public BooksWithNoCoverView(Shell parent) {
         super(parent, MODE_NONE);

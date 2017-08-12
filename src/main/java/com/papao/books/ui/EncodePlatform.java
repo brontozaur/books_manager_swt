@@ -650,7 +650,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                         searchType == BookSearchType.Data_cumpararii ||
                         searchType == BookSearchType.Nota_carte ||
                         searchType == BookSearchType.Nota_traducere ||
-                        searchType == BookSearchType.Pret) {
+                        searchType == BookSearchType.Pret ||
+                        searchType == BookSearchType.Lipsa_informatii) {
                     return StringUtil.romanianCompare(a.getInvisibleName(), b.getInvisibleName());
                 } else {
                     return StringUtil.romanianCompare(a.getName(), b.getName());
@@ -721,6 +722,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
             case Pret: {
                 SimpleTextNode rootNode = ApplicationController.buildPriceTree(ApplicationService.getApplicationConfig().getBooksCollectionName(), "pret.pret");
+                leftTreeViewer.setInput(rootNode);
+                break;
+            }
+            case Lipsa_informatii: {
+                SimpleTextNode rootNode = ApplicationController.buildMissingInfoTree(ApplicationService.getApplicationConfig().getBooksCollectionName());
                 leftTreeViewer.setInput(rootNode);
                 break;
             }
