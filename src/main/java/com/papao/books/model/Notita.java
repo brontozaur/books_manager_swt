@@ -1,10 +1,9 @@
 package com.papao.books.model;
 
-import com.papao.books.ui.custom.ComboElement;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-public class Citat {
+public class Notita {
 
     private String nrPagina;
     private String content;
@@ -64,12 +63,12 @@ public class Citat {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Citat)) {
+        if (!(obj instanceof Notita)) {
             return false;
         }
         if (this.getCreatedAt() == null) {
-            return getContent().equals(((Citat) obj).getContent());
+            return getContent().equals(((Notita) obj).getContent());
         }
-        return this.getCreatedAt().equals(((Citat) obj).getCreatedAt()) && ((Citat) obj).getContent().equals(getContent());
+        return this.getCreatedAt().equals(((Notita) obj).getCreatedAt()) && ((Notita) obj).getContent().equals(getContent());
     }
 }

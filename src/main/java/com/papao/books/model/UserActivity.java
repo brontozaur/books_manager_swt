@@ -21,6 +21,7 @@ public class UserActivity extends AuditObject {
     private ObjectId userId;
     private ObjectId bookId;
     private List<Citat> citate = new ArrayList<>();
+    private List<Notita> notite = new ArrayList<>();
     private CarteCitita carteCitita;
     private int rating;
     private int translationRating;
@@ -74,6 +75,14 @@ public class UserActivity extends AuditObject {
         this.citate = citate;
     }
 
+    public List<Notita> getNotite() {
+        return notite;
+    }
+
+    public void setNotite(List<Notita> notite) {
+        this.notite = notite;
+    }
+
     public CarteCitita getCarteCitita() {
         return carteCitita;
     }
@@ -94,6 +103,6 @@ public class UserActivity extends AuditObject {
     }
 
     public boolean isChanged() {
-        return !citate.isEmpty() || translationRating > 0 || rating > 0 || carteCitita != null || StringUtils.isNotEmpty(review);
+        return !citate.isEmpty() || !notite.isEmpty() || translationRating > 0 || rating > 0 || carteCitita != null || StringUtils.isNotEmpty(review);
     }
 }

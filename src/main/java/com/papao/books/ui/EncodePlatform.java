@@ -107,6 +107,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static final String TABLE_KEY = "booksViewer";
     private Text searchText;
     private CarteCitateTableComposite citateComposite;
+    private CarteNotiteTableComposite notiteTableComposite;
     private CarteCapitoleTableComposite capitoleComposite;
     private CartePersonajTableComposite cartePersonajComposite;
     private CarteReviewComposite carteReviewComposite;
@@ -373,6 +374,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         citateComposite = new CarteCitateTableComposite(bottomInnerTabFolderRight);
         tabCitate.setControl(citateComposite);
 
+        CTabItem tabNotite = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        tabNotite.setText("Notițe");
+        tabNotite.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
+        notiteTableComposite = new CarteNotiteTableComposite(bottomInnerTabFolderRight);
+        tabNotite.setControl(notiteTableComposite);
+
         CTabItem tabCapitole = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
         tabCapitole.setText("Capitole");
         tabCapitole.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
@@ -409,6 +416,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         //when a book is selected the citat composite should display it's quotes, if any
         this.addObserver(citateComposite);
+
+        //when a book is selected the citat composite should display it's notes, if any
+        this.addObserver(notiteTableComposite);
 
         //when a book is selected the capitole composite should display it's chapters, if any
         this.addObserver(capitoleComposite);

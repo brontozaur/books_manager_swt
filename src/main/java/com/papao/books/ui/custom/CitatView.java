@@ -31,6 +31,8 @@ public class CitatView extends AbstractCView implements INavigation {
 
         addComponents();
         populateFields();
+
+        WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
 
     private void addComponents() {
@@ -101,7 +103,6 @@ public class CitatView extends AbstractCView implements INavigation {
     protected void saveData() {
         this.citat.setNrPagina(this.textNrPagina.getText());
         this.citat.setContent(this.textContent.getText());
-        this.citat.setCreatedBy(EncodeLive.getIdUser().toString());
     }
 
     @Override

@@ -30,6 +30,8 @@ public class PersonajView extends AbstractCView implements INavigation {
 
         addComponents();
         populateFields();
+
+        WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
 
     private void addComponents() {

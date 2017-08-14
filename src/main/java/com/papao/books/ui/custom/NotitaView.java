@@ -1,7 +1,8 @@
 package com.papao.books.ui.custom;
 
 import com.novocode.naf.swt.custom.BalloonNotification;
-import com.papao.books.model.Capitol;
+import com.papao.books.model.Notita;
+import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.interfaces.INavigation;
 import com.papao.books.ui.util.WidgetCompositeUtil;
 import com.papao.books.ui.view.AbstractCView;
@@ -13,20 +14,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class CapitolView extends AbstractCView implements INavigation {
+public class NotitaView extends AbstractCView implements INavigation {
 
-    private Capitol capitol;
+    private Notita notita;
     private Table table;
     private int selIndex;
 
-    private Text textTitlu;
     private Text textNrPagina;
-    private Text textNrCapitol;
-    private Text textMotto;
+    private Text textContent;
 
-    public CapitolView(final Shell parent, final Capitol capitol, final Table table, final int viewMode) {
+    public NotitaView(final Shell parent, final Notita notita, final Table table, final int viewMode) {
         super(parent, viewMode);
-        this.capitol = capitol;
+        this.notita = notita;
         this.table = table;
         this.selIndex = table.getSelectionIndex();
 
@@ -41,31 +40,19 @@ public class CapitolView extends AbstractCView implements INavigation {
         getContainer().setLayout(getWidgetLayout());
 
         Composite temp = new Composite(getContainer(), SWT.NONE);
-        GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(4).applyTo(temp);
-        GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(temp);
-
-        new Label(temp, SWT.NONE).setText("Nr capitol");
-        this.textNrCapitol = new Text(temp, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrCapitol);
-
-        new Label(temp, SWT.NONE).setText("Titlu");
-        this.textTitlu = new Text(temp, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(textTitlu);
-
-        temp = new Composite(getContainer(), SWT.NONE);
         GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(2).applyTo(temp);
-        GridDataFactory.fillDefaults().span(2, 1).grab(false, false).applyTo(temp);
+        GridDataFactory.fillDefaults().span(2, 1).applyTo(temp);
 
         new Label(temp, SWT.NONE).setText("Nr pagina");
         this.textNrPagina = new Text(temp, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrPagina);
 
         Label tmp = new Label(getContainer(), SWT.NONE);
-        tmp.setText("Motto      ");
+        tmp.setText("Continut   ");
         GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(tmp);
 
-        this.textMotto = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        GridDataFactory.fillDefaults().grab(true, true).hint(300, 200).span(1, 1).applyTo(this.textMotto);
+        this.textContent = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        GridDataFactory.fillDefaults().grab(true, true).hint(300, 200).span(1, 1).applyTo(this.textContent);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
 
@@ -94,10 +81,8 @@ public class CapitolView extends AbstractCView implements INavigation {
     }
 
     private void populateFields() {
-        this.textNrCapitol.setText(StringUtils.defaultIfBlank(this.capitol.getNr(), ""));
-        this.textTitlu.setText(StringUtils.defaultIfBlank(this.capitol.getTitlu(), ""));
-        this.textNrPagina.setText(StringUtils.defaultIfBlank(this.capitol.getPagina(), ""));
-        this.textMotto.setText(StringUtils.defaultIfBlank(this.capitol.getMotto(), ""));
+        this.textNrPagina.setText(StringUtils.defaultIfBlank(this.notita.getNrPagina(), ""));
+        this.textContent.setText(StringUtils.defaultIfBlank(this.notita.getContent(), ""));
 
         if (!isViewEnabled()) {
             WidgetCompositeUtil.enableGUI(getContainer(), false);
@@ -110,20 +95,21 @@ public class CapitolView extends AbstractCView implements INavigation {
     public final void customizeView() {
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
-        setObjectName("capitol");
+        setObjectName("notita");
         setCreateUpperCompRightArea(true);
     }
 
     @Override
     protected void saveData() {
-        this.capitol = new Capitol(textNrCapitol.getText(), textTitlu.getText(), textNrPagina.getText(), textMotto.getText());
+        this.notita.setNrPagina(this.textNrPagina.getText());
+        this.notita.setContent(this.textContent.getText());
     }
 
     @Override
     protected boolean validate() {
         try {
-            if (StringUtils.isEmpty(this.textTitlu.getText())) {
-                BalloonNotification.showNotification(textTitlu, "Notificare", "Titlul nu este introdus!", 1500);
+            if (StringUtils.isEmpty(this.textContent.getText())) {
+                BalloonNotification.showNotification(textContent, "Notificare", "Continutul nu este introdus!", 1500);
                 return false;
             }
         } catch (Exception exc) {
@@ -132,8 +118,8 @@ public class CapitolView extends AbstractCView implements INavigation {
         return true;
     }
 
-    public Capitol getCapitol() {
-        return this.capitol;
+    public Notita getNotita() {
+        return notita;
     }
 
     @Override
@@ -155,7 +141,7 @@ public class CapitolView extends AbstractCView implements INavigation {
         }
 
         final TableItem item = this.table.getSelection()[0];
-        this.capitol = (Capitol) item.getData();
+        this.notita = (Notita) item.getData();
         populateFields();
     }
 
@@ -177,7 +163,7 @@ public class CapitolView extends AbstractCView implements INavigation {
             }
         }
         final TableItem item = this.table.getSelection()[0];
-        this.capitol = (Capitol) item.getData();
+        this.notita = (Notita) item.getData();
         populateFields();
     }
 }
