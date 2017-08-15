@@ -11,6 +11,7 @@ import com.papao.books.ui.interfaces.IAdd;
 import com.papao.books.ui.interfaces.IDelete;
 import com.papao.books.ui.interfaces.IModify;
 import com.papao.books.ui.util.ColorUtil;
+import com.papao.books.ui.util.ObjectUtil;
 import com.papao.books.ui.util.WidgetTableUtil;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
@@ -153,14 +154,13 @@ public class CartePersonajTableComposite extends Composite implements Observer, 
             return false;
         }
         TableItem item = table.getSelection()[0];
-        Personaj personaj = (Personaj) item.getData();
-        Personaj oldPersonaj = (Personaj) item.getData();
+        Personaj personaj = (Personaj) ObjectUtil.copy(item.getData());
         PersonajView personajView = new PersonajView(getShell(), personaj, table, AbstractView.MODE_MODIFY);
         personajView.open();
         if (personajView.getUserAction() == SWT.OK) {
             personaj = personajView.getPersonaj();
             showItem(table.getSelection()[0], personaj);
-            carte.getPersonaje().remove(oldPersonaj);
+            carte.getPersonaje().remove((Personaj) table.getSelection()[0].getData());
             carte.getPersonaje().add(personaj);
             ApplicationService.getBookController().save(carte);
             SWTeXtension.displayMessageI("Personajul a fost salvat cu succes!");

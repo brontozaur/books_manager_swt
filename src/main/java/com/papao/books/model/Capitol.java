@@ -1,9 +1,10 @@
 package com.papao.books.model;
 
-import com.papao.books.ui.custom.ComboElement;
 import com.sun.istack.internal.NotNull;
 
-public class Capitol implements ComboElement {
+import java.io.Serializable;
+
+public class Capitol implements Serializable {
 
     private String nr;
     @NotNull
@@ -47,11 +48,6 @@ public class Capitol implements ComboElement {
             return "";
         }
         return pagina;
-    }
-
-    @Override
-    public String getText() {
-        return getTitlu();
     }
 
     @Override

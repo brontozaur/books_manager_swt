@@ -1,10 +1,11 @@
 package com.papao.books.model;
 
-import com.papao.books.ui.custom.ComboElement;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-public class Citat {
+import java.io.Serializable;
+
+public class Citat implements Serializable {
 
     private String nrPagina;
     private String content;

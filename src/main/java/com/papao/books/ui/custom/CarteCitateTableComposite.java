@@ -13,6 +13,7 @@ import com.papao.books.ui.interfaces.IAdd;
 import com.papao.books.ui.interfaces.IDelete;
 import com.papao.books.ui.interfaces.IModify;
 import com.papao.books.ui.util.ColorUtil;
+import com.papao.books.ui.util.ObjectUtil;
 import com.papao.books.ui.util.WidgetTableUtil;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
@@ -156,16 +157,14 @@ public class CarteCitateTableComposite extends Composite implements Observer, IA
             return false;
         }
         TableItem item = table.getSelection()[0];
-        Citat citat = (Citat) item.getData();
+        Citat citat = (Citat) ObjectUtil.copy(item.getData());
         CitatView citatView = new CitatView(getShell(), citat, table, AbstractView.MODE_MODIFY);
         citatView.open();
         if (citatView.getUserAction() == SWT.OK) {
+            UserActivity userActivity = UserController.getUserActivity(EncodeLive.getIdUser(), carte.getId());
+            userActivity.getCitate().remove((Citat)table.getSelection()[0].getData());
             citat = citatView.getCitat();
             showItem(table.getSelection()[0], citat);
-            UserActivity userActivity = UserController.getUserActivity(EncodeLive.getIdUser(), carte.getId());
-            if (userActivity.getCitate().contains(citat)) {
-                userActivity.getCitate().remove(citat);
-            }
             userActivity.getCitate().add(citat);
             UserController.saveUserActivity(userActivity);
             SWTeXtension.displayMessageI("Citatul a fost salvat cu succes!");

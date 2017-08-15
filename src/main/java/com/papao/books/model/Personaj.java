@@ -1,8 +1,8 @@
 package com.papao.books.model;
 
-import com.papao.books.ui.custom.ComboElement;
+import java.io.Serializable;
 
-public class Personaj implements ComboElement{
+public class Personaj implements Serializable {
 
     private String nume;
     private String rol;
@@ -42,16 +42,11 @@ public class Personaj implements ComboElement{
     }
 
     @Override
-    public String getText() {
-        return this.nume;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Personaj)) {
             return false;
         }
-        return ((Personaj)obj).getNume().equals(this.nume);
+        return ((Personaj) obj).getNume().equals(this.nume);
     }
 
     @Override

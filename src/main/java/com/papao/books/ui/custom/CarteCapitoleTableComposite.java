@@ -11,6 +11,7 @@ import com.papao.books.ui.interfaces.IAdd;
 import com.papao.books.ui.interfaces.IDelete;
 import com.papao.books.ui.interfaces.IModify;
 import com.papao.books.ui.util.ColorUtil;
+import com.papao.books.ui.util.ObjectUtil;
 import com.papao.books.ui.util.WidgetTableUtil;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
@@ -164,14 +165,13 @@ public class CarteCapitoleTableComposite extends Composite implements Observer, 
             return false;
         }
         TableItem item = table.getSelection()[0];
-        Capitol capitol = (Capitol) item.getData();
-        Capitol oldCapitol = (Capitol) item.getData();
+        Capitol capitol = (Capitol) ObjectUtil.copy(item.getData());
         CapitolView capitolView = new CapitolView(getShell(), capitol, table, AbstractView.MODE_MODIFY);
         capitolView.open();
         if (capitolView.getUserAction() == SWT.OK) {
+            carte.getCapitole().remove((Capitol)table.getSelection()[0].getData());
             capitol = capitolView.getCapitol();
             showItem(table.getSelection()[0], capitol);
-            carte.getCapitole().remove(oldCapitol);
             carte.getCapitole().add(capitol);
             ApplicationService.getBookController().save(carte);
             SWTeXtension.displayMessageI("Capitolul a fost salvat cu succes!");

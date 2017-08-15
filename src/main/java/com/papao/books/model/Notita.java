@@ -3,7 +3,9 @@ package com.papao.books.model;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-public class Notita {
+import java.io.Serializable;
+
+public class Notita implements Serializable{
 
     private String nrPagina;
     private String content;

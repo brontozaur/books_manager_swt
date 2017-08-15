@@ -13,6 +13,7 @@ import com.papao.books.ui.interfaces.IAdd;
 import com.papao.books.ui.interfaces.IDelete;
 import com.papao.books.ui.interfaces.IModify;
 import com.papao.books.ui.util.ColorUtil;
+import com.papao.books.ui.util.ObjectUtil;
 import com.papao.books.ui.util.WidgetTableUtil;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
@@ -153,16 +154,14 @@ public class CarteNotiteTableComposite extends Composite implements Observer, IA
             return false;
         }
         TableItem item = table.getSelection()[0];
-        Notita notita = (Notita) item.getData();
+        Notita notita = (Notita) ObjectUtil.copy(item.getData());
         NotitaView notitaView = new NotitaView(getShell(), notita, table, AbstractView.MODE_MODIFY);
         notitaView.open();
         if (notitaView.getUserAction() == SWT.OK) {
+            UserActivity userActivity = UserController.getUserActivity(EncodeLive.getIdUser(), carte.getId());
+            userActivity.getNotite().remove((Notita) table.getSelection()[0].getData());
             notita = notitaView.getNotita();
             showItem(table.getSelection()[0], notita);
-            UserActivity userActivity = UserController.getUserActivity(EncodeLive.getIdUser(), carte.getId());
-            if (userActivity.getNotite().contains(notita)) {
-                userActivity.getNotite().remove(notita);
-            }
             userActivity.getNotite().add(notita);
             UserController.saveUserActivity(userActivity);
             SWTeXtension.displayMessageI("Notița a fost salvată cu succes!");
