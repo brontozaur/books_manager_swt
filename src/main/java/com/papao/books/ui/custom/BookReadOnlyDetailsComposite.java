@@ -348,9 +348,14 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         if (coverDescriptor != null && coverDescriptor.getId() != null) {
             GridFSDBFile dbFile = ApplicationController.getDocumentData(coverDescriptor.getId());
             if (dbFile != null) {
-                imageSelectorComposite.setImageId((ObjectId) dbFile.getId());
-                image = new Image(Display.getDefault(), dbFile.getInputStream());
-                imageName = dbFile.getFilename();
+                try {
+                    imageSelectorComposite.setImageId((ObjectId) dbFile.getId());
+                    image = new Image(Display.getDefault(), dbFile.getInputStream());
+                    imageName = dbFile.getFilename();
+                } catch (Exception exc) {
+                    logger.error(exc.getMessage(), exc);
+                    SWTeXtension.displayMessageE(exc.getMessage(), exc);
+                }
             }
         }
         imageSelectorComposite.setImage(image, imageName);

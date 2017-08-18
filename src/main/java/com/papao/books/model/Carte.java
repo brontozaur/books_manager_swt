@@ -1,6 +1,5 @@
 package com.papao.books.model;
 
-import com.sun.istack.internal.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -26,10 +25,8 @@ public class Carte extends AuditObject implements Serializable {
     private ObjectId id;
 
     @Indexed
-    @NotNull
     private List<ObjectId> idAutori;
     @Indexed
-    @NotNull
     private String titlu;
     private String subtitlu;
     private String editura;

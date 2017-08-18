@@ -1,13 +1,10 @@
 package com.papao.books.model;
 
-import com.sun.istack.internal.NotNull;
-
 import java.io.Serializable;
 
 public class Capitol implements Serializable {
 
     private String nr;
-    @NotNull
     private String titlu;
     private String motto;
     private String pagina;
