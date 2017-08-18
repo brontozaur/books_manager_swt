@@ -67,7 +67,7 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByPretIsNullOrPret_DataCumparariiIsNullOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(Pageable pageable);
 
-    Page<Carte> getByPret_DataCumparariiIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(Date dataCumpararii, Pageable pageable);
+    Page<Carte> getByPret_DataCumparariiIsBetweenOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(Date dateMin, Date dateMax, Pageable pageable);
 
     Page<Carte> getByCreatedAtIsNullOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(Pageable pageable);
 
