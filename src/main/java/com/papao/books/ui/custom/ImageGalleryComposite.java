@@ -71,6 +71,9 @@ public class ImageGalleryComposite extends Observable implements Observer {
             BookController controller = (BookController) o;
             populateFields(controller.getSearchResult().getContent());
         } else if (o instanceof ImageViewComposite) {
+            if (this.selected == o) {
+                return;
+            }
             if (this.selected != null) {
                 this.selected.resetSelection(true);
             }
