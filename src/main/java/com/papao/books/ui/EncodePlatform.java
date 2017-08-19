@@ -1789,14 +1789,24 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     }
 
     public boolean modify(boolean createDuplicate) {
+        boolean galleryTabSelected = mainRightTabFolder.getSelectionIndex() == 1;
+        Carte carte;
         CarteView view;
-        if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
-            return false;
-        }
-        Carte carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
-        if (carte == null) {
-            SWTeXtension.displayMessageI("Cartea selectata este invalida!");
-            return false;
+        if (galleryTabSelected) {
+            carte = this.galleryComposite.getSelected();
+            if (carte == null) {
+                SWTeXtension.displayMessageI("Nu ati selectat nici o carte!");
+
+            }
+        } else {
+            if ((this.tableViewer == null) || this.tableViewer.getControl().isDisposed() || (this.tableViewer.getTable().getSelectionCount() <= 0)) {
+                return false;
+            }
+            carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
+            if (carte == null) {
+                SWTeXtension.displayMessageI("Cartea selectata este invalida!");
+                return false;
+            }
         }
         Carte carteDatabase = ApplicationService.getBookController().findOne(carte.getId());
         if (carteDatabase == null) {
@@ -1814,13 +1824,17 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (view.getUserAction() == SWT.CANCEL) {
             return true;
         }
-        if (createDuplicate) {
-            tableViewer.add(view.getCarte());
-            tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+        if (galleryTabSelected) {
+            galleryComposite.populateFields(view.getCarte());
         } else {
-            tableViewer.refresh(view.getCarte(), true, true);
-            tableViewer.setSelection(new StructuredSelection(view.getCarte()));
-            tableViewer.getTable().getItem(((List<Carte>) tableViewer.getInput()).indexOf(view.getCarte())).setData(view.getCarte());
+            if (createDuplicate) {
+                tableViewer.add(view.getCarte());
+                tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+            } else {
+                tableViewer.refresh(view.getCarte(), true, true);
+                tableViewer.setSelection(new StructuredSelection(view.getCarte()));
+                tableViewer.getTable().getItem(((List<Carte>) tableViewer.getInput()).indexOf(view.getCarte())).setData(view.getCarte());
+            }
         }
         displayBookData();
         return true;

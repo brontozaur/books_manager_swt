@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.springframework.scheduling.annotation.Async;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -91,6 +92,13 @@ public class ImageGalleryComposite extends Observable implements Observer {
         for (Control control : mainComp.getChildren()) {
             control.dispose();
         }
+    }
+
+    public void populateFields(Carte carte) {
+        clearAll();
+        List<Carte> carti = new ArrayList<>();
+        carti.add(carte);
+        populateFields(carti);
     }
 
     @Async
