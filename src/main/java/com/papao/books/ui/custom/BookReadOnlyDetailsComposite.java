@@ -55,6 +55,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private LinkedInSimpleValuesComposite taguriComposite;
     private Label createdAtLabel;
     private Label updatedAtLabel;
+    private Label cumparataLabel;
     private Text textId;
     private Text textIdUserActivity;
     private Text textLocatie;
@@ -182,6 +183,9 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         label("Modificata la", temp);
         updatedAtLabel = new Label(temp, SWT.NONE);
 
+        label("Cumpărată la", temp);
+        cumparataLabel = new Label(temp, SWT.NONE);
+
         label("", temp);
         label("", temp);
 
@@ -296,9 +300,11 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         taguriComposite.setValues(carte.getTags());
         final String dateFormat = SettingsController.getString(StringSetting.APP_DATE_FORMAT) + " " + SettingsController.getString(StringSetting.APP_TIME_FORMAT);
         final DateFormat df = new SimpleDateFormat(dateFormat);
+        final DateFormat shortDateFormat = new SimpleDateFormat(SettingsController.getString(StringSetting.APP_DATE_FORMAT));
 
         createdAtLabel.setText(carte.getCreatedAt() != null ? df.format(carte.getCreatedAt()) : "");
         updatedAtLabel.setText(carte.getUpdatedAt() != null ? df.format(carte.getUpdatedAt()) : "");
+        cumparataLabel.setText(carte.getPret() != null && carte.getPret().getDataCumpararii() != null ? shortDateFormat.format(carte.getPret().getDataCumpararii()) : "");
 
         UserActivity userActivity = UserController.getUserActivity(EncodeLive.getIdUser(), carte.getId());
         CarteCitita carteCitita = null;
