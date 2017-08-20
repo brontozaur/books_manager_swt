@@ -490,6 +490,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         } else if ("baza de date".equals(comboSearch.getText())) {
             searchInDatabase(searchText.getText().trim());
         }
+        displayBookData();
     }
 
     private void searchInDatabase(String text) {

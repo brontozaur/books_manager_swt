@@ -2,7 +2,6 @@ package com.papao.books.ui.custom;
 
 import com.novocode.naf.swt.custom.BalloonNotification;
 import com.papao.books.model.Citat;
-import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.interfaces.INavigation;
 import com.papao.books.ui.util.WidgetCompositeUtil;
 import com.papao.books.ui.view.AbstractCView;
@@ -31,6 +30,8 @@ public class CitatView extends AbstractCView implements INavigation {
 
         addComponents();
         populateFields();
+
+        textNrPagina.setFocus();
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }

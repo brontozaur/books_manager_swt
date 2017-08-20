@@ -195,7 +195,7 @@ public class CarteCitateTableComposite extends Composite implements Observer, IA
     }
 
     private void populateFields() {
-        if (carte == null) {
+        if (carte == null || carte.getId() == null) {
             table.clearAll();
             enableOps();
             return;
