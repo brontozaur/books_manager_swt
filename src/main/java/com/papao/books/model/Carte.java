@@ -5,7 +5,6 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,8 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Document(collection = "carte")
-@CompoundIndexes({
-        @CompoundIndex(name = "uniqueAutoriAndTitleAndVolumAndEditura", def = "{'idAutori': 1, 'titlu': 1, 'volum': 1, 'editura': 1}", unique = true)})
+@CompoundIndex(name = "uniqueAutoriAndTitleAndVolumAndEdituraAndSerieNumeAndSerieVolum", def = "{'idAutori': 1, 'titlu': 1, 'volum': 1, 'editura': 1, 'serie.nume': 1, 'serie.volum': 1}", unique = true)
 public class Carte extends AuditObject implements Serializable {
 
     public static String REPLACEMENT_FOR_NOT_SET = "";

@@ -52,6 +52,7 @@ public class SerializareCompletaView {
         boolean showBorder;
         boolean showNrCrt;
         boolean showTitle;
+        boolean simpleExport;
         String titleName;
         String fileName;
         boolean serializareImagini;
@@ -70,8 +71,15 @@ public class SerializareCompletaView {
                 fileName = view.fileName;
                 serializareImagini = view.serializareImagini;
                 selectedImagesFolder = view.selectedImagesFolder;
-                selectedFields = view.selectedFields;
+                simpleExport = view.simpleExport;
                 sortProperties = view.sortProperties;
+                if (simpleExport) {
+                    selectedFields = new ArrayList<>();
+                    selectedFields.add(new FieldColumnValue("autori", SWT.LEFT, 100, 0));
+                    selectedFields.add(new FieldColumnValue("titluVolumSiSerie", SWT.LEFT, 100, 0));
+                } else {
+                    selectedFields = view.selectedFields;
+                }
             } else {
                 return;
             }
@@ -123,18 +131,23 @@ public class SerializareCompletaView {
                 }
             }
 
-            if (sortProperties != null && !sortProperties.isEmpty()) {
+            if (simpleExport) {
                 exportBooks.sort((o1, o2) -> {
                     try {
                         StringBuilder complexPropertyA = new StringBuilder();
                         StringBuilder complexPropertyB = new StringBuilder();
-                        for (String sortProperty : sortProperties) {
-                            Method method = ObjectUtil.getMethod(CarteExport.class, "get" + StringUtils.capitalize(sortProperty));
-                            String a = (String) method.invoke(o1, (Object[]) null);
-                            String b = (String) method.invoke(o2, (Object[]) null);
-                            complexPropertyA.append(a != null ? a : " ");
-                            complexPropertyB.append(b != null ? b : " ");
-                        }
+                        //autori
+                        complexPropertyA.append(o1.getAutori() != null ? o1.getAutori() : "");
+                        complexPropertyB.append(o2.getAutori() != null ? o2.getAutori() : "");
+                        //serie
+                        complexPropertyA.append(o1.getSerie() != null ? o1.getSerie() : "");
+                        complexPropertyB.append(o2.getSerie() != null ? o2.getSerie() : "");
+                        //titlu
+                        complexPropertyA.append(o1.getTitlu() != null ? o1.getTitlu() : "");
+                        complexPropertyB.append(o2.getTitlu() != null ? o2.getTitlu() : "");
+                        //volum
+                        complexPropertyA.append(o1.getVolum() != null ? o1.getVolum() : "");
+                        complexPropertyB.append(o2.getVolum() != null ? o2.getVolum() : "");
                         return complexPropertyA.toString().compareToIgnoreCase(complexPropertyB.toString());
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
@@ -143,7 +156,28 @@ public class SerializareCompletaView {
                     return 0;
                 });
             } else {
-                exportBooks.sort(Comparator.comparing(CarteExport::getAutori));
+                if (sortProperties != null && !sortProperties.isEmpty()) {
+                    exportBooks.sort((o1, o2) -> {
+                        try {
+                            StringBuilder complexPropertyA = new StringBuilder();
+                            StringBuilder complexPropertyB = new StringBuilder();
+                            for (String sortProperty : sortProperties) {
+                                Method method = ObjectUtil.getMethod(CarteExport.class, "get" + StringUtils.capitalize(sortProperty));
+                                String a = (String) method.invoke(o1, (Object[]) null);
+                                String b = (String) method.invoke(o2, (Object[]) null);
+                                complexPropertyA.append(a != null ? a : "");
+                                complexPropertyB.append(b != null ? b : "");
+                            }
+                            return complexPropertyA.toString().compareToIgnoreCase(complexPropertyB.toString());
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                            SWTeXtension.displayMessageE(e.getMessage(), e);
+                        }
+                        return 0;
+                    });
+                } else {
+                    exportBooks.sort(Comparator.comparing(CarteExport::getAutori));
+                }
             }
 
             dlgClassic.setMax(exportBooks.size());
@@ -175,6 +209,11 @@ public class SerializareCompletaView {
                     tf.nextCell();
                     Method method = ObjectUtil.getMethod(CarteExport.class, "get" + StringUtils.capitalize(selectedFields.get(j).getFieldName()));
                     String value = (String) method.invoke(carteExport, (Object[]) null);
+                    if (simpleExport) {
+                        if (j == 0) {
+                            value += " - ";
+                        }
+                    }
                     tf.addLine(value);
                 }
             }

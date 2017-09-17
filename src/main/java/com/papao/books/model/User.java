@@ -3,12 +3,10 @@ package com.papao.books.model;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "user")
-@CompoundIndexes({
-        @CompoundIndex(name = "uniqueNumeAndPrenume", def = "{'nume': 1, 'prenume': 1}", unique = true)})
+@CompoundIndex(name = "uniqueNumeAndPrenume", def = "{'nume': 1, 'prenume': 1}", unique = true)
 public class User extends AuditObject {
 
     @Id

@@ -31,9 +31,10 @@ public class SerializareCompletaOptionsView extends AbstractExportView implement
     private final static String[] ITEMS = new String[]{
             ITEM_OPTIONS, ITEM_TABLE_COLS};
 
-    boolean showBorder = true;
-    boolean showNrCrt = true;
-    boolean showTitle = true;
+    boolean showBorder = false;
+    boolean showNrCrt = false;
+    boolean showTitle = false;
+    boolean simpleExport = true;
     String titleName = "Carti";
     String fileName;
     boolean serializareImagini = false;
@@ -86,6 +87,7 @@ public class SerializareCompletaOptionsView extends AbstractExportView implement
         private Button buttonShowNrCrt;
         private Button buttonExportPathAuto;
         private Button buttonShowBorder;
+        private Button buttonSimpleExport;
         private Button buttonShowTitle;
         private Text textTitleName;
         private DirectorySelectorComposite dscSerializareImagini;
@@ -116,11 +118,22 @@ public class SerializareCompletaOptionsView extends AbstractExportView implement
             labelName.setFont(FontUtil.TAHOMA12_BOLD);
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(labelName);
 
+            this.buttonSimpleExport = new Button(this, SWT.CHECK);
+            this.buttonSimpleExport.setText("Export simplu");
+            WidgetCursorUtil.addHandCursorListener(this.buttonSimpleExport);
+
             groupOptions = new Group(this, SWT.NONE);
             groupOptions.setText("Optiuni export");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             groupOptions.setLayoutData(gd);
             groupOptions.setLayout(new GridLayout(1, true));
+
+            buttonSimpleExport.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    WidgetCompositeUtil.enableGUI(groupOptions, !buttonSimpleExport.getSelection());
+                }
+            });
 
             temp = new Label(groupOptions, SWT.NONE);
             temp.setText("Nume fisier");
@@ -198,6 +211,7 @@ public class SerializareCompletaOptionsView extends AbstractExportView implement
             selectedImagesFolder = dscSerializareImagini.getSelectedDirPath();
             titleName = this.textTitleName.getText();
             fileName = this.dsc.getSelectedDirPath().concat(numeFisier);
+            simpleExport = buttonSimpleExport.getSelection();
         }
 
         @Override

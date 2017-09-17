@@ -38,6 +38,8 @@ public class CarteExport {
     private String traducatori;
     private String traducereDin;
     private String locatie;
+    private String volum;
+    private String titluVolumSiSerie;
 
     public CarteExport(Carte carte) {
         this.id = carte.getId() != null ? carte.getId().toString() : "";
@@ -51,6 +53,7 @@ public class CarteExport {
         this.inaltime = carte.getInaltime() + "";
         this.greutate = carte.getGreutate() + "";
         this.nrPagini = carte.getNrPagini() + "";
+        this.volum = carte.getVolum() + "";
         this.serie = carte.getSerie().getFormattedValue();
         this.isbn = carte.getIsbn();
         this.autoriIlustratii = Arrays.deepToString(carte.getAutoriIlustratii().toArray());
@@ -71,6 +74,7 @@ public class CarteExport {
         this.traducatori = Arrays.deepToString(carte.getTraducatori().toArray());
         this.traducereDin = carte.getTraducereDin().name();
         this.locatie = carte.getLocatie();
+        this.titluVolumSiSerie = carte.getTitluVolumSiSerie();
     }
 
     public String getId() {
@@ -195,5 +199,13 @@ public class CarteExport {
 
     public String getLocatie() {
         return locatie;
+    }
+
+    public String getVolum() {
+        return volum;
+    }
+
+    public String getTitluVolumSiSerie() {
+        return titluVolumSiSerie;
     }
 }
