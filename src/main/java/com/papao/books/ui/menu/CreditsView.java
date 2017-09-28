@@ -50,7 +50,7 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 		SWT.NORMAL);
 	private AnnimationThread annimationThread;
 	private static final String[] tabNames = new String[] {
-			"Aplicatie", "Sistem", "Setari", "Resurse", "Versiuni", "Credits" };
+			"Aplicație", "Sistem", "Setări", "Resurse", "Versiuni", "Credits" };
 
 	private final static int IDX_APLICATIE = 0;
 	private final static int IDX_SISTEM = 1;

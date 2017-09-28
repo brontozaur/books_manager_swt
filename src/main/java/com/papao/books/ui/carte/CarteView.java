@@ -223,7 +223,7 @@ public class CarteView extends AbstractCSaveView {
         final Composite copertaSpateComposite = createCopertaSpateTab(mainComp);
 
         itemBackCover = new ToolItem(toolBar, SWT.RADIO);
-        itemBackCover.setText("Coperta spate");
+        itemBackCover.setText("Copertă spate");
         itemBackCover.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemBackCover.addListener(SWT.Selection, new Listener() {
             @Override
@@ -345,7 +345,7 @@ public class CarteView extends AbstractCSaveView {
         this.textIsbn = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(this.textIsbn);
 
-        label(mainCompLeft, "Editura");
+        label(mainCompLeft, "Editură");
         this.textEditura = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).span(3, 1).applyTo(this.textEditura);
         ContentProposalProvider.addContentProposal(textEditura, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editura"));
@@ -425,7 +425,7 @@ public class CarteView extends AbstractCSaveView {
         new Label(comp, SWT.NONE);
         new Label(comp, SWT.NONE);
 
-        label(comp, "Editura");
+        label(comp, "Editură");
         this.textEditiaPrincepsEditura = new Text(comp, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).span(5, 1).hint(150, SWT.DEFAULT).applyTo(this.textEditiaPrincepsEditura);
         ContentProposalProvider.addContentProposal(textEditiaPrincepsEditura, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editiaOriginala.editura"));
@@ -568,7 +568,7 @@ public class CarteView extends AbstractCSaveView {
         this.compositeGenLiterar = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "genLiterar"), carte.getGenLiterar());
         ((GridData) compositeGenLiterar.getLayoutData()).horizontalSpan = 7;
 
-        label(comp, "Autori ilustratii");
+        label(comp, "Autori ilustrații");
         this.compositeAutoriIlustratii = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "autoriIlustratii"), carte.getAutoriIlustratii());
         ((GridData) compositeAutoriIlustratii.getLayoutData()).horizontalSpan = 7;
         ((GridData) compositeAutoriIlustratii.getLayoutData()).grabExcessHorizontalSpace = true;
@@ -591,7 +591,7 @@ public class CarteView extends AbstractCSaveView {
         //read only combos receive focus on OSX, only after enabling
         // System Preferences -> Keyboard -> Keyboard Shortcuts -> All Controls
         //see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376039
-        label(comp, "Limba");
+        label(comp, "Limbă");
         comboLimba = new Combo(comp, SWT.READ_ONLY);
         comboLimba.setItems(Limba.getComboItems());
         label(comp, "");

@@ -45,12 +45,12 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
 
     private final Map<String, IConfig> mapSettings = new TreeMap<String, IConfig>();
 
-    private final static String ITEM_PREFERINTE_VIZUALE = "Preferinte vizuale";
+    private final static String ITEM_PREFERINTE_VIZUALE = "Preferințe vizuale";
     private final static String ITEM_SYSTEM_TRAY = "System Tray";
-    private final static String ITEM_APPLICATIE = "Aplicatie";
-    private final static String ITEM_MAIN_PERSPECTIVE = "Perspectiva";
+    private final static String ITEM_APPLICATIE = "Aplicație";
+    private final static String ITEM_MAIN_PERSPECTIVE = "Perspectivă";
     private final static String ITEM_RAPOARTE = "Rapoarte";
-    private final static String ITEM_ROOT = "Categorii setari";
+    private final static String ITEM_ROOT = "Categorii setări";
 
     private final static String[] ITEMS = new String[]{
             AppConfigView.ITEM_APPLICATIE,
@@ -823,21 +823,21 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
         @Override
         public void createContents() {
             Group group = new Group(this, SWT.NONE);
-            group.setText("Perspectiva principala");
+            group.setText("Perspectivă principală");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(group);
             group.setLayout(new GridLayout(2, false));
 
             this.buttonShowGallery = new Button(group, SWT.CHECK);
-            this.buttonShowGallery.setText("afisare galerie carti");
+            this.buttonShowGallery.setText("afișare galerie cărți");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowGallery);
             WidgetCursorUtil.addHandCursorListener(this.buttonShowGallery);
 
             this.buttonAutorLink = new Button(group, SWT.CHECK);
-            this.buttonAutorLink.setText("click suport pt autor");
+            this.buttonAutorLink.setText("click suport pt. autor");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonAutorLink);
             WidgetCursorUtil.addHandCursorListener(this.buttonAutorLink);
 
-            new Label(group, SWT.NONE).setText("Motor cautare:");
+            new Label(group, SWT.NONE).setText("Motor căutare:");
             this.comboSearchEngine = new Combo(group, SWT.READ_ONLY);
             this.comboSearchEngine.setItems(SearchEngine.getComboItems());
             WidgetCursorUtil.addHandCursorListener(this.comboSearchEngine);

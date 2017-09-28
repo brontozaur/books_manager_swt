@@ -755,7 +755,7 @@ public abstract class AbstractView extends Observable {
                 }
                 if (StringUtils.isNotEmpty(this.objectName)) {
                     if (StringUtils.isEmpty(getShellText())) {
-                        setShellText("Adaugare " + this.objectName);
+                        setShellText("Adăugare " + this.objectName);
                     }
                     if (StringUtils.isEmpty(getBigViewMessage())) {
                         setBigViewMessage(StringUtil.capitalizeCharAtIdx(this.objectName, 0));

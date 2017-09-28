@@ -50,7 +50,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
     private final static int IDX_NUME = 0;
     private final static int IDX_TITLU = 1;
 
-    private static final String[] BOOK_COLS = new String[]{"Titlu", "Rating", "Editura"};
+    private static final String[] BOOK_COLS = new String[]{"Titlu", "Rating", "Editură"};
     private final static int IDX_BOOK_TITLE = 0;
     private final static int IDX_BOOK_RATING = 1;
     private final static int IDX_BOOK_EDITURA = 2;

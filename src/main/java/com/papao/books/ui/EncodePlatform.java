@@ -76,7 +76,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private TableViewer tableViewer;
     private CTabFolder mainRightTabFolder;
 
-    private static final String[] COLS = new String[]{"Autor", "Titlu", "Subtitlu", "Rating", "Editura", "An aparitie", "Limba"};
+    private static final String[] COLS = new String[]{"Autor", "Titlu", "Subtitlu", "Rating", "Editură", "An aparitie", "Limbă"};
     private final static int IDX_AUTOR = 0;
     private final static int IDX_TITLU = 1;
     private final static int IDX_SUBTITLU = 2;
@@ -728,7 +728,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
             case Colectie: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "colectie", false, true);
-                createTreeNodes(wrapper, "Colectii");
+                createTreeNodes(wrapper, "Colecții");
                 break;
             }
             case Pret: {
@@ -743,7 +743,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
             case Locatie: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "locatie", false, true);
-                createTreeNodes(wrapper, "Locatii");
+                createTreeNodes(wrapper, "Locații");
                 break;
             }
             case Taguri: {
@@ -796,12 +796,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
             case Traducator: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctArrayPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "traducatori");
-                createTreeNodes(wrapper, "Traducatori");
+                createTreeNodes(wrapper, "Traducători");
                 break;
             }
             case An_aparitie: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "anAparitie", false, true);
-                createTreeNodes(wrapper, "Ani aparitie");
+                createTreeNodes(wrapper, "Ani apariție");
                 break;
             }
             case Limba: {
@@ -816,7 +816,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
             case Tip_coperta: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "tipCoperta", false, true);
-                createTreeNodes(wrapper, " Tipuri coperta");
+                createTreeNodes(wrapper, " Tipuri copertă");
                 break;
             }
             case Titlu: {
