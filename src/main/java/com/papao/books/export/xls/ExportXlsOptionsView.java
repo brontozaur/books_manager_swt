@@ -79,7 +79,7 @@ public class ExportXlsOptionsView extends AbstractExportView {
         setShellImage(AppImages.getImage16(AppImages.IMG_EXCEL));
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
         setBigViewImage(AppImages.getImage24(AppImages.IMG_EXCEL));
-        setBigViewMessage("Configurare export date in format MS Excel");
+        setBigViewMessage("Configurare export date în format MS Excel");
         setShowSaveOKMessage(false);
     }
 
@@ -118,13 +118,13 @@ public class ExportXlsOptionsView extends AbstractExportView {
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(labelName);
 
             groupOptions = new Group(this, SWT.NONE);
-            groupOptions.setText("Optiuni export");
+            groupOptions.setText("Opțiuni export");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             groupOptions.setLayoutData(gd);
             groupOptions.setLayout(new GridLayout(1, true));
 
             temp = new Label(groupOptions, SWT.NONE);
-            temp.setText("Nume fisier");
+            temp.setText("Nume fișier");
             GridDataFactory.fillDefaults().applyTo(temp);
 
             Composite comp = new Composite(groupOptions, SWT.NONE);
@@ -145,7 +145,7 @@ public class ExportXlsOptionsView extends AbstractExportView {
             this.comboExtension.addListener(SWT.FocusIn, this);
 
             ExportXlsOptionsView.this.buttonExportPathAuto = new Button(groupOptions, SWT.CHECK);
-            ExportXlsOptionsView.this.buttonExportPathAuto.setText("cale automata export");
+            ExportXlsOptionsView.this.buttonExportPathAuto.setText("cale automată export");
             ExportXlsOptionsView.this.buttonExportPathAuto.addListener(SWT.Selection, this);
 
             this.dsc = new DirectorySelectorComposite(groupOptions);
@@ -169,13 +169,13 @@ public class ExportXlsOptionsView extends AbstractExportView {
             this.buttonAutoResizeCols = new Button(groupOptions, SWT.CHECK);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).span(((GridLayout) groupOptions.getLayout()).numColumns,
                     1).applyTo(this.buttonAutoResizeCols);
-            this.buttonAutoResizeCols.setText("Redimensionare automata a coloanelor");
+            this.buttonAutoResizeCols.setText("Redimensionare automată a coloanelor");
             WidgetCursorUtil.addHandCursorListener(this.buttonAutoResizeCols);
 
             this.buttonShowHeader = new Button(groupOptions, SWT.CHECK);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).span(((GridLayout) groupOptions.getLayout()).numColumns,
                     1).applyTo(this.buttonShowHeader);
-            this.buttonShowHeader.setText("Afisare header (primele 3 linii din fiecare sheet)");
+            this.buttonShowHeader.setText("Afișare header (primele 3 linii din fiecare sheet)");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowHeader);
         }
 
@@ -227,34 +227,34 @@ public class ExportXlsOptionsView extends AbstractExportView {
         public final boolean validate() {
             if (this.comboExtension.getText().equals(ExportXls.XLSX_EXTENSION)) {
                 if (ExportXlsOptionsView.this.settings.getNrOfItems() > ExportXls.MAX_ELEMENTS_FOR_XLSX) {
-                    if (SWTeXtension.displayMessageQ("Ati selectat formatul Excel 2007(.xlsx) si va fi generat un fisier care va contine "
+                    if (SWTeXtension.displayMessageQ("Ați selectat formatul Excel 2007(.xlsx) și va fi generat un fișier care va conține "
                                     + ExportXlsOptionsView.this.settings.getNrOfItems()
-                                    + " elemente. Aceste conditii necesita o cantitate considerabila de memorie pentru a se putea efectua. Continuati?",
-                            "Posibila operatie de lunga durata") == SWT.NO) {
+                                    + " elemente. Aceste condiții necesită o cantitate considerabila de memorie pentru a se putea efectua. Continuați?",
+                            "Posibilă operație de lungă durată") == SWT.NO) {
                         return false;
                     }
                 }
             }
             if (this.buttonAutoResizeCols.getSelection()
                     && (ExportXlsOptionsView.this.settings.getNrOfItems() > ExportXls.MAX_ELEMENTS_FOR_AUTO_RESIZE)) {
-                if (SWTeXtension.displayMessageQ("Ajustarea automata a dimensiunilor coloanelor pentru mai mult de "
+                if (SWTeXtension.displayMessageQ("Ajustarea automată a dimensiunilor coloanelor pentru mai mult de "
                                 + ExportXls.MAX_ELEMENTS_FOR_AUTO_RESIZE
-                                + " elemente poate fi o operatie lenta. Doriti sa continuati?",
-                        "Posibila operatie de lunga durata") == SWT.NO) {
+                                + " elemente poate fi o operație lentă. Doriți să continuați?",
+                        "Posibilă operație de lungă durată") == SWT.NO) {
                     return false;
                 }
             }
             if (ExportXlsOptionsView.this.settings.getNrOfItems() > ExportXls.MAX_ROWS) {
                 if (SWTeXtension.displayMessageQ("Se vor genera "
                                 + ((ExportXlsOptionsView.this.settings.getNrOfItems() / ExportXls.MAX_ROWS) + 1)
-                                + " sheet-uri distincte pentru salvarea informatiilor."
+                                + " sheet-uri distincte pentru salvarea informațiilor."
                                 + " Este necesar ca o cantitate de aproximativ "
                                 + (130 * ((ExportXlsOptionsView.this.settings.getNrOfItems() / ExportXls.MAX_ROWS) + 1))
-                                + " MB RAM sa fie alocata aplicatiei, "
-                                + "pentru ca exportul sa se poata realiza. "
-                                + "(Valoarea sugerata poate sa difere in functie de numarul de coloane din "
-                                + "tabela, lungimea textului afisat in celule si configuratia sistemului dvs.) Continuam?",
-                        "Posibila operatie de lunga durata") == SWT.NO) {
+                                + " MB RAM să fie alocată aplicației, "
+                                + "pentru ca exportul să se poată realiza. "
+                                + "(Valoarea sugerata poate să difere în funcție de numărul de coloane din "
+                                + "tabelă, lungimea textului afișat în celule și configurația sistemului dvs.) Continuăm?",
+                        "Posibilă operație de lungă durată") == SWT.NO) {
                     return false;
                 }
             }

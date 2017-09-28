@@ -382,7 +382,7 @@ public final class ExportXls {
             dbRap.setType(ExportType.XLS);
             ReportController.save(dbRap);
 
-            SWTeXtension.displayMessageI("Fisierul \n" + output.getCanonicalPath() + " a fost generat cu succes!",
+            SWTeXtension.displayMessageI("Fișierul \n" + output.getCanonicalPath() + " a fost generat cu succes!",
                     "Export efectuat cu succes",
                     output.getCanonicalPath());
 

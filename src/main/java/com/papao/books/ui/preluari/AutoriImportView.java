@@ -54,14 +54,14 @@ public class AutoriImportView extends AbstractPreluareDateM2View {
                 AutorController.save(autor);
                 succesfullyImportedIndices.add(i);
             } else {
-                items[i].setText(tableDocumente.getColumnCount() - 1, "Exista deja");
+                items[i].setText(tableDocumente.getColumnCount() - 1, "Există deja");
                 items[i].setBackground(ColorUtil.COLOR_ROSU_SEMI_ROSU);
             }
         }
         Integer[] array = succesfullyImportedIndices.toArray(new Integer[succesfullyImportedIndices.size()]);
         tableDocumente.remove(ArrayUtils.toPrimitive(array));
         if (succesfullyImportedIndices.size() == items.length) {
-            SWTeXtension.displayMessageI("Toti autorii au fost importati cu succes!");
+            SWTeXtension.displayMessageI("Toți autorii au fost importați cu succes!");
         } else {
             SWTeXtension.displayMessageI("S-au importat cu succes doar " + succesfullyImportedIndices.size() + " din " + items.length + ".");
         }

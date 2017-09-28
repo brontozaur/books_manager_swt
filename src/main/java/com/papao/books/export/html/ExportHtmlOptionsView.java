@@ -80,8 +80,8 @@ public class ExportHtmlOptionsView extends AbstractExportView {
         setViewOptions(AbstractView.ADD_OK | AbstractView.ADD_CANCEL);
         setShellImage(AppImages.getImage16(AppImages.IMG_BROWSER));
         setBigViewImage(AppImages.getImage24(AppImages.IMG_BROWSER));
-        setBigViewMessage("Configurare export date in format HTML");
-        setShellText("Optiuni export HTML");
+        setBigViewMessage("Configurare export date în format HTML");
+        setShellText("Opțiuni export HTML");
         setShowSaveOKMessage(false);
     }
 
@@ -129,12 +129,12 @@ public class ExportHtmlOptionsView extends AbstractExportView {
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(labelName);
 
             groupOptions = new Group(this, SWT.NONE);
-            groupOptions.setText("Optiuni export");
+            groupOptions.setText("Opțiuni export");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             groupOptions.setLayoutData(gd);
             groupOptions.setLayout(new GridLayout(1, true));
 
-            new Label(groupOptions, SWT.NONE).setText("Nume fisier");
+            new Label(groupOptions, SWT.NONE).setText("Nume fișier");
 
             this.textFileName = new Text(groupOptions, SWT.BORDER);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).grab(false, false).hint(250,
@@ -143,12 +143,12 @@ public class ExportHtmlOptionsView extends AbstractExportView {
             this.textFileName.addListener(SWT.Modify, this);
 
             ExportHtmlOptionsView.this.buttonExportPathAuto = new Button(groupOptions, SWT.CHECK);
-            ExportHtmlOptionsView.this.buttonExportPathAuto.setText("cale automata export");
+            ExportHtmlOptionsView.this.buttonExportPathAuto.setText("cale automată export");
             ExportHtmlOptionsView.this.buttonExportPathAuto.addListener(SWT.Selection, this);
             GridDataFactory.fillDefaults().applyTo(ExportHtmlOptionsView.this.buttonExportPathAuto);
             this.dsc = new DirectorySelectorComposite(groupOptions);
 
-            new Label(groupOptions, SWT.NONE).setText("Font tabela");
+            new Label(groupOptions, SWT.NONE).setText("Font tabelă");
             this.fs = new FontSelectorComposite(groupOptions);
             this.fs.getTextSelectie().addListener(SWT.FocusIn, this);
 
@@ -168,21 +168,21 @@ public class ExportHtmlOptionsView extends AbstractExportView {
             this.buttonShowNrCrt = new Button(groupOptions, SWT.CHECK);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).span(((GridLayout) groupOptions.getLayout()).numColumns,
                     1).applyTo(this.buttonShowNrCrt);
-            this.buttonShowNrCrt.setText("Afisare coloana pentru numar curent");
+            this.buttonShowNrCrt.setText("Afișare coloană pentru număr curent");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowNrCrt);
             this.buttonShowNrCrt.addListener(SWT.Selection, this);
 
             this.buttonShowHeader = new Button(groupOptions, SWT.CHECK);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).span(((GridLayout) groupOptions.getLayout()).numColumns,
                     1).applyTo(this.buttonShowHeader);
-            this.buttonShowHeader.setText("Afisare antet tabel");
+            this.buttonShowHeader.setText("Afișare antet tabel");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowHeader);
             this.buttonShowHeader.addListener(SWT.Selection, this);
 
             this.buttonShowGradient = new Button(groupOptions, SWT.CHECK);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).span(((GridLayout) groupOptions.getLayout()).numColumns,
                     1).applyTo(this.buttonShowGradient);
-            this.buttonShowGradient.setText("Alternare culori in tabel");
+            this.buttonShowGradient.setText("Alternare culori în tabel");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowGradient);
             this.buttonShowGradient.addListener(SWT.Selection, this);
 
@@ -192,11 +192,11 @@ public class ExportHtmlOptionsView extends AbstractExportView {
         @Override
         public final boolean validate() {
             if (getSettings().getNrOfItems() > ExportHtmlOptionsView.MAX_ROWS_4_WARNING) {
-                if (SWTeXtension.displayMessageQ("Atentie. Pentru mai mult de "
+                if (SWTeXtension.displayMessageQ("Atenție. Pentru mai mult de "
                                 + ExportHtmlOptionsView.MAX_ROWS_4_WARNING
-                                + " linii exportate, este foarte posibil ca browserul sa le afiseze extrem de incet. "
-                                + "Se recomanda salvarea in alt format (de ex. *.pdf sau *.xls). Doriti sa continuati exportul curent?",
-                        "Posibila operatie de lunga durata") == SWT.NO) {
+                                + " linii exportate, este foarte posibil ca browserul să le afișeze extrem de încet. "
+                                + "Se recomandă salvarea în alt format (de ex. *.pdf sau *.xls). Doriți să continuați exportul curent?",
+                        "Posibilă operație de lungă durată") == SWT.NO) {
                     return false;
                 }
             }

@@ -60,7 +60,7 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter implements Observ
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(compAplica);
 
         ToolItem itemAplica = new ToolItem(new ToolBar(compAplica, SWT.RIGHT | SWT.FLAT), SWT.RIGHT | SWT.FLAT);
-        itemAplica.setText("Afiseaza cartile");
+        itemAplica.setText("Afișeaza cărțile");
         itemAplica.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
         itemAplica.setHotImage(AppImages.getImage16Focus(AppImages.IMG_REFRESH));
         itemAplica.addListener(SWT.Selection, new Listener() {
@@ -95,7 +95,7 @@ public class BooksWithNoCoverView extends AbstractCViewAdapter implements Observ
                     try {
                         carte.setCopertaFata(ApplicationController.saveDocument(booksImageComposite));
                         ApplicationService.getBookController().save(carte);
-                        SWTeXtension.displayMessageI("Imaginea a fost salvata cu succes!", "Modificare carte");
+                        SWTeXtension.displayMessageI("Imaginea a fost salvată cu succes!", "Modificare carte");
 
                         booksImageComposite.setImageChanged(false);
                     } catch (IOException e) {

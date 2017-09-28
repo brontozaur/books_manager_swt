@@ -28,9 +28,9 @@ public class ColumnsChooserView extends AbstractCView implements IReset {
 		setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE | SWT.APPLICATION_MODAL);
 		setViewOptions(AbstractView.ADD_OK | AbstractView.ADD_CANCEL);
 		setShellImage(AppImages.getImage16(AppImages.IMG_SELECT));
-		setShellText("Coloane, dimensiuni si alinieri");
+		setShellText("Coloane, dimensiuni și alinieri");
 		setBigViewImage(AppImages.getImage24(AppImages.IMG_SELECT));
-		setBigViewMessage("Selectati coloanele dorite");
+		setBigViewMessage("Selectați coloanele dorite");
 		setShowSaveOKMessage(false);
 		setIsUsingCoords(false);
 	}

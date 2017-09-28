@@ -81,7 +81,7 @@ public class ExportPdfOptionsView extends AbstractExportView {
         setShellImage(AppImages.getImage16(AppImages.IMG_ADOBE));
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
         setBigViewImage(AppImages.getImage24(AppImages.IMG_ADOBE));
-        setBigViewMessage("Configurare export date in format PDF");
+        setBigViewMessage("Configurare export date în format PDF");
         setShowSaveOKMessage(false);
     }
 
@@ -242,9 +242,9 @@ public class ExportPdfOptionsView extends AbstractExportView {
         @Override
         public final boolean validate() {
             if (ExportPdfOptionsView.this.settings.getNrOfItems() > ExportPdf.MAX_ROWS_PDF) {
-                if (SWTeXtension.displayMessageQ("Atentie. Se vor genera foarte multe pagini, si este posibil ca raportul sa "
-                                + "necesite un timp indelungat pentru generare, iar cantitatea de memorie ceruta sa fie mai mare decat de obicei. Continuam?",
-                        "Posibila operatie de lunga durata") == SWT.NO) {
+                if (SWTeXtension.displayMessageQ("Atenție. Se vor genera foarte multe pagini, și este posibil ca raportul să "
+                                + "necesite un timp îndelungat pentru generare, iar cantitatea de memorie cerută să fie mai mare ca de obicei. Continuăm?",
+                        "Posibilă operație de lungă durată") == SWT.NO) {
                     return false;
                 }
             }

@@ -66,7 +66,7 @@ public final class CWaitDlgClassic {
             if (operatie != null) {
                 this.labelMessage.setText(operatie);
             } else {
-                this.labelMessage.setText("Va rugam asteptati procesarea datelor...");
+                this.labelMessage.setText("Vă rugăm așteptați procesarea datelor...");
             }
             GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).hint(400, SWT.DEFAULT).minSize(400,
                     SWT.DEFAULT).applyTo(this.labelMessage);
@@ -92,7 +92,7 @@ public final class CWaitDlgClassic {
 
     public final int getMax() {
         if ((this.cpbar != null) && !this.cpbar.isDisposed()) {
-            this.cpbar.getMax();
+            return this.cpbar.getMax();
         }
         return 1;
     }

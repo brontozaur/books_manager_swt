@@ -179,7 +179,7 @@ public class CarteCitateTableComposite extends Composite implements Observer, IA
         if (selectionCount == 0) {
             return false;
         }
-        if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti " + (selectionCount > 1 ? "citatele selectate?" : "citatul selectat?")) == SWT.NO) {
+        if (SWTeXtension.displayMessageQ("Sunteți siguri că doriți să ștergeți " + (selectionCount > 1 ? "citatele selectate?" : "citatul selectat?")) == SWT.NO) {
             return false;
         }
         for (TableItem item : table.getSelection()) {
@@ -189,7 +189,7 @@ public class CarteCitateTableComposite extends Composite implements Observer, IA
             UserController.saveUserActivity(userActivity);
             item.dispose();
         }
-        SWTeXtension.displayMessageI("Am sters " + (selectionCount > 1 ? "citatele." : "citat."));
+        SWTeXtension.displayMessageI("Am șters " + (selectionCount > 1 ? "citatele." : "citat."));
         enableOps();
         return true;
     }

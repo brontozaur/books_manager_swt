@@ -137,7 +137,7 @@ public abstract class AbstractPreluareDateM1View extends AbstractCViewAdapter im
             });
 
             menuItem = new MenuItem(menu, SWT.NONE);
-            menuItem.setText("Adaugare");
+            menuItem.setText("Adăugare");
             menuItem.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -157,7 +157,7 @@ public abstract class AbstractPreluareDateM1View extends AbstractCViewAdapter im
             });
 
             menuItem = new MenuItem(menu, SWT.NONE);
-            menuItem.setText("Stergere	Del");
+            menuItem.setText("Ștergere	Del");
             menuItem.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -202,7 +202,7 @@ public abstract class AbstractPreluareDateM1View extends AbstractCViewAdapter im
                 return;
             }
             if ((getTableDocumente().getItemCount() > 0) && ask) {
-                if (SWTeXtension.displayMessageQ("Sunteti sigur ca doriti sa stergeti liniile importate?", "Stergere linii importate") == SWT.NO) {
+                if (SWTeXtension.displayMessageQ("Sunteți sigur că doriți să ștergeți liniile importate?", "Ștergere linii importate") == SWT.NO) {
                     return;
                 }
             }

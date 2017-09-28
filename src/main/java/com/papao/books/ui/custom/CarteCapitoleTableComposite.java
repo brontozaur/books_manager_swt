@@ -128,7 +128,7 @@ public class CarteCapitoleTableComposite extends Composite implements Observer, 
         column.setAlignment(aligns[IDX_TITLU]);
 
         column = new TableColumn(table, SWT.LEFT);
-        column.setText("Nr pagină");
+        column.setText("Nr. pagină");
         column.setResizable(true);
         column.setWidth(visible[IDX_NR_PAGINA] ? dims[IDX_NR_PAGINA] : 0);
         column.setAlignment(aligns[IDX_NR_PAGINA]);
@@ -186,7 +186,7 @@ public class CarteCapitoleTableComposite extends Composite implements Observer, 
         if (selectionCount == 0) {
             return false;
         }
-        if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti " + (selectionCount > 1 ? "capitolele selectate?" : "capitolul selectat?")) == SWT.NO) {
+        if (SWTeXtension.displayMessageQ("Sunteți siguri că doriți să ștergeți " + (selectionCount > 1 ? "capitolele selectate?" : "capitolul selectat?")) == SWT.NO) {
             return false;
         }
         for (TableItem item : table.getSelection()) {
@@ -195,7 +195,7 @@ public class CarteCapitoleTableComposite extends Composite implements Observer, 
             item.dispose();
         }
         ApplicationService.getBookController().save(carte);
-        SWTeXtension.displayMessageI("Am sters " + selectionCount + (selectionCount > 1 ? " capitole." : " capitol."));
+        SWTeXtension.displayMessageI("Am șters " + selectionCount + (selectionCount > 1 ? " capitole." : " capitol."));
         enableOps();
         return true;
     }

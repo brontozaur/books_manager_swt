@@ -25,7 +25,7 @@ public final class WidgetMenuUtil {
             menuItem.setMenu(menuExport);
 
             item = new MenuItem(menuExport, SWT.NULL);
-            item.setText("Export fisier PDF");
+            item.setText("Export fișier PDF");
             item.setImage(AppImages.getImage16(AppImages.IMG_ADOBE));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -35,7 +35,7 @@ public final class WidgetMenuUtil {
             });
 
             item = new MenuItem(menuExport, SWT.NULL);
-            item.setText("Export fisier Excel");
+            item.setText("Export fișier Excel");
             item.setImage(AppImages.getImage16(AppImages.IMG_EXCEL));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -45,7 +45,7 @@ public final class WidgetMenuUtil {
             });
 
             item = new MenuItem(menuExport, SWT.NULL);
-            item.setText("Export fisier TXT");
+            item.setText("Export fișier TXT");
             item.setImage(AppImages.getImage16(AppImages.IMG_EXPORT));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -55,7 +55,7 @@ public final class WidgetMenuUtil {
             });
 
             item = new MenuItem(menuExport, SWT.NULL);
-            item.setText("Export fisier RTF");
+            item.setText("Export fișier RTF");
             item.setImage(AppImages.getImage16(AppImages.IMG_WORD2));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -65,7 +65,7 @@ public final class WidgetMenuUtil {
             });
 
             item = new MenuItem(menuExport, SWT.NULL);
-            item.setText("Export fisier HTML");
+            item.setText("Export fișier HTML");
             item.setImage(AppImages.getImage16(AppImages.IMG_BROWSER));
             item.addListener(SWT.Selection, new Listener() {
                 @Override

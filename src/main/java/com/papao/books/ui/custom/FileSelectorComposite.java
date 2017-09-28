@@ -31,7 +31,7 @@ public class FileSelectorComposite extends Composite implements Listener {
         this.filterNames = filterNames;
 
         if (drawLabelInfo) {
-            new Label(this, SWT.NONE).setText("Fisier");
+            new Label(this, SWT.NONE).setText("Fișier");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) parent.getLayout()).numColumns,
                     1).applyTo(this);
             GridLayoutFactory.swtDefaults().numColumns(3).equalWidth(false).margins(0, 0).applyTo(this);

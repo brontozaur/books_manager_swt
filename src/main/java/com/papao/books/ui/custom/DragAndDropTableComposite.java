@@ -162,7 +162,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
         column.setWidth(100);
 
         column = new TableColumn(table, SWT.RIGHT);
-        column.setText("Marime (kb)");
+        column.setText("Mărime (kb)");
         column.setResizable(true);
         column.setWidth(75);
 
@@ -172,7 +172,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
         column.setWidth(120);
 
         column = new TableColumn(table, SWT.LEFT);
-        column.setText("Cale fisier");
+        column.setText("Cale fișier");
         column.setResizable(true);
         column.setWidth(350);
 
@@ -213,7 +213,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
             DocumentData doc = (DocumentData) item.getData();
             if (permanentChanges) {
                 carte.getDocuments().remove(doc);
-                logger.info("Am sters un document atasat cartii " + carte.getId());
+                logger.info("Am șters un document atașat cărții " + carte.getId());
                 ApplicationController.removeDocument(doc.getId());
             } else {
                 deleted.add(doc);
@@ -223,7 +223,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
         }
         if (permanentChanges) {
             ApplicationService.getBookController().getRepository().save(carte);
-            SWTeXtension.displayMessageI("Am sters " + selectionCount + " documente atasate cartii curente");
+            SWTeXtension.displayMessageI("Am șters " + selectionCount + " documente atașate cărții curente.");
         }
         enableOps();
     }

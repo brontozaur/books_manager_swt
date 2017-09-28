@@ -17,7 +17,7 @@ import org.mihalis.opal.notify.Notifier;
 public final class SWTeXtension {
 
     private static final String ERR_MSG = "A intervenit o eroare.";
-    private static final String ERR_BOLD_MSG = "Eroare in aplicatie";
+    private static final String ERR_BOLD_MSG = "Eroare în aplicație";
 
     private static final Logger logger = Logger.getLogger(SWTeXtension.class);
 
@@ -57,7 +57,7 @@ public final class SWTeXtension {
      * afisare intrebare
      */
     public static int displayMessageQ(final String mesaj) {
-        return SWTeXtension.displayMessageQ(mesaj, "Confirmare actiune");
+        return SWTeXtension.displayMessageQ(mesaj, "Confirmare acțiune");
     }
 
     public static int displayMessageQ(final String mesaj, final String boldMessage) {

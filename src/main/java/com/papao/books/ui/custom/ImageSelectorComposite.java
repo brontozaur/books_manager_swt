@@ -76,7 +76,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
 
         final Menu menu = new Menu(this.mainComposite.getShell(), SWT.POP_UP);
         MenuItem item = new MenuItem(menu, SWT.PUSH);
-        item.setText("Fisier local");
+        item.setText("Fișier local");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {

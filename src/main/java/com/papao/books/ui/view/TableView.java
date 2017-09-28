@@ -102,7 +102,7 @@ public class TableView extends AbstractCView implements IReset, IHelp,
 
     @Override
     public final void showHelp() {
-        SWTeXtension.displayMessageI("In campurile din fereastra sunt afisate datele inregistrarii selectate.");
+        SWTeXtension.displayMessageI("În câmpurile din fereastra sunt afișate datele înregistrării selectate.");
     }
 
     @Override

@@ -851,7 +851,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 break;
             }
             default:
-                SWTeXtension.displayMessageI("Vizualizarea dupa " + searchType + " nu este implementata inca!");
+                SWTeXtension.displayMessageI("Vizualizarea după " + searchType + " nu este implementată încă!");
         }
     }
 
@@ -1638,7 +1638,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             if (e.type != SWT.Close) {
                 e.type = SWT.Close;
             }
-            boolean close = SWTeXtension.displayMessageQ("Sunteti sigur ca doriti sa inchideti aplicatia?", "Inchidere aplicatie") == SWT.NO;
+            boolean close = SWTeXtension.displayMessageQ("Sunteți sigur că doriți să închideți aplicația?", "Închidere aplicație") == SWT.NO;
             if (close) {
                 e.doit = false;
             } else {
@@ -1749,7 +1749,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                     return true;
                 }
             } else {
-                if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti cartea selectata si toate informatiile asociate?", "Confirmare stergere") == SWT.NO) {
+                if (SWTeXtension.displayMessageQ("Sunteți siguri că doriți să ștergeți cartea selectată și toate informațiile asociate?", "Confirmare ștergere") == SWT.NO) {
                     return true;
                 }
             }
@@ -1772,9 +1772,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 }
             }
             if (selectedCount == 1) {
-                SWTeXtension.displayMessageI("Cartea selectata a fost stearsa cu succes!");
+                SWTeXtension.displayMessageI("Cartea selectată a fost ștearsă cu succes!");
             } else {
-                SWTeXtension.displayMessageI("Cartile selectate au fost sterse cu succes (" + selectedCount + " carti)!");
+                SWTeXtension.displayMessageI("Carțile selectate au fost șterse cu succes (" + selectedCount + " cărți)!");
             }
             displayBookData();
         } catch (Exception exc) {
@@ -1796,7 +1796,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         if (galleryTabSelected) {
             carte = this.galleryComposite.getSelected();
             if (carte == null) {
-                SWTeXtension.displayMessageI("Nu ati selectat nici o carte!");
+                SWTeXtension.displayMessageI("Nu ați selectat nici o carte!");
 
             }
         } else {
@@ -1805,13 +1805,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
             carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
             if (carte == null) {
-                SWTeXtension.displayMessageI("Cartea selectata este invalida!");
+                SWTeXtension.displayMessageI("Cartea selectată este invalidă!");
                 return false;
             }
         }
         Carte carteDatabase = ApplicationService.getBookController().findOne(carte.getId());
         if (carteDatabase == null) {
-            SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
+            SWTeXtension.displayMessageI("Cartea selectată nu mai există în baza de date!");
             return false;
         }
         int viewMode = MODE_MODIFY;
@@ -1847,12 +1847,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         }
         Carte carte = (Carte) this.tableViewer.getTable().getSelection()[0].getData();
         if (carte == null) {
-            SWTeXtension.displayMessageI("Cartea selectata este invalida!");
+            SWTeXtension.displayMessageI("Cartea selectată este invalidă!");
             return;
         }
         Carte carteDatabase = ApplicationService.getBookController().findOne(carte.getId());
         if (carteDatabase == null) {
-            SWTeXtension.displayMessageI("Cartea selectata nu mai exista in baza de date!");
+            SWTeXtension.displayMessageI("Cartea selectată nu mai există în baza de date!");
             return;
         }
         new CarteView(this.tableViewer.getTable().getShell(), carteDatabase, AbstractView.MODE_VIEW).open();

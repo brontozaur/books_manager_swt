@@ -54,7 +54,7 @@ public class ImageViewComposite extends Observable {
                     return;
                 }
                 UserController.saveBookRatingForCurrentUser(carte.getId(), starRating.getCurrentNumberOfStars());
-                SWTeXtension.displayMessageI("Nota a fost salvata cu succes!");
+                SWTeXtension.displayMessageI("Nota a fost salvată cu succes!");
                 setChanged();
                 notifyObservers();
             }
@@ -142,7 +142,7 @@ public class ImageViewComposite extends Observable {
             Image resizedImage = AppImages.getImage(fullImage, WIDTH, HEIGHT);
             labelImage.setImage(resizedImage);
         } else {
-            labelImage.setText(" fara \n  imagine");
+            labelImage.setText(" fără \n  imagine");
         }
 
         starRating.setCurrentNumberOfStars(UserController.getPersonalRating(carte.getId()));

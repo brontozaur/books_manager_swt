@@ -68,7 +68,7 @@ public class ExportTxtOptionsView extends AbstractExportView {
         setShellImage(AppImages.getImage16(AppImages.IMG_EXPORT));
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
         setBigViewImage(AppImages.getImage24(AppImages.IMG_EXPORT));
-        setBigViewMessage("Configurare export date in format text");
+        setBigViewMessage("Configurare export date în format text");
         setShowSaveOKMessage(false);
     }
 
@@ -114,13 +114,13 @@ public class ExportTxtOptionsView extends AbstractExportView {
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(labelName);
 
             groupOptions = new Group(this, SWT.NONE);
-            groupOptions.setText("Optiuni export");
+            groupOptions.setText("Opțiuni export");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             groupOptions.setLayoutData(gd);
             groupOptions.setLayout(new GridLayout(1, true));
 
             temp = new Label(groupOptions, SWT.NONE);
-            temp.setText("Nume fisier");
+            temp.setText("Nume fișier");
 
             this.textFileName = new Text(groupOptions, SWT.BORDER);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).grab(false, false).hint(250,
@@ -129,22 +129,22 @@ public class ExportTxtOptionsView extends AbstractExportView {
             this.textFileName.addListener(SWT.Modify, this);
 
             ExportTxtOptionsView.this.buttonExportPathAuto = new Button(groupOptions, SWT.CHECK);
-            ExportTxtOptionsView.this.buttonExportPathAuto.setText("cale automata export");
+            ExportTxtOptionsView.this.buttonExportPathAuto.setText("cale automată export");
             ExportTxtOptionsView.this.buttonExportPathAuto.addListener(SWT.Selection, this);
 
             this.dsc = new DirectorySelectorComposite(groupOptions);
 
             this.buttonShowNrCrt = new Button(groupOptions, SWT.CHECK);
-            this.buttonShowNrCrt.setText("Afisare coloana pentru numar curent");
+            this.buttonShowNrCrt.setText("Afișare coloană pentru număr curent");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowNrCrt);
             this.buttonShowNrCrt.addListener(SWT.Selection, this);
 
             this.buttonShowBorder = new Button(groupOptions, SWT.CHECK);
-            this.buttonShowBorder.setText("Afisare margini celule");
+            this.buttonShowBorder.setText("Afișare margini celule");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowBorder);
 
             this.buttonShowTitle = new Button(groupOptions, SWT.CHECK);
-            this.buttonShowTitle.setText("Afisare denumire raport");
+            this.buttonShowTitle.setText("Afișare denumire raport");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowTitle);
             this.buttonShowTitle.addListener(SWT.Selection, this);
 
@@ -198,9 +198,9 @@ public class ExportTxtOptionsView extends AbstractExportView {
             if (e.type == SWT.Selection) {
                 if (e.widget == this.buttonShowNrCrt) {
                     if (this.buttonShowNrCrt.getSelection()) {
-                        updateDetailMessage("Prima coloana a raportului va afisa numarul curent al elementelor.");
+                        updateDetailMessage("Prima coloana a raportului va afișa numărul curent al elementelor.");
                     } else {
-                        updateDetailMessage("Nu se vor numerota elementele afisate.");
+                        updateDetailMessage("Nu se vor numerota elementele afișate.");
                     }
                 } else if (e.widget == this.buttonShowTitle) {
                     this.textTitleName.setEnabled(this.buttonShowTitle.getSelection());
@@ -214,7 +214,7 @@ public class ExportTxtOptionsView extends AbstractExportView {
                 }
             } else if (e.type == SWT.FocusIn) {
                 if (e.widget == this.textFileName) {
-                    updateDetailMessage("Numele fisierului care va fi exportat.");
+                    updateDetailMessage("Numele fițierului care va fi exportat.");
                 }
             }
         }

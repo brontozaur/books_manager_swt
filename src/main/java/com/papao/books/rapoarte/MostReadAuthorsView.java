@@ -105,7 +105,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
         });
 
         buttonEnd = new Button(upperComp, SWT.CHECK);
-        buttonEnd.setText("pana la");
+        buttonEnd.setText("până la");
         dateChooserEnd = new DateChooserCustom(upperComp);
         dateChooserEnd.setEnabled(false);
 
@@ -131,7 +131,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
         GridLayoutFactory.fillDefaults().numColumns(2).applyTo(compAplica);
 
         ToolItem itemAplica = new ToolItem(new ToolBar(compAplica, SWT.RIGHT | SWT.FLAT), SWT.RIGHT | SWT.FLAT);
-        itemAplica.setText("Aplica filtrele");
+        itemAplica.setText("Aplică filtrele");
         itemAplica.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
         itemAplica.setHotImage(AppImages.getImage16Focus(AppImages.IMG_REFRESH));
         itemAplica.addListener(SWT.Selection, new Listener() {
@@ -211,7 +211,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
                     try {
                         autor.setMainImage(ApplicationController.saveDocument(autorImageComposite));
                         AutorController.save(autor);
-                        SWTeXtension.displayMessageI("Imaginea a fost salvata cu succes!", "Modificare autor");
+                        SWTeXtension.displayMessageI("Imaginea a fost salvată cu succes!", "Modificare autor");
 
                         autorImageComposite.setImageChanged(false);
                     } catch (IOException e) {
@@ -249,7 +249,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
                     try {
                         carte.setCopertaFata(ApplicationController.saveDocument(booksImageComposite));
                         ApplicationService.getBookController().save(carte);
-                        SWTeXtension.displayMessageI("Imaginea a fost salvata cu succes!", "Modificare carte");
+                        SWTeXtension.displayMessageI("Imaginea a fost salvată cu succes!", "Modificare carte");
 
                         booksImageComposite.setImageChanged(false);
                     } catch (IOException e) {
@@ -319,7 +319,7 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
             }
             final Carte carte = ApplicationService.getBookController().findOne(activity.getBookId());
             if (carte == null) {
-                logger.error("Nu am gasit cartea cu id " + activity.getBookId());
+                logger.error("Nu am găsit cartea cu id " + activity.getBookId());
                 continue;
             }
             carte.setReadStartDate(activity.getCarteCitita().getDataStart());

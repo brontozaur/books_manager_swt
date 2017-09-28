@@ -28,7 +28,7 @@ public final class PlatformMenu {
         itemAuth.setMenu(PlatformMenu.createMenuAuth(itemAuth));
 
         final MenuItem window = new MenuItem(menu, SWT.CASCADE);
-        window.setText("Fe&reastra");
+        window.setText("Fe&reastră");
         window.setMenu(PlatformMenu.createWindowMenu(window));
 
         final MenuItem itemAbout = new MenuItem(menu, SWT.CASCADE);

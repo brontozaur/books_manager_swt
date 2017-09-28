@@ -439,7 +439,7 @@ public final class WidgetTreeUtil {
 			});
 
 			final MenuItem itemAdvanced = new MenuItem(headerMenu, SWT.PUSH);
-			itemAdvanced.setText("Selectie avansata");
+			itemAdvanced.setText("Selecție avansată");
             itemAdvanced.addListener(SWT.Selection, new Listener() {
                 @Override
                 public final void handleEvent(final Event e) {

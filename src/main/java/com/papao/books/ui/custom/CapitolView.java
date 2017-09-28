@@ -44,7 +44,7 @@ public class CapitolView extends AbstractCView implements INavigation {
         GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(4).applyTo(temp);
         GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(temp);
 
-        new Label(temp, SWT.NONE).setText("Nr capitol");
+        new Label(temp, SWT.NONE).setText("Nr. capitol");
         this.textNrCapitol = new Text(temp, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrCapitol);
 
@@ -56,7 +56,7 @@ public class CapitolView extends AbstractCView implements INavigation {
         GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(2).applyTo(temp);
         GridDataFactory.fillDefaults().span(2, 1).grab(false, false).applyTo(temp);
 
-        new Label(temp, SWT.NONE).setText("Nr pagina");
+        new Label(temp, SWT.NONE).setText("Nr. pagină");
         this.textNrPagina = new Text(temp, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrPagina);
 

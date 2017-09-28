@@ -170,7 +170,7 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
         this.itemUp = new ToolItem(barOrder, SWT.NONE);
         this.itemUp.setImage(AppImages.getImage24(AppImages.IMG_ARROW_UP));
         this.itemUp.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_UP));
-        this.itemUp.setText("Spre inceput");
+        this.itemUp.setText("Spre început");
         this.itemUp.addListener(SWT.Selection, this);
         this.itemUp.setEnabled(false);
 
@@ -180,7 +180,7 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
         this.itemDown = new ToolItem(barOrder2, SWT.NONE);
         this.itemDown.setImage(AppImages.getImage24(AppImages.IMG_ARROW_DOWN));
         this.itemDown.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_DOWN));
-        this.itemDown.setText("Spre sfarsit");
+        this.itemDown.setText("Spre sfârșit");
         this.itemDown.addListener(SWT.Selection, this);
         this.itemDown.setEnabled(false);
         GridDataFactory.fillDefaults().align(SWT.END, SWT.BEGINNING).applyTo(barOrder2);
@@ -235,12 +235,12 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
                 }
                 if ((row.getDim() == 0) && row.isChecked()) {
                     SWTeXtension.displayMessageW("Dimensiunea unei coloane selectate este zero. "
-                            + "Prin urmare, aceasta coloana nu poate fi afisata.");
+                            + "Prin urmare, această coloană nu poate fi afișată.");
                     return false;
                 }
                 if ((row.getAlign() != SWT.LEFT) && (row.getAlign() != SWT.RIGHT)
                         && (row.getAlign() != SWT.CENTER)) {
-                    SWTeXtension.displayMessageW("Aliniere incorecta pentru una din coloanele tabelei!");
+                    SWTeXtension.displayMessageW("Aliniere incorectă pentru una din coloanele tabelei!");
                     return false;
                 }
             }

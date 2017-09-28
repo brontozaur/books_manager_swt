@@ -80,16 +80,16 @@ public class BookImportView extends AbstractPreluareDateM2View {
                 ApplicationService.getBookController().save(carte);
                 succesfullyImportedIndices.add(i);
             } else {
-                items[i].setText(tableDocumente.getColumnCount() - 1, "Exista deja");
+                items[i].setText(tableDocumente.getColumnCount() - 1, "Există deja");
                 items[i].setBackground(ColorUtil.COLOR_ROSU_SEMI_ROSU);
             }
         }
         Integer[] array = succesfullyImportedIndices.toArray(new Integer[succesfullyImportedIndices.size()]);
         tableDocumente.remove(ArrayUtils.toPrimitive(array));
         if (succesfullyImportedIndices.size() == items.length) {
-            SWTeXtension.displayMessageI("Tate cartile au fost importate cu succes!");
+            SWTeXtension.displayMessageI("Toate cărțile au fost importate cu succes!");
         } else {
-            SWTeXtension.displayMessageI("S-au importat cu succes doar " + succesfullyImportedIndices.size() + " carti din " + items.length + ".");
+            SWTeXtension.displayMessageI("S-au importat cu succes doar " + succesfullyImportedIndices.size() + " cărți din " + items.length + ".");
         }
     }
 

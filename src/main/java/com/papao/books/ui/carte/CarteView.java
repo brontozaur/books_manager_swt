@@ -133,7 +133,7 @@ public class CarteView extends AbstractCSaveView {
         final Composite mainPropertiesComposite = createMainPropertiesTab(mainComp);
 
         itemInformatiiEsentiale = new ToolItem(toolBar, SWT.RADIO);
-        itemInformatiiEsentiale.setText("Informatii esentiale");
+        itemInformatiiEsentiale.setText("Informații esențiale");
         itemInformatiiEsentiale.setImage(AppImages.getImage16(AppImages.IMG_ARROW_UP_OPAL));
         itemInformatiiEsentiale.addListener(SWT.Selection, new Listener() {
             @Override
@@ -178,7 +178,7 @@ public class CarteView extends AbstractCSaveView {
         final Composite pretComposite = createPretTab(mainComp);
 
         itemPret = new ToolItem(toolBar, SWT.RADIO);
-        itemPret.setText("Pret");
+        itemPret.setText("Preț");
         itemPret.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemPret.addListener(SWT.Selection, new Listener() {
             @Override
@@ -193,7 +193,7 @@ public class CarteView extends AbstractCSaveView {
         final Composite editiaOriginalaComposite = createEditiaOriginalaTab(mainComp);
 
         itemEditiaOriginala = new ToolItem(toolBar, SWT.RADIO);
-        itemEditiaOriginala.setText("Editia originala");
+        itemEditiaOriginala.setText("Ediția originală");
         itemEditiaOriginala.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
         itemEditiaOriginala.addListener(SWT.Selection, new Listener() {
             @Override
@@ -261,7 +261,7 @@ public class CarteView extends AbstractCSaveView {
         GridLayoutFactory.fillDefaults().numColumns(6).equalWidth(false).applyTo(comp);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
 
-        label(comp, "Traducatori");
+        label(comp, "Traducători");
         this.compositeTraducatori = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "traducatori"), carte.getTraducatori());
         ((GridData) compositeTraducatori.getLayoutData()).horizontalSpan = 5;
 
@@ -359,27 +359,27 @@ public class CarteView extends AbstractCSaveView {
         this.textImprimerie = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(this.textImprimerie);
 
-        label(mainCompLeft, "Locatie");
+        label(mainCompLeft, "Locație");
         this.textLocatie = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(this.textLocatie);
         ContentProposalProvider.addContentProposal(textLocatie, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "locatie"));
 
-        label(mainCompLeft, "An aparitie");
+        label(mainCompLeft, "An apariție");
         textAnAparitie = new Text(mainCompLeft, SWT.BORDER);
         ContentProposalProvider.addContentProposal(textAnAparitie, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "anAparitie"));
         GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textAnAparitie);
 
-        label(mainCompLeft, "Numar pagini");
+        label(mainCompLeft, "Număr pagini");
         this.textNrPagini = new FormattedText(mainCompLeft, SWT.BORDER);
         this.textNrPagini.setFormatter(new IntegerFormatter());
         GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textNrPagini.getControl());
         ((NumberFormatter) this.textNrPagini.getFormatter()).setFixedLengths(false, true);
 
-        label(mainCompLeft, "Editia");
+        label(mainCompLeft, "Ediția");
         this.textEditia = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(this.textEditia);
 
-        label(mainCompLeft, "Colectie");
+        label(mainCompLeft, "Colecție");
         this.textColectie = new Text(mainCompLeft, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).span(3, 1).applyTo(this.textColectie);
         ContentProposalProvider.addContentProposal(textColectie, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "colectie"));
@@ -409,7 +409,7 @@ public class CarteView extends AbstractCSaveView {
         this.textEditiaPrincepsTitlu = new Text(comp, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).span(5, 1).applyTo(this.textEditiaPrincepsTitlu);
 
-        label(comp, "Tara");
+        label(comp, "Țara");
         textEditiaPrincepsTara = new Text(comp, SWT.BORDER);
         ContentProposalProvider.addContentProposal(textEditiaPrincepsTara, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editiaOriginala.tara"));
         GridDataFactory.fillDefaults().span(3, 1).applyTo(this.textEditiaPrincepsTara);
@@ -430,7 +430,7 @@ public class CarteView extends AbstractCSaveView {
         GridDataFactory.fillDefaults().grab(false, false).span(5, 1).hint(150, SWT.DEFAULT).applyTo(this.textEditiaPrincepsEditura);
         ContentProposalProvider.addContentProposal(textEditiaPrincepsEditura, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editiaOriginala.editura"));
 
-        label(comp, "An aparitie");
+        label(comp, "An apariție");
         textEditiaPrincepsAn = new Text(comp, SWT.BORDER);
         ContentProposalProvider.addContentProposal(textEditiaPrincepsAn, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editiaOriginala.an"));
         GridDataFactory.fillDefaults().hint(40, SWT.DEFAULT).applyTo(this.textEditiaPrincepsAn);
@@ -440,7 +440,7 @@ public class CarteView extends AbstractCSaveView {
         new Label(comp, SWT.NONE);
         new Label(comp, SWT.NONE);
 
-        label(comp, "Autori ilustratii");
+        label(comp, "Autori ilustrații");
         this.compositeEditiaPrincepsAutoriIlustratii = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editiaOriginala.ilustratori"), carte.getEditiaOriginala().getIlustratori());
         ((GridData) compositeEditiaPrincepsAutoriIlustratii.getLayoutData()).horizontalSpan = 5;
         ((GridData) compositeEditiaPrincepsAutoriIlustratii.getLayoutData()).grabExcessHorizontalSpace = true;
@@ -554,7 +554,7 @@ public class CarteView extends AbstractCSaveView {
             }
         });
 
-        label(comp, "Pagina web");
+        label(comp, "Pagină web");
         this.textWebsite = new Text(comp, SWT.BORDER);
         GridDataFactory.fillDefaults().span(7, 1).grab(true, false).hint(400, SWT.DEFAULT).applyTo(this.textWebsite);
         this.textWebsite.addListener(SWT.Modify, new Listener() {
@@ -573,12 +573,12 @@ public class CarteView extends AbstractCSaveView {
         ((GridData) compositeAutoriIlustratii.getLayoutData()).horizontalSpan = 7;
         ((GridData) compositeAutoriIlustratii.getLayoutData()).grabExcessHorizontalSpace = true;
 
-        label(comp, "Autori coperta");
+        label(comp, "Autori copertă");
         this.compositeAutoriCoperta = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "autoriCoperta"), carte.getAutoriCoperta());
         ((GridData) compositeAutoriCoperta.getLayoutData()).horizontalSpan = 7;
         ((GridData) compositeAutoriCoperta.getLayoutData()).grabExcessHorizontalSpace = true;
 
-        label(comp, "Ilustratii coperta");
+        label(comp, "Ilustrații copertă");
         this.compositeAutoriIlustratiiCoperta = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "autoriIlustratiiCoperta"), carte.getAutoriIlustratiiCoperta());
         ((GridData) compositeAutoriIlustratiiCoperta.getLayoutData()).horizontalSpan = 7;
         ((GridData) compositeAutoriIlustratiiCoperta.getLayoutData()).grabExcessHorizontalSpace = true;
@@ -626,16 +626,16 @@ public class CarteView extends AbstractCSaveView {
         Composite comp = new Composite(parent, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(5, 5, 5, 5).applyTo(comp);
 
-        label(comp, "Data cumparare");
+        label(comp, "Data cumpărare");
         textDataCumparare = new DateChooserCustom(comp);
 
-        label(comp, "Pret intreg");
+        label(comp, "Preț întreg");
         textPretIntreg = new FormattedText(comp, SWT.BORDER);
         this.textPretIntreg.setFormatter(new DoubleFormatter(NumberUtil.getPattern(2, false)));
         GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textPretIntreg.getControl());
         ((NumberFormatter) this.textPretIntreg.getFormatter()).setFixedLengths(false, true);
 
-        label(comp, "Pret redus");
+        label(comp, "Preț redus");
         textPretRedus = new FormattedText(comp, SWT.BORDER);
         this.textPretRedus.setFormatter(new DoubleFormatter(NumberUtil.getPattern(2, false)));
         GridDataFactory.fillDefaults().grab(false, false).hint(40, SWT.DEFAULT).applyTo(this.textPretRedus.getControl());
@@ -653,7 +653,7 @@ public class CarteView extends AbstractCSaveView {
         Composite comp = new Composite(parent, SWT.NONE);
         GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(5, 5, 5, 5).applyTo(comp);
 
-        new Label(comp, SWT.NONE).setText("Coperta spate");
+        new Label(comp, SWT.NONE).setText("Copertă spate");
 
         new Label(comp, SWT.NONE).setText("Autograf");
 

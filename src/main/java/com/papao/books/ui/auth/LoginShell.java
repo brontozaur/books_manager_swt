@@ -191,7 +191,7 @@ public class LoginShell extends AbstractCView implements Listener {
         this.comboUsers.getCombo().setToolTipText("Selectați utilizatorul cu care vă veți autentifica în sistem");
 
         tmpLabel = new Label(compDown1, SWT.NONE);
-        tmpLabel.setText("Parola");
+        tmpLabel.setText("Parolă");
 
         this.textPassword = new Text(compDown1, SWT.PASSWORD | SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.textPassword);
@@ -262,7 +262,7 @@ public class LoginShell extends AbstractCView implements Listener {
     private void quit(Event e) {
         bp.show();
         setExitChoice(SWT.CANCEL);
-        e.doit = SWTeXtension.displayMessageQ("Sunteti sigur ca doriti sa inchideti aplicatia?", "Inchidere aplicatie") == SWT.YES;
+        e.doit = SWTeXtension.displayMessageQ("Sunteți sigur că doriți să închideți aplicația?", "Închidere aplicație") == SWT.YES;
         bp.hide();
     }
 

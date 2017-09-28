@@ -57,7 +57,7 @@ public class SimplePaginationComposite extends Observable {
         itemPrevious = new ToolItem(barFirstpage, SWT.NONE);
         itemPrevious.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT_OPAL));
         itemPrevious.setToolTipText("Pagina anterioară");
-        itemPrevious.setText("pagina");
+        itemPrevious.setText("pagină");
         itemPrevious.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -110,7 +110,7 @@ public class SimplePaginationComposite extends Observable {
             }
         });
 
-        new Label(this.compParent, SWT.NONE).setText("Paginatie");
+        new Label(this.compParent, SWT.NONE).setText("Paginație");
 
         comboItemsPerPage = new Combo(this.compParent, SWT.BORDER | SWT.READ_ONLY);
         comboItemsPerPage.setItems(new String[]{"2", "5", "10", "25", "50", "100", "250", "500"});

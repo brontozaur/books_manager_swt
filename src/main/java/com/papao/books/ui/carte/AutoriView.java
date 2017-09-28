@@ -226,7 +226,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Refresh   F5");
+        menuItem.setText("Actualizare   F5");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -238,7 +238,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
         new MenuItem(menu, SWT.SEPARATOR);
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Adaugare");
+        menuItem.setText("Adăugare");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -259,7 +259,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Stergere  Del");
+        menuItem.setText("Ștergere  Del");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
@@ -360,7 +360,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                     try {
                         autor.setMainImage(ApplicationController.saveDocument(autorImageComposite));
                         AutorController.save(autor);
-                        SWTeXtension.displayMessageI("Imaginea a fost salvata cu succes!", "Modificare autor");
+                        SWTeXtension.displayMessageI("Imaginea a fost salvată cu succes!", "Modificare autor");
 
                         autorImageComposite.setImageChanged(false);
                     } catch (IOException e) {
@@ -398,7 +398,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
                     try {
                         carte.setCopertaFata(ApplicationController.saveDocument(booksImageComposite));
                         ApplicationService.getBookController().save(carte);
-                        SWTeXtension.displayMessageI("Imaginea a fost salvata cu succes!", "Modificare carte");
+                        SWTeXtension.displayMessageI("Imaginea a fost salvată cu succes!", "Modificare carte");
 
                         booksImageComposite.setImageChanged(false);
                     } catch (IOException e) {

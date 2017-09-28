@@ -154,42 +154,42 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             } else {
                 this.rightForm.setContent(new ConfigApp());
             }
-            updateDetailMessage("Setari aplicatie");
+            updateDetailMessage("Setări aplicație");
         } else if (catName.equals(AppConfigView.ITEM_PREFERINTE_VIZUALE)) {
             if (this.mapSettings.get(AppConfigView.ITEM_PREFERINTE_VIZUALE) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_PREFERINTE_VIZUALE));
             } else {
                 this.rightForm.setContent(new ConfigPreferinteVizuale());
             }
-            updateDetailMessage("Configurare aspect aplicatie");
+            updateDetailMessage("Configurare aspect aplicație");
         } else if (catName.equals(AppConfigView.ITEM_MAIN_PERSPECTIVE)) {
             if (this.mapSettings.get(AppConfigView.ITEM_MAIN_PERSPECTIVE) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_MAIN_PERSPECTIVE));
             } else {
                 this.rightForm.setContent(new MainPerspective());
             }
-            updateDetailMessage("Configurare aspect aplicatie");
+            updateDetailMessage("Configurare aspect aplicație");
         } else if (catName.equals(AppConfigView.ITEM_SYSTEM_TRAY)) {
             if (this.mapSettings.get(AppConfigView.ITEM_SYSTEM_TRAY) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_SYSTEM_TRAY));
             } else {
                 this.rightForm.setContent(new ConfigSystemTray());
             }
-            updateDetailMessage("Setari componenta System Tray");
+            updateDetailMessage("Setări componentă System Tray");
         } else if (catName.equals(AppConfigView.ITEM_RAPOARTE)) {
             if (this.mapSettings.get(AppConfigView.ITEM_RAPOARTE) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_RAPOARTE));
             } else {
                 this.rightForm.setContent(new ConfigReports());
             }
-            updateDetailMessage("Setari generare rapoarte");
+            updateDetailMessage("Setări generare rapoarte");
         } else if (catName.equals(AppConfigView.ITEM_ROOT)) {
             if (this.mapSettings.get(AppConfigView.ITEM_ROOT) != null) {
                 this.rightForm.setContent((Composite) this.mapSettings.get(AppConfigView.ITEM_ROOT));
             } else {
                 this.rightForm.setContent(new Overview());
             }
-            updateDetailMessage("Index categorii setari");
+            updateDetailMessage("Index categorii setări");
         } else {
             return;
         }
@@ -209,9 +209,9 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
     public void customizeView() {
         setShellStyle(SWT.MIN | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.ADD_OK);
-        setBigViewMessage("Configurare parametri vizuali ai aplicatiei");
+        setBigViewMessage("Configurare parametri vizuali ai aplicației");
         setBigViewImage(AppImages.getImage32(AppImages.IMG_CONFIG));
-        setShellText("Setari aplicatie");
+        setShellText("Setări aplicație");
         setShellImage(AppImages.getImage16(AppImages.IMG_CONFIG));
     }
 
@@ -255,7 +255,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
                 if (StringUtils.isEmpty(this.textSearch.getText())) {
                     updateDetailMessage("Toate categoriile sunt vizibile.");
                 } else {
-                    updateDetailMessage("Sunt vizibile doar categoriile care contin textul \'" + this.textSearch.getText() + "\'");
+                    updateDetailMessage("Sunt vizibile doar categoriile care conțin textul \'" + this.textSearch.getText() + "\'");
                 }
                 this.treeViewer.expandToLevel(AbstractTreeViewer.ALL_LEVELS);
             }
@@ -279,7 +279,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             Label tmp;
 
             tmp = new Label(this, SWT.NONE);
-            tmp.setText("Setari");
+            tmp.setText("Setări");
             GridDataFactory.fillDefaults().span(2, 1).applyTo(tmp);
 
             tmp = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -418,13 +418,13 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(labelName);
 
             group = new Group(this, SWT.NONE);
-            group.setText("Setari rapoarte");
+            group.setText("Setări rapoarte");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             group.setLayoutData(gd);
             group.setLayout(new GridLayout(2, false));
 
             this.buttonReportsShowOptions = new Button(group, SWT.CHECK);
-            this.buttonReportsShowOptions.setText("Afisare optiuni");
+            this.buttonReportsShowOptions.setText("Afișare opțiuni");
             this.buttonReportsShowOptions.setToolTipText("Implicit, la orice fel de export se deschide o"
                     + " fereastră de configurare parametri export. Debifând opțiunea curentă, acest lucru nu se va mai întâmpla.");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
@@ -477,12 +477,12 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             labelName = new CLabel(this, SWT.BORDER);
             labelName.setBackground(ColorUtil.COLOR_ALBASTRU_FACEBOOK);
             labelName.setForeground(ColorUtil.COLOR_WHITE);
-            labelName.setText("Preferinte vizuale");
+            labelName.setText("Preferințe vizuale");
             labelName.setFont(FontUtil.TAHOMA12_BOLD);
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(labelName);
 
             group = new Group(this, SWT.NONE);
-            group.setText("Setari ferestre");
+            group.setText("Setări ferestre");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).grab(true, false).applyTo(group);
             group.setLayout(new GridLayout(2, false));
 
@@ -507,7 +507,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             WidgetCursorUtil.addHandCursorListener(this.buttonUseTablePrefs);
 
             this.buttonWindowsAsk = new Button(group, SWT.CHECK);
-            this.buttonWindowsAsk.setText("Confirmare la inchidere");
+            this.buttonWindowsAsk.setText("Confirmare la închidere");
             this.buttonWindowsAsk.setToolTipText("Selectând această opțiune, la închiderea unei ferestre veți fi întrebat dacă doriți acest lucru, dacă butonul de salvare este vizibil");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) group.getLayout()).numColumns, 1).applyTo(this.buttonWindowsAsk);
             WidgetCursorUtil.addHandCursorListener(this.buttonWindowsAsk);
@@ -520,12 +520,12 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             WidgetCursorUtil.addHandCursorListener(this.buttonWindowsReenterData);
 
             group = new Group(this, SWT.NONE);
-            group.setText("Cautare instanta");
+            group.setText("Căutare instantă");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).grab(true, false).applyTo(group);
             group.setLayout(new GridLayout(3, true));
 
             this.buttonHighlightUseBold = new Button(group, SWT.CHECK);
-            this.buttonHighlightUseBold.setText("Marcheaza rezultatele folosind bold text");
+            this.buttonHighlightUseBold.setText("Marchează rezultatele folosind bold text");
             this.buttonHighlightUseBold.setToolTipText("Selectarea opțiunii va marca potrivirile de text folosind un stil bold pt textele găsite.");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) group.getLayout()).numColumns, 1).applyTo(this.buttonHighlightUseBold);
             WidgetCursorUtil.addHandCursorListener(this.buttonHighlightUseBold);
@@ -659,42 +659,42 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             labelName = new CLabel(this, SWT.BORDER);
             labelName.setBackground(ColorUtil.COLOR_ALBASTRU_FACEBOOK);
             labelName.setForeground(ColorUtil.COLOR_WHITE);
-            labelName.setText("Aplicatie");
+            labelName.setText("Aplicație");
             labelName.setFont(FontUtil.TAHOMA12_BOLD);
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).applyTo(labelName);
 
             group = new Group(this, SWT.NONE);
-            group.setText("Setari in aplicatie");
+            group.setText("Setări în aplicație");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(group);
             group.setLayout(new GridLayout(2, false));
 
             this.buttonShowAll = new Button(group, SWT.CHECK);
-            this.buttonShowAll.setText("afisare nod 'toate' in cadrul grupajelor");
+            this.buttonShowAll.setText("afișare nod 'toate' în cadrul grupajelor");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowAll);
             WidgetCursorUtil.addHandCursorListener(this.buttonShowAll);
 
             this.buttonShowRecentActivity = new Button(group, SWT.CHECK);
-            this.buttonShowRecentActivity.setText("afisare nod 'operatii recente' in cadrul grupajelor");
+            this.buttonShowRecentActivity.setText("afișare nod 'operații recente' în cadrul grupajelor");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowRecentActivity);
             WidgetCursorUtil.addHandCursorListener(this.buttonShowRecentActivity);
 
             this.buttonShowNumbers = new Button(group, SWT.CHECK);
-            this.buttonShowNumbers.setText("afisare nr inregistrari in grupaje");
+            this.buttonShowNumbers.setText("afișare nr înregistrări în grupaje");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowNumbers);
             WidgetCursorUtil.addHandCursorListener(this.buttonShowNumbers);
 
-            new Label(group, SWT.NONE).setText("Stil afisare data");
+            new Label(group, SWT.NONE).setText("Stil afișare data");
             this.comboTreeDateFormat = new Combo(group, SWT.READ_ONLY);
             this.comboTreeDateFormat.setItems(StilAfisareData.STIL_AFISARE_DATA);
             WidgetCursorUtil.addHandCursorListener(this.comboTreeDateFormat);
 
             group = new Group(this, SWT.NONE);
-            group.setText("Format data/ora");
+            group.setText("Format dată/oră");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(group);
             group.setLayout(new GridLayout(2, false));
 
             Label tmp = new Label(group, SWT.NONE);
-            tmp.setText("Format afisare data");
+            tmp.setText("Format afișare dată");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(tmp);
 
             this.comboDateFormat = new Combo(group, SWT.READ_ONLY);
@@ -703,14 +703,14 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             this.comboDateFormat.addListener(SWT.Selection, this);
 
             tmp = new Label(group, SWT.NONE);
-            tmp.setText("Vizualizare format data");
+            tmp.setText("Vizualizare format dată");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(tmp);
 
             this.labelDatePreview = new Label(group, SWT.NONE);
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.labelDatePreview);
 
             tmp = new Label(group, SWT.NONE);
-            tmp.setText("Format afisare ora");
+            tmp.setText("Format afișare oră");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(tmp);
 
             this.comboTimeFormat = new Combo(group, SWT.READ_ONLY);
@@ -719,7 +719,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             this.comboTimeFormat.addListener(SWT.Selection, this);
 
             tmp = new Label(group, SWT.NONE);
-            tmp.setText("Vizualizare format ora");
+            tmp.setText("Vizualizare format oră");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(tmp);
 
             this.labelTimePreview = new Label(group, SWT.NONE);

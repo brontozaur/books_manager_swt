@@ -114,7 +114,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
 
         final TreeViewerColumn treeCol = new TreeViewerColumn(this.leftViewer, SWT.NONE);
         TableSetting setting = SettingsController.getTableSetting(1, getClass(), TREE_KEY);
-        treeCol.getColumn().setText("Tip fisier");
+        treeCol.getColumn().setText("Tip fișier");
         treeCol.getColumn().setWidth(setting.getWidths()[0]);
         treeCol.getColumn().setAlignment(setting.getAligns()[0]);
         treeCol.getColumn().setResizable(true);
@@ -154,7 +154,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         this.itemRefresh = new ToolItem(bar, SWT.NONE);
         this.itemRefresh.setImage(AppImages.getImage24(AppImages.IMG_REFRESH));
         this.itemRefresh.setHotImage(AppImages.getImage24Focus(AppImages.IMG_REFRESH));
-        this.itemRefresh.setText("&Refresh");
+        this.itemRefresh.setText("&Actualizare");
         this.itemRefresh.addListener(SWT.Selection, this);
 
         this.itemShowRaport = new ToolItem(bar, SWT.NONE);
@@ -162,21 +162,21 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         this.itemShowRaport.setHotImage(AppImages.getImage24Focus(AppImages.IMG_MOD_VIZUALIZARE));
         this.itemShowRaport.addListener(SWT.Selection, this);
         this.itemShowRaport.setEnabled(false);
-        this.itemShowRaport.setText("&Afisare raport");
+        this.itemShowRaport.setText("&Afișare raport");
 
         this.itemLaunchRaport = new ToolItem(bar, SWT.NONE);
         this.itemLaunchRaport.setImage(AppImages.getImage24(AppImages.IMG_EXPORT));
         this.itemLaunchRaport.setHotImage(AppImages.getImage24Focus(AppImages.IMG_EXPORT));
         this.itemLaunchRaport.addListener(SWT.Selection, this);
         this.itemLaunchRaport.setEnabled(false);
-        this.itemLaunchRaport.setText("&Lansare aplicatie externa");
+        this.itemLaunchRaport.setText("&Lansare aplicație externă");
 
         this.itemDelete = new ToolItem(bar, SWT.NONE);
         this.itemDelete.setImage(AppImages.getImage24(AppImages.IMG_CANCEL));
         this.itemDelete.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CANCEL));
         this.itemDelete.addListener(SWT.Selection, this);
         this.itemDelete.setEnabled(false);
-        this.itemDelete.setText("Sterge");
+        this.itemDelete.setText("Șterge");
 
         this.rightViewer = new TableViewer(comp, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
         this.rightViewer.setUseHashlookup(true);
@@ -335,7 +335,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Refresh	F5");
+        menuItem.setText("Actualizare	F5");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -345,7 +345,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Afisare raport");
+        menuItem.setText("Afișare raport");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
@@ -354,7 +354,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Lansare aplicatie externa");
+        menuItem.setText("Lansare aplicație externă");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
@@ -378,7 +378,7 @@ public final class VizualizareRapoarte extends AbstractCViewAdapter implements L
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Stergere");
+        menuItem.setText("Ștergere");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {

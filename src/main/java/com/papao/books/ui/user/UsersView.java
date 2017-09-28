@@ -45,7 +45,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
     public UsersView(final Shell parent) {
         super(parent, AbstractView.MODE_NONE);
 
-        getShell().setText("Utilizatori aplicatie");
+        getShell().setText("Utilizatori aplicație");
         getShell().setImage(AppImages.getImage16(AppImages.IMG_CONFIG));
 
         addComponents();
@@ -124,7 +124,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
             SettingsController.removeAllUserSettings(usr.getId());
             UserController.removeUserActivities(usr.getId());
             refresh();
-            SWTeXtension.displayMessageI("Operatie executata cu succes!");
+            SWTeXtension.displayMessageI("Operație executată cu succes!");
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             return false;
@@ -157,7 +157,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
     protected void customizeView() {
         setShellStyle(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
         setViewOptions(AbstractView.ADD_CANCEL | AbstractView.SHOW_OPS_LABELS);
-        setBigViewMessage("Configurare utilizatori aplicatie");
+        setBigViewMessage("Configurare utilizatori aplicație");
         setBigViewImage(AppImages.getImage24(AppImages.IMG_USER));
     }
 
@@ -204,7 +204,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Refresh   F5");
+        menuItem.setText("Actualizare   F5");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -216,7 +216,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
         new MenuItem(menu, SWT.SEPARATOR);
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Adaugare");
+        menuItem.setText("Adăugare");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -237,7 +237,7 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Stergere  Del");
+        menuItem.setText("Ștergere  Del");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {

@@ -122,27 +122,27 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 
 					switch (getFolder().getSelectionIndex()) {
 						case IDX_APLICATIE: {
-							updateDetailMessage("Sigla firma producatoare si numarul versiunii curente.");
+							updateDetailMessage("Sigla firmă producătoare și numărul versiunii curente.");
 							break;
 						}
 						case IDX_CREDITS: {
-							updateDetailMessage("O scurta cuvantare vizavi de autori si aplicatie");
+							updateDetailMessage("O scurtă cuvântare vizavi de autori și aplicație");
 							break;
 						}
 						case IDX_RESURSE: {
-							updateDetailMessage("Resursele alocate aplicatiei, in acest moment");
+							updateDetailMessage("Resursele alocate aplicației, în acest moment");
 							break;
 						}
 						case IDX_SETARI: {
-							updateDetailMessage("Setarile de baza ale utilizatorului curent");
+							updateDetailMessage("Setările de bază ale utilizatorului curent");
 							break;
 						}
 						case IDX_SISTEM: {
-							updateDetailMessage("Setarile masinii virtuale de pe calculatorul curent");
+							updateDetailMessage("Setările mașinii virtuale de pe calculatorul curent");
 							break;
 						}
 						case IDX_VERSIUNI: {
-							updateDetailMessage("Versiuni aplicatie si modificarile lor");
+							updateDetailMessage("Versiuni aplicație și modificările lor");
 							break;
 						}
 						default:
@@ -425,7 +425,7 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 		pbar.setLayoutData(gdata);
 
 		new Label(getCompResurse(), SWT.NONE);
-		new Label(getCompResurse(), SWT.NONE).setText("[INFORMATII SISTEM]");
+		new Label(getCompResurse(), SWT.NONE).setText("[INFORMAȚII SISTEM]");
 		new Label(getCompResurse(), SWT.NONE);
 
 		final Label labelTotalMem = new Label(getCompResurse(), SWT.NONE);
@@ -453,7 +453,7 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 		gdata = new GridData(SWT.LEFT, SWT.NONE, true, false);
 		gdata.horizontalSpan = 3;
 		labelDisplaySettings.setLayoutData(gdata);
-		labelDisplaySettings.setText("Rezolutie curenta: "
+		labelDisplaySettings.setText("Rezoluție curenta: "
 				+ Display.getDefault().getPrimaryMonitor().getBounds().width + "x"
 				+ Display.getDefault().getPrimaryMonitor().getBounds().height + " pixeli");
 
@@ -462,7 +462,7 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 		gdata.horizontalSpan = 3;
 		labelDisplayDepth.setLayoutData(gdata);
 		labelDisplayDepth.setAlignment(SWT.LEFT);
-		labelDisplayDepth.setText("Adancime culoare: " + Display.getDefault().getDepth() + " biti");
+		labelDisplayDepth.setText("Adâncime culoare: " + Display.getDefault().getDepth() + " biți");
 
 		final Label labelFont = new Label(getCompResurse(), SWT.NONE);
 		gdata = new GridData(SWT.LEFT, SWT.NONE, true, false);
@@ -484,9 +484,9 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 		double totalUsedBefore = total - free;
 		pbar.setMaximum((int) total / (1024 * 1024));
 		pbar.setSelection((int) totalUsedBefore / (1024 * 1024));
-		labelUsedMem.setText("Memorie utilizata : " + nf.format(totalUsedBefore / (1024 * 1024))
+		labelUsedMem.setText("Memorie utilizată : " + nf.format(totalUsedBefore / (1024 * 1024))
 				+ " MB");
-		labelTotalMem.setText("Memorie alocata : " + nf.format(total / (1024 * 1024)) + " MB");
+		labelTotalMem.setText("Memorie alocată : " + nf.format(total / (1024 * 1024)) + " MB");
 
 		/**
 		 * Superb example of updating a widget from another thread
@@ -508,20 +508,20 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 								pbar.setSelection((int) totalUsedBeforeM / (1024 * 1024));
 							}
 							if (!labelUsedMem.isDisposed()) {
-								labelUsedMem.setText("Memorie utilizata : "
+								labelUsedMem.setText("Memorie utilizată : "
 										+ nf.format(totalUsedBeforeM / (1024 * 1024)) + " MB");
 							}
 							if (!labelTotalMem.isDisposed()) {
-								labelTotalMem.setText("Memorie alocata : "
+								labelTotalMem.setText("Memorie alocată : "
 										+ nf.format(totalM / (1024 * 1024)) + " MB");
 							}
 							if (!labelFreeMem.isDisposed()) {
-								labelFreeMem.setText("Memorie libera : "
+								labelFreeMem.setText("Memorie liberă : "
 										+ nf.format(((int) Runtime.getRuntime().freeMemory())
 												/ (1024 * 1024)) + " MB");
 							}
 							if (!labelThreadCount.isDisposed()) {
-								labelThreadCount.setText("Fire de executie in paralel (threads) : "
+								labelThreadCount.setText("Fire de execuție în paralel: "
 										+ Thread.activeCount());
 							}
 						}
@@ -598,7 +598,7 @@ public final class CreditsView extends AbstractCViewAdapter implements Runnable 
 				if (c.getSelectionIndex() == -1) {
 					return;
 				}
-				final String versionInfo = "Text versiuni aplicatie";
+				final String versionInfo = "Text versiuni aplicație";
 				CreditsView.this.styledTextVersiuni.setText(versionInfo);
 
 				int rangeLength = 0;

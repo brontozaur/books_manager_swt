@@ -117,7 +117,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
                 }
                 ratingValue = bookRating.getCurrentNumberOfStars();
                 UserController.saveBookRatingForCurrentUser(carte.getId(), ratingValue);
-                SWTeXtension.displayMessageI("Nota a fost salvata cu succes!");
+                SWTeXtension.displayMessageI("Nota a fost salvată cu succes!");
                 setChanged();
                 notifyObservers();
             }
@@ -217,11 +217,11 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).spacing(5, 1).applyTo(comp);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.BEGINNING, SWT.CENTER).span(1, 1).applyTo(comp);
 
-        new Label(comp, SWT.NONE).setText("inceputa");
+        new Label(comp, SWT.NONE).setText("începută");
         readStartDate = new DateChooserCustom(comp);
         readStartDate.setEnabled(false);
 
-        new Label(comp, SWT.NONE).setText("terminata");
+        new Label(comp, SWT.NONE).setText("terminată");
         readEndDate = new DateChooserCustom(comp);
         readEndDate.setEnabled(false);
 

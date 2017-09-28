@@ -521,7 +521,7 @@ public abstract class AbstractView extends Observable {
                         this.compSearchWithHighlight = new Composite(this.upperCompRightArea, SWT.NONE);
                         GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).grab(true, true).applyTo(this.compSearchWithHighlight);
                         GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(0, 4, 0, 4).equalWidth(false).applyTo(this.compSearchWithHighlight);
-                        new Label(this.compSearchWithHighlight, SWT.NONE).setText("Cautare");
+                        new Label(this.compSearchWithHighlight, SWT.NONE).setText("Căutare");
                         this.textSearchWithHighlight = new Text(this.compSearchWithHighlight, SWT.BORDER);
                         GridDataFactory.fillDefaults().hint(textSearchWithHighlightWidth, SWT.DEFAULT).grab(true, false).align(SWT.CENTER, SWT.CENTER).applyTo(this.textSearchWithHighlight);
                         this.textSearchWithHighlight.addListener(SWT.Modify, this.viewListener);
@@ -950,7 +950,7 @@ public abstract class AbstractView extends Observable {
             exportMainControl.setMenu(menu);
 
             item = new MenuItem(menu, SWT.NULL);
-            item.setText("Export fisier PDF");
+            item.setText("Export fișier PDF");
             item.setImage(AppImages.getImage16(AppImages.IMG_ADOBE));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -960,7 +960,7 @@ public abstract class AbstractView extends Observable {
             });
 
             item = new MenuItem(menu, SWT.NULL);
-            item.setText("Export fisier Excel");
+            item.setText("Export fișier Excel");
             item.setImage(AppImages.getImage16(AppImages.IMG_EXCEL));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -970,7 +970,7 @@ public abstract class AbstractView extends Observable {
             });
 
             item = new MenuItem(menu, SWT.NULL);
-            item.setText("Export fisier TXT");
+            item.setText("Export fișier TXT");
             item.setImage(AppImages.getImage16(AppImages.IMG_EXPORT));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -980,7 +980,7 @@ public abstract class AbstractView extends Observable {
             });
 
             item = new MenuItem(menu, SWT.NULL);
-            item.setText("Export fisier RTF");
+            item.setText("Export fișier RTF");
             item.setImage(AppImages.getImage16(AppImages.IMG_WORD2));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -990,7 +990,7 @@ public abstract class AbstractView extends Observable {
             });
 
             item = new MenuItem(menu, SWT.NULL);
-            item.setText("Export fisier HTML");
+            item.setText("Export fișier HTML");
             item.setImage(AppImages.getImage16(AppImages.IMG_BROWSER));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -1025,7 +1025,7 @@ public abstract class AbstractView extends Observable {
             });
 
             item = new MenuItem(menu, SWT.NULL);
-            item.setText("Tiparire la imprimanta");
+            item.setText("Tiparire la imprimantă");
             item.setImage(AppImages.getImage16(AppImages.IMG_PRINT));
             item.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -1051,7 +1051,7 @@ public abstract class AbstractView extends Observable {
                 close(SWT.OK);
             }
             if (AbstractView.this.automaticallyShowSaveOKMessage) {
-                SWTeXtension.displayMessageI("Operatia s-a executat cu succes.", "Salvare OK");
+                SWTeXtension.displayMessageI("Operația s-a executat cu succes.", "Salvare OK");
             }
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
@@ -1160,7 +1160,7 @@ public abstract class AbstractView extends Observable {
         } else if (e.widget == this.buttonCancel) {
             close(SWT.CANCEL);
         } else if (e.widget == this.buttonDetails) {
-            SWTeXtension.displayMessageI("Not implemented yet!");
+            SWTeXtension.displayMessageI("Operațiunea selectată nu este implementată încă!");
         } else if (e.widget == this.toolItemAdd) {
             ((IAdd) AbstractView.this).add();
         } else if (e.widget == this.toolItemMod) {

@@ -53,14 +53,14 @@ public class MsgBox implements Listener {
     private boolean isWarning;
     private String canonicalFileName;
 
-    private final static String APPLICATION_ERROR = "Eroare in aplicatie";
+    private final static String APPLICATION_ERROR = "Eroare în aplicație";
     private final static String APPLICATION_ERROR_MESSAGE = "Mesaj:";
     private final static String APPLICATION_ERROR_DETAILS = "Detalii tehnice:";
 
     public static final String BOX_ERROR = "Mesaj de eroare";
     public static final String BOX_INFO = "Mesaj informativ";
-    public static final String BOX_WARNING = "Mesaj de atentionare";
-    public static final String BOX_QUESTION = "Confirmare actiune";
+    public static final String BOX_WARNING = "Mesaj de atenționare";
+    public static final String BOX_QUESTION = "Confirmare acțiune";
 
     private Point shellSize;
     private StringBuilder bufferErrorDetails;
@@ -143,7 +143,7 @@ public class MsgBox implements Listener {
                 } else if (this.isError) {
                     text = "A intervenit o eroare!";
                 } else if (this.isQuestion) {
-                    text = "Va rugam confirmati sau nu actiunea dorita:";
+                    text = "Va rugăm confirmați sau nu acțiunea dorită:";
                 } else if (this.isWarning) {
                     text = "Mesaj de avertizare.";
                 }
@@ -428,7 +428,7 @@ public class MsgBox implements Listener {
                 this.compErrorActions.setLayoutData(gd);
 
                 this.buttonOptions = new Button(this.compErrorActions, SWT.PUSH);
-                this.buttonOptions.setText("Optiuni..");
+                this.buttonOptions.setText("Opțiuni..");
                 this.buttonOptions.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
                 this.buttonOptions.setImage(AppImages.getImage16(AppImages.IMG_MODIFICARE));
                 this.buttonOptions.setMenu(createButtonOptionsMenu());
@@ -517,7 +517,7 @@ public class MsgBox implements Listener {
         final Menu menu = new Menu(this.buttonOptions);
         try {
             menuItem = new MenuItem(menu, SWT.NONE);
-            menuItem.setText("Copiaza mesajul afisat");
+            menuItem.setText("Copiază mesajul afișat");
             menuItem.setImage(AppImages.getImage16(AppImages.IMG_MODIFICARE));
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -527,7 +527,7 @@ public class MsgBox implements Listener {
             });
 
             menuItem = new MenuItem(menu, SWT.NONE);
-            menuItem.setText("Consultare log aplicatie");
+            menuItem.setText("Consultare log aplicație");
             menuItem.setImage(AppImages.getImage16(AppImages.IMG_OK));
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
