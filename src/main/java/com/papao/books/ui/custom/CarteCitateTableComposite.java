@@ -114,7 +114,7 @@ public class CarteCitateTableComposite extends Composite implements Observer, IA
 
 
         TableColumn column = new TableColumn(table, SWT.LEFT);
-        column.setText("Nr pagina");
+        column.setText("Nr. pagină");
         column.setResizable(true);
         column.setWidth(visible[0] ? dims[0]: 0);
         column.setAlignment(aligns[0]);

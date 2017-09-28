@@ -118,7 +118,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         super(null, AbstractView.MODE_NONE);
         String defaultSearchType = ApplicationService.getApplicationConfig().getDefaultSearchType();
         for (BookSearchType searchType : BookSearchType.values()) {
-            if (searchType.name().toLowerCase().contains(defaultSearchType.toLowerCase())) {
+            if (searchType.getNume().toLowerCase().contains(defaultSearchType.toLowerCase())) {
                 this.searchType = searchType;
                 break;
             }
@@ -203,7 +203,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private Menu createMainRightTabFolderMenu() {
         final Menu tabFolderMenu = new Menu(mainRightTabFolder.getShell(), SWT.POP_UP);
         MenuItem item = new MenuItem(tabFolderMenu, SWT.PUSH);
-        item.setText("Afiseaza galerie");
+        item.setText("Afișare galerie");
         tabFolderMenu.addListener(SWT.Show, new Listener() {
             @Override
             public void handleEvent(final Event e) {
@@ -259,7 +259,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         mainRightTabFolder.setMenu(createMainRightTabFolderMenu());
 
         CTabItem tabGrid = new CTabItem(this.mainRightTabFolder, SWT.NONE);
-        tabGrid.setText("Lista");
+        tabGrid.setText("Listă");
         tabGrid.setImage(AppImages.getImage16(AppImages.IMG_LISTA));
         this.mainRightTabFolder.setSelection(tabGrid);
 
@@ -298,7 +298,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         ToolItem itemSearch = new ToolItem(new ToolBar(mainCompRightTab, SWT.FLAT | SWT.RIGHT), SWT.RIGHT);
         itemSearch.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
         itemSearch.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
-        itemSearch.setText("Cautare");
+        itemSearch.setText("Căutare");
         itemSearch.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -684,19 +684,19 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        new Label(compLeftTree, SWT.NONE).setText("Grupare dupa");
+        new Label(compLeftTree, SWT.NONE).setText("Grupare după");
         comboModAfisare = new Combo(compLeftTree, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(comboModAfisare);
         for (BookSearchType searchType : BookSearchType.values()) {
-            comboModAfisare.add(searchType.name());
+            comboModAfisare.add(searchType.getNume());
         }
-        comboModAfisare.select(comboModAfisare.indexOf(searchType.name()));
+        comboModAfisare.select(comboModAfisare.indexOf(searchType.getNume()));
         ContentProposalProvider.addContentProposal(comboModAfisare, comboModAfisare.getItems(), true);
         comboModAfisare.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 try {
-                    searchType = BookSearchType.valueOf(comboModAfisare.getText());
+                    searchType = BookSearchType.getByNume(comboModAfisare.getText());
                 } catch (Exception exc) {
                     return;
                 }
@@ -811,7 +811,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
             case Limba_originala: {
                 IntValuePairsWrapper wrapper = ApplicationController.getDistinctStringPropertyValues(ApplicationService.getApplicationConfig().getBooksCollectionName(), "editiaOriginala.limba", false, true);
-                createTreeNodes(wrapper, "Limba originala");
+                createTreeNodes(wrapper, BookSearchType.Limba_originala.getNume());
                 break;
             }
             case Tip_coperta: {
@@ -940,7 +940,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         new MenuItem(menu, SWT.SEPARATOR);
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Aliniere la stanga");
+        menuItem.setText("Aliniere la stânga");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
@@ -960,7 +960,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         new MenuItem(menu, SWT.SEPARATOR);
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Afiseaza galerie");
+        menuItem.setText("Afișare galerie");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -970,7 +970,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Edit autor");
+        menuItem.setText("Modificare autor");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_USER));
         menuItem.setEnabled(searchType == BookSearchType.Autor);
         menuItem.addListener(SWT.Selection, new Listener() {
@@ -999,7 +999,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 @Override
                 public void handleEvent(Event event) {
                     searchType = type;
-                    comboModAfisare.select(comboModAfisare.indexOf(searchType.name()));
+                    comboModAfisare.select(comboModAfisare.indexOf(searchType.getNume()));
                     populateLeftTree();
                 }
             });
@@ -1048,7 +1048,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         final Menu importMenu = new Menu(getShell(), SWT.POP_UP);
         MenuItem item = new MenuItem(importMenu, SWT.PUSH);
-        item.setText("Import carti");
+        item.setText("Import cărți");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -1083,7 +1083,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         final Menu exportMenu = new Menu(getShell(), SWT.POP_UP);
         item = new MenuItem(exportMenu, SWT.PUSH);
-        item.setText("Serializare completa");
+        item.setText("Serializare completă");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -1109,7 +1109,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         final Menu rapoarteMenu = new Menu(getShell(), SWT.POP_UP);
         item = new MenuItem(rapoarteMenu, SWT.PUSH);
-        item.setText("Cei mai cititi autori");
+        item.setText("Cei mai citiți autori");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -1118,7 +1118,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         item = new MenuItem(rapoarteMenu, SWT.PUSH);
-        item.setText("Carti fara imagine");
+        item.setText("Cărți fără imagine");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -1223,7 +1223,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         item.setImage(AppImages.getImage24(AppImages.IMG_CONFIG));
         item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CONFIG));
         item.setToolTipText("Configurare aplicatie");
-        item.setText("Setari");
+        item.setText("Setări");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
@@ -1467,7 +1467,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Refresh   F5");
+        menuItem.setText("Actualizare   F5");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_REFRESH));
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -1479,7 +1479,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         new MenuItem(menu, SWT.SEPARATOR);
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Adaugare");
+        menuItem.setText("Adăugare");
         menuItem.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
@@ -1500,7 +1500,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText("Stergere  Del");
+        menuItem.setText("Ștergere  Del");
         menuItem.addListener(SWT.Selection, new Listener() {
             @Override
             public final void handleEvent(final Event e) {
@@ -1581,7 +1581,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             });
 
             menuItem = new MenuItem(trayItemMenu, SWT.PUSH);
-            menuItem.setText("Afisare Books Manager");
+            menuItem.setText("Afișare Books Manager");
             menuItem.setImage(AppImages.getImage16(AppImages.IMG_BORG_MAIN));
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
@@ -1902,7 +1902,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         });
 
         MenuItem item = new MenuItem(menu, SWT.PUSH);
-        item.setText("Inchidere ferestre");
+        item.setText("Închidere ferestre");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {
@@ -1919,7 +1919,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         item = new MenuItem(menu, SWT.PUSH);
         item.setImage(AppImages.getImageMiscByName(AppImages.IMG_MISC_SIMPLE_MAXIMIZE));
-        item.setText("Afisare ferestre");
+        item.setText("Afișare ferestre");
         item.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(final Event e) {

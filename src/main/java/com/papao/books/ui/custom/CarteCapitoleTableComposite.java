@@ -116,7 +116,7 @@ public class CarteCapitoleTableComposite extends Composite implements Observer, 
         boolean[] visible = setting.getVisibility();
 
         TableColumn column = new TableColumn(table, SWT.LEFT);
-        column.setText("Nr capitol");
+        column.setText("Nr. capitol");
         column.setResizable(true);
         column.setWidth(visible[IDX_NR_CAPITOL] ? dims[IDX_NR_CAPITOL] : 0);
         column.setAlignment(aligns[IDX_NR_CAPITOL]);
@@ -128,7 +128,7 @@ public class CarteCapitoleTableComposite extends Composite implements Observer, 
         column.setAlignment(aligns[IDX_TITLU]);
 
         column = new TableColumn(table, SWT.LEFT);
-        column.setText("Nr pagina");
+        column.setText("Nr pagină");
         column.setResizable(true);
         column.setWidth(visible[IDX_NR_PAGINA] ? dims[IDX_NR_PAGINA] : 0);
         column.setAlignment(aligns[IDX_NR_PAGINA]);

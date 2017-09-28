@@ -139,12 +139,12 @@ public class ExportPdfOptionsView extends AbstractExportView {
             GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(labelName);
 
             groupOptions = new Group(this, SWT.NONE);
-            groupOptions.setText("Optiuni export");
+            groupOptions.setText("Opțiuni export");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             groupOptions.setLayoutData(gd);
             groupOptions.setLayout(new GridLayout(1, true));
 
-            new Label(groupOptions, SWT.NONE).setText("Nume fisier");
+            new Label(groupOptions, SWT.NONE).setText("Nume fișier");
 
             this.textFileName = new Text(groupOptions, SWT.BORDER);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).grab(false, false).hint(250,
@@ -153,7 +153,7 @@ public class ExportPdfOptionsView extends AbstractExportView {
             this.textFileName.addListener(SWT.Modify, this);
 
             ExportPdfOptionsView.this.buttonExportPathAuto = new Button(groupOptions, SWT.CHECK);
-            ExportPdfOptionsView.this.buttonExportPathAuto.setText("cale automata export");
+            ExportPdfOptionsView.this.buttonExportPathAuto.setText("cale automată export");
             ExportPdfOptionsView.this.buttonExportPathAuto.addListener(SWT.Selection, this);
             GridDataFactory.fillDefaults().applyTo(ExportPdfOptionsView.this.buttonExportPathAuto);
 
@@ -177,7 +177,7 @@ public class ExportPdfOptionsView extends AbstractExportView {
             this.comboPDFVersion.setItems(ExportPdfSetting.VERSIONS);
             this.comboPDFVersion.addListener(SWT.FocusIn, this);
 
-            new Label(groupOptions, SWT.NONE).setText("Font tabela");
+            new Label(groupOptions, SWT.NONE).setText("Font tabelă");
             this.fs = new FontSelectorComposite(groupOptions);
             this.fs.getTextSelectie().addListener(SWT.FocusIn, this);
 
@@ -206,28 +206,28 @@ public class ExportPdfOptionsView extends AbstractExportView {
             this.buttonShowNrCrt = new Button(groupOptions, SWT.CHECK);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).span(((GridLayout) groupOptions.getLayout()).numColumns,
                     1).applyTo(this.buttonShowNrCrt);
-            this.buttonShowNrCrt.setText("Afisare coloana pentru numar curent");
+            this.buttonShowNrCrt.setText("Afișare coloană pentru număr curent");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowNrCrt);
             this.buttonShowNrCrt.addListener(SWT.Selection, this);
 
             this.buttonShowHeader = new Button(groupOptions, SWT.CHECK);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).span(((GridLayout) groupOptions.getLayout()).numColumns,
                     1).applyTo(this.buttonShowHeader);
-            this.buttonShowHeader.setText("Afisare antet tabel");
+            this.buttonShowHeader.setText("Afișare antet tabel");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowHeader);
             this.buttonShowHeader.addListener(SWT.Selection, this);
 
             this.buttonShowGradient = new Button(groupOptions, SWT.CHECK);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).span(((GridLayout) groupOptions.getLayout()).numColumns,
                     1).applyTo(this.buttonShowGradient);
-            this.buttonShowGradient.setText("Alternare culori in tabel");
+            this.buttonShowGradient.setText("Alternare culori în tabel");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowGradient);
             this.buttonShowGradient.addListener(SWT.Selection, this);
 
             this.buttonShowPageNumbers = new Button(groupOptions, SWT.CHECK);
             GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).span(((GridLayout) groupOptions.getLayout()).numColumns,
                     1).applyTo(this.buttonShowPageNumbers);
-            this.buttonShowPageNumbers.setText("Afisare numere de pagina in document");
+            this.buttonShowPageNumbers.setText("Afișare numere de pagină în document");
             WidgetCursorUtil.addHandCursorListener(this.buttonShowPageNumbers);
             this.buttonShowPageNumbers.addListener(SWT.Selection, this);
 

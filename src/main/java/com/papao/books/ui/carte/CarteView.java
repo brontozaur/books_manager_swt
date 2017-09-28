@@ -417,7 +417,7 @@ public class CarteView extends AbstractCSaveView {
         new Label(comp, SWT.NONE);
         new Label(comp, SWT.NONE);
 
-        label(comp, "Limba originala");
+        label(comp, "Limba originală");
         comboEditiaPrincepsLimba = new Combo(comp, SWT.READ_ONLY);
         GridDataFactory.fillDefaults().span(3, 1).grab(false, false).applyTo(this.comboEditiaPrincepsLimba);
         comboEditiaPrincepsLimba.setItems(Limba.getComboItems());
