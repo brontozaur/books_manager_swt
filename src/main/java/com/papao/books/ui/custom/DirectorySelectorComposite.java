@@ -76,7 +76,7 @@ public class DirectorySelectorComposite extends Composite implements Listener {
 
     private void selectDir() {
         DirectoryDialog dd = new DirectoryDialog(this.getShell());
-        dd.setMessage("Selectati un director");
+        dd.setMessage("Selectați un director");
         dd.setText("Selectare director");
         if (StringUtils.isNotEmpty(this.dirPath)) {
             dd.setFilterPath(this.dirPath);

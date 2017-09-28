@@ -243,7 +243,7 @@ public final class ExportPdf {
             // pdfTable.setLockedWidth(true);
 
             wait = new CWaitDlgClassic(nrOfItems);
-            wait.setMessageLabel("Se genereaza fisierul...");
+            wait.setMessageLabel("Se generează fișierul...");
             wait.open();
 
             if (exportSetting.isShowHeader()) {
@@ -334,7 +334,7 @@ public final class ExportPdf {
             ExportPdf.createFooter(pdfTable);
             document.add(pdfTable);
 
-            wait.setMessageLabel("Salvare fisier pe disc...va rugam asteptati...");
+            wait.setMessageLabel("Salvare fișier pe disc...vă rugăm așteptați...");
 
             document.close();
 

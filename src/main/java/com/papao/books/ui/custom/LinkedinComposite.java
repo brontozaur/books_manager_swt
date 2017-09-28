@@ -49,7 +49,7 @@ public class LinkedinComposite extends Composite {
         RowLayoutFactory.fillDefaults().extendedMargins(2, 5, 2, 2).spacing(1).pack(true).wrap(true).applyTo(this);
 
         textSearch = new Text(this, SWT.SEARCH);
-        textSearch.setMessage("Cautare...");
+        textSearch.setMessage("Căutare...");
         RowDataFactory.swtDefaults().hint(140, SWT.DEFAULT).applyTo(textSearch);
 
         ContentProposalProvider.addContentProposal(textSearch, proposals);

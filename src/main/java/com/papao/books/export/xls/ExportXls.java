@@ -219,7 +219,7 @@ public final class ExportXls {
             int crtInputIndex = 0;
 
             for (int w = 0; w < NR_OF_SHEETS; ) {
-                wait.setMessageLabel("Generare fisier..." + (NR_OF_SHEETS > 1 ? (" generare sheet " + (w + 1)) : ""));
+                wait.setMessageLabel("Generare fișier..." + (NR_OF_SHEETS > 1 ? (" generare sheet " + (w + 1)) : ""));
                 if ((w > 0) || (sheet == null)) {
                     if (StringUtils.isEmpty(numeSheet)) {
                         sheet = workBook.createSheet(NR_OF_SHEETS > 1 ? "Sheet" + (w + 1) : "");
@@ -354,7 +354,7 @@ public final class ExportXls {
                 // mult de 10k linii, NU se va apela.
                 if ((sheet.getLastRowNum() < ExportXls.MAX_ELEMENTS_FOR_AUTO_RESIZE) && (NR_OF_SHEETS == 1)) {
                     wait.setMax(sheetColumnIndex);
-                    wait.setMessageLabel("Ajustare automata dimensiuni coloane...");
+                    wait.setMessageLabel("Ajustare automată dimensiuni coloane...");
                     wait.setMax(sheetColumnIndex);
                     for (int i = 0; i < sheetColumnIndex; i++) {
                         wait.advance(i);
@@ -367,7 +367,7 @@ public final class ExportXls {
                 w++;
             }
 
-            wait.setMessageLabel("Salvare fisier pe disc...va rugam asteptati...");
+            wait.setMessageLabel("Salvare fișier pe disc...vă rugăm așteptați...");
             workBook.write(fileOut);
             fileOut.close();
 

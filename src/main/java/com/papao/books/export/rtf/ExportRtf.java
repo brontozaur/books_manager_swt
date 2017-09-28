@@ -212,7 +212,7 @@ public final class ExportRtf {
             }
 
             wait = new CWaitDlgClassic(nrOfItems);
-            wait.setMessageLabel("Se genereaza fisierul...");
+            wait.setMessageLabel("Se generează fișierul...");
             wait.open();
 
             if (exportSetting.isShowHeader()) {
@@ -220,7 +220,7 @@ public final class ExportRtf {
             }
 
             if (exportSetting.isShowPageNumber()) {
-                hf = new HeaderFooter(new Phrase("Pag. "), new Phrase(" - a fost generata cu Books Manager, https://github.com/brontozaur"));
+                hf = new HeaderFooter(new Phrase("Pag. "), new Phrase(" - a fost generată cu Books Manager, https://github.com/brontozaur"));
             } else {
                 hf = new HeaderFooter(new Phrase("Raport generat cu Books Manager, https://github.com/brontozaur"), false);
             }
@@ -281,7 +281,7 @@ public final class ExportRtf {
             document.add(rtfTable);
             rtfTable.deleteAllRows();
 
-            wait.setMessageLabel("Salvare fisier pe disc...va rugam asteptati...");
+            wait.setMessageLabel("Salvare fisier pe disc...vă rugăm așteptați...");
 
             document.close();
             writer.close();

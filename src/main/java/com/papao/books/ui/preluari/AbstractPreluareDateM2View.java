@@ -508,7 +508,7 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
             List<String[]> values = loadFileContentIntoMemory(filePath);
             tableDocumente.removeAll();
             dlg = new CWaitDlgClassic(values.size());
-            dlg.setMessageLabel("Incarcare date in tabela...");
+            dlg.setMessageLabel("Încarcare date în tabelă...");
             dlg.open();
             for (int i = 0; i < values.size(); i++) {
                 final String[] str = values.get(i);

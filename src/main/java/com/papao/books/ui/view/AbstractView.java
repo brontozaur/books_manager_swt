@@ -1483,7 +1483,7 @@ public abstract class AbstractView extends Observable {
         if ((this.waitDlg == null) || this.waitDlg.isClosed() || (this.waitDlg.getMax() <= 0)) {
             getWaitDlg("", MAX, true);
         }
-        this.waitDlg.setMessageLabel("Inregistrarea curenta: " + String.valueOf(this.waitDlg.getSelection()) + " din " + MAX + "...");
+        this.waitDlg.setMessageLabel("Înregistrarea curentă: " + String.valueOf(this.waitDlg.getSelection()) + " din " + MAX + "...");
         this.waitDlg.advance();
     }
 

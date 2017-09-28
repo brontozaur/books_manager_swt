@@ -268,16 +268,16 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         GridDataFactory.fillDefaults().grab(true, false).applyTo(mainCompRightTab);
 
         final Combo comboSearch = new Combo(mainCompRightTab, SWT.READ_ONLY);
-        comboSearch.setItems(new String[]{"tabela", "baza de date"});
+        comboSearch.setItems(new String[]{"tabelă", "baza de date"});
         comboSearch.select(1);
 
         searchText = new Text(mainCompRightTab, SWT.SEARCH);
-        searchText.setMessage("cautare dupa...");
+        searchText.setMessage("căutare după...");
         GridDataFactory.fillDefaults().hint(150, SWT.DEFAULT).applyTo(searchText);
         searchText.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if ("tabela".equals(comboSearch.getText())) {
+                if ("tabelă".equals(comboSearch.getText())) {
                     if (searchText.getText().isEmpty()) {
                         resetSearchFilters();
                         return;
@@ -485,7 +485,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             BalloonNotification.showNotification(searchText, "Notificare", "Introduceti minim 2 caractere!", 1500);
             return;
         }
-        if ("tabela".equals(comboSearch.getText())) {
+        if ("tabelă".equals(comboSearch.getText())) {
             searchInTable(searchText.getText().trim());
         } else if ("baza de date".equals(comboSearch.getText())) {
             searchInDatabase(searchText.getText().trim());
