@@ -39,7 +39,7 @@ public class BookImportView extends AbstractPreluareDateM2View {
     @Override
     protected boolean validate() {
         if (tableDocumente.getItemCount() == 0) {
-            SWTeXtension.displayMessageW("Selectati fisierul de preluare!");
+            SWTeXtension.displayMessageW("Selectați fișierul de preluare!");
             return false;
         }
         return true;

@@ -439,9 +439,9 @@ public abstract class AbstractView extends Observable {
                         this.toolItemAdd = new ToolItem(this.mainToolbar, SWT.PUSH | SWT.FLAT);
                         this.toolItemAdd.setImage(AppImages.getImage24(AppImages.IMG_PLUS));
                         this.toolItemAdd.setHotImage(AppImages.getImage24Focus(AppImages.IMG_PLUS));
-                        this.toolItemAdd.setToolTipText("Adaugare");
+                        this.toolItemAdd.setToolTipText("Adăugare");
                         if (this.showOpsLabels) {
-                            this.toolItemAdd.setText("&Adaugare");
+                            this.toolItemAdd.setText("&Adăugare");
                         }
                         this.toolItemAdd.addListener(SWT.Selection, this.viewListener);
                     }
@@ -459,9 +459,9 @@ public abstract class AbstractView extends Observable {
                         this.toolItemDel = new ToolItem(this.mainToolbar, SWT.PUSH | SWT.FLAT);
                         this.toolItemDel.setImage(AppImages.getImage24(AppImages.IMG_CANCEL));
                         this.toolItemDel.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CANCEL));
-                        this.toolItemDel.setToolTipText("Stergere");
+                        this.toolItemDel.setToolTipText("Ștergere");
                         if (this.showOpsLabels) {
-                            this.toolItemDel.setText("Stergere");
+                            this.toolItemDel.setText("Ștergere");
                         }
                         this.toolItemDel.addListener(SWT.Selection, this.viewListener);
                     }
@@ -470,9 +470,9 @@ public abstract class AbstractView extends Observable {
                         this.toolItemRefresh = new ToolItem(this.mainToolbar, SWT.PUSH | SWT.FLAT);
                         this.toolItemRefresh.setImage(AppImages.getImage24(AppImages.IMG_REFRESH));
                         this.toolItemRefresh.setHotImage(AppImages.getImage24Focus(AppImages.IMG_REFRESH));
-                        this.toolItemRefresh.setToolTipText("Reactualizare informatii");
+                        this.toolItemRefresh.setToolTipText("Reactualizare informații");
                         if (this.showOpsLabels) {
-                            this.toolItemRefresh.setText("Refresh");
+                            this.toolItemRefresh.setText("Actualizare");
                         }
                         this.toolItemRefresh.addListener(SWT.Selection, this.viewListener);
                     }
@@ -507,13 +507,13 @@ public abstract class AbstractView extends Observable {
                         this.toolItemBack = new ToolItem(this.barNavigare, SWT.PUSH | SWT.FLAT);
                         this.toolItemBack.setImage(AppImages.getImage24(AppImages.IMG_ARROW_LEFT));
                         this.toolItemBack.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_LEFT));
-                        this.toolItemBack.setToolTipText("Inapoi/Anterior");
+                        this.toolItemBack.setToolTipText("Înapoi/Anterior");
                         this.toolItemBack.addListener(SWT.Selection, this.viewListener);
 
                         this.toolItemNext = new ToolItem(this.barNavigare, SWT.PUSH | SWT.FLAT);
                         this.toolItemNext.setImage(AppImages.getImage24(AppImages.IMG_ARROW_RIGHT));
                         this.toolItemNext.setHotImage(AppImages.getImage24Focus(AppImages.IMG_ARROW_RIGHT));
-                        this.toolItemNext.setToolTipText("Inainte/Urmatorul");
+                        this.toolItemNext.setToolTipText("Înainte/Următorul");
                         this.toolItemNext.addListener(SWT.Selection, this.viewListener);
                     }
 
@@ -662,7 +662,7 @@ public abstract class AbstractView extends Observable {
                         this.toolItemHelp = new ToolItem(new ToolBar(getCompHIRE(), SWT.FLAT), SWT.FLAT | SWT.PUSH);
                         this.toolItemHelp.setImage(AppImages.getImage24(AppImages.IMG_HELP));
                         this.toolItemHelp.setHotImage(AppImages.getImage24Focus(AppImages.IMG_HELP));
-                        this.toolItemHelp.setToolTipText("Afisare informatii");
+                        this.toolItemHelp.setToolTipText("Afișare informații");
                         this.toolItemHelp.addListener(SWT.Selection, this.viewListener);
                     }
 
@@ -670,7 +670,7 @@ public abstract class AbstractView extends Observable {
                         this.toolItemPrint = new ToolItem(new ToolBar(getCompHIRE(), SWT.FLAT), SWT.DROP_DOWN);
                         this.toolItemPrint.setImage(AppImages.getImage24(AppImages.IMG_PRINT));
                         this.toolItemPrint.setHotImage(AppImages.getImage24Focus(AppImages.IMG_PRINT));
-                        this.toolItemPrint.setToolTipText("Tiparire date");
+                        this.toolItemPrint.setToolTipText("Tipărire date");
                         createPrintMenu(this.toolItemPrint.getParent());
                         this.toolItemPrint.addListener(SWT.Selection, this.viewListener);
                     }
@@ -708,7 +708,7 @@ public abstract class AbstractView extends Observable {
                     if (((getViewOptions() & AbstractView.ADD_OK) == AbstractView.ADD_OK)) {
                         this.buttonOk = new Button(this.compSaveButtons, SWT.PUSH);
                         this.buttonOk.setText("&Salvare");
-                        this.buttonOk.setToolTipText("Salvare modificari");
+                        this.buttonOk.setToolTipText("Salvare modificări");
                         this.buttonOk.setImage(AppImages.getImage16(AppImages.IMG_OK));
                         data = new GridData(SWT.END, SWT.CENTER, false, false);
                         this.buttonOk.setLayoutData(data);
@@ -719,7 +719,7 @@ public abstract class AbstractView extends Observable {
                     if ((getViewOptions() & AbstractView.ADD_CANCEL) == AbstractView.ADD_CANCEL) {
                         this.buttonCancel = new Button(this.compSaveButtons, SWT.PUSH);
                         this.buttonCancel.setText("In&chide");
-                        this.buttonCancel.setToolTipText("Renuntare/Inchide fereastra curenta");
+                        this.buttonCancel.setToolTipText("Renunțare/Închide fereastra curentă");
                         this.buttonCancel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
                         data = new GridData(SWT.END, SWT.CENTER, false, false);
                         this.buttonCancel.setLayoutData(data);

@@ -61,7 +61,7 @@ public final class ExportTxt {
             nrOfColumns = table.getColumnCount();
 
             if ((nrOfItems == 0) || (nrOfColumns <= 0)) {
-                SWTeXtension.displayMessageW("Nu exista date pentru a fi exportate!");
+                SWTeXtension.displayMessageW("Nu există date pentru a fi exportate!");
                 return;
             }
 

@@ -245,7 +245,7 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
                 }
             }
             if (!hasSelection) {
-                SWTeXtension.displayMessageW("Nu ati selectat nici o coloana!");
+                SWTeXtension.displayMessageW("Nu ați selectat nici o coloană!");
                 return false;
             }
         } catch (Exception exc) {
@@ -351,12 +351,12 @@ public class ColumnsChooserComposite extends Composite implements Listener, IRes
         }
         TableRow[] input = (TableRow[]) this.viewer.getInput();
         if ((this.viewer.getTable().getSelectionIndex() == 0) && (direction == SWT.UP)) {
-            SWTeXtension.displayMessageW("Coloana selectata va fi afisata pe prima pozitie.");
+            SWTeXtension.displayMessageW("Coloana selectata va fi afișată pe prima poziție.");
             return;
         }
         if ((this.viewer.getTable().getSelectionIndex() == (input.length - 1))
                 && (direction == SWT.DOWN)) {
-            SWTeXtension.displayMessageW("Coloana selectata va fi afisata pe ultima pozitie.");
+            SWTeXtension.displayMessageW("Coloana selectată va fi afișată pe ultima poziție.");
             return;
         }
         final int selectedIndex = this.viewer.getTable().getSelectionIndex();

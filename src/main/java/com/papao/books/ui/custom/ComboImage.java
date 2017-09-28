@@ -156,7 +156,7 @@ public class ComboImage extends Composite implements Listener {
             this.itemAdd = new ToolItem(bar, SWT.NONE);
             this.itemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
             this.itemAdd.setHotImage(AppImages.getImage16Focus(AppImages.IMG_PLUS));
-            this.itemAdd.setToolTipText("Adaugare");
+            this.itemAdd.setToolTipText("Adăugare");
         }
         if ((this.descriptor.getToolItemStyle() & ComboImage.ADD_MOD) == ComboImage.ADD_MOD) {
             this.itemMod = new ToolItem(bar, SWT.NONE);
@@ -169,7 +169,7 @@ public class ComboImage extends Composite implements Listener {
             this.itemDel = new ToolItem(bar, SWT.NONE);
             this.itemDel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
             this.itemDel.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
-            this.itemDel.setToolTipText("Stergere");
+            this.itemDel.setToolTipText("Ștergere");
             this.itemDel.setEnabled(false);
         }
 

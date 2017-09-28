@@ -60,7 +60,7 @@ public class SettingsController {
         if (setting.isValid()) {
             settingRepository.save(setting);
         } else {
-            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
         }
     }
 
@@ -71,7 +71,7 @@ public class SettingsController {
             if (setting.isValid()) {
                 setting = settingRepository.save(setting);
             } else {
-                SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+                SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
             }
             return setting;
         }
@@ -87,7 +87,7 @@ public class SettingsController {
         if (setting.isValid()) {
             settingRepository.save(setting);
         } else {
-            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
         }
     }
 
@@ -117,7 +117,7 @@ public class SettingsController {
         if (setting.isValid()) {
             settingRepository.save(setting);
         } else {
-            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
         }
     }
 
@@ -131,7 +131,7 @@ public class SettingsController {
         if (setting.isValid()) {
             settingRepository.save(setting);
         } else {
-            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
         }
     }
 
@@ -143,7 +143,7 @@ public class SettingsController {
         if (setting.isValid()) {
             settingRepository.save(setting);
         } else {
-            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
         }
     }
 
@@ -155,7 +155,7 @@ public class SettingsController {
         if (setting.isValid()) {
             settingRepository.save(setting);
         } else {
-            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
         }
     }
 
@@ -167,7 +167,7 @@ public class SettingsController {
         if (setting.isValid()) {
             settingRepository.save(setting);
         } else {
-            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
         }
     }
 
@@ -179,7 +179,7 @@ public class SettingsController {
         if (setting.isValid()) {
             settingRepository.save(setting);
         } else {
-            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
         }
     }
 
@@ -191,7 +191,7 @@ public class SettingsController {
         if (setting.isValid()) {
             settingRepository.save(setting);
         } else {
-            SWTeXtension.displayMessageW("Setare invalida!", setting.toString());
+            SWTeXtension.displayMessageW("Setare invalidă!", setting.toString());
         }
     }
 

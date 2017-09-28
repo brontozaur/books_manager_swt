@@ -188,14 +188,14 @@ public class LoginShell extends AbstractCView implements Listener {
         });
 
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.comboUsers);
-        this.comboUsers.getCombo().setToolTipText("Selectati utilizatorul cu care va veti autentifica in sistem");
+        this.comboUsers.getCombo().setToolTipText("Selectați utilizatorul cu care vă veți autentifica în sistem");
 
         tmpLabel = new Label(compDown1, SWT.NONE);
         tmpLabel.setText("Parola");
 
         this.textPassword = new Text(compDown1, SWT.PASSWORD | SWT.BORDER);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.textPassword);
-        this.textPassword.setToolTipText("Introduceti parola utilizatorului selectat");
+        this.textPassword.setToolTipText("Introduceți parola utilizatorului selectat");
         this.textPassword.addListener(SWT.KeyDown, this);
         this.textPassword.addListener(SWT.KeyDown, new Listener() {
             @Override

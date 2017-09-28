@@ -341,9 +341,9 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
 
             this.buttonFolosireSystemTray = new Button(group, SWT.CHECK);
             this.buttonFolosireSystemTray.setText("Folosire System Tray");
-            this.buttonFolosireSystemTray.setToolTipText("Selectand aceasta optiune, la minimizarea "
-                    + "aplicatiei, aceasta va fi minimizata pe componenta Tray a sistemului, in loc de bara de unelte a suprafetei de lucru (desktop),"
-                    + "si devine accesibil un meniu cu diverse optiuni, pe aceasta componenta");
+            this.buttonFolosireSystemTray.setToolTipText("Selectând această opțiune, la minimizarea "
+                    + "aplicației, aceasta va fi minimizată pe componenta Tray a sistemului, în loc de bara de unelte a suprafeței de lucru (desktop),"
+                    + "și devine accesibil un meniu cu diverse opțiuni, pe această componentă.");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             gd.horizontalSpan = ((GridLayout) group.getLayout()).numColumns;
             this.buttonFolosireSystemTray.setLayoutData(gd);
@@ -426,7 +426,7 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             this.buttonReportsShowOptions = new Button(group, SWT.CHECK);
             this.buttonReportsShowOptions.setText("Afisare optiuni");
             this.buttonReportsShowOptions.setToolTipText("Implicit, la orice fel de export se deschide o"
-                    + " fereastra de configurare parametri export. Debifand optiunea curenta, acest lucru nu se va mai intampla");
+                    + " fereastră de configurare parametri export. Debifând opțiunea curentă, acest lucru nu se va mai întâmpla.");
             gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             gd.horizontalSpan = ((GridLayout) group.getLayout()).numColumns;
             this.buttonReportsShowOptions.setLayoutData(gd);
@@ -488,34 +488,34 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
 
             this.buttonRichWindows = new Button(group, SWT.CHECK);
             this.buttonRichWindows.setText("Ferestre detaliate");
-            this.buttonRichWindows.setToolTipText("Selectand aceasta optiune, pentru " + "fiecare fereastra din aplicatie se vor afisa detalii suplimentare, in partea de sus a acesteia");
+            this.buttonRichWindows.setToolTipText("Selectând această opțiune, pentru " + "fiecare fereastră din aplicație se vor afișa detalii suplimentare, în partea de sus a acesteia");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) group.getLayout()).numColumns, 1).applyTo(this.buttonRichWindows);
             WidgetCursorUtil.addHandCursorListener(this.buttonRichWindows);
 
             this.buttonUseCoords = new Button(group, SWT.CHECK);
-            this.buttonUseCoords.setText("Restabilire coordonate si dimensiune");
-            this.buttonUseCoords.setToolTipText("Selectand aceasta optiune, " + "fiecare fereastra din aplicatie se va afisa in pozitia in care s-a aflat la ultima "
-                    + "inchidere, si va avea ultima dimensiune utilizata");
+            this.buttonUseCoords.setText("Restabilire coordonate și dimensiune");
+            this.buttonUseCoords.setToolTipText("Selectând această opțiune, " + "fiecare fereastră din aplicație se va afișa în poziția în care s-a aflat la ultima "
+                    + "închidere, și va avea ultima dimensiune utilizată.");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) group.getLayout()).numColumns, 1).applyTo(this.buttonUseCoords);
             WidgetCursorUtil.addHandCursorListener(this.buttonUseCoords);
 
             this.buttonUseTablePrefs = new Button(group, SWT.CHECK);
-            this.buttonUseTablePrefs.setText("Restabilire coloane vizibile si dimensiuni coloane");
-            this.buttonUseTablePrefs.setToolTipText("Selectand aceasta optiune, " + "se vor restabili coloanele vizibile, dimensiunea si aliniera acestora, pentru orice tabela din aplicatie, "
-                    + "folosind valorile configurate ultima data de catre utilizatorul curent");
+            this.buttonUseTablePrefs.setText("Restabilire coloane vizibile și dimensiuni coloane");
+            this.buttonUseTablePrefs.setToolTipText("Selectând această opțiune, " + "se vor restabili coloanele vizibile, dimensiunea și alinierea acestora, pentru orice tabelă din aplicație, "
+                    + "folosind valorile configurate ultima data de către utilizatorul curent.");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) group.getLayout()).numColumns, 1).applyTo(this.buttonUseTablePrefs);
             WidgetCursorUtil.addHandCursorListener(this.buttonUseTablePrefs);
 
             this.buttonWindowsAsk = new Button(group, SWT.CHECK);
             this.buttonWindowsAsk.setText("Confirmare la inchidere");
-            this.buttonWindowsAsk.setToolTipText("Selectand aceasta optiune, la " + "inchiderea unei ferestre veti fi intrebat daca doriti acest lucru, daca butonul de salvare este vizibil");
+            this.buttonWindowsAsk.setToolTipText("Selectând această opțiune, la închiderea unei ferestre veți fi întrebat dacă doriți acest lucru, dacă butonul de salvare este vizibil");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) group.getLayout()).numColumns, 1).applyTo(this.buttonWindowsAsk);
             WidgetCursorUtil.addHandCursorListener(this.buttonWindowsAsk);
 
             this.buttonWindowsReenterData = new Button(group, SWT.CHECK);
             this.buttonWindowsReenterData.setText("Reintroducere date");
-            this.buttonWindowsReenterData.setToolTipText("Cu aceasta optiune selectata, daca veti salva un document in orice fereastra,"
-                    + "aceasta va reintra pe modul de adaugare a unui nou document. Ciclul se opreste daca apasati renuntare sau inchideti fereastra.");
+            this.buttonWindowsReenterData.setToolTipText("Cu această opțiune selectată, dacă veți salva un document în orice fereastră,"
+                    + "aceasta va reintra pe modul de adăugare a unui nou document. Ciclul se oprește dacă apăsați renunțare sau închideți fereastra.");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) group.getLayout()).numColumns, 1).applyTo(this.buttonWindowsReenterData);
             WidgetCursorUtil.addHandCursorListener(this.buttonWindowsReenterData);
 
@@ -526,14 +526,14 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
 
             this.buttonHighlightUseBold = new Button(group, SWT.CHECK);
             this.buttonHighlightUseBold.setText("Marcheaza rezultatele folosind bold text");
-            this.buttonHighlightUseBold.setToolTipText("Selectarea optiunii va marca potrivirile de text folosind un stil bold pt textele gasite.");
+            this.buttonHighlightUseBold.setToolTipText("Selectarea opțiunii va marca potrivirile de text folosind un stil bold pt textele găsite.");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(((GridLayout) group.getLayout()).numColumns, 1).applyTo(this.buttonHighlightUseBold);
             WidgetCursorUtil.addHandCursorListener(this.buttonHighlightUseBold);
 
             this.buttonHighlightUseColor = new Button(group, SWT.CHECK);
             this.buttonHighlightUseColor.setText("Culoare rezultate");
             this.buttonHighlightUseColor
-                    .setToolTipText("Selectarea optiunii va marca potrivirile de text folosind o anumita culoare. Daca bifati aceasta optiune, va trebui sa specificati si culoarea dorita");
+                    .setToolTipText("Selectarea opțiunii va marca potrivirile de text folosind o anumită culoare. Daca bifați această opțiune, va trebui să specificați și culoarea dorită.");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(this.buttonHighlightUseColor);
             WidgetCursorUtil.addHandCursorListener(this.buttonHighlightUseColor);
             this.buttonHighlightUseColor.addListener(SWT.Selection, this);
@@ -563,11 +563,11 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
         public boolean validate() {
             try {
                 if (!this.buttonHighlightUseBold.getSelection() && !this.buttonHighlightUseColor.getSelection()) {
-                    SWTeXtension.displayMessageW("Cel putin una din optiunile '" + this.buttonHighlightUseBold.getText() + "' sau '" + this.buttonHighlightUseColor.getText() + "' trebuie selectata!");
+                    SWTeXtension.displayMessageW("Cel puțin una din opțiunile '" + this.buttonHighlightUseBold.getText() + "' sau '" + this.buttonHighlightUseColor.getText() + "' trebuie selectată!");
                     return false;
                 }
                 if ((this.buttonHighlightUseColor.getSelection() && (this.compColorTab.getBackground() == null)) || this.compColorTab.getBackground().isDisposed()) {
-                    SWTeXtension.displayMessageW("Daca bifati optiunea '" + this.buttonHighlightUseColor.getText() + "', trebuie sa selectati si o culoare.");
+                    SWTeXtension.displayMessageW("Daca bifați opțiunea '" + this.buttonHighlightUseColor.getText() + "', trebuie să selectați și o culoare.");
                     return false;
                 }
                 return true;

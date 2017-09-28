@@ -74,7 +74,7 @@ public class DateChooserCustom {
             ToolItem itemAzi = new ToolItem(new ToolBar(content, SWT.FLAT), SWT.FLAT);
             itemAzi.setImage(AppImages.getImage16(AppImages.IMG_SELECT));
             itemAzi.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SELECT));
-            itemAzi.setToolTipText("Selecteaza data de azi");
+            itemAzi.setToolTipText("Selectează data de azi");
             itemAzi.addListener(SWT.Selection, new Listener() {
                 @Override
                 public void handleEvent(Event event) {

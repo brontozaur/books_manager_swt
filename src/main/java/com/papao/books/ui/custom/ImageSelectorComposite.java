@@ -100,7 +100,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
         final ToolItem itemLocalSelection = new ToolItem(bar, SWT.PUSH);
         itemLocalSelection.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
         itemLocalSelection.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
-        itemLocalSelection.setToolTipText("Selectie imagine de pe calculator");
+        itemLocalSelection.setToolTipText("Selecție imagine de pe calculator");
         itemLocalSelection.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -111,7 +111,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
         ToolItem itemWebSelection = new ToolItem(bar, SWT.PUSH);
         itemWebSelection.setImage(AppImages.getImage16(AppImages.IMG_BROWSER));
         itemWebSelection.setHotImage(AppImages.getImage16Focus(AppImages.IMG_BROWSER));
-        itemWebSelection.setToolTipText("Cautare imagine pe internet");
+        itemWebSelection.setToolTipText("Căutare imagine pe internet");
         itemWebSelection.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -122,7 +122,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
         ToolItem itemRemove = new ToolItem(bar, SWT.PUSH);
         itemRemove.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
         itemRemove.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
-        itemRemove.setToolTipText("Sterge imagine");
+        itemRemove.setToolTipText("Șterge imagine");
         itemRemove.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -231,7 +231,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
             loadLocalImage(selectedFile);
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
-            SWTeXtension.displayMessageW("Imaginea selectata este invalida sau nu a putut fi incarcata!");
+            SWTeXtension.displayMessageW("Imaginea selectată este invalidă sau nu a putut fi încărcată!");
         }
     }
 

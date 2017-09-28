@@ -49,7 +49,7 @@ public class CitatView extends AbstractCView implements INavigation {
         GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrPagina);
 
         Label tmp = new Label(getContainer(), SWT.NONE);
-        tmp.setText("Continut   ");
+        tmp.setText("Conținut   ");
         GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(tmp);
 
         this.textContent = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);

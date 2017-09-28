@@ -272,8 +272,8 @@ public class MsgBox implements Listener {
                 if ((drawButtonsCfg & SWT.OK) == SWT.OK) {
 
                     this.buttonOk = new Button(this.compButtons, SWT.PUSH);
-                    this.buttonOk.setText("Inchide");
-                    this.buttonOk.setToolTipText("Inchide fereastra curenta");
+                    this.buttonOk.setText("Închide");
+                    this.buttonOk.setToolTipText("Închide fereastra curentă");
                     this.buttonOk.setImage(AppImages.getImage16(AppImages.IMG_OK));
                     GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.buttonOk);
                     this.buttonOk.addListener(SWT.Selection, this);
@@ -298,7 +298,7 @@ public class MsgBox implements Listener {
 
                     this.buttonOpenFile = new Button(this.compButtons, SWT.PUSH);
                     this.buttonOpenFile.setText("Consultare");
-                    this.buttonOpenFile.setToolTipText("Deschidere fisier");
+                    this.buttonOpenFile.setToolTipText("Deschidere fișier");
                     this.buttonOpenFile.setImage(AppImages.getImage16(AppImages.IMG_EXPORT));
                     GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.buttonOpenFile);
                     this.buttonOpenFile.addListener(SWT.Selection, this);
@@ -309,7 +309,7 @@ public class MsgBox implements Listener {
 
                     this.buttonYes = new Button(this.compButtons, SWT.PUSH);
                     this.buttonYes.setText("&Da");
-                    this.buttonYes.setToolTipText("Confirmare actiune");
+                    this.buttonYes.setToolTipText("Confirmare acțiune");
                     this.buttonYes.setImage(AppImages.getImage16(AppImages.IMG_OK));
                     GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.buttonYes);
                     this.buttonYes.addListener(SWT.Selection, this);
@@ -320,7 +320,7 @@ public class MsgBox implements Listener {
 
                     this.buttonNo = new Button(this.compButtons, SWT.PUSH);
                     this.buttonNo.setText("&Nu");
-                    this.buttonNo.setToolTipText("Refuzare actiune");
+                    this.buttonNo.setToolTipText("Refuzare acțiune");
                     this.buttonNo.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
                     GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.buttonNo);
                     this.buttonNo.addListener(SWT.Selection, this);
@@ -330,8 +330,8 @@ public class MsgBox implements Listener {
                 if ((drawButtonsCfg & SWT.CANCEL) == SWT.CANCEL) {
 
                     this.buttonCancel = new Button(this.compButtons, SWT.PUSH);
-                    this.buttonCancel.setText("&Renunt");
-                    this.buttonCancel.setToolTipText("Inchide fereastra curenta");
+                    this.buttonCancel.setText("&Renunț");
+                    this.buttonCancel.setToolTipText("Închide fereastra curentă");
                     this.buttonCancel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
                     GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.buttonCancel);
                     this.buttonCancel.addListener(SWT.Selection, this);
@@ -342,7 +342,7 @@ public class MsgBox implements Listener {
 
                     this.buttonAbort = new Button(this.compButtons, SWT.PUSH);
                     this.buttonAbort.setText("&Abandon");
-                    this.buttonAbort.setToolTipText("Nu se mai reincearca operatia");
+                    this.buttonAbort.setToolTipText("Nu se mai reîncearcă operația");
                     this.buttonAbort.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
                     GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.buttonAbort);
                     this.buttonAbort.addListener(SWT.Selection, this);
@@ -353,7 +353,7 @@ public class MsgBox implements Listener {
 
                     this.buttonRetry = new Button(this.compButtons, SWT.PUSH);
                     this.buttonRetry.setText("Re&try");
-                    this.buttonRetry.setToolTipText("Reincercare operatie");
+                    this.buttonRetry.setToolTipText("Reîncercare operație");
                     this.buttonRetry.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
                     GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(this.buttonRetry);
                     this.buttonRetry.addListener(SWT.Selection, this);

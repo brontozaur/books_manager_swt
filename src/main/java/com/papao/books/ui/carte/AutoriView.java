@@ -131,21 +131,21 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
             }
             autor = AutorController.findOne(autor.getId());
             if (autor == null) {
-                SWTeXtension.displayMessageW("Autorul nu mai exista!");
+                SWTeXtension.displayMessageW("Autorul nu mai există!");
                 return false;
             }
             java.util.List<Carte> cartileAutorului = ApplicationService.getBookController().getRepository().getByIdAutoriContainsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(autor.getId());
             if (cartileAutorului != null && !cartileAutorului.isEmpty()) {
-                SWTeXtension.displayMessageW("Nu se poate sterge autorul selectat, pentru ca exista " + cartileAutorului.size() +
-                        " carti cu acest autor in baza de date!");
+                SWTeXtension.displayMessageW("Nu se poate șterge autorul selectat, pentru că există " + cartileAutorului.size() +
+                        " cărți cu acest autor în baza de date!");
                 return false;
             }
-            if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti autorul selectat?", "Confirmare stergere autor") == SWT.NO) {
+            if (SWTeXtension.displayMessageQ("Sunteți siguri că doriți să ștergeți autorul selectat?", "Confirmare ștergere autor") == SWT.NO) {
                 return true;
             }
             AutorController.delete(autor);
             refresh();
-            SWTeXtension.displayMessageI("Operatie executata cu succes!");
+            SWTeXtension.displayMessageI("Operație executată cu succes!");
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
             return false;

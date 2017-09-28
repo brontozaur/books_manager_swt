@@ -47,7 +47,7 @@ public class PaginationComposite extends Composite implements Observer {
         ToolBar barFirstpage = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 
         itemFirstPage = new ToolItem(barFirstpage, SWT.NONE);
-        itemFirstPage.setToolTipText("Prima pagina");
+        itemFirstPage.setToolTipText("Prima pagină");
         itemFirstPage.setImage(AppImages.getImage16(AppImages.IMG_HOME));
         itemFirstPage.setHotImage(AppImages.getImage16Focus(AppImages.IMG_HOME));
         itemFirstPage.addListener(SWT.Selection, new Listener() {
@@ -60,8 +60,8 @@ public class PaginationComposite extends Composite implements Observer {
 
         itemPrevious = new ToolItem(barFirstpage, SWT.NONE);
         itemPrevious.setImage(AppImages.getImage16(AppImages.IMG_ARROW_LEFT_OPAL));
-        itemPrevious.setToolTipText("Pagina anterioara");
-        itemPrevious.setText("pagina");
+        itemPrevious.setToolTipText("Pagina anterioară");
+        itemPrevious.setText("pagină");
         itemPrevious.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -80,7 +80,7 @@ public class PaginationComposite extends Composite implements Observer {
             public void handleEvent(Event event) {
                 if (event.keyCode == SWT.CR) {
                     if (!validatePageNumber(event)) {
-                        SWTeXtension.displayMessageW("Pagina invalida!");
+                        SWTeXtension.displayMessageW("Pagină invalida!");
                         return;
                     }
                     currentPage = Integer.valueOf(textGoToPage.getValue().toString());
@@ -93,7 +93,7 @@ public class PaginationComposite extends Composite implements Observer {
 
         itemNext = new ToolItem(barLastPage, SWT.NONE);
         itemNext.setImage(AppImages.getImage16(AppImages.IMG_ARROW_RIGHT_OPAL));
-        itemPrevious.setToolTipText("Pagina urmatoare");
+        itemPrevious.setToolTipText("Pagina următoare");
         itemNext.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -103,7 +103,7 @@ public class PaginationComposite extends Composite implements Observer {
         });
 
         itemLastPage = new ToolItem(barLastPage, SWT.NONE);
-        itemLastPage.setToolTipText("Ultima pagina");
+        itemLastPage.setToolTipText("Ultima pagină");
         itemLastPage.setImage(AppImages.getImage16(AppImages.IMG_SHOW));
         itemLastPage.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SHOW));
         itemLastPage.addListener(SWT.Selection, new Listener() {
@@ -114,7 +114,7 @@ public class PaginationComposite extends Composite implements Observer {
             }
         });
 
-        new Label(this, SWT.NONE).setText("Paginatie");
+        new Label(this, SWT.NONE).setText("Paginație");
 
         comboItemsPerPage = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
         comboItemsPerPage.setItems(new String[]{"2", "5", "10", "25", "50", "100", "250", "500"});

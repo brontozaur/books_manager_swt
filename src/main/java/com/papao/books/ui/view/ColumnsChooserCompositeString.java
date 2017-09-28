@@ -259,17 +259,17 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
                 }
                 if ((row.getDim() == 0) && row.isChecked()) {
                     SWTeXtension.displayMessageW("Dimensiunea unei coloane selectate este zero. "
-                            + "Prin urmare, aceasta coloana nu poate fi afisata.");
+                            + "Prin urmare, aceasta coloană nu poate fi afișată.");
                     return false;
                 }
                 if ((row.getAlign() != SWT.LEFT) && (row.getAlign() != SWT.RIGHT)
                         && (row.getAlign() != SWT.CENTER)) {
-                    SWTeXtension.displayMessageW("Aliniere incorecta pentru una din coloanele tabelei!");
+                    SWTeXtension.displayMessageW("Aliniere incorectă pentru una din coloanele tabelei!");
                     return false;
                 }
             }
             if (!hasSelection) {
-                SWTeXtension.displayMessageW("Nu ati selectat nici o coloana!");
+                SWTeXtension.displayMessageW("Nu ați selectat nici o coloană!");
                 return false;
             }
         } catch (Exception exc) {
@@ -348,12 +348,12 @@ public class ColumnsChooserCompositeString extends Composite implements Listener
         }
         TableRow[] input = (TableRow[]) this.viewer.getInput();
         if ((this.viewer.getTable().getSelectionIndex() == 0) && (direction == SWT.UP)) {
-            SWTeXtension.displayMessageW("Coloana selectata va fi afisata pe prima pozitie.");
+            SWTeXtension.displayMessageW("Coloana selectată va fi afișată pe prima poziție.");
             return;
         }
         if ((this.viewer.getTable().getSelectionIndex() == (input.length - 1))
                 && (direction == SWT.DOWN)) {
-            SWTeXtension.displayMessageW("Coloana selectata va fi afisata pe ultima pozitie.");
+            SWTeXtension.displayMessageW("Coloana selectată va fi afișată pe prima poziție.");
             return;
         }
         final int selectedIndex = this.viewer.getTable().getSelectionIndex();

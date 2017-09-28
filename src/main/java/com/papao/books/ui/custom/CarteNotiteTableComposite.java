@@ -54,7 +54,7 @@ public class CarteNotiteTableComposite extends Composite implements Observer, IA
         itemAdd = new ToolItem(barOps, SWT.NONE);
         itemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
         itemAdd.setHotImage(AppImages.getImage16Focus(AppImages.IMG_PLUS));
-        itemAdd.setToolTipText("Adaugare");
+        itemAdd.setToolTipText("Adăugare");
         itemAdd.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -111,13 +111,13 @@ public class CarteNotiteTableComposite extends Composite implements Observer, IA
 
 
         TableColumn column = new TableColumn(table, SWT.LEFT);
-        column.setText("Nr pagina");
+        column.setText("Nr. pagină");
         column.setResizable(true);
         column.setWidth(visible[0] ? dims[0] : 0);
         column.setAlignment(aligns[0]);
 
         column = new TableColumn(table, SWT.LEFT);
-        column.setText("Continut");
+        column.setText("Conținut");
         column.setResizable(true);
         column.setWidth(visible[1] ? dims[1] : 0);
         column.setAlignment(aligns[1]);

@@ -219,7 +219,7 @@ public class ValidareCoduriView extends AbstractCViewAdapter {
 			this.itemValidare.addListener(SWT.Selection, this);
 
 			this.labelResultValidare = new Label(this, SWT.NONE);
-			this.labelResultValidare.setToolTipText("Rezultatul validarii");
+			this.labelResultValidare.setToolTipText("Rezultatul validării");
 			GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).hint(24, 24).applyTo(this.labelResultValidare);
 		}
 

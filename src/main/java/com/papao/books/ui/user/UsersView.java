@@ -110,14 +110,14 @@ public class UsersView extends AbstractCView implements IRefresh, IAdd, IModify,
             }
             usr = UserController.getById(usr.getId());
             if (usr == null) {
-                SWTeXtension.displayMessageW("Utilizatorul nu mai exista!");
+                SWTeXtension.displayMessageW("Utilizatorul nu mai există!");
                 return false;
             }
             if (usr.getId().equals(EncodeLive.getIdUser())) {
-                SWTeXtension.displayMessageW("Nu puteti sterge utilizatorul curent!");
+                SWTeXtension.displayMessageW("Nu puteți șterge utilizatorul curent!");
                 return false;
             }
-            if (SWTeXtension.displayMessageQ("Sunteti siguri ca doriti sa stergeti utilizatorul selectat si toate informatiile asociate (rating-uri, review-uri, etc)?", "Confirmare stergere utilizator") == SWT.NO) {
+            if (SWTeXtension.displayMessageQ("Sunteți siguri că doriți să ștergeți utilizatorul selectat și toate informațiile asociate (rating-uri, review-uri, etc)?", "Confirmare ștergere utilizator") == SWT.NO) {
                 return false;
             }
             UserController.delete(usr);

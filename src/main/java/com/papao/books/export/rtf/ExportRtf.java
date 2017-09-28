@@ -69,7 +69,7 @@ public final class ExportRtf {
             nrOfColumns = swtTable.getColumnCount();
 
             if ((nrOfItems == 0) || (nrOfColumns <= 0)) {
-                SWTeXtension.displayMessageW("Nu exista date pentru a fi exportate!");
+                SWTeXtension.displayMessageW("Nu există date pentru a fi exportate!");
                 return;
             }
 

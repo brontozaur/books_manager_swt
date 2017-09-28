@@ -37,7 +37,7 @@ public class PremiiLiterareComposite extends Composite {
         ToolItem itemAdd = new ToolItem(bar, SWT.NONE);
         itemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
         itemAdd.setHotImage(AppImages.getImage16Focus(AppImages.IMG_PLUS));
-        itemAdd.setToolTipText("Adaugare");
+        itemAdd.setToolTipText("Adăugare");
         itemAdd.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -68,7 +68,7 @@ public class PremiiLiterareComposite extends Composite {
         itemDel = new ToolItem(bar, SWT.NONE);
         itemDel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
         itemDel.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
-        itemDel.setToolTipText("Stergere");
+        itemDel.setToolTipText("Ștergere");
         itemDel.setEnabled(false);
         itemDel.addListener(SWT.Selection, new Listener() {
             @Override

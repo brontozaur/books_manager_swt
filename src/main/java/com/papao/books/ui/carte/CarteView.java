@@ -871,12 +871,12 @@ public class CarteView extends AbstractCSaveView {
     protected boolean validate() {
         try {
             if (StringUtils.isEmpty(this.carteTitluVolumComposite.getTitlu())) {
-                SWTeXtension.displayMessageW("Titlul cartii nu este introdus!");
+                SWTeXtension.displayMessageW("Titlul cărții nu este introdus!");
                 carteTitluVolumComposite.setFocus();
                 return false;
             }
             if (compositeAutori.getSelectedIds().isEmpty()) {
-                SWTeXtension.displayMessageW("Autorul cartii nu a fost introdus!");
+                SWTeXtension.displayMessageW("Autorul cărții nu a fost introdus!");
                 compositeAutori.setFocus();
                 return false;
             }

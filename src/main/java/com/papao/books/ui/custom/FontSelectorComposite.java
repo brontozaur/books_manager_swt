@@ -50,7 +50,7 @@ public class FontSelectorComposite extends Composite implements Listener {
         GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).grab(false, false).applyTo(this.itemSelectie.getParent());
         this.itemSelectie.setImage(AppImages.getImage16(AppImages.IMG_SEARCH));
         this.itemSelectie.setHotImage(AppImages.getImage16Focus(AppImages.IMG_SEARCH));
-        this.itemSelectie.setToolTipText("Selectie font");
+        this.itemSelectie.setToolTipText("Selecție font");
         this.itemSelectie.addListener(SWT.Selection, this);
     }
 

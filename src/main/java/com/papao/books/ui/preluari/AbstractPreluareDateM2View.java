@@ -79,7 +79,7 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
         this.itemOpenFile = new ToolItem(getMainToolBar(), SWT.PUSH);
         itemOpenFile.setImage(AppImages.getImage24(AppImages.IMG_IMPORT));
         itemOpenFile.setHotImage(AppImages.getImage24Focus(AppImages.IMG_IMPORT));
-        itemOpenFile.setToolTipText("Import fisier (prima linie este rezervata pentru denumirea coloanelor)");
+        itemOpenFile.setToolTipText("Import fișier (prima linie este rezervată pentru denumirea coloanelor)");
         itemOpenFile.setText("&Import");
         itemOpenFile.addListener(SWT.Selection, new Listener() {
             @Override
@@ -95,7 +95,7 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
         this.itemValidateFile = new ToolItem(getMainToolBar(), SWT.PUSH);
         itemValidateFile.setImage(AppImages.getImage24(AppImages.IMG_OK));
         itemValidateFile.setHotImage(AppImages.getImage24Focus(AppImages.IMG_OK));
-        itemValidateFile.setToolTipText("Validare fisier");
+        itemValidateFile.setToolTipText("Validare fișier");
         itemValidateFile.setText("&Validare");
         itemValidateFile.setEnabled(false);
         itemValidateFile.addListener(SWT.Selection, new Listener() {
@@ -259,7 +259,7 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
         for (String row : rows) {
             String[] values = columnLabels.length > 1 ? row.split(delimitator) : new String[]{row};
             if (values.length != this.columnLabels.length) {
-                SWTeXtension.displayMessageW("Continut invalid. Verificati structura textului pe care \ndoriti sa-l importati si delimitatorul ales.");
+                SWTeXtension.displayMessageW("Conținut invalid. Verificați structura textului pe care \ndoriți să-l importați și delimitatorul ales.");
                 clearTable(false);
                 return;
             }
@@ -514,7 +514,7 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
                 final String[] str = values.get(i);
                 if (str.length != this.columnLabels.length) {
                     dlg.close();
-                    SWTeXtension.displayMessageW("Pe o linie din fisierul importat exista un numar diferit de valori fata de numarul de coloane din tabela. Importul nu este posibil.");
+                    SWTeXtension.displayMessageW("Pe o linie din fișierul importat există un număr diferit de valori față de numărul de coloane din tabelă. Importul nu este posibil.");
                     clearTable(false);
                     return;
                 }

@@ -43,12 +43,12 @@ public class NotitaView extends AbstractCView implements INavigation {
         GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(2).applyTo(temp);
         GridDataFactory.fillDefaults().span(2, 1).applyTo(temp);
 
-        new Label(temp, SWT.NONE).setText("Nr pagina");
+        new Label(temp, SWT.NONE).setText("Nr. pagină");
         this.textNrPagina = new Text(temp, SWT.BORDER);
         GridDataFactory.fillDefaults().grab(false, false).hint(50, SWT.DEFAULT).applyTo(textNrPagina);
 
         Label tmp = new Label(getContainer(), SWT.NONE);
-        tmp.setText("Continut   ");
+        tmp.setText("Conținut   ");
         GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(tmp);
 
         this.textContent = new Text(getContainer(), SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
@@ -109,7 +109,7 @@ public class NotitaView extends AbstractCView implements INavigation {
     protected boolean validate() {
         try {
             if (StringUtils.isEmpty(this.textContent.getText())) {
-                BalloonNotification.showNotification(textContent, "Notificare", "Continutul nu este introdus!", 1500);
+                BalloonNotification.showNotification(textContent, "Notificare", "Conținutul nu este introdus!", 1500);
                 return false;
             }
         } catch (Exception exc) {

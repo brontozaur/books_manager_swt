@@ -81,7 +81,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
         itemAdd = new ToolItem(barOps, SWT.NONE);
         itemAdd.setImage(AppImages.getImage16(AppImages.IMG_PLUS));
         itemAdd.setHotImage(AppImages.getImage16Focus(AppImages.IMG_PLUS));
-        itemAdd.setToolTipText("Adaugare");
+        itemAdd.setToolTipText("Adăugare");
         itemAdd.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -115,7 +115,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
         itemDel = new ToolItem(barOps, SWT.NONE);
         itemDel.setImage(AppImages.getImage16(AppImages.IMG_CANCEL));
         itemDel.setHotImage(AppImages.getImage16Focus(AppImages.IMG_CANCEL));
-        itemDel.setToolTipText("Stergere");
+        itemDel.setToolTipText("Ștergere");
         itemDel.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -127,7 +127,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(table);
-        table.setToolTipText("Tabela suporta drag and drop multiplu pentru orice tip de fisier, \ncu detectia tipului acestora.");
+        table.setToolTipText("Tabela suportă drag and drop multiplu pentru orice tip de fișier, \ncu detecția tipului acestora.");
         SWTeXtension.addSelectAllListener(table);
         table.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -236,7 +236,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
         for (DocumentData doc : result) {
             if (file.length() == doc.getLength()) {
                 logger.error("File " + filePath + " already exists!");
-                SWTeXtension.displayMessageW("Fisierul " + filePath + " exista deja!");
+                SWTeXtension.displayMessageW("Fisierul " + filePath + " există deja!");
                 return;
             }
         }

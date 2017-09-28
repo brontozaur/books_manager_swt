@@ -30,7 +30,7 @@ public class AutoriImportView extends AbstractPreluareDateM2View {
     protected boolean validate() {
         try {
             if (tableDocumente.getItemCount() == 0) {
-                SWTeXtension.displayMessageW("Selectati fisierul de preluare!");
+                SWTeXtension.displayMessageW("Selectați fișierul de preluare!");
                 return false;
             }
         } catch (Exception exc) {

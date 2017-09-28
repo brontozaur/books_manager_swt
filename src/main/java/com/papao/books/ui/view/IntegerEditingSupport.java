@@ -37,13 +37,13 @@ public class IntegerEditingSupport extends EditingSupport {
         try {
             final int intValue = Integer.valueOf(value.toString());
             if (intValue <= 0) {
-                SWTeXtension.displayMessageW("Introduceti doar numere pozitive!");
+                SWTeXtension.displayMessageW("Introduceți doar numere pozitive!");
                 return;
             }
             obj.setDim(intValue);
             this.viewer.refresh();
         } catch (NumberFormatException exc) {
-            SWTeXtension.displayMessageW("Introduceti doar numere!");
+            SWTeXtension.displayMessageW("Introduceți doar numere!");
         }
     }
 }

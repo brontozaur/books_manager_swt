@@ -1023,7 +1023,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         this.toolItemGrupare = new ToolItem(getMainToolBar(), SWT.CHECK);
         this.toolItemGrupare.setImage(AppImages.getImage24(AppImages.IMG_SHOW));
         this.toolItemGrupare.setHotImage(AppImages.getImage24Focus(AppImages.IMG_HIDE));
-        this.toolItemGrupare.setToolTipText("Afisare sau ascundere grupare documente");
+        this.toolItemGrupare.setToolTipText("Afișare sau ascundere grupare documente");
         this.toolItemGrupare.setText("Grupare");
         this.toolItemGrupare.addListener(SWT.Selection, new Listener() {
             @Override
@@ -1174,7 +1174,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         ToolItem item = new ToolItem(bar, SWT.NONE);
         item.setImage(AppImages.getImage24(AppImages.IMG_MOD_VIZUALIZARE));
         item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_MOD_VIZUALIZARE));
-        item.setToolTipText("Afisare fisiere exportate");
+        item.setToolTipText("Afișare fișiere exportate");
         item.setText("Exporturi");
         item.addListener(SWT.Selection, new Listener() {
             @Override
@@ -1222,7 +1222,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         item = new ToolItem(bar, SWT.NONE);
         item.setImage(AppImages.getImage24(AppImages.IMG_CONFIG));
         item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_CONFIG));
-        item.setToolTipText("Configurare aplicatie");
+        item.setToolTipText("Configurare aplicație");
         item.setText("Setări");
         item.addListener(SWT.Selection, new Listener() {
             @Override
@@ -1246,7 +1246,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         item = new ToolItem(bar, SWT.NONE);
         item.setImage(AppImages.getImage24(AppImages.IMG_STOP));
         item.setHotImage(AppImages.getImage24Focus(AppImages.IMG_STOP));
-        item.setToolTipText("Inchidere aplicatie");
+        item.setToolTipText("Închidere aplicație");
         item.setText(" Exit ");
         item.addListener(SWT.Selection, new Listener() {
             @Override
@@ -1757,7 +1757,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 Carte carte = (Carte) item.getData();
                 Carte carteDb = ApplicationService.getBookController().findOne(carte.getId());
                 if (carteDb == null) {
-                    SWTeXtension.displayMessageW("Cartea nu mai exista in baza de date!");
+                    SWTeXtension.displayMessageW("Cartea nu mai există în baza de date!");
                     return false;
                 }
                 ApplicationService.getBookController().delete(carteDb);

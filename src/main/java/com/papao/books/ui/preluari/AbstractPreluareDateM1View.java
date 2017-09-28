@@ -43,7 +43,7 @@ public abstract class AbstractPreluareDateM1View extends AbstractCViewAdapter im
         setItemOpenFile(new ToolItem(getBarOps(), SWT.PUSH));
         getItemOpenFile().setImage(AppImages.getImage16(AppImages.IMG_IMPORT));
         getItemOpenFile().setHotImage(AppImages.getImage16Focus(AppImages.IMG_IMPORT));
-        getItemOpenFile().setToolTipText("Import fisier (prima linie este rezervata pentru denumirea coloanelor)");
+        getItemOpenFile().setToolTipText("Import fișier (prima linie este rezervată pentru denumirea coloanelor)");
         getItemOpenFile().setText("Import");
         getItemOpenFile().addListener(SWT.Selection, new Listener() {
             @Override
@@ -55,7 +55,7 @@ public abstract class AbstractPreluareDateM1View extends AbstractCViewAdapter im
         setItemValidateFile(new ToolItem(getBarOps(), SWT.PUSH));
         itemValidateFile.setImage(AppImages.getImage16(AppImages.IMG_OK));
         itemValidateFile.setHotImage(AppImages.getImage16Focus(AppImages.IMG_OK));
-        itemValidateFile.setToolTipText("Validare fisier");
+        itemValidateFile.setToolTipText("Validare fișier");
         itemValidateFile.setText("Validare");
         itemValidateFile.setEnabled(false);
         itemValidateFile.addListener(SWT.Selection, new Listener() {

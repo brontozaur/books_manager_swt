@@ -78,7 +78,7 @@ public class PremiuLiterarView extends AbstractCSaveView {
     protected boolean validate() {
         try {
             if (StringUtils.isEmpty(this.textPremiu.getText())) {
-                SWTeXtension.displayMessageW("Nu ati introdus denumirea premiului!");
+                SWTeXtension.displayMessageW("Nu ați introdus denumirea premiului!");
                 this.textPremiu.setFocus();
                 return false;
             }
