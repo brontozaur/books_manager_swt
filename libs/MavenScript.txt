@@ -22,6 +22,10 @@ mvn install:install-file -Dfile=org.eclipse.ui.forms-3.5.jar -DgroupId=org.eclip
 
 mvn install:install-file -Dfile=com.inamik.utils.tableformatter-0.96.0/com.inamik.utils.tableformatter-0.96.0.jar -Dsources=com.inamik.utils.tableformatter-0.96.0/com.inamik.utils.tableformatter-0.96.0.sources.zip -DgroupId=com.inamik.utils -DartifactId=tableformatter -Dversion=0.96.0 -Dpackaging=jar
 
+Startup params on MacOS:
+---------------------------
+-XstartOnFirstThread -Duser.timezone="UTC"
+
 pom.xml
 ------------
 
