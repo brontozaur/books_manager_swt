@@ -559,7 +559,7 @@ public class ApplicationController {
                 lunaNode = new SimpleTextNode(yearNode, numeLuna.toString());
                 lunaNode.setQueryValue(cal.getTime());
                 lunaNode.setNodeType(NodeType.MONTH);
-                lunaNode.setInvisibleName(String.valueOf(luna));
+                lunaNode.setInvisibleName(luna < 10 ? ("0"+luna): String.valueOf(luna));
             }
             lunaNode.setImage(AppImages.getImage16(isAutoExpand ? AppImages.IMG_EXPAND : AppImages.IMG_COLLAPSE));
 
