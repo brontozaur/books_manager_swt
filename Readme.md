@@ -60,7 +60,7 @@ Startup parameters:
 
   ![Book view](http://i66.tinypic.com/2chu8h3.png)
 
-<i>TODO's</i>
+# TODOs
 
 * :thumbsup: bug gallery menu displays everywhere
 * :thumbsup: error 50 on MacOS and random NPE's. Must be related to Spring data.
