@@ -1,7 +1,9 @@
 # Books Manager SWT
 
 Having manny books, it's always a good idea to have some king of ordering system for them
-This is exactly what this app does. Here are some features:
+This is exactly what this app does.
+
+# Some features:
 
  * over 20 ways of grouping the books (by title, author, price, cover type, location, readers, etc)
  * customizable pagination for the main grid
@@ -25,7 +27,7 @@ Startup parameters:
 
 -XstartOnFirstThread -Duser.timezone="UTC"
 
-Here are some technologies used:
+# Some technologies:
 
  * Spring boot
  * Mongo database
