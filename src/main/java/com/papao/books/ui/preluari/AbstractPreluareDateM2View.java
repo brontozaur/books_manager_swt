@@ -1,7 +1,9 @@
 package com.papao.books.ui.preluari;
 
+import com.papao.books.controller.SettingsController;
 import com.papao.books.export.ExportType;
 import com.papao.books.export.Exporter;
+import com.papao.books.model.config.GeneralSetting;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.custom.CWaitDlgClassic;
@@ -14,15 +16,39 @@ import com.papao.books.ui.util.WidgetTableUtil;
 import com.papao.books.ui.util.importers.ReadExcelFileWithJXL;
 import com.papao.books.ui.util.importers.ReadExcelFileWithPOI;
 import com.papao.books.ui.util.importers.ReadTabDelimitedFile;
-import com.papao.books.ui.view.*;
+import com.papao.books.ui.view.AbstractCViewAdapter;
+import com.papao.books.ui.view.AbstractView;
+import com.papao.books.ui.view.InfoView;
+import com.papao.books.ui.view.SWTeXtension;
+import com.papao.books.ui.view.TableView;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CBanner;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +72,7 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
     public String[] columnDescriptions;
     protected Table tableDocumente;
     private Text textDelimitator;
-    private String delimitator;
+    private String delimitator = " - ";
 
     public AbstractPreluareDateM2View(final Shell parent,
                                       final String[] columnLabels,
@@ -144,12 +170,20 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
 
         new Label(rightArea, SWT.NONE).setText("Delimitator:");
         textDelimitator = new Text(rightArea, SWT.BORDER);
+        GridDataFactory.fillDefaults().grab(false, false).hint(30, SWT.DEFAULT).applyTo(textDelimitator);
         textDelimitator.addListener(SWT.Modify, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 delimitator = textDelimitator.getText();
             }
         });
+
+        GeneralSetting importDelimiterSetting = SettingsController.getGeneralSetting("importDelimiter");
+        if (importDelimiterSetting != null) {
+            textDelimitator.setText((String) importDelimiterSetting.getValue());
+        } else {
+            textDelimitator.setText(delimitator);
+        }
 
         this.cpBar = new ProgressBarComposite(
                 rightArea,
@@ -218,9 +252,9 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
         col.setText("Rezultat");
         col.setWidth(250);
 
-		/*
+        /*
          * definim acum capabilitatile de Drag and Drop ale tabelei
-		 */
+         */
 
         DropTarget dt = new DropTarget(tableDocumente, DND.DROP_DEFAULT | DND.DROP_MOVE);
         dt.setTransfer(new Transfer[]{

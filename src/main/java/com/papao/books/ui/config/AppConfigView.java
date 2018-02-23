@@ -12,7 +12,11 @@ import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
 import com.papao.books.ui.providers.tree.ITreeNode;
 import com.papao.books.ui.providers.tree.SimpleTextNode;
 import com.papao.books.ui.providers.tree.TreeContentProvider;
-import com.papao.books.ui.util.*;
+import com.papao.books.ui.util.ColorUtil;
+import com.papao.books.ui.util.FontUtil;
+import com.papao.books.ui.util.WidgetCompositeUtil;
+import com.papao.books.ui.util.WidgetCursorUtil;
+import com.papao.books.ui.util.WidgetTreeUtil;
 import com.papao.books.ui.view.AbstractCView;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
@@ -20,7 +24,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
@@ -29,13 +38,43 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TreeItem;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
-import static com.papao.books.config.BooleanSetting.*;
+import static com.papao.books.config.BooleanSetting.APP_USE_SYSTEM_TRAY;
+import static com.papao.books.config.BooleanSetting.LEFT_TREE_SHOW_ALL;
+import static com.papao.books.config.BooleanSetting.LEFT_TREE_SHOW_NUMBERS;
+import static com.papao.books.config.BooleanSetting.LEFT_TREE_SHOW_RECENT;
+import static com.papao.books.config.BooleanSetting.PERSPECTIVE_AUTHOR_LINKS;
+import static com.papao.books.config.BooleanSetting.PERSPECTIVE_SHOW_GALLERY;
+import static com.papao.books.config.BooleanSetting.REPORT_SHOW_OPTIONS;
+import static com.papao.books.config.BooleanSetting.SEARCH_HIGHLIGHT_USES_BOLD;
+import static com.papao.books.config.BooleanSetting.SEARCH_HIGHLIGHT_USES_COLOR;
+import static com.papao.books.config.BooleanSetting.SHOW_RICH_WINDOWS;
+import static com.papao.books.config.BooleanSetting.SYSTEM_TRAY_MESSAGES;
+import static com.papao.books.config.BooleanSetting.TABLES_USE_CONFIG;
+import static com.papao.books.config.BooleanSetting.WINDOWS_ASK_ON_CLOSE;
+import static com.papao.books.config.BooleanSetting.WINDOWS_REENTER_DATA;
+import static com.papao.books.config.BooleanSetting.WINDOWS_USE_COORDS;
 
 public class AppConfigView extends AbstractCView implements Listener, IReset {
 
@@ -641,7 +680,10 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
         private Label labelDatePreview;
         private Label labelTimePreview;
 
+        private Text textImportDelimiter;
+
         private GeneralSetting stilAfisareDataInTree = null;
+        private GeneralSetting importDelimiter = null;
 
         public ConfigApp() {
             super(AppConfigView.this.rightForm);
@@ -682,6 +724,10 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             this.buttonShowNumbers.setText("afișare nr înregistrări în grupaje");
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(2, 1).applyTo(this.buttonShowNumbers);
             WidgetCursorUtil.addHandCursorListener(this.buttonShowNumbers);
+
+            new Label(group, SWT.NONE).setText("Delimitator import");
+            this.textImportDelimiter = new Text(group, SWT.BORDER);
+            GridDataFactory.fillDefaults().grab(false, false).hint(30, SWT.DEFAULT).applyTo(textImportDelimiter);
 
             new Label(group, SWT.NONE).setText("Stil afișare data");
             this.comboTreeDateFormat = new Combo(group, SWT.READ_ONLY);
@@ -745,6 +791,14 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
             this.comboDateFormat.select(this.comboDateFormat.indexOf(SettingsController.getString(StringSetting.APP_DATE_FORMAT)));
             this.comboTimeFormat.select(this.comboTimeFormat.indexOf(SettingsController.getString(StringSetting.APP_TIME_FORMAT)));
 
+            importDelimiter = SettingsController.getGeneralSetting("importDelimiter");
+            if (importDelimiter == null) {
+                importDelimiter = new GeneralSetting();
+                importDelimiter.setKey("importDelimiter");
+                importDelimiter.setValue(" - ");
+            }
+            textImportDelimiter.setText((String) importDelimiter.getValue());
+
             previewDate();
             previewTime();
         }
@@ -760,6 +814,9 @@ public class AppConfigView extends AbstractCView implements Listener, IReset {
 
             stilAfisareDataInTree.setValue(comboTreeDateFormat.getSelectionIndex());
             SettingsController.saveGeneralSetting(stilAfisareDataInTree);
+
+            importDelimiter.setValue(textImportDelimiter.getText());
+            SettingsController.saveGeneralSetting(importDelimiter);
         }
 
         private void previewDate() {
