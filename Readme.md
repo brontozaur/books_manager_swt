@@ -42,11 +42,11 @@ Startup parameters:
 
  * Main perspective:
 
- ![Main perspective](http://i65.tinypic.com/219ytle.png)
+ ![Main perspective](http://i64.tinypic.com/210n2gz.png)
 
  * Gallery perspective:
 
- ![Gallery perspective](http://i64.tinypic.com/210n2gz.png)
+ ![Gallery perspective](http://i65.tinypic.com/219ytle.png)
 
   * Authors view:
 
