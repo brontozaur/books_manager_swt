@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -36,7 +37,8 @@ public class UserController {
         if (id == null) {
             return null;
         }
-        return repository.findOne(id.toString());
+        Optional<User> optional = repository.findById(id.toString());
+        return optional.orElse(null);
     }
 
     public static void delete(User user) {
@@ -45,7 +47,7 @@ public class UserController {
 
     public static void deleteAllBookUserActivity(ObjectId bookId) {
         List<UserActivity> userActivities = userActivityRepository.getByBookId(bookId);
-        userActivityRepository.delete(userActivities);
+        userActivityRepository.deleteAll(userActivities);
     }
 
     public static List<User> findAll() {

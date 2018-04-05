@@ -1,26 +1,22 @@
-Install to local maven
-------------------------
+Install to local maven - run from /libs folder
+------------------------------------------------
 
-mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.core.commands_3.5.0.I20090525-2000.jar -Dsources=org.eclipse.jface/source/org.eclipse.core.commands.source_3.5.0.I20090525-2000.jar -DgroupId=org.eclipse.core -DartifactId=commands -Dversion=3.5.0.I20090525-2000 -Dpackaging=jar
-mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.core.runtime_3.6.0.v20091204.jar -Dsources=org.eclipse.jface/source/org.eclipse.core.runtime.source_3.6.0.v20091204.jar -DgroupId=org.eclipse.core -DartifactId=runtime -Dversion=3.6.0.v20091204 -Dpackaging=jar
-mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.equinox.common_3.6.0.v20091203.jar -Dsources=org.eclipse.jface/source/org.eclipse.equinox.common.source_3.6.0.v20091203.jar -DgroupId=org.eclipse.equinox -DartifactId=common -Dversion=3.6.0.v20091203 -Dpackaging=jar
-mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.jface_3.6.0.I20091207-1800.jar -Dsources=org.eclipse.jface/source/org.eclipse.jface.source_3.6.0.I20091207-1800.jar -DgroupId=org.eclipse -DartifactId=jface -Dversion=3.6.0.I20091207-1800 -Dpackaging=jar
+mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.core.commands_3.5.0.I20090525-2000.jar -Dsources=org.eclipse.jface/source/org.eclipse.core.commands.source_3.5.0.I20090525-2000.jar -DgroupId=org.eclipse.core -DartifactId=commands -Dversion=3.5.0.I20090525-2000 -Dpackaging=jar;
+mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.core.runtime_3.6.0.v20091204.jar -Dsources=org.eclipse.jface/source/org.eclipse.core.runtime.source_3.6.0.v20091204.jar -DgroupId=org.eclipse.core -DartifactId=runtime -Dversion=3.6.0.v20091204 -Dpackaging=jar;
+mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.equinox.common_3.6.0.v20091203.jar -Dsources=org.eclipse.jface/source/org.eclipse.equinox.common.source_3.6.0.v20091203.jar -DgroupId=org.eclipse.equinox -DartifactId=common -Dversion=3.6.0.v20091203 -Dpackaging=jar;
+mvn install:install-file -Dfile=org.eclipse.jface/org.eclipse.jface_3.6.0.I20091207-1800.jar -Dsources=org.eclipse.jface/source/org.eclipse.jface.source_3.6.0.I20091207-1800.jar -DgroupId=org.eclipse -DartifactId=jface -Dversion=3.6.0.I20091207-1800 -Dpackaging=jar;
 
-mvn install:install-file -Dfile=borg_images.jar -DgroupId=com.papao -DartifactId=borg_images -Dversion=1.0 -Dpackaging=jar
-
-mvn install:install-file -Dfile=org.aspen.cloud.widgets/aspencloud.widgets.jar -Dsources=org.aspen.cloud.widgets/aspencloud.widgets.sources.zip -DgroupId=org.aspen.cloud -DartifactId=widgets -Dversion=1.0 -Dpackaging=jar
-
-mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.datechooser_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=datechooser -Dversion=1.0 -Dpackaging=jar
-mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.formattedtext_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=formattedtext -Dversion=1.0 -Dpackaging=jar
-mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.pshelf_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=pshelf -Dversion=1.0 -Dpackaging=jar
-mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.pgroup_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=pgroup -Dversion=1.0 -Dpackaging=jar
-mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.tablecombo_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=tablecombo -Dversion=1.0 -Dpackaging=jar
-
-mvn install:install-file -Dfile=tika-core-1.14.jar -DgroupId=org.apache.tika -DartifactId=tika-core -Dversion=1.14 -Dpackaging=jar
-mvn install:install-file -Dfile=opal-0.9.5.2.jar -DgroupId=org.mihalis.opal -DartifactId=opal -Dversion=0.9.5.2 -Dpackaging=jar -Dsources=opal-0.9.5-src.zip
-mvn install:install-file -Dfile=org.eclipse.ui.forms-3.5.jar -DgroupId=org.eclipse.ui -DartifactId=forms -Dversion=3.5 -Dpackaging=jar
-
-mvn install:install-file -Dfile=com.inamik.utils.tableformatter-0.96.0/com.inamik.utils.tableformatter-0.96.0.jar -Dsources=com.inamik.utils.tableformatter-0.96.0/com.inamik.utils.tableformatter-0.96.0.sources.zip -DgroupId=com.inamik.utils -DartifactId=tableformatter -Dversion=0.96.0 -Dpackaging=jar
+mvn install:install-file -Dfile=borg_images.jar -DgroupId=com.papao -DartifactId=borg_images -Dversion=1.0 -Dpackaging=jar;
+mvn install:install-file -Dfile=org.aspen.cloud.widgets/aspencloud.widgets.jar -Dsources=org.aspen.cloud.widgets/aspencloud.widgets.sources.zip -DgroupId=org.aspen.cloud -DartifactId=widgets -Dversion=1.0 -Dpackaging=jar;
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.datechooser_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=datechooser -Dversion=1.0 -Dpackaging=jar;
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.formattedtext_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=formattedtext -Dversion=1.0 -Dpackaging=jar;
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.pshelf_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=pshelf -Dversion=1.0 -Dpackaging=jar;
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.pgroup_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=pgroup -Dversion=1.0 -Dpackaging=jar;
+mvn install:install-file -Dfile=org.eclipse.nebula.widgets/org.eclipse.nebula.widgets.tablecombo_1.0.0.HEAD.jar -DgroupId=org.eclipse.nebula.widgets -DartifactId=tablecombo -Dversion=1.0 -Dpackaging=jar;
+mvn install:install-file -Dfile=tika-core-1.14.jar -DgroupId=org.apache.tika -DartifactId=tika-core -Dversion=1.14 -Dpackaging=jar;
+mvn install:install-file -Dfile=opal/opal-0.9.5.2.jar -DgroupId=org.mihalis.opal -DartifactId=opal -Dversion=0.9.5.2 -Dpackaging=jar -Dsources=opal/opal-0.9.5-src.zip;
+mvn install:install-file -Dfile=org.eclipse.ui.forms-3.5.jar -DgroupId=org.eclipse.ui -DartifactId=forms -Dversion=3.5 -Dpackaging=jar;
+mvn install:install-file -Dfile=com.inamik.utils.tableformatter-0.96.0/com.inamik.utils.tableformatter-0.96.0.jar -Dsources=com.inamik.utils.tableformatter-0.96.0/com.inamik.utils.tableformatter-0.96.0.sources.zip -DgroupId=com.inamik.utils -DartifactId=tableformatter -Dversion=0.96.0 -Dpackaging=jar;
 
 Startup params on MacOS:
 ---------------------------

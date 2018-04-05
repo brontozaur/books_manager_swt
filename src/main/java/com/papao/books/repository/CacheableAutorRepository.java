@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class CacheableAutorRepository {
@@ -25,7 +26,8 @@ public class CacheableAutorRepository {
 
     @Cacheable("autori")
     public Autor getById(String id) {
-        return autorRepository.findOne(id);
+        Optional<Autor> optional = autorRepository.findById(id);
+        return optional.orElse(null);
     }
 
     @Cacheable("autoriList")

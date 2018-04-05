@@ -28,6 +28,7 @@ import org.springframework.stereotype.Controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Optional;
 
 @Controller
 public class BookController extends Observable {
@@ -75,7 +76,8 @@ public class BookController extends Observable {
         if (id == null) {
             return null;
         }
-        return repository.findOne(id.toString());
+        Optional<Carte> optional = repository.findById(id.toString());
+        return optional.orElse(null);
     }
 
     public void delete(Carte carte) {

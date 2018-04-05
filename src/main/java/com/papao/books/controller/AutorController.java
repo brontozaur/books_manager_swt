@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AutorController {
@@ -27,7 +28,8 @@ public class AutorController {
         if (id == null) {
             return null;
         }
-        return cacheableAutorRepository.getAutorRepository().findOne(id.toString());
+        Optional<Autor> optionalAutor = cacheableAutorRepository.getAutorRepository().findById(id.toString());
+        return optionalAutor.orElse(null);
     }
 
     public static void delete(Autor autor) {

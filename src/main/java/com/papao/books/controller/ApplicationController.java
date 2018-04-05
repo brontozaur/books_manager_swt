@@ -1,9 +1,10 @@
 package com.papao.books.controller;
 
-import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.DistinctIterable;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
@@ -25,6 +26,7 @@ import com.papao.books.ui.searcheable.CategoriePret;
 import com.papao.books.ui.util.BorgDateUtil;
 import com.papao.books.ui.util.FileTypeDetector;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -47,11 +49,16 @@ public class ApplicationController {
     @Autowired
     public ApplicationController(MongoTemplate mongoTemplate) {
         ApplicationController.mongoTemplate = mongoTemplate;
-        ApplicationController.gridFS = new GridFS(mongoTemplate.getDb());
+        ApplicationController.gridFS = new GridFS(mongoTemplate.getMongoDbFactory().getLegacyDb());
     }
 
     public static List<String> getDistinctFieldAsContentProposal(String collectionName, String databaseField) {
-        return mongoTemplate.getCollection(collectionName).distinct(databaseField);
+        DistinctIterable<String> result = mongoTemplate.getCollection(collectionName).distinct(databaseField, String.class);
+        List<String> stringResult = new ArrayList<>();
+        for (String str : result) {
+            stringResult.add(str);
+        }
+        return stringResult;
     }
 
     public static GridFSDBFile getDocumentData(ObjectId documentId) {
@@ -134,12 +141,12 @@ public class ApplicationController {
         UnwindOperation unwindRefs = Aggregation.unwind("ref", true);
         GroupOperation groupByAuthor = Aggregation.group("ref").count().as("count");
         Aggregation aggregation = Aggregation.newAggregation(lookupAuthor, unwindRefs, groupByAuthor);
-        List<BasicDBObject> results = mongoTemplate.aggregate(aggregation, localCollection, BasicDBObject.class).getMappedResults();
+        List<Document> results = mongoTemplate.aggregate(aggregation, localCollection, Document.class).getMappedResults();
 
         List<IntValuePair> occurrences = new ArrayList<>();
 
         int emptyOrNullCount = 0;
-        for (DBObject distinctValue : results) {
+        for (Document distinctValue : results) {
             Object objectId = distinctValue.get("_id");
             int count = (int) distinctValue.get("count");
             if (objectId == null) {
@@ -194,9 +201,9 @@ public class ApplicationController {
                 Aggregation.group(groupProperty).count().as("totalForRating")
         );
 
-        AggregationResults<BasicDBObject> groupResults
-                = mongoTemplate.aggregate(agg, UserActivity.class, BasicDBObject.class);
-        List<BasicDBObject> result = groupResults.getMappedResults();
+        AggregationResults<Document> groupResults
+                = mongoTemplate.aggregate(agg, UserActivity.class, Document.class);
+        List<Document> result = groupResults.getMappedResults();
 
         SimpleTextNode baseNode;
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
@@ -214,7 +221,7 @@ public class ApplicationController {
             baseNode = invisibleRoot;
         }
 
-        for (DBObject distinctValue : result) {
+        for (Document distinctValue : result) {
             Integer ratingNumber = (int) distinctValue.get("_id");
             int count = (int) distinctValue.get("totalForRating");
             SimpleTextNode ratingNode = new SimpleTextNode(baseNode, "");
@@ -390,9 +397,9 @@ public class ApplicationController {
             );
         }
 
-        AggregationResults<BasicDBObject> groupResults
-                = mongoTemplate.aggregate(agg, UserActivity.class, BasicDBObject.class);
-        List<BasicDBObject> result = groupResults.getMappedResults();
+        AggregationResults<Document> groupResults
+                = mongoTemplate.aggregate(agg, UserActivity.class, Document.class);
+        List<Document> result = groupResults.getMappedResults();
 
         SimpleTextNode baseNode;
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
@@ -410,7 +417,7 @@ public class ApplicationController {
             baseNode = invisibleRoot;
         }
 
-        for (DBObject distinctValue : result) {
+        for (Document distinctValue : result) {
             ObjectId userId = (ObjectId) distinctValue.get("_id");
             int count = (int) distinctValue.get("userBooks");
 
@@ -444,7 +451,7 @@ public class ApplicationController {
                                                                        String propName,
                                                                        boolean useFirstLetter,
                                                                        boolean includeEmpty) {
-        DBCollection collection = mongoTemplate.getCollection(collectionName);
+        MongoCollection collection = mongoTemplate.getCollection(collectionName);
 
         /*
             http://stackoverflow.com/questions/21452674/mongos-distinct-value-count-for-two-fields-in-java
@@ -466,12 +473,12 @@ public class ApplicationController {
             pipeline = Arrays.asList(group);
         }
         // [{ "$project" : { "titlu" : {$toUpper: { "$substr" : [ "$titlu" , 0 , 1]}}}}, { "$group" : { "_id" : "$titlu" , "count" : { "$sum" : 1}}}]
-        AggregationOutput output = collection.aggregate(pipeline);
+        AggregateIterable<Document> output = collection.aggregate(pipeline);
 
         List<IntValuePair> occurrences = new ArrayList<>();
 
         int emptyOrNullCount = 0;
-        for (DBObject distinctValue : output.results()) {
+        for (Document distinctValue : output) {
             String itemName = (String) distinctValue.get("_id");
             int count = Integer.valueOf(distinctValue.get("count").toString());
             if (StringUtils.isNotEmpty((String) itemName)) {
@@ -496,7 +503,7 @@ public class ApplicationController {
      * @return
      */
     public static SimpleTextNode getDateTreeStructure(String collectionName, String propName, boolean isAutoExpand) {
-        DBCollection collection = mongoTemplate.getCollection(collectionName);
+        MongoCollection collection = mongoTemplate.getCollection(collectionName);
 
         Query query = new Query();
         Criteria criteria = new Criteria().orOperator(Criteria.where(propName).is(null),
@@ -523,7 +530,7 @@ public class ApplicationController {
         boolean afisareFull = stilAfisareDataInTree != null && ((Integer) stilAfisareDataInTree.getValue()) == StilAfisareData.AFISARE_LUNI_IN_LITERE_FULL;
         boolean afisareTipScurt = stilAfisareDataInTree != null && ((Integer) stilAfisareDataInTree.getValue()) == StilAfisareData.AFISARE_LUNI_IN_LITERE_SCURT;
 
-        List<Date> list = collection.distinct(propName);
+        DistinctIterable<Date> list = collection.distinct(propName, Date.class);
         for (Date distinctValue : list) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(distinctValue);
@@ -559,7 +566,7 @@ public class ApplicationController {
                 lunaNode = new SimpleTextNode(yearNode, numeLuna.toString());
                 lunaNode.setQueryValue(cal.getTime());
                 lunaNode.setNodeType(NodeType.MONTH);
-                lunaNode.setInvisibleName(luna < 10 ? ("0"+luna): String.valueOf(luna));
+                lunaNode.setInvisibleName(luna < 10 ? ("0" + luna) : String.valueOf(luna));
             }
             lunaNode.setImage(AppImages.getImage16(isAutoExpand ? AppImages.IMG_EXPAND : AppImages.IMG_COLLAPSE));
 
@@ -595,7 +602,7 @@ public class ApplicationController {
      * @return a fully constructed internal tree representation, ready to be plugged into a live tree
      */
     public static SimpleTextNode getShortDateTreeStructure(String collectionName, String propName, boolean isAutoExpand, boolean includeEmpty) {
-        DBCollection collection = mongoTemplate.getCollection(collectionName);
+        MongoCollection collection = mongoTemplate.getCollection(collectionName);
 
         boolean showNumbers = SettingsController.getBoolean(BooleanSetting.LEFT_TREE_SHOW_NUMBERS);
         SimpleTextNode invisibleRoot = new SimpleTextNode(null);
@@ -608,9 +615,9 @@ public class ApplicationController {
         groupFields.put("count", new BasicDBObject("$sum", 1));
         DBObject group = new BasicDBObject("$group", groupFields);
         List<DBObject> pipeline = Arrays.asList(group);
-        AggregationOutput output = collection.aggregate(pipeline);
+        AggregateIterable<Document> output = collection.aggregate(pipeline);
 
-        for (DBObject distinctValue : output.results()) {
+        for (Document distinctValue : output) {
             Date dataCumpararii = (Date) distinctValue.get("_id");
             int count = Integer.valueOf(distinctValue.get("count").toString());
             if (dataCumpararii == null) {
@@ -699,7 +706,7 @@ public class ApplicationController {
         )
      */
     public static IntValuePairsWrapper getDistinctArrayPropertyValues(String collectionName, String propertyName) {
-        DBCollection collection = mongoTemplate.getCollection(collectionName);
+        MongoCollection collection = mongoTemplate.getCollection(collectionName);
         final String mongoProperty = "$" + propertyName;
 
 //  the preserveNullAndEmptyArrays does in fact preserves only the null arays!!
@@ -714,12 +721,12 @@ public class ApplicationController {
         DBObject group = new BasicDBObject("$group", groupFields);
 
         List<DBObject> pipeline = Arrays.asList(unwind, group);
-        AggregationOutput output = collection.aggregate(pipeline);
+        AggregateIterable<Document> output = collection.aggregate(pipeline);
 
         List<IntValuePair> occurrences = new ArrayList<>();
 
         int emptyOrNullCount = 0;
-        for (DBObject distinctValue : output.results()) {
+        for (Document distinctValue : output) {
             String itemName = (String) distinctValue.get("_id");
             int count = Integer.valueOf(distinctValue.get("count").toString());
             if (StringUtils.isNotEmpty((String) itemName)) {
@@ -747,10 +754,10 @@ public class ApplicationController {
     }
 
     public static ObjectId getRandomBook(String collectionName) {
-        DBCollection collection = mongoTemplate.getCollection(collectionName);
+        MongoCollection collection = mongoTemplate.getCollection(collectionName);
         DBObject sample = new BasicDBObject("$sample", new BasicDBObject("size", 1));
         List<DBObject> pipeline = Collections.singletonList(sample);
-        AggregationOutput output = collection.aggregate(pipeline);
-        return (ObjectId) output.results().iterator().next().get("_id");
+        AggregateIterable<Document> output = collection.aggregate(pipeline);
+        return (ObjectId) output.iterator().next().get("_id");
     }
 }
