@@ -30,3 +30,4 @@ accounts
 *.log
 
 classes
+.DS_Store
