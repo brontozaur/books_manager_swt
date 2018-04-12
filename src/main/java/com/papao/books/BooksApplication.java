@@ -23,6 +23,7 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 
 @SpringBootApplication
 @EnableMongoRepositories
@@ -91,7 +92,7 @@ public class BooksApplication {
             closeApplication(false);
         } catch (Exception exc) {
             logger.error(exc.getMessage(), exc);
-            SWTeXtension.showErrorBoxSWTInternal("A intervenit o eroare fatală la lansarea/închiderea aplicației - " + exc.getMessage() + "."
+            SWTeXtension.showErrorBoxSWTInternal("A intervenit o eroare fatală la lansarea/închiderea aplicației - " + Arrays.toString(exc.getStackTrace()) + "."
                     + "\nAceasta se va închide acum.");
             closeApplication(true);
         }

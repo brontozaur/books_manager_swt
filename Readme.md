@@ -60,6 +60,20 @@ Startup parameters:
 
   ![Book view](http://i66.tinypic.com/2chu8h3.png)
 
+# How to launch in standalone mode
+
+* ```mvn clean install -DskipTests```
+* create a new .sh file (let's say ```books.sh```) with the following content:
+
+        #!/bin/bash
+        java -jar -XstartOnFirstThread -Duser.timezone="UTC" ~/.m2/repository/com/papao/books/books/0.0.1-SNAPSHOT/books-0.0.1-SNAPSHOT.jar
+* execute the sh with:
+
+        ./books.sh
+* if necessary, change the permissions on the sh file with:
+
+        sudo chmod +x books.sh
+
 # TODOs
 
 * :thumbsup: bug gallery menu displays everywhere

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.Random;
 
@@ -33,8 +34,7 @@ public class ApplicationService {
         ApplicationService.applicationConfig = applicationConfig;
 
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("welcome.properties").getFile());
-        try (FileInputStream fis = new FileInputStream(file);) {
+        try (InputStream fis = classLoader.getResourceAsStream("welcome.properties")) {
             welcomeMessages = new Properties();
             welcomeMessages.load(fis);
         } catch (IOException iox) {
