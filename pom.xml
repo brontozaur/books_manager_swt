@@ -51,8 +51,8 @@
             <groupId>org.eclipse</groupId>
             <artifactId>swt</artifactId>
             <version>4.7.3a-cocoa-macosx</version>
-            <!--<version>4.7-x86</version>-->
-            <!--<version>4.7-x64</version>-->
+            <!--<version>4.7.3a-x86</version>-->
+            <!--<version>4.7.3a-x64</version>-->
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
