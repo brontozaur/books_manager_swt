@@ -17,7 +17,7 @@ public final class ColorUtil {
 
     public static final Color COLOR_LABEL_PASSWORD = new Color(Display.getDefault(), new RGB(255, 250, 228));
 
-    public static final Color COLOR_FOCUS_YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+    public static final Color COLOR_FOCUS_YELLOW = new Color(Display.getDefault(), new RGB(255, 255, 220));;//Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
     /*
      * new Color(Display.getDefault(), new RGB( 252, 249, 194));
      */

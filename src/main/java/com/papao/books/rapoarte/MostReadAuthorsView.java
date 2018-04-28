@@ -28,6 +28,7 @@ import com.papao.books.ui.util.sorter.AbstractColumnViewerSorter;
 import com.papao.books.ui.util.sorter.AbstractTableColumnViewerSorter;
 import com.papao.books.ui.view.AbstractCViewAdapter;
 import com.papao.books.ui.view.SWTeXtension;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -424,7 +425,11 @@ public class MostReadAuthorsView extends AbstractCViewAdapter {
                         @Override
                         public String getText(final Object element) {
                             Carte carte = (Carte) element;
-                            return carte.getTitlu();
+                            String result = carte.getTitlu();
+                            if (!StringUtils.isEmpty(carte.getVolum())) {
+                                result += " (vol. #" + carte.getVolum() + ")";
+                            }
+                            return result;
                         }
                     });
                     AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.booksTableViewer, col) {
