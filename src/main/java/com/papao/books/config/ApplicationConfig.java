@@ -1,21 +1,25 @@
 package com.papao.books.config;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
 import java.io.File;
 
 @Configuration
-public class ApplicationConfig {
-
-    @Value("${spring.data.mongodb.host}")
-    private String host;
+public class ApplicationConfig extends AbstractMongoConfiguration {
 
     @Value("${spring.data.mongodb.database}")
     private String database;
+
+    @Value("${spring.data.mongodb.uri}")
+    private String mongoURI;
 
     @Value("${app.mongo.books.collection}")
     private String booksCollectionName;
@@ -45,13 +49,21 @@ public class ApplicationConfig {
     private String defaultSearchType;
 
     @Bean
-    public MongoClient mongo() throws Exception {
-        return new MongoClient(host);
+    public MongoDbFactory mongoDbFactory() {
+        return new SimpleMongoDbFactory(mongoClient(), this.database);
+    }
+
+    @Override
+    public MongoClient mongoClient() {
+        MongoClientURI uri = new MongoClientURI(mongoURI);
+        return new MongoClient(uri);
     }
 
     @Bean
     public MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(mongo(), database);
+        MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(), mappingMongoConverter());
+        return mongoTemplate;
+
     }
 
     public String getAutoriCollectionName() {
@@ -100,5 +112,10 @@ public class ApplicationConfig {
 
     public String getDefaultSearchType() {
         return defaultSearchType;
+    }
+
+    @Override
+    protected String getDatabaseName() {
+        return this.database;
     }
 }
