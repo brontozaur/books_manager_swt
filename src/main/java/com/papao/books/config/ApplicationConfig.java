@@ -18,8 +18,8 @@ public class ApplicationConfig extends AbstractMongoConfiguration {
     @Value("${spring.data.mongodb.database}")
     private String database;
 
-    @Value("${spring.data.mongodb.uri}")
-    private String mongoURI;
+//    @Value("${spring.data.mongodb.uri}")
+//    private String mongoURI;
 
     @Value("${app.mongo.books.collection}")
     private String booksCollectionName;
@@ -55,8 +55,9 @@ public class ApplicationConfig extends AbstractMongoConfiguration {
 
     @Override
     public MongoClient mongoClient() {
-        MongoClientURI uri = new MongoClientURI(mongoURI);
-        return new MongoClient(uri);
+//        MongoClientURI uri = new MongoClientURI(mongoURI);
+//        return new MongoClient(uri);
+        return new MongoClient();
     }
 
     @Bean
