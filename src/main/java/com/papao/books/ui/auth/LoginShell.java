@@ -56,7 +56,7 @@ public class LoginShell extends AbstractCView implements Listener {
         getShell().addListener(SWT.Close, this);
         getShell().setBackground(ColorUtil.COLOR_WHITE);
         GridLayoutFactory.fillDefaults().spacing(0, 0).margins(0, 0).applyTo(getContainer());
-        getShell().setImages(new Image[]{AppImages.getImage16(AppImages.IMG_BORG_MAIN), AppImages.getImage24(AppImages.IMG_BORG_MAIN), AppImages.getImage32(AppImages.IMG_BORG_MAIN)});
+        getShell().setImages(new Image[]{AppImages.getImage16(AppImages.IMG_BOOKS_MAIN), AppImages.getImage24(AppImages.IMG_BOOKS_MAIN), AppImages.getImage32(AppImages.IMG_BOOKS_MAIN)});
         GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0).applyTo(getShell());
 
         Composite upperComp = new Composite(getContainer(), SWT.BORDER);
@@ -249,7 +249,7 @@ public class LoginShell extends AbstractCView implements Listener {
     protected void customizeView() {
         setShellStyle(SWT.CLOSE | SWT.MIN | SWT.APPLICATION_MODAL);
         setViewOptions(SWT.NONE);
-        setShellImage(AppImages.getImage16(AppImages.IMG_BORG_MAIN));
+        setShellImage(AppImages.getImage16(AppImages.IMG_BOOKS_MAIN));
         //cannot use coords, since coords are user-based
         setIsUsingCoords(false);
         setShowSaveOKMessage(false);

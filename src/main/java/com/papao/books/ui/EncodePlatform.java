@@ -142,10 +142,10 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             instance = this;
             getShell().setMenuBar(PlatformMenu.createShellMenu());
 
-            getShell().setImage(AppImages.getImage16(AppImages.IMG_BORG_MAIN));
+            getShell().setImage(AppImages.getImage16(AppImages.IMG_BOOKS_MAIN));
             GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).margins(0, 0).spacing(SWT.DEFAULT, 0).applyTo(getShell());
             getShell().addListener(SWT.Close, this);
-            getShell().setImages(new Image[]{AppImages.getImage32(AppImages.IMG_BORG_MAIN)});
+            getShell().setImages(new Image[]{AppImages.getImage32(AppImages.IMG_BOOKS_MAIN)});
 
             createTraySystem();
 
@@ -1566,7 +1566,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
             item = new TrayItem(getAppTray(), SWT.NONE);
             item.setToolTipText(getShellText());
-            item.setImage(AppImages.getImage16(AppImages.IMG_BORG_MAIN));
+            item.setImage(AppImages.getImage16(AppImages.IMG_BOOKS_MAIN));
             item.setToolTip(this.appToolTip);
             item.addListener(SWT.DefaultSelection, new Listener() {
                 @Override
@@ -1582,7 +1582,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
             menuItem = new MenuItem(trayItemMenu, SWT.PUSH);
             menuItem.setText("Afișare Books Manager");
-            menuItem.setImage(AppImages.getImage16(AppImages.IMG_BORG_MAIN));
+            menuItem.setImage(AppImages.getImage16(AppImages.IMG_BOOKS_MAIN));
             menuItem.addListener(SWT.Selection, new Listener() {
                 @Override
                 public void handleEvent(final Event event) {

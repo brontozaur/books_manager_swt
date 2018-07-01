@@ -137,6 +137,7 @@ public final class AppImages {
     public final static String IMG_BROWSER = "browser.png";
     public final static String IMG_BANCA = "banca.png";
     public final static String IMG_BORG_MAIN = "borg.png";
+    public final static String IMG_BOOKS_MAIN = "Books-2-icon.png";
     public final static String IMG_SHOW = "show.png";
     public final static String IMG_HIDE = "hide.png";
     public final static String IMG_DETAILS_NEW = "details.png";
