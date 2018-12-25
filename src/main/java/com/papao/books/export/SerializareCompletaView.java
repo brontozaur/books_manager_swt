@@ -76,7 +76,7 @@ public class SerializareCompletaView {
                 if (simpleExport) {
                     selectedFields = new ArrayList<>();
                     selectedFields.add(new FieldColumnValue("autori", SWT.LEFT, 100, 0));
-                    selectedFields.add(new FieldColumnValue("titluVolumSiSerie", SWT.LEFT, 100, 0));
+                    selectedFields.add(new FieldColumnValue("titluVolumSerieSiColectie", SWT.LEFT, 100, 0));
                 } else {
                     selectedFields = view.selectedFields;
                 }

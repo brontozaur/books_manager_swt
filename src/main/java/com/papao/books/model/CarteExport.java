@@ -39,7 +39,7 @@ public class CarteExport {
     private String traducereDin;
     private String locatie;
     private String volum;
-    private String titluVolumSiSerie;
+    private String titluVolumSerieSiColectie;
 
     public CarteExport(Carte carte) {
         this.id = carte.getId() != null ? carte.getId().toString() : "";
@@ -74,7 +74,7 @@ public class CarteExport {
         this.traducatori = Arrays.deepToString(carte.getTraducatori().toArray());
         this.traducereDin = carte.getTraducereDin().name();
         this.locatie = carte.getLocatie();
-        this.titluVolumSiSerie = carte.getTitluVolumSiSerie();
+        this.titluVolumSerieSiColectie = carte.getTitluVolumSerieSiColectie();
     }
 
     public String getId() {
@@ -205,7 +205,7 @@ public class CarteExport {
         return volum;
     }
 
-    public String getTitluVolumSiSerie() {
-        return titluVolumSiSerie;
+    public String getTitluVolumSerieSiColectie() {
+        return titluVolumSerieSiColectie;
     }
 }
