@@ -90,6 +90,14 @@ public class Carte extends AuditObject implements Serializable {
         return titlu;
     }
 
+    public String getTitluSiVolum() {
+        String result = titlu;
+        if (StringUtils.isNotEmpty(volum)) {
+            result += " (vol #" + volum + ")";
+        }
+        return result;
+    }
+
     public String getTitluVolumSiSerie() {
         String result = titlu;
         if (StringUtils.isNotEmpty(getSerie().getNume())) {
@@ -97,6 +105,20 @@ public class Carte extends AuditObject implements Serializable {
         }
         if (StringUtils.isNotEmpty(volum)) {
             result += " (vol #" + volum + ")";
+        }
+        return result;
+    }
+
+    public String getTitluVolumSerieSiColectie() {
+        String result = titlu;
+        if (StringUtils.isNotEmpty(getSerie().getNume())) {
+            result += " (" + getSerie().getFormattedValue() + ")";
+        }
+        if (StringUtils.isNotEmpty(volum)) {
+            result += " (vol #" + volum + ")";
+        }
+        if (StringUtils.isNotEmpty(colectie)) {
+            result += " ["+ colectie + "]";
         }
         return result;
     }

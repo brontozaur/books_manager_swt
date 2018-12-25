@@ -20,6 +20,7 @@ import com.papao.books.ui.providers.ContentProposalProvider;
 import com.papao.books.ui.util.ColorUtil;
 import com.papao.books.ui.util.FontUtil;
 import com.papao.books.ui.view.SWTeXtension;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -58,6 +59,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private Label createdAtLabel;
     private Label updatedAtLabel;
     private Label cumparataLabel;
+    private Label colectieLabel;
     private Text textId;
     private Text textIdUserActivity;
     private Text textLocatie;
@@ -101,7 +103,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         rightLabelTitle = new CLabel(mainComp, SWT.CENTER | SWT.BORDER);
         rightLabelTitle.setFont(FontUtil.TAHOMA12_NORMAL);
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(rightLabelTitle);
-        GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 25).span(2, 1).applyTo(rightLabelTitle);
+        GridDataFactory.fillDefaults().grab(true, false).hint(SWT.DEFAULT, 40).span(2, 1).applyTo(rightLabelTitle);
         rightLabelTitle.setBackground(ColorUtil.COLOR_ALBASTRU_INCHIS);
         rightLabelTitle.setForeground(ColorUtil.COLOR_WHITE);
 
@@ -179,10 +181,14 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         label(" Taguri", temp);
         taguriComposite = new LinkedInSimpleValuesComposite(temp);
 
-        label("Creata la", temp);
+        label("Colecție", temp);
+        colectieLabel = new Label(temp, SWT.NONE);
+
+
+        label("Creată la", temp);
         createdAtLabel = new Label(temp, SWT.NONE);
 
-        label("Modificata la", temp);
+        label("Modificată la", temp);
         updatedAtLabel = new Label(temp, SWT.NONE);
 
         label("Cumpărată la", temp);
@@ -288,12 +294,15 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
             carte = new Carte();
         }
         textId.setText(carte.getId() != null ? carte.getId().toString() : "");
-        if (carte.getTitlu().length() > 40) {
-            rightLabelTitle.setText(carte.getTitlu().substring(0, 35) + "...");
-        } else {
-            rightLabelTitle.setText(carte.getTitlu());
+        String bookTitle = carte.getTitluSiVolum();
+        if (bookTitle.length() > 40) {
+            bookTitle = bookTitle.substring(0, 35) + "...";
         }
-        rightLabelTitle.setToolTipText(carte.getTitlu());
+        if (carte.getSerie() != null && StringUtils.isNotEmpty(carte.getSerie().getNume())) {
+            bookTitle += "\n(" + carte.getSerie().getFormattedValue() + ")";
+        }
+        rightLabelTitle.setText(bookTitle);
+        rightLabelTitle.setToolTipText(carte.getTitluVolumSerieSiColectie());
 
         displayImage(carte.getCopertaFata(), rightFrontCoverImageComposite);
         rightWebResourcesComposite.setCarte(carte);
@@ -304,6 +313,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         final DateFormat df = new SimpleDateFormat(dateFormat);
         final DateFormat shortDateFormat = new SimpleDateFormat(SettingsController.getString(StringSetting.APP_DATE_FORMAT));
 
+        colectieLabel.setText(carte.getColectie() != null ? carte.getColectie() : "");
         createdAtLabel.setText(carte.getCreatedAt() != null ? df.format(carte.getCreatedAt()) : "");
         updatedAtLabel.setText(carte.getUpdatedAt() != null ? df.format(carte.getUpdatedAt()) : "");
         cumparataLabel.setText(carte.getPret() != null && carte.getPret().getDataCumpararii() != null ? shortDateFormat.format(carte.getPret().getDataCumpararii()) : "");
