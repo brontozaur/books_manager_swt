@@ -11,6 +11,8 @@ import com.papao.books.model.Carte;
 import com.papao.books.model.CarteCitita;
 import com.papao.books.model.DocumentData;
 import com.papao.books.model.UserActivity;
+import com.papao.books.model.config.GeneralSetting;
+import com.papao.books.model.config.SearchEngine;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.auth.EncodeLive;
@@ -341,7 +343,14 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         scrolledComposite.setMinSize(mainComp.computeSize(r.width, SWT.DEFAULT));
 
         ratingValue = bookRating.getCurrentNumberOfStars();
+        GeneralSetting searchEngineConfig = SettingsController.getGeneralSetting("searchEngine");
         observableProperty = carte.getTitlu();
+        if (searchEngineConfig != null) {
+            int searchEngineIndex = Integer.valueOf(searchEngineConfig.getValue().toString());
+            if (searchEngineIndex == SearchEngine.GOOGLE_COM.ordinal()) {
+                observableProperty = carte.getTitlu() + " " + rightAutoriComposite.getGoogleSearchTerm();
+            }
+        }
         textLocatie.setText(carte.getLocatie());
 
         setChanged();

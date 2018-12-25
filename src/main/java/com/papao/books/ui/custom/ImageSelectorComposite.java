@@ -7,6 +7,7 @@ import com.papao.books.ui.menu.WebBrowser;
 import com.papao.books.ui.util.ColorUtil;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
@@ -19,7 +20,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
@@ -156,7 +158,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
             @Override
             public void handleEvent(Event event) {
                 ImagePath result = hb.getResult();
-                if (result != null) {
+                if (result != null && hb.getExitChoice() == SWT.OK) {
                     try {
                         removeImage();
                         String localFilePath = serializeWebImage(result);
@@ -165,6 +167,8 @@ public class ImageSelectorComposite extends Observable implements Observer {
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                         SWTeXtension.displayMessageE("Imaginea selectata este invalida sau nu a putut fi incarcata!", e);
+                        event.doit = false;
+                        hb.resetResultSelection();
                     }
                 }
             }
@@ -279,15 +283,8 @@ public class ImageSelectorComposite extends Observable implements Observer {
     }
 
     private String serializeWebImage(ImagePath imagePath) throws IOException {
-        URL url = new URL(imagePath.getFilePath());
-        InputStream in = new BufferedInputStream(url.openStream());
         final String localPath = ApplicationService.getApplicationConfig().getAppImagesFolder() + "/" + imagePath.getFileName();
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(localPath));
-        for (int i; (i = in.read()) != -1; ) {
-            out.write(i);
-        }
-        in.close();
-        out.close();
+        FileUtils.copyURLToFile(new URL(imagePath.getFilePath()), new File(localPath));
         return localPath;
     }
 

@@ -3,8 +3,11 @@ package com.papao.books.ui.carte;
 import com.github.haixing_hu.swt.starrating.StarRating;
 import com.papao.books.ApplicationService;
 import com.papao.books.controller.ApplicationController;
+import com.papao.books.controller.SettingsController;
 import com.papao.books.controller.UserController;
 import com.papao.books.model.*;
+import com.papao.books.model.config.GeneralSetting;
+import com.papao.books.model.config.SearchEngine;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.auth.EncodeLive;
 import com.papao.books.ui.custom.*;
@@ -38,6 +41,7 @@ public class CarteView extends AbstractCSaveView {
 
     private Carte carte;
     private String observableProperty;
+    private String searchTerm;
 
     private CarteTitluVolumComposite carteTitluVolumComposite;
     private Text textSubtitlu;
@@ -893,6 +897,14 @@ public class CarteView extends AbstractCSaveView {
 
     private void markAsChanged() {
         observableProperty = this.carteTitluVolumComposite.getTitlu();
+        searchTerm = this.carteTitluVolumComposite.getTitlu();;
+        GeneralSetting searchEngineConfig = SettingsController.getGeneralSetting("searchEngine");
+        if (searchEngineConfig != null) {
+            int searchEngineIndex = Integer.valueOf(searchEngineConfig.getValue().toString());
+            if (searchEngineIndex == SearchEngine.GOOGLE_COM.ordinal()) {
+                searchTerm += " " + this.compositeAutori.getGoogleSearchTerm();
+            }
+        }
         if (!observableProperty.equals(" - ")) {
             if (compositeAutori.getGoogleSearchTerm().isEmpty()) {
                 getBigLabelText().setText(this.carteTitluVolumComposite.getTitlu());
@@ -908,6 +920,6 @@ public class CarteView extends AbstractCSaveView {
 
     @Override
     public String getObservableProperty() {
-        return this.observableProperty;
+        return this.searchTerm;
     }
 }

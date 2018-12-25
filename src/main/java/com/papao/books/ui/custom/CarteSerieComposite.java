@@ -29,7 +29,7 @@ public class CarteSerieComposite extends Composite {
         new Label(this, SWT.NONE).setText("#");
 
         this.textVolum = new Text(this, SWT.BORDER);
-        GridDataFactory.fillDefaults().grab(false, false).hint(20, SWT.DEFAULT).applyTo(this.textVolum);
+        GridDataFactory.fillDefaults().grab(false, false).hint(35, SWT.DEFAULT).applyTo(this.textVolum);
 
         this.textSerie.setText(carteSerie.getNume().trim());
         this.textVolum.setText(carteSerie.getVolum().trim());

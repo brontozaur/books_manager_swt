@@ -1319,11 +1319,11 @@ public abstract class AbstractView extends Observable {
         this.shellLocation = shellLocation;
     }
 
-    protected final void setExitChoice(final int exitChoice) {
+    public final void setExitChoice(final int exitChoice) {
         this.exitChoice = exitChoice;
     }
 
-    protected int getExitChoice() {
+    public int getExitChoice() {
         return this.exitChoice;
     }
 

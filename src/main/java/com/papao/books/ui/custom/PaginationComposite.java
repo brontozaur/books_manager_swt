@@ -32,6 +32,8 @@ public class PaginationComposite extends Composite implements Observer {
     private ToolItem itemLastPage;
     private String searchQuery;
     private List<ObjectId> idAutori;
+    private String colectie;
+    private boolean exactSearch;
 
     private long totalCount = 0;
     private long totalPages = 0;
@@ -54,7 +56,7 @@ public class PaginationComposite extends Composite implements Observer {
             @Override
             public void handleEvent(Event event) {
                 currentPage = 1;
-                search();
+                search(exactSearch);
             }
         });
 
@@ -68,7 +70,7 @@ public class PaginationComposite extends Composite implements Observer {
                 if (currentPage > 0) {
                     currentPage--;
                 }
-                search();
+                search(exactSearch);
             }
         });
 
@@ -84,7 +86,7 @@ public class PaginationComposite extends Composite implements Observer {
                         return;
                     }
                     currentPage = Integer.valueOf(textGoToPage.getValue().toString());
-                    search();
+                    search(exactSearch);
                 }
             }
         });
@@ -98,7 +100,7 @@ public class PaginationComposite extends Composite implements Observer {
             @Override
             public void handleEvent(Event event) {
                 currentPage++;
-                search();
+                search(exactSearch);
             }
         });
 
@@ -110,14 +112,14 @@ public class PaginationComposite extends Composite implements Observer {
             @Override
             public void handleEvent(Event event) {
                 currentPage = totalPages;
-                search();
+                search(exactSearch);
             }
         });
 
         new Label(this, SWT.NONE).setText("Paginație");
 
         comboItemsPerPage = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
-        comboItemsPerPage.setItems(new String[]{"2", "5", "10", "25", "50", "100", "250", "500"});
+        comboItemsPerPage.setItems("2", "5", "10", "25", "50", "100", "250", "500");
         comboItemsPerPage.select(5);
         comboItemsPerPage.addListener(SWT.Selection, new Listener() {
             @Override
@@ -126,7 +128,7 @@ public class PaginationComposite extends Composite implements Observer {
                 currentPage = 1;
                 totalPages = 0;
                 totalCount = 0;
-                search();
+                search(exactSearch);
             }
         });
 
@@ -180,12 +182,19 @@ public class PaginationComposite extends Composite implements Observer {
         updateUI();
     }
 
-    private void search() {
+    private void search(boolean exactSearch) {
+        this.exactSearch = exactSearch;
         if (searchQuery != null) {
             java.util.List<ObjectId> autori = AutorController.getByNumeCompletLikeIgnoreCaseOrTitluLikeIgnoreCase(searchQuery);
-            ApplicationService.getBookController().getByIdIsOrTitluLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(searchQuery, autori, getPageable(false));
+            ApplicationService.getBookController().getByIdIsOrTitluLikeIgnoreCaseOrColectieLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(searchQuery, autori, getPageable(false));
         } else if (this.idAutori != null) {
             ApplicationService.getBookController().getByIdAutoriInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(idAutori, getPageable(false));
+        } else if (this.colectie != null) {
+            if (exactSearch) {
+                ApplicationService.getBookController().getByColectieIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(colectie, getPageable(false));
+            } else {
+                ApplicationService.getBookController().getByColectieContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(colectie, getPageable(false));
+            }
         } else {
             ApplicationService.getBookController().requestSearch(getPageable(false));
         }
@@ -197,6 +206,7 @@ public class PaginationComposite extends Composite implements Observer {
 
     public void setIdAutori(java.util.List<ObjectId> idAutori) {
         this.searchQuery = null;
+        this.colectie = null;
         this.idAutori = idAutori;
         totalCount = 0;
         totalPages = 0;
@@ -204,7 +214,21 @@ public class PaginationComposite extends Composite implements Observer {
 
         updateUI();
         if (this.idAutori != null) {
-            search();
+            search(false);
+        }
+    }
+
+    public void setColectie(String colectie) {
+        this.searchQuery = null;
+        this.idAutori = null;
+        this.colectie = colectie;
+        totalCount = 0;
+        totalPages = 0;
+        currentPage = 1;
+
+        updateUI();
+        if (this.colectie != null) {
+            search(true);
         }
     }
 
@@ -217,7 +241,7 @@ public class PaginationComposite extends Composite implements Observer {
 
         updateUI();
         if (this.searchQuery != null) {
-            search();
+            search(exactSearch);
         }
     }
 

@@ -15,7 +15,7 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Carte getByTitluAndIdAutori(String titlu, List<ObjectId> idAutori);
 
-    Page<Carte> getByIdIsOrTitluLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String id, String titlu, String subtitlu, List<ObjectId> idAutori, String serie, String volum, Pageable pageable);
+    Page<Carte> getByIdIsOrTitluLikeIgnoreCaseOrColectieLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String id, String titlu, String colectie, String subtitlu, List<ObjectId> idAutori, String serie, String volum, Pageable pageable);
 
     List<Carte> getByIdAutoriContainsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(ObjectId idAutor);
 
@@ -34,7 +34,9 @@ public interface CarteRepository extends MongoRepository<Carte, String> {
 
     Page<Carte> getByColectieIsNullOrEdituraIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String emptyString, Pageable pageable);
 
-    Page<Carte> getByColectieContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String editura, Pageable pageable);
+    Page<Carte> getByColectieContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String colectie, Pageable pageable);
+
+    Page<Carte> getByColectieIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String colectie, Pageable pageable);
 
     Page<Carte> getByLocatieIsNullOrLocatieIsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String emptyString, Pageable pageable);
 

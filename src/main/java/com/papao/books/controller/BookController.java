@@ -369,8 +369,8 @@ public class BookController extends Observable {
         return repository.getByTitluAndIdAutori(titlu, idAutori);
     }
 
-    public void getByIdIsOrTitluLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String searchTerm, List<ObjectId> idAutori, Pageable pageable) {
-        carti = repository.getByIdIsOrTitluLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(searchTerm, searchTerm, searchTerm, idAutori, searchTerm, searchTerm, pageable);
+    public void getByIdIsOrTitluLikeIgnoreCaseOrColectieLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String searchTerm, List<ObjectId> idAutori, Pageable pageable) {
+        carti = repository.getByIdIsOrTitluLikeIgnoreCaseOrColectieLikeIgnoreCaseOrSubtitluLikeIgnoreCaseOrIdAutoriContainsOrSerie_NumeLikeIgnoreCaseOrVolumLikeIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(searchTerm, searchTerm, searchTerm, searchTerm, idAutori, searchTerm, searchTerm, pageable);
         setChanged();
         notifyObservers();
     }
@@ -385,6 +385,18 @@ public class BookController extends Observable {
 
     public void getByIdAutoriInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(List<ObjectId> idAutori, Pageable pageable) {
         carti = repository.getByIdAutoriInOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(idAutori, pageable);
+        setChanged();
+        notifyObservers();
+    }
+
+    public void getByColectieContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String colectie, Pageable pageable) {
+        carti = repository.getByColectieContainsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(colectie, pageable);
+        setChanged();
+        notifyObservers();
+    }
+
+    public void getByColectieIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(String colectie, Pageable pageable) {
+        carti = repository.getByColectieIsIgnoreCaseOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(colectie, pageable);
         setChanged();
         notifyObservers();
     }

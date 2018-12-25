@@ -231,6 +231,7 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
                 itemSave.addListener(SWT.Selection, new Listener() {
                     @Override
                     public void handleEvent(Event event) {
+                        setExitChoice(SWT.OK);
                         saveAndClose();
                     }
                 });
@@ -247,12 +248,21 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
         }
     }
 
+    public void resetResultSelection() {
+        this.imagePath = null;
+        setExitChoice(SWT.CANCEL);
+    }
+
     public ImagePath getResult() {
         return this.imagePath;
     }
 
     private void saveAndClose() {
-        imagePath = (ImagePath) itemSave.getData();
+        if (getExitChoice() == SWT.OK) {
+            imagePath = (ImagePath) itemSave.getData();
+        } else {
+            imagePath = null;
+        }
         getShell().close();
     }
 
@@ -270,6 +280,8 @@ public final class WebBrowser extends AbstractCViewAdapter implements Listener {
             itemSave.setEnabled(true);
         } catch (Exception exc) {
             itemSave.setEnabled(false);
+            itemSave.setData(null);
+            imagePath = null;
         }
     }
 
