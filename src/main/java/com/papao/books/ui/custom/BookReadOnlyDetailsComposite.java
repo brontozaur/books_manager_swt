@@ -294,7 +294,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
             carte = new Carte();
         }
         textId.setText(carte.getId() != null ? carte.getId().toString() : "");
-        String bookTitle = carte.getTitluSiVolum();
+        String bookTitle = StringUtils.defaultIfBlank(carte.getTitluSiVolum(), "");
         if (bookTitle.length() > 40) {
             bookTitle = bookTitle.substring(0, 35) + "...";
         }
