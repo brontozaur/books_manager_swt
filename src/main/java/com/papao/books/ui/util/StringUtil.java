@@ -22,7 +22,7 @@ public final class StringUtil {
     }
 
     public static int romanianCompare(String a, String b) {
-        return ROMANIAN_COLLATOR.compare(a, b);
+        return ROMANIAN_COLLATOR.compare(StringUtils.defaultString(a, ""), StringUtils.defaultString(b, ""));
     }
 
     public static String capitalizeCharAtIdx(final String str, final int idx) {
