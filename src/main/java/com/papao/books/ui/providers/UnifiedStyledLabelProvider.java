@@ -90,6 +90,9 @@ public class UnifiedStyledLabelProvider extends StyledCellLabelProvider implemen
      * @return an array of int pairs (index, length)
      */
     public static int[] getSearchTermOccurrences(final String searchTerm, final String content) {
+        if (content == null || searchTerm == null) {
+            return new int[0];
+        }
         List<StyleRange> styleRange;
         List<Integer> ranges;
         StyleRange myStyleRange = new StyleRange(0, 0, null, SettingsController.getHighlightColor());

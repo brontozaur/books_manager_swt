@@ -1869,7 +1869,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             } else {
                 tableViewer.refresh(view.getCarte(), true, true);
                 tableViewer.setSelection(new StructuredSelection(view.getCarte()));
-                tableViewer.getTable().getItem(((List<Carte>) tableViewer.getInput()).indexOf(view.getCarte())).setData(view.getCarte());
+                final int index = ((List<Carte>) tableViewer.getInput()).indexOf(view.getCarte());
+                if (index > 0) {
+                    TableItem item = tableViewer.getTable().getItem(index);
+                    if (item != null && !item.isDisposed()) {
+                        item.setData(view.getCarte());
+                    }
+                }
             }
         }
         displayBookData();
