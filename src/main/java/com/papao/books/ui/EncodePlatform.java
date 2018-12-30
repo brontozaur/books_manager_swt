@@ -998,7 +998,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         Menu menu = new Menu(itemViewMode);
         for (final BookSearchType type : BookSearchType.values()) {
             MenuItem item = new MenuItem(menu, SWT.PUSH);
-            item.setText(type.name());
+            item.setText(type.getNume());
             item.addListener(SWT.Selection, new Listener() {
                 @Override
                 public void handleEvent(Event event) {
