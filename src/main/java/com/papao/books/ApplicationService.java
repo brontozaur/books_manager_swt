@@ -6,10 +6,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.Random;
 
@@ -36,7 +34,7 @@ public class ApplicationService {
         ClassLoader classLoader = getClass().getClassLoader();
         try (InputStream fis = classLoader.getResourceAsStream("welcome.properties")) {
             welcomeMessages = new Properties();
-            welcomeMessages.load(fis);
+            welcomeMessages.load(new InputStreamReader(fis, Charset.forName("UTF-8")));
         } catch (IOException iox) {
             logger.error(iox.getMessage(), iox);
         }

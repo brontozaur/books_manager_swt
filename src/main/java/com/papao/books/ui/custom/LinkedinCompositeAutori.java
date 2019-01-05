@@ -57,7 +57,9 @@ public class LinkedinCompositeAutori extends Composite {
         comboAutor.getItemAdd().addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                AutorView view = new AutorView(getShell(), new Autor(), AbstractView.MODE_ADD);
+                Autor autor = new Autor();
+                autor.setNumeComplet(comboAutor.getText());
+                AutorView view = new AutorView(getShell(), autor, AbstractView.MODE_ADD);
                 view.open();
                 if (view.getUserAction() == SWT.CANCEL) {
                     return;
