@@ -244,7 +244,7 @@ public class CarteView extends AbstractCSaveView {
 
         //traverse next
         handleTraverseNextEvent(compositeTags.getTextSearch(), itemInformatiiEsentiale, itemTraducere);
-        handleTraverseNextEvent(compositeTraducatori.getTextSearch(), itemTraducere, itemBookDetails);
+        handleTraverseNextEvent(compositeRedactori.getTextSearch(), itemTraducere, itemBookDetails);
         handleTraverseNextEvent(textLatime.getControl(), itemBookDetails, itemPret);
         handleTraverseNextEvent(textMagazin, itemPret, itemEditiaOriginala);
         handleTraverseNextEvent(premiiLiterareComposite.getTable(), itemEditiaOriginala, itemDescriere);
@@ -255,7 +255,7 @@ public class CarteView extends AbstractCSaveView {
         handleTraversePreviousEvent(textEditiaPrincepsTitlu, itemEditiaOriginala, itemPret);
         handleTraversePreviousEvent(textDataCumparare.getFormattedText(), itemPret, itemBookDetails);
         handleTraversePreviousEvent(textGoodreadsUrl, itemBookDetails, itemTraducere);
-        handleTraversePreviousEvent(compositeTraducatori.getTextSearch(), itemTraducere, itemInformatiiEsentiale);
+        handleTraversePreviousEvent(compositeRedactori.getTextSearch(), itemTraducere, itemInformatiiEsentiale);
 
         WidgetCompositeUtil.addColoredFocusListener2Childrens(getContainer());
     }
@@ -265,18 +265,13 @@ public class CarteView extends AbstractCSaveView {
         GridLayoutFactory.fillDefaults().numColumns(6).equalWidth(false).applyTo(comp);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
 
-        label(comp, "Traducători");
-        this.compositeTraducatori = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "traducatori"), carte.getTraducatori());
-        ((GridData) compositeTraducatori.getLayoutData()).horizontalSpan = 5;
+        label(comp, "Redactori");
+        this.compositeRedactori = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "redactori"), carte.getRedactori());
+        ((GridData) compositeRedactori.getLayoutData()).horizontalSpan = 5;
 
-        label(comp, "Traducere din");
-        comboTraducereDin = new Combo(comp, SWT.READ_ONLY);
-        comboTraducereDin.setItems(Limba.getComboItems());
-
-        label(comp, "");
-        label(comp, "");
-        label(comp, "");
-        label(comp, "");
+        label(comp, "Tehnoredactori");
+        this.compositeTehnoredactori = new LinkedinComposite(comp, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "tehnoredactori"), carte.getTehnoredactori());
+        ((GridData) compositeTehnoredactori.getLayoutData()).horizontalSpan = 5;
 
         label(comp, "Documente");
         dragAndDropTableComposite = new DragAndDropTableComposite(comp, carte, false);
@@ -391,15 +386,19 @@ public class CarteView extends AbstractCSaveView {
         new Label(mainCompLeft, SWT.NONE);
         new Label(mainCompLeft, SWT.NONE);
 
-        label(mainCompLeft, "Redactori");
-        this.compositeRedactori = new LinkedinComposite(mainCompLeft, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "redactori"), carte.getRedactori());
-        ((GridData) compositeRedactori.getLayoutData()).horizontalSpan = 5;
-        ((GridData) compositeRedactori.getLayoutData()).grabExcessHorizontalSpace = true;
+        label(mainCompLeft, "Traducători");
+        this.compositeTraducatori = new LinkedinComposite(mainCompLeft, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "traducatori"), carte.getTraducatori());
+        ((GridData) compositeTraducatori.getLayoutData()).horizontalSpan = 5;
+        ((GridData) compositeTraducatori.getLayoutData()).grabExcessHorizontalSpace = true;
 
-        label(mainCompLeft, "Tehnoredactori");
-        this.compositeTehnoredactori = new LinkedinComposite(mainCompLeft, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "tehnoredactori"), carte.getTehnoredactori());
-        ((GridData) compositeTehnoredactori.getLayoutData()).horizontalSpan = 5;
-        ((GridData) compositeTehnoredactori.getLayoutData()).grabExcessHorizontalSpace = true;
+        label(mainCompLeft, "Traducere din");
+        comboTraducereDin = new Combo(mainCompLeft, SWT.READ_ONLY);
+        GridDataFactory.fillDefaults().grab(false, false).span(2, 1).applyTo(comboTraducereDin);
+        comboTraducereDin.setItems(Limba.getComboItems());
+
+        label(mainCompLeft, "");
+        label(mainCompLeft, "");
+        label(mainCompLeft, "");
 
         label(mainCompLeft, "Taguri");
         this.compositeTags = new LinkedinComposite(mainCompLeft, ApplicationController.getDistinctFieldAsContentProposal(ApplicationService.getApplicationConfig().getBooksCollectionName(), "tags"), carte.getTags());
@@ -888,7 +887,8 @@ public class CarteView extends AbstractCSaveView {
 
     private void markAsChanged() {
         observableProperty = this.carteTitluVolumComposite.getTitlu();
-        searchTerm = this.carteTitluVolumComposite.getTitlu();;
+        searchTerm = this.carteTitluVolumComposite.getTitlu();
+        ;
         GeneralSetting searchEngineConfig = SettingsController.getGeneralSetting("searchEngine");
         if (searchEngineConfig != null) {
             int searchEngineIndex = Integer.valueOf(searchEngineConfig.getValue().toString());
