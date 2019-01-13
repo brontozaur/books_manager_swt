@@ -4,8 +4,8 @@ import org.eclipse.swt.widgets.Display;
 
 public enum SearchEngine {
     LIBRARIE_NET(0, "librarie.net", "http://www.librarie.net/cautare-rezultate.php?t=QQQ"),
-    ELEFANT_RO(1, "elefant.ro", "http://www.elefant.ro/search?q=QQQ"),
-    LIBRIS_RO(2, "libris.ro", "http://www.libris.ro/?sn.q=QQQ\""),
+    ELEFANT_RO(1, "elefant.ro", "http://www.elefant.ro/search?query=QQQ"),
+    LIBRIS_RO(2, "libris.ro", "http://www.libris.ro/?sn.q=QQQ"),
     LIBRARIASOPHIA_RO(3, "sophia.ro", "http://www.librariasophia.ro/cautare.html?mod=cautarerapida&cautare_toate=&cautare_multimedia=&cautare_promotii=&cautare_reducere50=&cautare_titluri=&cautare_autori=&cautare_edituri=&filtru=QQQ"),
     EGUMENITA_RO(4, "egumenita.ro", "https://egumenita.ro/cauta.php?search-box=QQQ"),
     GOOGLE_COM(5, "google.com", "https://www.google.ro/search?tbm=isch&biw=" +
