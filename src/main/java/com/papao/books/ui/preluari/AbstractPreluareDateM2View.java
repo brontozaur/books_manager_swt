@@ -319,6 +319,8 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
                         menu.getItem(idx++).setEnabled(tableDocumente.getColumnCount() > 0); // add
                         menu.getItem(idx++).setEnabled(selIdx != -1); // mod
                         menu.getItem(idx++).setEnabled(selIdx != -1); // del
+                        idx++;
+                        menu.getItem(idx++).setEnabled(true); // paste from clipboard
                     } catch (Exception exc) {
                         logger.error(exc, exc);
                         SWTeXtension.displayMessageEGeneric(exc);
@@ -361,6 +363,22 @@ public abstract class AbstractPreluareDateM2View extends AbstractCViewAdapter im
                     }
                 }
             });
+
+            new MenuItem(menu, SWT.SEPARATOR);
+            menuItem = new MenuItem(menu, SWT.NONE);
+            menuItem.setText("Lipire	Ctrl+V");
+            menuItem.addListener(SWT.Selection, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    if (StringUtils.isEmpty(delimitator) && columnLabels.length > 1) {
+                        updateDetailMessage("Nu ati introdus delimitatorul!");
+                        textDelimitator.setFocus();
+                        return;
+                    }
+                    pasteFromClipboard();
+                }
+            });
+
         } catch (Exception exc) {
             logger.error(exc, exc);
             SWTeXtension.displayMessageEGeneric(exc);
