@@ -645,8 +645,11 @@ public final class AppImages {
     public static Image getImageForExtension(String extension) {
         Image image = FILE_TYPE_IMAGES.get(extension);
         if (image == null || image.isDisposed()) {
-            image = new Image(Display.getDefault(), Program.findProgram(extension).getImageData());
-            FILE_TYPE_IMAGES.put(extension, image);
+            Program program = Program.findProgram(extension);
+            if (program != null) {
+                image = new Image(Display.getDefault(), Program.findProgram(extension).getImageData());
+                FILE_TYPE_IMAGES.put(extension, image);
+            }
         }
         return image;
     }
