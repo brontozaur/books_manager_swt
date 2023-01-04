@@ -3,20 +3,17 @@ package com.papao.books.ui.util;
 import com.papao.books.ui.view.SWTeXtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 public final class Cypher {
 
 	private static Logger logger = Logger.getLogger(Cypher.class);
 
     public static final String DEFAULT_ENCODING = "UTF-8";
-    private static BASE64Encoder enc = new BASE64Encoder();
-    private static BASE64Decoder dec = new BASE64Decoder();
 
     private Cypher() {}
 
@@ -96,16 +93,15 @@ public final class Cypher {
     }
 
     public static String base64encode(final String password) throws UnsupportedEncodingException {
-        return Cypher.enc.encode(password.getBytes(Cypher.DEFAULT_ENCODING));
+        return new String(Base64.getEncoder().encode(password.getBytes(Cypher.DEFAULT_ENCODING)));
     }
 
     public static String base64decode(final String password) throws UnsupportedEncodingException, IOException {
-        return new String(Cypher.dec.decodeBuffer(password), Cypher.DEFAULT_ENCODING);
+        return new String(Base64.getDecoder().decode(password), Cypher.DEFAULT_ENCODING);
     }
 
     public static String encode(final String userName, final String userPassword) throws UnsupportedEncodingException {
-        String dataParam = userName;
-        dataParam = Cypher.xorMessage(userName, userPassword);
+        String dataParam = Cypher.xorMessage(userName, userPassword);
         return Cypher.base64encode(dataParam);
     }
 
