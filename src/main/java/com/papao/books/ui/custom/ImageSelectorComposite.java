@@ -229,7 +229,7 @@ public class ImageSelectorComposite extends Observable implements Observer {
         FileDialog dlg;
         try {
             dlg = new FileDialog(this.mainComposite.getShell(), SWT.OPEN);
-            dlg.setFilterExtensions(new String[]{"*.jpg;*.png;*.jpeg;*.bmp;*.gif"});
+            dlg.setFilterExtensions(new String[]{"*.jpg;*.png;*.jpeg;*.bmp;*.gif;*.webp"});
             dlg.setFilterNames(new String[]{"Imagini (*.*)"});
             String selectedFile = dlg.open();
             loadLocalImage(selectedFile);

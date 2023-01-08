@@ -8,7 +8,7 @@ public class UrlImageValidator {
     private static Pattern pattern;
 
     private static final String IMAGE_PATTERN =
-            "([^\\s]+(\\.(?i)(jpg|png|gif|bmp|jpeg|tiff))$)";
+            "([^\\s]+(\\.(?i)(jpg|png|gif|bmp|jpeg|tiff|webp))$)";
 
     static {
         pattern = Pattern.compile(IMAGE_PATTERN);
