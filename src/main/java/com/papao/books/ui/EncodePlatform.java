@@ -10,6 +10,8 @@ import com.papao.books.controller.AutorController;
 import com.papao.books.controller.BookController;
 import com.papao.books.controller.SettingsController;
 import com.papao.books.controller.UserController;
+import com.papao.books.export.ExportType;
+import com.papao.books.export.Exporter;
 import com.papao.books.export.SerializareCompletaView;
 import com.papao.books.export.VizualizareRapoarte;
 import com.papao.books.model.AbstractMongoDB;
@@ -59,6 +61,7 @@ import com.papao.books.ui.util.ObjectCloner;
 import com.papao.books.ui.util.StringUtil;
 import com.papao.books.ui.util.ValidareCoduriView;
 import com.papao.books.ui.util.WidgetCursorUtil;
+import com.papao.books.ui.util.WidgetMenuUtil;
 import com.papao.books.ui.util.WidgetTableUtil;
 import com.papao.books.ui.util.WidgetTreeUtil;
 import com.papao.books.ui.util.sorter.AbstractColumnViewerSorter;
@@ -94,6 +97,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -120,15 +124,14 @@ import java.util.Observer;
 
 public class EncodePlatform extends AbstractCViewAdapter implements Listener, Observer, IAdd, IModify, IDelete, IRefresh, IDuplicate {
 
-    private static Logger logger = Logger.getLogger(EncodePlatform.class);
+    private static final Logger logger = Logger.getLogger(EncodePlatform.class);
+
     private ToolTip appToolTip;
     private Tray appTray;
     private static ToolBar barDocking;
     private static EncodePlatform instance;
     private LiveSashForm verticalSash;
     private Composite compLeftTree;
-    private LiveSashForm rightInnerSash;
-    private CTabFolder bottomInnerTabFolderRight;
     private TableViewer tableViewer;
     private CTabFolder mainRightTabFolder;
 
@@ -143,7 +146,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private final static int IDX_LIMBA = 7;
 
     private ToolItem toolItemGrupare;
-    private ToolItem toolItemRandom;
     private Composite compRight;
     private UnifiedStyledLabelProvider leftTreeColumnProvider;
     private TreeViewer leftTreeViewer;
@@ -155,19 +157,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private LiveSashForm rightVerticalSash;
     private BookReadOnlyDetailsComposite readOnlyDetailsComposite;
     private ImageGalleryComposite galleryComposite;
-    private ProgressBarComposite progressBarComposite;
     private ToolItem itemImport;
     private ToolItem itemExport;
     private ToolItem itemRapoarte;
-    private ToolItem itemConfig;
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
     private Text searchText;
-    private CarteCitateTableComposite citateComposite;
-    private CarteNotiteTableComposite notiteTableComposite;
-    private CarteCapitoleTableComposite capitoleComposite;
-    private CartePersonajTableComposite cartePersonajComposite;
-    private CarteReviewComposite carteReviewComposite;
 
     private SimpleTextNode lastTreeSelection;
 
@@ -363,7 +358,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             }
         });
 
-        progressBarComposite = new ProgressBarComposite(mainCompRightTab, SWT.SMOOTH);
+        ProgressBarComposite progressBarComposite = new ProgressBarComposite(mainCompRightTab, SWT.SMOOTH);
         GridDataFactory.fillDefaults().grab(true, false).align(SWT.END, SWT.CENTER).applyTo(progressBarComposite);
         mainRightTabFolder.setTopRight(mainCompRightTab);
 
@@ -378,7 +373,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         this.verticalSash.setWeights(new int[]{2, 8});
 
-        rightInnerSash = new LiveSashForm(mainRightTabFolder, SWT.VERTICAL | SWT.SMOOTH);
+        LiveSashForm rightInnerSash = new LiveSashForm(mainRightTabFolder, SWT.VERTICAL | SWT.SMOOTH);
         rightInnerSash.sashWidth = 4;
         rightInnerSash.setLayout(new GridLayout(2, false));
         GridDataFactory.fillDefaults().grab(true, true).applyTo(rightInnerSash);
@@ -408,56 +403,75 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         initViewerCols();
         WidgetTableUtil.customizeTable(this.tableViewer.getTable(), getClass(), TABLE_KEY);
 
-        this.bottomInnerTabFolderRight = new CTabFolder(rightInnerSash, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(this.bottomInnerTabFolderRight);
-        this.bottomInnerTabFolderRight.setSimple(true);
-        this.bottomInnerTabFolderRight.setUnselectedImageVisible(true);
-        this.bottomInnerTabFolderRight.setUnselectedCloseVisible(false);
-        this.bottomInnerTabFolderRight.setMRUVisible(true);
-        this.bottomInnerTabFolderRight.setMinimizeVisible(false);
-        this.bottomInnerTabFolderRight.setMaximizeVisible(false);
+        CTabFolder bottomInnerTabFolderRight = new CTabFolder(rightInnerSash, SWT.NONE);
+        GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(bottomInnerTabFolderRight);
+        bottomInnerTabFolderRight.setSimple(true);
+        bottomInnerTabFolderRight.setUnselectedImageVisible(true);
+        bottomInnerTabFolderRight.setUnselectedCloseVisible(false);
+        bottomInnerTabFolderRight.setMRUVisible(true);
+        bottomInnerTabFolderRight.setMinimizeVisible(false);
+        bottomInnerTabFolderRight.setMaximizeVisible(false);
         bottomInnerTabFolderRight.setSelectionBackground(ColorUtil.COLOR_SYSTEM);
 
-        CTabItem tabDocumente = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        CTabItem tabDocumente = new CTabItem(bottomInnerTabFolderRight, SWT.NONE);
         tabDocumente.setText("Documente");
         tabDocumente.setImage(AppImages.getImage16(AppImages.IMG_DETAILS_NEW));
-        this.bottomInnerTabFolderRight.setSelection(tabDocumente);
+        bottomInnerTabFolderRight.setSelection(tabDocumente);
 
         tabDocumente.setControl(createTabDocuments(bottomInnerTabFolderRight));
 
-        CTabItem tabCitate = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        CTabItem tabCitate = new CTabItem(bottomInnerTabFolderRight, SWT.NONE);
         tabCitate.setText("Citate");
         tabCitate.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
-        citateComposite = new CarteCitateTableComposite(bottomInnerTabFolderRight);
+        CarteCitateTableComposite citateComposite = new CarteCitateTableComposite(bottomInnerTabFolderRight);
         tabCitate.setControl(citateComposite);
 
-        CTabItem tabNotite = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        CTabItem tabNotite = new CTabItem(bottomInnerTabFolderRight, SWT.NONE);
         tabNotite.setText("Notițe");
         tabNotite.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
-        notiteTableComposite = new CarteNotiteTableComposite(bottomInnerTabFolderRight);
+        CarteNotiteTableComposite notiteTableComposite = new CarteNotiteTableComposite(bottomInnerTabFolderRight);
         tabNotite.setControl(notiteTableComposite);
 
-        CTabItem tabCapitole = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        CTabItem tabCapitole = new CTabItem(bottomInnerTabFolderRight, SWT.NONE);
         tabCapitole.setText("Capitole");
         tabCapitole.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
-        capitoleComposite = new CarteCapitoleTableComposite(bottomInnerTabFolderRight);
+        CarteCapitoleTableComposite capitoleComposite = new CarteCapitoleTableComposite(bottomInnerTabFolderRight);
         tabCapitole.setControl(capitoleComposite);
 
-        CTabItem tabPersonaje = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        CTabItem tabPersonaje = new CTabItem(bottomInnerTabFolderRight, SWT.NONE);
         tabPersonaje.setText("Personaje");
         tabPersonaje.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
-        cartePersonajComposite = new CartePersonajTableComposite(bottomInnerTabFolderRight);
+        CartePersonajTableComposite cartePersonajComposite = new CartePersonajTableComposite(bottomInnerTabFolderRight);
         tabPersonaje.setControl(cartePersonajComposite);
 
-        CTabItem tabReview = new CTabItem(this.bottomInnerTabFolderRight, SWT.NONE);
+        CTabItem tabReview = new CTabItem(bottomInnerTabFolderRight, SWT.NONE);
         tabReview.setText("Comentariu");
         tabReview.setImage(AppImages.getImage16(AppImages.IMG_APP_EVENT));
-        carteReviewComposite = new CarteReviewComposite(bottomInnerTabFolderRight);
+        CarteReviewComposite carteReviewComposite = new CarteReviewComposite(bottomInnerTabFolderRight);
         tabReview.setControl(carteReviewComposite);
 
+        Composite compExport = new Composite(bottomInnerTabFolderRight, SWT.NONE);
+        compExport.setLayout(new GridLayout(4, false));
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(compExport);
 
-        this.rightInnerSash.setWeights(new int[]{8, 5});
+        ToolItem exportItem = new ToolItem(new ToolBar(compExport, SWT.FLAT | SWT.RIGHT), SWT.DROP_DOWN);
+        exportItem.setText("Export carti");
+        exportItem.setImage(AppImages.getImage16(AppImages.IMG_EXPORT));
+        exportItem.setHotImage(AppImages.getImage16Focus(AppImages.IMG_EXPORT));
+        exportItem.setToolTipText("Export date");
+        createBooksExportMenu(exportItem.getParent());
+        exportItem.setEnabled(tableViewer.getInput() instanceof List && !((List) tableViewer.getInput()).isEmpty());
+        exportItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                WidgetMenuUtil.customizeMenuLocation(exportItem.getParent().getMenu(), exportItem);
+                exportItem.getParent().getMenu().setVisible(true);
+            }
+        });
+
+        rightInnerSash.setWeights(new int[]{8, 5});
         tabGrid.setControl(rightInnerSash);
+        bottomInnerTabFolderRight.setTopRight(compExport);
 
         readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash);
 
@@ -1100,12 +1114,12 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         new ToolItem(getMainToolBar(), SWT.SEPARATOR);
 
-        this.toolItemRandom = new ToolItem(getMainToolBar(), SWT.PUSH | SWT.FLAT);
-        this.toolItemRandom.setImage(AppImages.getImage24(AppImages.IMG_WARNING));
-        this.toolItemRandom.setHotImage(AppImages.getImage24Focus(AppImages.IMG_WARNING));
-        this.toolItemRandom.setText("Aleator!");
-        this.toolItemRandom.setToolTipText("Alege carte aleatorie!");
-        this.toolItemRandom.addListener(SWT.Selection, new Listener() {
+        ToolItem toolItemRandom = new ToolItem(getMainToolBar(), SWT.PUSH | SWT.FLAT);
+        toolItemRandom.setImage(AppImages.getImage24(AppImages.IMG_WARNING));
+        toolItemRandom.setHotImage(AppImages.getImage24Focus(AppImages.IMG_WARNING));
+        toolItemRandom.setText("Aleator!");
+        toolItemRandom.setToolTipText("Alege carte aleatorie!");
+        toolItemRandom.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 pickRandomBook();
@@ -2054,6 +2068,92 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
     public static EncodePlatform getInstance() {
         return instance;
+    }
+
+    private void createBooksExportMenu(final Control exportMainControl) {
+        Menu menu;
+        MenuItem item;
+        try {
+            if ((exportMainControl == null) || exportMainControl.isDisposed()) {
+                return;
+            }
+
+            menu = new Menu(exportMainControl);
+            exportMainControl.setMenu(menu);
+
+            item = new MenuItem(menu, SWT.NULL);
+            item.setText("Export fișier PDF");
+            item.setImage(AppImages.getImage16(AppImages.IMG_ADOBE));
+            item.addListener(SWT.Selection, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    exportPDF();
+                }
+            });
+
+            item = new MenuItem(menu, SWT.NULL);
+            item.setText("Export fișier Excel");
+            item.setImage(AppImages.getImage16(AppImages.IMG_EXCEL));
+            item.addListener(SWT.Selection, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    exportExcel();
+                }
+            });
+
+            item = new MenuItem(menu, SWT.NULL);
+            item.setText("Export fișier TXT");
+            item.setImage(AppImages.getImage16(AppImages.IMG_EXPORT));
+            item.addListener(SWT.Selection, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    exportTxt();
+                }
+            });
+
+            item = new MenuItem(menu, SWT.NULL);
+            item.setText("Export fișier RTF");
+            item.setImage(AppImages.getImage16(AppImages.IMG_WORD2));
+            item.addListener(SWT.Selection, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    exportRTF();
+                }
+            });
+
+            item = new MenuItem(menu, SWT.NULL);
+            item.setText("Export fișier HTML");
+            item.setImage(AppImages.getImage16(AppImages.IMG_BROWSER));
+            item.addListener(SWT.Selection, new Listener() {
+                @Override
+                public final void handleEvent(final Event e) {
+                    exportHTML();
+                }
+            });
+
+        } catch (Exception exc) {
+            logger.error(exc.getMessage(), exc);
+        }
+    }
+
+    public void exportTxt() {
+        Exporter.export(ExportType.TXT, tableViewer.getTable(), "Selectie carti", getClass(), TABLE_KEY);
+    }
+
+    public void exportPDF() {
+        Exporter.export(ExportType.PDF, tableViewer.getTable(), "Selectie carti", getClass(), TABLE_KEY);
+    }
+
+    public void exportExcel() {
+        Exporter.export(ExportType.XLS, tableViewer.getTable(), "Selectie carti", getClass(), TABLE_KEY);
+    }
+
+    public void exportRTF() {
+        Exporter.export(ExportType.RTF, tableViewer.getTable(), "Selectie carti", getClass(), TABLE_KEY);
+    }
+
+    public void exportHTML() {
+        Exporter.export(ExportType.HTML, tableViewer.getTable(), "Selectie carti", getClass(), TABLE_KEY);
     }
 
     @Override

@@ -119,7 +119,7 @@ public class PaginationComposite extends Composite implements Observer {
         new Label(this, SWT.NONE).setText("Paginație");
 
         comboItemsPerPage = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
-        comboItemsPerPage.setItems("2", "5", "10", "25", "50", "100", "250", "500");
+        comboItemsPerPage.setItems("2", "5", "10", "25", "50", "100", "250", "500", "1000", "5000", "10000");
         comboItemsPerPage.select(5);
         comboItemsPerPage.addListener(SWT.Selection, new Listener() {
             @Override

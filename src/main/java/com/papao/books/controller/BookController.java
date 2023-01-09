@@ -92,6 +92,9 @@ public class BookController extends Observable {
     public void requestSearch(BookSearchType searchType, SimpleTextNode node, Pageable pageable) {
         this.searchType = searchType;
         this.node = node;
+        if (node == null) {
+            return;
+        }
         //TODO need to think about consistent handling for node type ALL
         Object value = node.getQueryValue();
         switch (searchType) {
