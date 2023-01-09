@@ -23,6 +23,7 @@ import com.papao.books.ui.carte.AutoriView;
 import com.papao.books.ui.carte.CarteView;
 import com.papao.books.ui.config.AppConfigView;
 import com.papao.books.ui.custom.BookReadOnlyDetailsComposite;
+import com.papao.books.ui.custom.CWaitDlgClassic;
 import com.papao.books.ui.custom.CarteCapitoleTableComposite;
 import com.papao.books.ui.custom.CarteCitateTableComposite;
 import com.papao.books.ui.custom.CarteNotiteTableComposite;
@@ -555,9 +556,15 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
             text = text.replace("ObjectId(\"", "");
             text = text.replace("\")", "");
         }
-        paginationComposite.setSearchQuery(text);
-        if (!ObjectId.isValid(text)) {
-            searchInTable(text);
+        CWaitDlgClassic waitDlgClassic = new CWaitDlgClassic("Interogare baza de date....");
+        try {
+            waitDlgClassic.open();
+            paginationComposite.setSearchQuery(text);
+            if (!ObjectId.isValid(text)) {
+                searchInTable(text);
+            }
+        } finally {
+            waitDlgClassic.close();
         }
     }
 

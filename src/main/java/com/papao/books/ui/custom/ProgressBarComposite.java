@@ -97,6 +97,7 @@ public class ProgressBarComposite extends Composite {
                     xCoord = point.x / 2;
                 }
                 e.gc.drawString(string, xCoord, (point.y - stringHeight) / 2 - 1, true);
+                Display.getCurrent().readAndDispatch();
             }
         });
     }
@@ -127,7 +128,7 @@ public class ProgressBarComposite extends Composite {
                         return;
                     }
                     ProgressBarComposite.this.progressBar.setSelection(ProgressBarComposite.this.progressBar.getMaximum());
-                    Display.getDefault().readAndDispatch();
+                    Display.getCurrent().readAndDispatch();
                 }
             });
         } catch (Exception exc) {

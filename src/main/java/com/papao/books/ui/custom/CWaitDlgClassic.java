@@ -105,6 +105,7 @@ public final class CWaitDlgClassic {
                     shell.pack();
                     WidgetCompositeUtil.centerInDisplay(shell);
                     shell.open();
+                    Display.getCurrent().readAndDispatch();
                 }
             });
         } catch (Exception exc) {
@@ -139,6 +140,7 @@ public final class CWaitDlgClassic {
 
     public void advance() {
         this.cpbar.advance(this.cpbar.getSelection() + 1);
+        Display.getCurrent().readAndDispatch();
     }
 
     public void advance(final int idx) {
