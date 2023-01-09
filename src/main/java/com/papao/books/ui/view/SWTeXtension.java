@@ -85,9 +85,9 @@ public final class SWTeXtension {
         }
     }
 
-	/*
+    /*
      * afisare informatii
-	 */
+     */
 
     public static void displayMessageI(final String mesaj) {
         if (EncodeLive.isNotificationUsingOpalStyle()) {
@@ -670,9 +670,13 @@ public final class SWTeXtension {
     }
 
     public static boolean getDeleteTrigger(Event e) {
-        boolean stateMask = e.stateMask == (EncodeLive.IS_MAC ? SWT.COMMAND : SWT.CTRL);
-        boolean trigger = e.character == (EncodeLive.IS_MAC ? SWT.BS : SWT.DEL);
-        return stateMask && trigger;
+        if (EncodeLive.IS_MAC) {
+            if (e.character == SWT.DEL) {
+                return true;
+            }
+            return e.stateMask == SWT.COMMAND && e.character == SWT.BS;
+        }
+        return e.character == SWT.DEL;
     }
 
     public static boolean getDuplicateTrigger(Event e) {
