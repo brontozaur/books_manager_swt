@@ -16,7 +16,9 @@ import com.papao.books.model.config.SearchEngine;
 import com.papao.books.ui.AppImages;
 import com.papao.books.ui.EncodePlatform;
 import com.papao.books.ui.auth.EncodeLive;
+import com.papao.books.ui.events.CanvasEventDto;
 import com.papao.books.ui.providers.ContentProposalProvider;
+import com.papao.books.ui.searcheable.BookSearchType;
 import com.papao.books.ui.util.ColorUtil;
 import com.papao.books.ui.util.FontUtil;
 import com.papao.books.ui.view.SWTeXtension;
@@ -32,7 +34,13 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -68,6 +76,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     private int ratingValue = 0;
     private Carte carte;
     private String observableProperty = null;
+    private CanvasEventDto canvasEventDto = null;
     private Button buttonCitita;
     private DateChooserCustom readStartDate;
     private DateChooserCustom readEndDate;
@@ -176,10 +185,16 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         rightAutoriComposite = new LinkedinCompositeAutoriLinks(temp, null);
 
         label("Gen", temp);
-        genLiterarComposite = new LinkedInSimpleValuesComposite(temp);
+        genLiterarComposite = new LinkedInSimpleValuesComposite(temp, BookSearchType.Gen_literar);
+        // when we click on literary genre -> we notify the books table to redraw with all books
+        // of that genre. Todo: maybe also switch tree view?
+        genLiterarComposite.addObserver(this);
 
         label(" Taguri", temp);
-        taguriComposite = new LinkedInSimpleValuesComposite(temp);
+        taguriComposite = new LinkedInSimpleValuesComposite(temp, BookSearchType.Taguri);
+        // when we click on literary genre -> we notify the books table to redraw with all books
+        // containing this tag Todo: maybe also switch tree view?
+        taguriComposite.addObserver(this);
 
         label("Colecție", temp);
         colectieLabel = new Label(temp, SWT.NONE);
@@ -287,7 +302,7 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
     }
 
     @Async
-    private void populateFields(Carte carte) {
+    public void populateFields(Carte carte) {
         this.carte = carte;
         this.buttonSave.setEnabled(carte != null);
         if (carte == null) {
@@ -392,10 +407,6 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
         GridDataFactory.fillDefaults().align(SWT.END, SWT.BEGINNING).applyTo(label);
     }
 
-    public Carte getCarte() {
-        return carte;
-    }
-
     @Override
     public void update(Observable observable, Object o) {
         if (observable instanceof ImageGalleryComposite) {
@@ -406,10 +417,23 @@ public class BookReadOnlyDetailsComposite extends Observable implements Observer
             notifyObservers();
         } else if (observable instanceof EncodePlatform) {
             populateFields((Carte) ((EncodePlatform) observable).getObservableObject());
+        } else if (observable instanceof LinkedInSimpleValuesComposite) {
+            this.canvasEventDto = ((LinkedInSimpleValuesComposite) observable).getCanvasEventDto();
+            setChanged();
+            notifyObservers("canvas");
         }
+    }
+
+    // depending on where the changes are observed, we might need one or another observable property
+    public Carte getCarte() {
+        return carte;
     }
 
     public String getObservableProperty() {
         return this.observableProperty;
+    }
+
+    public CanvasEventDto getCanvasEventDto() {
+        return canvasEventDto;
     }
 }

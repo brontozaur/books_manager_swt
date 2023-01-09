@@ -33,13 +33,14 @@ import java.util.Optional;
 @Controller
 public class BookController extends Observable {
 
+    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
+
     private final CarteRepository repository;
     private final CacheableAutorRepository cacheableAutorRepository;
 
-    private Page<Carte> carti = new PageImpl<>(new ArrayList<Carte>());
+    private Page<Carte> carti = new PageImpl<>(new ArrayList<>());
     private BookSearchType searchType;
     private SimpleTextNode node;
-    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
     @Autowired
     public BookController(CarteRepository repository,

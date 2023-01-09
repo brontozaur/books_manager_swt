@@ -39,7 +39,6 @@ public class LinkedinCompositeAutoriLinks extends Composite {
         }
     }
 
-
     private void layoutEverything() {
         this.setSize(this.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         this.getParent().layout();
