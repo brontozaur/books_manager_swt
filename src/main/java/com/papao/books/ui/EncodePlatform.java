@@ -70,6 +70,7 @@ import com.papao.books.ui.util.sorter.AbstractTreeColumnViewerSorter;
 import com.papao.books.ui.view.AbstractCViewAdapter;
 import com.papao.books.ui.view.AbstractView;
 import com.papao.books.ui.view.SWTeXtension;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -163,6 +164,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
     private Text searchText;
+    private ToolItem exportItem;
 
     private SimpleTextNode lastTreeSelection;
 
@@ -454,13 +456,13 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         compExport.setLayout(new GridLayout(4, false));
         GridDataFactory.fillDefaults().grab(true, false).applyTo(compExport);
 
-        ToolItem exportItem = new ToolItem(new ToolBar(compExport, SWT.FLAT | SWT.RIGHT), SWT.DROP_DOWN);
+        exportItem = new ToolItem(new ToolBar(compExport, SWT.FLAT | SWT.RIGHT), SWT.DROP_DOWN);
         exportItem.setText("Export carti");
         exportItem.setImage(AppImages.getImage16(AppImages.IMG_EXPORT));
         exportItem.setHotImage(AppImages.getImage16Focus(AppImages.IMG_EXPORT));
         exportItem.setToolTipText("Export date");
         createBooksExportMenu(exportItem.getParent());
-        exportItem.setEnabled(tableViewer.getInput() instanceof List && !((List) tableViewer.getInput()).isEmpty());
+        exportItem.setEnabled(CollectionUtils.isNotEmpty((List) tableViewer.getInput()));
         exportItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -578,6 +580,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 searchInTable(text);
             }
         } finally {
+            if (!exportItem.isDisposed()) {
+                exportItem.setEnabled(CollectionUtils.isNotEmpty((List) tableViewer.getInput()));
+            }
             waitDlgClassic.close();
         }
     }
@@ -2184,6 +2189,9 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         Page<Carte> page = controller.getSearchResult();
         if (!tableViewer.getTable().isDisposed()) {
             tableViewer.setInput(page.getContent());
+            if (!exportItem.isDisposed()) {
+                exportItem.setEnabled(CollectionUtils.isNotEmpty((List) tableViewer.getInput()));
+            }
             if (tableViewer.getTable().getItemCount() > 0) {
                 Carte carte = (Carte) tableViewer.getTable().getItem(tableViewer.getTable().getItemCount() - 1).getData();
                 tableViewer.setSelection(new StructuredSelection(carte));

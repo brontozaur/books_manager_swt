@@ -400,7 +400,7 @@ public class DragAndDropTableComposite extends Composite implements Observer {
     }
 
     @Async
-    private void populateFields() {
+    public void populateFields() {
         this.result = (List<DocumentData>) ObjectUtil.copy(carte.getDocuments());
         for (DocumentData document : result) {
             createTableItem(document);
