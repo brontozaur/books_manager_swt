@@ -136,7 +136,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private TableViewer tableViewer;
     private CTabFolder mainRightTabFolder;
 
-    private static final String[] COLS = new String[]{"Autor", "Titlu", "Colecție", "Subtitlu", "Rating", "Editură", "An apariție", "Limbă"};
+    private static final String[] COLS = new String[]{"Autor", "Titlu", "Colecție", "Subtitlu", "Rating", "Editură", "An apariție", "Limbă", "Serie"};
     private final static int IDX_AUTOR = 0;
     private final static int IDX_TITLU = 1;
     private final static int IDX_COLECTIE = 2;
@@ -145,6 +145,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private final static int IDX_EDITURA = 5;
     private final static int IDX_AN_APARITIE = 6;
     private final static int IDX_LIMBA = 7;
+    private final static int IDX_SERIE = 8;
 
     private ToolItem toolItemGrupare;
     private Composite compRight;
@@ -156,7 +157,6 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private Combo comboModAfisare;
     private DragAndDropTableComposite dragAndDropTableComposite;
     private LiveSashForm rightVerticalSash;
-    private BookReadOnlyDetailsComposite readOnlyDetailsComposite;
     private ImageGalleryComposite galleryComposite;
     private ToolItem itemImport;
     private ToolItem itemExport;
@@ -164,7 +164,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
     private static final String TREE_KEY = "leftTreeViewer";
     private static final String TABLE_KEY = "booksViewer";
     private Text searchText;
-    private ToolItem exportItem;
+    private ToolItem tableViewerExportItem;
 
     private SimpleTextNode lastTreeSelection;
 
@@ -456,18 +456,18 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         compExport.setLayout(new GridLayout(4, false));
         GridDataFactory.fillDefaults().grab(true, false).applyTo(compExport);
 
-        exportItem = new ToolItem(new ToolBar(compExport, SWT.FLAT | SWT.RIGHT), SWT.DROP_DOWN);
-        exportItem.setText("Export carti");
-        exportItem.setImage(AppImages.getImage16(AppImages.IMG_EXPORT));
-        exportItem.setHotImage(AppImages.getImage16Focus(AppImages.IMG_EXPORT));
-        exportItem.setToolTipText("Export date");
-        createBooksExportMenu(exportItem.getParent());
-        exportItem.setEnabled(CollectionUtils.isNotEmpty((List) tableViewer.getInput()));
-        exportItem.addListener(SWT.Selection, new Listener() {
+        tableViewerExportItem = new ToolItem(new ToolBar(compExport, SWT.FLAT | SWT.RIGHT), SWT.DROP_DOWN);
+        tableViewerExportItem.setText("Export carti");
+        tableViewerExportItem.setImage(AppImages.getImage16(AppImages.IMG_EXPORT));
+        tableViewerExportItem.setHotImage(AppImages.getImage16Focus(AppImages.IMG_EXPORT));
+        tableViewerExportItem.setToolTipText("Export date");
+        createBooksExportMenu(tableViewerExportItem.getParent());
+        tableViewerExportItem.setEnabled(CollectionUtils.isNotEmpty((List) tableViewer.getInput()));
+        tableViewerExportItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                WidgetMenuUtil.customizeMenuLocation(exportItem.getParent().getMenu(), exportItem);
-                exportItem.getParent().getMenu().setVisible(true);
+                WidgetMenuUtil.customizeMenuLocation(tableViewerExportItem.getParent().getMenu(), tableViewerExportItem);
+                tableViewerExportItem.getParent().getMenu().setVisible(true);
             }
         });
 
@@ -475,7 +475,7 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         tabGrid.setControl(rightInnerSash);
         bottomInnerTabFolderRight.setTopRight(compExport);
 
-        readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash);
+        BookReadOnlyDetailsComposite readOnlyDetailsComposite = new BookReadOnlyDetailsComposite(rightVerticalSash);
 
         // table viewer is notified when rating changes on the details composite
         readOnlyDetailsComposite.addObserver(this);
@@ -580,8 +580,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 searchInTable(text);
             }
         } finally {
-            if (!exportItem.isDisposed()) {
-                exportItem.setEnabled(CollectionUtils.isNotEmpty((List) tableViewer.getInput()));
+            if (!tableViewerExportItem.isDisposed()) {
+                tableViewerExportItem.setEnabled(CollectionUtils.isNotEmpty((List) tableViewer.getInput()));
             }
             waitDlgClassic.close();
         }
@@ -1069,6 +1069,11 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
 
         new MenuItem(menu, SWT.SEPARATOR);
 
+        // export
+        MenuItem itemExport = new MenuItem(menu, SWT.CASCADE);
+        itemExport.setText("Export");
+        itemExport.setMenu(createTreeExportMenu(itemExport));
+
         MenuItem itemViewMode = new MenuItem(menu, SWT.CASCADE);
         itemViewMode.setText("Grupare");
         itemViewMode.setMenu(createViewModeMenu(itemViewMode));
@@ -1089,6 +1094,57 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                 }
             });
         }
+        return menu;
+    }
+
+    private Menu createTreeExportMenu(MenuItem parent) {
+        Menu menu = new Menu(parent);
+
+        MenuItem item = new MenuItem(menu, SWT.PUSH);
+        item.setText("Export PDF");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                // todo
+            }
+        });
+
+        item = new MenuItem(menu, SWT.PUSH);
+        item.setText("Export XLS");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                // todo
+            }
+        });
+
+        item = new MenuItem(menu, SWT.PUSH);
+        item.setText("Export TXT");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                // todo
+            }
+        });
+
+        item = new MenuItem(menu, SWT.PUSH);
+        item.setText("Export RTF");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                // todo
+            }
+        });
+
+        item = new MenuItem(menu, SWT.PUSH);
+        item.setText("Export HTML");
+        item.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                // todo
+            }
+        });
+
         return menu;
     }
 
@@ -1547,6 +1603,34 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
                             Carte a = (Carte) e1;
                             Carte b = (Carte) e2;
                             return a.getLimba().compareTo(b.getLimba());
+                        }
+
+                    };
+                    cSorter.setSorter(cSorter, AbstractColumnViewerSorter.ASC);
+                    break;
+                }
+                case IDX_SERIE: {
+                    col.setLabelProvider(new ColumnLabelProvider() {
+                        @Override
+                        public String getText(final Object element) {
+                            Carte carte = (Carte) element;
+                            return carte.getSerie() != null ? StringUtils.defaultString(carte.getSerie().getFormattedValue()) : "";
+                        }
+                    });
+                    AbstractTableColumnViewerSorter cSorter = new AbstractTableColumnViewerSorter(this.tableViewer, col) {
+                        @Override
+                        protected int doCompare(final Viewer viewer, final Object e1, final Object e2) {
+                            Carte a = (Carte) e1;
+                            Carte b = (Carte) e2;
+                            if (a.getSerie() == null && b.getSerie() == null) {
+                                return 0;
+                            } else if (a.getSerie() == null) {
+                                return -1;
+                            } else if (b.getSerie() == null) {
+                                return 1;
+                            }
+                            return StringUtils.defaultString(a.getSerie().getFormattedValue())
+                                    .compareTo(StringUtils.defaultString(b.getSerie().getFormattedValue()));
                         }
 
                     };
@@ -2189,8 +2273,8 @@ public class EncodePlatform extends AbstractCViewAdapter implements Listener, Ob
         Page<Carte> page = controller.getSearchResult();
         if (!tableViewer.getTable().isDisposed()) {
             tableViewer.setInput(page.getContent());
-            if (!exportItem.isDisposed()) {
-                exportItem.setEnabled(CollectionUtils.isNotEmpty((List) tableViewer.getInput()));
+            if (!tableViewerExportItem.isDisposed()) {
+                tableViewerExportItem.setEnabled(CollectionUtils.isNotEmpty((List) tableViewer.getInput()));
             }
             if (tableViewer.getTable().getItemCount() > 0) {
                 Carte carte = (Carte) tableViewer.getTable().getItem(tableViewer.getTable().getItemCount() - 1).getData();

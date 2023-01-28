@@ -1,8 +1,10 @@
 package com.papao.books.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 
-public class CarteSerie implements Serializable{
+public class CarteSerie implements Serializable {
 
     private String nume;
     private String volum;
@@ -21,6 +23,10 @@ public class CarteSerie implements Serializable{
     }
 
     public String getFormattedValue() {
-        return this.nume + " #" + this.volum;
+        if (StringUtils.isNotEmpty(this.nume) && StringUtils.isNotEmpty(this.volum)) {
+            return this.nume + " #" + this.volum;
+        } else if (StringUtils.isEmpty(this.nume)) {
+            return this.volum;
+        } else return this.nume;
     }
 }

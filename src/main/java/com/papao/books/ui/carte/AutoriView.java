@@ -20,6 +20,7 @@ import com.papao.books.ui.custom.ImageSelectorComposite;
 import com.papao.books.ui.interfaces.*;
 import com.papao.books.ui.providers.AdbMongoContentProvider;
 import com.papao.books.ui.providers.UnifiedStyledLabelProvider;
+import com.papao.books.ui.util.ObjectCloner;
 import com.papao.books.ui.util.StringUtil;
 import com.papao.books.ui.util.WidgetCursorUtil;
 import com.papao.books.ui.util.WidgetTableUtil;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify, IDelete, IExport, ISearchWithHighlight {
 
@@ -124,26 +126,29 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
             if ((this.autoriTableViewer == null) || this.autoriTableViewer.getControl().isDisposed() || (this.autoriTableViewer.getTable().getSelectionCount() <= 0)) {
                 return false;
             }
-            Autor autor = (Autor) this.autoriTableViewer.getTable().getSelection()[0].getData();
-            if (autor == null) {
-                SWTeXtension.displayMessageI("Autorul selectat este invalid!");
-                return false;
-            }
-            autor = AutorController.findOne(autor.getId());
-            if (autor == null) {
-                SWTeXtension.displayMessageW("Autorul nu mai există!");
-                return false;
-            }
-            java.util.List<Carte> cartileAutorului = ApplicationService.getBookController().getRepository().getByIdAutoriContainsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(autor.getId());
-            if (cartileAutorului != null && !cartileAutorului.isEmpty()) {
-                SWTeXtension.displayMessageW("Nu se poate șterge autorul selectat, pentru că există " + cartileAutorului.size() +
-                        " cărți cu acest autor în baza de date!");
-                return false;
-            }
-            if (SWTeXtension.displayMessageQ("Sunteți siguri că doriți să ștergeți autorul selectat?", "Confirmare ștergere autor") == SWT.NO) {
+            TableItem[] selectedItems = this.autoriTableViewer.getTable().getSelection();
+            if (SWTeXtension.displayMessageQ("Sunteți siguri că doriți să ștergeți autorii selectați?", "Confirmare ștergere autori") == SWT.NO) {
                 return true;
             }
-            AutorController.delete(autor);
+            for (TableItem item : selectedItems) {
+                Autor autor = (Autor) item.getData();
+                if (autor == null) {
+                    SWTeXtension.displayMessageI("Autorul selectat este invalid!");
+                    return false;
+                }
+                autor = AutorController.findOne(autor.getId());
+                if (autor == null) {
+                    SWTeXtension.displayMessageW("Autorul nu mai există!");
+                    return false;
+                }
+                List<Carte> cartileAutorului = ApplicationService.getBookController().getRepository().getByIdAutoriContainsOrderBySerie_NumeAscSerie_VolumAscTitluAscVolumAsc(autor.getId());
+                if (cartileAutorului != null && !cartileAutorului.isEmpty()) {
+                    SWTeXtension.displayMessageW("Nu se poate șterge autorul selectat, pentru că există " + cartileAutorului.size() +
+                            " cărți cu acest autor în baza de date!");
+                    return false;
+                }
+                AutorController.delete(autor);
+            }
             refresh();
             SWTeXtension.displayMessageI("Operație executată cu succes!");
         } catch (Exception exc) {
@@ -291,7 +296,7 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
         GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(upperComp);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(upperComp);
 
-        this.autoriTableViewer = new TableViewer(upperComp, SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE);
+        this.autoriTableViewer = new TableViewer(upperComp, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
         this.autoriTableViewer.getTable().setHeaderVisible(true);
         this.autoriTableViewer.getTable().setLinesVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this.autoriTableViewer.getControl());
@@ -379,6 +384,14 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
         this.booksTableViewer.getTable().setLinesVisible(true);
         GridDataFactory.fillDefaults().grab(true, true).applyTo(this.booksTableViewer.getControl());
 
+        this.booksTableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                modifyBook();
+            }
+        });
+        this.booksTableViewer.getTable().setMenu(createTableBooksMenu());
+
         booksImageComposite = new ImageSelectorComposite(lowerComp, null, null);
         this.addObserver(booksImageComposite);
         GridData data = booksImageComposite.getLayoutData();
@@ -447,6 +460,119 @@ public class AutoriView extends AbstractCView implements IRefresh, IAdd, IModify
         SWTeXtension.addColoredFocusListener(this.booksTableViewer.getTable(), null);
 
         mainSash.setWeights(new int[]{5, 5});
+    }
+
+    public boolean modify(boolean createDuplicate) {
+        Carte carte;
+        CarteView view;
+        if ((this.booksTableViewer == null) ||
+                this.booksTableViewer.getControl().isDisposed() ||
+                this.booksTableViewer.getTable().getSelectionCount() <= 0) {
+            return false;
+        }
+        carte = (Carte) this.booksTableViewer.getTable().getSelection()[0].getData();
+        if (carte == null) {
+            SWTeXtension.displayMessageI("Cartea selectată este invalidă!");
+            return false;
+        }
+        Carte carteDatabase = ApplicationService.getBookController().findOne(carte.getId());
+        if (carteDatabase == null) {
+            SWTeXtension.displayMessageI("Cartea selectată nu mai există în baza de date!");
+            return false;
+        }
+        int viewMode = MODE_MODIFY;
+        if (createDuplicate) {
+            carteDatabase = (Carte) ObjectCloner.copy(carteDatabase);
+            carteDatabase.initCopy();
+            viewMode = MODE_CLONE;
+        }
+        view = new CarteView(this.booksTableViewer.getTable().getShell(), carteDatabase, viewMode);
+        view.open();
+        if (view.getUserAction() == SWT.CANCEL) {
+            return true;
+        }
+        booksTableViewer.refresh(view.getCarte(), true, true);
+        booksTableViewer.setSelection(new StructuredSelection(view.getCarte()));
+        final int index = ((List<Carte>) booksTableViewer.getInput()).indexOf(view.getCarte());
+        if (index > 0) {
+            TableItem item = booksTableViewer.getTable().getItem(index);
+            if (item != null && !item.isDisposed()) {
+                item.setData(view.getCarte());
+            }
+        }
+        return true;
+    }
+
+    private Menu createTableBooksMenu() {
+        if ((this.booksTableViewer == null) || this.booksTableViewer.getControl().isDisposed()) {
+            return null;
+        }
+        final Menu menu = new Menu(this.booksTableViewer.getTable());
+        MenuItem menuItem;
+        menu.addListener(SWT.Show, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                int idx = 0;
+                final int selIdx = booksTableViewer.getTable().getSelectionIndex();
+                menu.getItem(idx++).setEnabled(selIdx != -1); // mod
+            }
+        });
+
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText("Modificare");
+        menuItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public final void handleEvent(final Event e) {
+                modifyBook();
+            }
+        });
+
+        return menu;
+    }
+
+    public boolean modifyBook() {
+        Carte carte;
+        CarteView view;
+        if ((this.booksTableViewer == null)
+                || this.booksTableViewer.getControl().isDisposed()
+                || (this.booksTableViewer.getTable().getSelectionCount() <= 0)) {
+            return false;
+        }
+        Autor autor = (Autor) this.autoriTableViewer.getTable().getSelection()[0].getData();
+        carte = (Carte) this.booksTableViewer.getTable().getSelection()[0].getData();
+        if (carte == null) {
+            SWTeXtension.displayMessageI("Cartea selectată este invalidă!");
+            return false;
+        }
+        Carte carteDatabase = ApplicationService.getBookController().findOne(carte.getId());
+        if (carteDatabase == null) {
+            SWTeXtension.displayMessageI("Cartea selectată nu mai există în baza de date!");
+            return false;
+        }
+        int viewMode = MODE_MODIFY;
+        view = new CarteView(this.booksTableViewer.getTable().getShell(), carteDatabase, viewMode);
+        view.open();
+        if (view.getUserAction() == SWT.CANCEL) {
+            return true;
+        }
+
+        booksTableViewer.setInput(ApplicationService.getBookController().getByIdAutoriContains(autor.getId()));
+        booksImageComposite.setImage(null, null);
+        if (booksTableViewer.getTable().getItemCount() > 0) {
+            booksTableViewer.getTable().select(0);
+            booksTableViewer.getTable().notifyListeners(SWT.Selection, new Event());
+        }
+
+        booksTableViewer.refresh(view.getCarte(), true, true);
+        booksTableViewer.setSelection(new StructuredSelection(view.getCarte()));
+        final int index = ((List<Carte>) booksTableViewer.getInput()).indexOf(view.getCarte());
+        if (index > 0) {
+            TableItem item = booksTableViewer.getTable().getItem(index);
+            if (item != null && !item.isDisposed()) {
+                item.setData(view.getCarte());
+            }
+        }
+        return true;
     }
 
     private void initViewerCols() {
